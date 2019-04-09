@@ -1,0 +1,23 @@
+{
+  "name": "azar",
+  "version": "1.0.0",
+  "description": "html5 framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/duthienkt/Azar.git"
+  },
+  "keywords": [
+    "html5",
+    "dom"
+  ],
+  "author": "Pham Quoc Du Thien",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/duthienkt/Azar/issues"
+  },
+  "homepage": "https://gitlab.com/duthienkt/Azar#readme"
+}

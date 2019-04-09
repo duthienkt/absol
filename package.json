@@ -1,0 +1,27 @@
+{
+  "name": "azar",
+  "version": "1.0.0",
+  "description": "HTML5 Framework",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "webpack-dev-server --config webpack.config.js",
+    "dist": "webpack --config webpack.config.js --progress --profile --colors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/duthienkt/Azar.git"
+  },
+  "keywords": [
+    "html",
+    "xml"
+  ],
+  "author": "Pham Quoc Du Thien",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/duthienkt/Azar/issues"
+  },
+  "homepage": "https://gitlab.com/duthienkt/Azar#readme"
+}
