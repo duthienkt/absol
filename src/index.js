@@ -4,6 +4,7 @@ import EventEmittor from "./EventEmittor";
 import Dom from "./Dom";
 import OOP from "./OOP";
 import BrowserDetector from './BrowserDectector';
+import XML from './XML';
 
 var absol = {};
 window.absol = absol;
@@ -48,5 +49,7 @@ Object.defineProperties(absol,{
         }
     }
 });
+
+absol.XML = XML;
 
 export default absol;

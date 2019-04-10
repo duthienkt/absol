@@ -4,7 +4,7 @@ module.exports = {
     mode: process.env.MODE || "development",
     entry: "./src/index.js",
     output: {
-        path: path.join(__dirname, ".."),
+        path: path.join(__dirname, "."),
         filename: "./dist/Azar.js"
     },
     resolve: {
