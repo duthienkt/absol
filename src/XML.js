@@ -11,38 +11,40 @@ function getRegexBody(regex) {
 var BEGIN_TAG = 1;
 var END_TAG = 2;
 var CDATA = 3;
+var DECLARATION = 4;
+var COMMENT = 4;
 
 
 
-var identRgx = /[^\s\"\r\n\'\!\/=\>\<\-\]\[]+/;
+var identRgx = /[^\s\"\r\n\'\!\/=\>\<\]\[\?]+/;
 var spaceRgx = /[\s\r\n]+/;
 var stringRgx = /\"(([^\"\\]*|(\\.))*)\"/;
 var textRgx = /[^\<\-]+/;
-var commentStartRgx = /\<!--/;
-var commnetEndRgx = /\-\-\>/;
+var commentOpenRgx = /\<!\-\-/;
+var commentCloseRgx = /\-\-\>/;
 var cdataOpenRgx = /\<\!\[CDATA\[/;
 var cdataCloseRgx = /]]>/;
 var openRgx = /\</;
 var openEndTagRgx = /\<\//;
 var closeRgx = /\>/;
 var shortCloseRgx = /\/\>/;
-var declarationStartRgx = /\<\?/;
-var declarationEndRgx = /\?\>/;
+var declarationOpenRgx = /\<\?/;
+var declarationCloseRgx = /\?\>/;
 var assignOpRgx = /=/;
 
 var tokenRgxBody = '(' +
     [
         spaceRgx,
-        declarationStartRgx,
+        declarationOpenRgx,
         cdataOpenRgx,
-        commentStartRgx,
+        commentOpenRgx,
         openEndTagRgx,
         openRgx,
-        identRgx,
         assignOpRgx,
         stringRgx,
-        commnetEndRgx,
-        declarationEndRgx,
+        commentCloseRgx,
+        identRgx,
+        declarationCloseRgx,
         shortCloseRgx,
         closeRgx,
         cdataCloseRgx,
@@ -54,16 +56,16 @@ var tokenRgxBody = '(' +
 
 var tokenType = {
     space: spaceRgx,
-    declarationStart: declarationStartRgx,
+    declarationOpen: declarationOpenRgx,
     cdataOpen: cdataOpenRgx,
-    commentStart: commentStartRgx,
+    commentOpen: commentOpenRgx,
     openEndTag: openEndTagRgx,
     open: openRgx,
     ident: identRgx,
     assignOp: assignOpRgx,
     string: stringRgx,
-    commnetEnd: commnetEndRgx,
-    declarationEnd: declarationEndRgx,
+    commentClose: commentCloseRgx,
+    declarationClose: declarationCloseRgx,
     shortClose: shortCloseRgx,
     close: closeRgx,
     cdataClose: cdataCloseRgx,
@@ -243,11 +245,13 @@ function MatchBeginTag(tokens, i) {
                                         ++i;
                                     }
                                     else {
+                                        //TODO: we can ignore some error here, the same with order Match* function
                                         result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected > or indent');
                                         break;
                                     }
                                 }
                                 else {
+                                    //TODO: we can ignore some error here
                                     result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected > or indent');
                                     break;
                                 }
@@ -372,6 +376,92 @@ function MatchEndTag(tokens, i) {
     return result;
 }
 
+/**
+ * 
+ * @param {Array<Token>} tokens 
+ * @param {Number} i 
+ * @returns {XMLParseNode}
+ */
+function MatchDeclaration(tokens, i) {
+    var result = { __xml__: { type: DECLARATION, tokens: tokens, start: i } };
+    var cToken;
+    if (i < tokens.length) {
+        cToken = tokens[i];
+        if (cToken.matched['declarationOpen']) {
+            ++i;
+            if (i < tokens.length) {
+                cToken = tokens[i];
+                if (cToken.matched['ident']) {
+                    result.tag = cToken.text;
+                    ++i;
+                    if (i < tokens.length) {
+                        var finished = false;//when find the close symbol
+                        while (i < tokens.length) {
+                            cToken = tokens[i];
+                            if (cToken.matched['space']) {
+                                ++i;
+                            }//skip space between attribute
+                            if (i < tokens.length) {
+                                cToken = tokens[i];
+                                if (cToken.matched['declarationClose']) {
+                                    result.__xml__.closed = false;
+                                    ++i;
+                                    finished = true;
+                                    break;
+                                }
+                                else if (tokens[i - 1].matched['space']) {
+                                    var assign = MatchAssign(tokens, i);
+                                    if (!assign.__xml__.error) {
+                                        result.attr = result.attr || {};
+                                        result.attr[assign.key] = assign.value;
+                                        i = assign.__xml__.end;
+                                    }
+                                    else if (cToken.matched['ident']) {
+                                        result.attr = result.attr || {};
+                                        result.attr[cToken.text] = null;// a flag
+                                        ++i;
+                                    }
+                                    else {
+                                        result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected > or indent');
+
+                                    }
+                                }
+                                else {
+                                    result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected > or indent');
+                                }
+                            }
+                            else {
+                                result.__xml__.error = new Error('End of data found, expected /> or >');
+                            }
+                        }
+                        if (!finished && !result.__xml__.error) {
+                            result.__xml__.error = new Error('End of data found, expected /> or >');
+                        }
+                    }
+                    else {
+                        result.__xml__.error = new Error('End of data found, expected /> or >');
+                    }
+                }
+                else {
+                    result.__xml__.error = new Error('Expected indent');
+                }
+            }
+            else {
+                result.__xml__.error = new Error('End of data found, expected indent');
+            }
+            result.__xml__.end = i;
+        }
+        else {
+            result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected <');
+        }
+    }
+    else {
+        result.__xml__.error = new Error('End of data found, expected <');
+    }
+    result.__xml__.end = i;
+    return result;
+}
+
 
 
 /**
@@ -391,7 +481,7 @@ function MatchCData(tokens, i) {
             var finished = false;
             while (i < tokens.length) {
                 cToken = tokens[i];
-                
+
                 if (cToken.matched['cdataClose']) {
                     finished = true;
                     ++i;
@@ -402,7 +492,7 @@ function MatchCData(tokens, i) {
                     ++i;
                 }
             }
-            if (!finished){
+            if (!finished) {
                 result.__xml__.error = new Error('End of data found, expected ]]>');
             }
         }
@@ -419,36 +509,99 @@ function MatchCData(tokens, i) {
 
 
 
+/**
+ * 
+ * @param {Array<Token>} tokens 
+ * @param {Number} i 
+ * @returns {XMLParseNode}
+ */
+function MatchComment(tokens, i) {
+    var result = { __xml__: { type: CDATA, tokens: tokens, start: i } };
+    var cToken;
+    if (i < tokens.length) {
+        cToken = tokens[i];
+        if (cToken.matched['commentOpen']) {
+            ++i;
+            result.text = '';
+            var finished = false;
+            while (i < tokens.length) {
+                cToken = tokens[i];
+
+                if (cToken.matched['commentClose']) {
+                    finished = true;
+                    ++i;
+                    break;
+                }
+                else {
+                    result.text += cToken.text;
+                    ++i;
+                }
+            }
+            if (!finished) {
+                result.__xml__.error = new Error('End of data found, expected -->');
+            }
+        }
+        else {
+            result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected <!--');
+        }
+    }
+    else {
+        result.__xml__.error = new Error('End of data found, expected <!--');
+    }
+    result.__xml__.end = i
+    return result;
+};
+
+
+
+
+
 XMLTest.testcase.forEach(function (testcase) {
+    var beginTime = performance.now();
     var tokens = tokenize(testcase.code.trim());
     var xmls = [];
     var i = 0;
     while (i < tokens.length) {
-        var begin = MatchBeginTag(tokens, i);
-        if (!begin.__xml__.error) {
-            xmls.push(begin);
-            i = begin.__xml__.end;
+        var comment = MatchComment(tokens, i);
+        if (!comment.__xml__.error) {
+            xmls.push(comment);
+            i = comment.__xml__.end;
         }
         else {
-            var end = MatchEndTag(tokens, i);
-            if (!end.__xml__.error) {
-                xmls.push(end);
-                i = end.__xml__.end;
+            var declaration = MatchDeclaration(tokens, i);
+            if (!declaration.__xml__.error) {
+                xmls.push(declaration);
+                i = declaration.__xml__.end;
             }
             else {
-                var cdata = MatchCData(tokens, i);
-                if (!cdata.__xml__.error){
-                    xmls.push(cdata);
-                    i = cdata.__xml__.end;
+                var begin = MatchBeginTag(tokens, i);
+                if (!begin.__xml__.error) {
+                    xmls.push(begin);
+                    i = begin.__xml__.end;
                 }
-                else{
-                    ++i;//skip
+                else {
+                    var end = MatchEndTag(tokens, i);
+                    if (!end.__xml__.error) {
+                        xmls.push(end);
+                        i = end.__xml__.end;
+                    }
+                    else {
+                        var cdata = MatchCData(tokens, i);
+                        if (!cdata.__xml__.error) {
+                            xmls.push(cdata);
+                            i = cdata.__xml__.end;
+                        }
+                        else {
+                            ++i;//skip
+                        }
+                    }
                 }
             }
         }
     }
     console.log('token', tokens);
     console.log('xml', xmls);
+    console.log('time', performance.now() - beginTime);
 }
 );
 
