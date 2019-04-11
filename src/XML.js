@@ -13,6 +13,7 @@ var END_TAG = 2;
 var CDATA = 3;
 var DECLARATION = 4;
 var COMMENT = 4;
+var TEXT = 5;
 
 
 
@@ -87,7 +88,7 @@ var tokenRgx = new RegExp(tokenRgxBody);
  * @param {String} text 
  * @returns {Array<Token>}
  */
-function tokenize(text) {
+function xmlTokenize(text) {
     return text.match(new RegExp(tokenRgxBody, 'g'))
         .map(function (tokenText) {
             var result = { text: tokenText, matched: {} };
@@ -124,7 +125,7 @@ function tokenize(text) {
  * @param {Number} i 
  * @returns {XMLParseNode}
  */
-function MatchAssign(tokens, i) {
+function matchAssign(tokens, i) {
     var result = { __xml__: { tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
@@ -199,7 +200,7 @@ function MatchAssign(tokens, i) {
  * @param {Number} i 
  * @returns {XMLParseNode}
  */
-function MatchBeginTag(tokens, i) {
+function matchBeginTag(tokens, i) {
     var result = { __xml__: { type: BEGIN_TAG, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
@@ -233,7 +234,7 @@ function MatchBeginTag(tokens, i) {
                                     break;
                                 }
                                 else if (tokens[i - 1].matched['space']) {
-                                    var assign = MatchAssign(tokens, i);
+                                    var assign = matchAssign(tokens, i);
                                     if (!assign.__xml__.error) {
                                         result.attr = result.attr || {};
                                         result.attr[assign.key] = assign.value;
@@ -296,7 +297,7 @@ function MatchBeginTag(tokens, i) {
  * @param {Number} i 
  * @returns {XMLParseNode}
  */
-function MatchEndTag(tokens, i) {
+function matchEndTag(tokens, i) {
     var result = { __xml__: { type: END_TAG, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
@@ -324,7 +325,7 @@ function MatchEndTag(tokens, i) {
                                     break;
                                 }
                                 else if (tokens[i - 1].matched['space']) {
-                                    var assign = MatchAssign(tokens, i);
+                                    var assign = matchAssign(tokens, i);
                                     if (!assign.__xml__.error) {
                                         result.attr = result.attr || {};
                                         result.attr[assign.key] = assign.value;
@@ -382,7 +383,7 @@ function MatchEndTag(tokens, i) {
  * @param {Number} i 
  * @returns {XMLParseNode}
  */
-function MatchDeclaration(tokens, i) {
+function matchDeclaration(tokens, i) {
     var result = { __xml__: { type: DECLARATION, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
@@ -410,7 +411,7 @@ function MatchDeclaration(tokens, i) {
                                     break;
                                 }
                                 else if (tokens[i - 1].matched['space']) {
-                                    var assign = MatchAssign(tokens, i);
+                                    var assign = matchAssign(tokens, i);
                                     if (!assign.__xml__.error) {
                                         result.attr = result.attr || {};
                                         result.attr[assign.key] = assign.value;
@@ -470,7 +471,7 @@ function MatchDeclaration(tokens, i) {
  * @param {Number} i 
  * @returns {XMLParseNode}
  */
-function MatchCData(tokens, i) {
+function matchCData(tokens, i) {
     var result = { __xml__: { type: CDATA, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
@@ -515,7 +516,7 @@ function MatchCData(tokens, i) {
  * @param {Number} i 
  * @returns {XMLParseNode}
  */
-function MatchComment(tokens, i) {
+function matchComment(tokens, i) {
     var result = { __xml__: { type: CDATA, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
@@ -552,43 +553,41 @@ function MatchComment(tokens, i) {
     return result;
 };
 
-
-
-
-
-XMLTest.testcase.forEach(function (testcase) {
-    var beginTime = performance.now();
-    var tokens = tokenize(testcase.code.trim());
-    var xmls = [];
+/**
+ * 
+ * @param {Token} tokens 
+ */
+function parseXMLTab(tokens) {
+    var tabs = [];
     var i = 0;
     while (i < tokens.length) {
-        var comment = MatchComment(tokens, i);
+        var comment = matchComment(tokens, i);
         if (!comment.__xml__.error) {
-            xmls.push(comment);
+            tabs.push(comment);
             i = comment.__xml__.end;
         }
         else {
-            var declaration = MatchDeclaration(tokens, i);
+            var declaration = matchDeclaration(tokens, i);
             if (!declaration.__xml__.error) {
-                xmls.push(declaration);
+                tabs.push(declaration);
                 i = declaration.__xml__.end;
             }
             else {
-                var begin = MatchBeginTag(tokens, i);
+                var begin = matchBeginTag(tokens, i);
                 if (!begin.__xml__.error) {
-                    xmls.push(begin);
+                    tabs.push(begin);
                     i = begin.__xml__.end;
                 }
                 else {
-                    var end = MatchEndTag(tokens, i);
+                    var end = matchEndTag(tokens, i);
                     if (!end.__xml__.error) {
-                        xmls.push(end);
+                        tabs.push(end);
                         i = end.__xml__.end;
                     }
                     else {
-                        var cdata = MatchCData(tokens, i);
+                        var cdata = matchCData(tokens, i);
                         if (!cdata.__xml__.error) {
-                            xmls.push(cdata);
+                            tabs.push(cdata);
                             i = cdata.__xml__.end;
                         }
                         else {
@@ -599,8 +598,173 @@ XMLTest.testcase.forEach(function (testcase) {
             }
         }
     }
-    console.log('token', tokens);
-    console.log('xml', xmls);
+    return tabs;
+}
+
+
+
+/**
+ * 
+ * @param {Array<Token>} tokens 
+ * @param {Array<XMLParseNode>} tabs 
+ * @returns {Array<XMLParseNode>}
+ */
+function parseXMLText(tokens, tabs) {
+    var texts = [];
+    var ofs = 0;
+    for (var i = 0; i < tabs.length; ++i) {
+        var tab = tabs[i];
+        if (tab.__xml__.start > ofs) {
+            var text = tokens.slice(ofs, tab.__xml__.start)
+                .map(function (token) {
+                    return token.text;
+                }).join('').trim();
+            if (text.length > 0)
+                texts.push({
+                    __xml__: {
+                        type: TEXT,
+                        tokens: tokens,
+                        start: ofs,
+                        end: tab.__xml__.start
+                    },
+                    text: text
+                });
+        }
+        ofs = tab.__xml__.end;
+    }
+    if (ofs < tokens.length) {
+        var text = tokens.slice(ofs)
+            .map(function (token) {
+                return token.text;
+            }).join('').trim();
+        if (text.length > 0)
+            texts.push({
+                __xml__: {
+                    type: TEXT,
+                    tokens: tokens,
+                    start: ofs,
+                    end: tab.__xml__.start
+                },
+                text: text
+            });
+    }
+    return texts;
+}
+
+
+/**
+ * 
+ * @param {Array<XMLParseNode>} tabs 
+ * @param {Array<XMLParseNode>} texts 
+ * @return {Array<XMLParseNode>}  
+ */
+function mergeNodes(tabs, texts) {
+    var nodes = [];
+    var choose;
+    var iTabs = 0, iTexts = 0;
+    var diTabs, diTexts;
+    var minStart;
+    do {
+        choose = undefined;
+        diTabs = 0, diTexts = 0;
+        if (iTabs < tabs.length) {
+            choose = tabs[iTabs];
+            minStart = choose.__xml__.start;
+            diTabs = 1;
+        }
+
+        if (iTexts < texts.length && texts[iTexts].__xml__.start < minStart) {
+            choose = texts[iTexts];
+            minStart = choose.__xml__.start;
+            diTabs = 0;
+            diTexts = 1;
+        }
+        if (choose) {
+            iTexts += diTexts;
+            iTabs += diTabs;
+            nodes.push(choose);
+        }
+    } while (choose);
+    return nodes;
+}
+
+/**
+ * 
+ * @param {String} text 
+ * @return {Array<XMLParseNode>} 
+ */
+function parseXMLTextToXMLParseNode(text) {
+    var text = text.trim();
+    var tokens = xmlTokenize(text.trim());
+    var tabs = parseXMLTab(tokens);
+    var texts = parseXMLText(tokens, tabs);
+    return mergeNodes(tabs, texts);
+
+}
+
+
+
+
+XMLTest.testcase.slice().forEach(function (testcase) {
+    var beginTime = performance.now();
+    var nodes = parseXMLTextToXMLParseNode(testcase.code);
+    // var tokens = xmlTokenize(testcase.code.trim());
+    // var xmls = [];
+    // var i = 0;
+    // while (i < tokens.length) {
+    //     var comment = matchComment(tokens, i);
+    //     if (!comment.__xml__.error) {
+    //         xmls.push(comment);
+    //         i = comment.__xml__.end;
+    //     }
+    //     else {
+    //         var declaration = matchDeclaration(tokens, i);
+    //         if (!declaration.__xml__.error) {
+    //             xmls.push(declaration);
+    //             i = declaration.__xml__.end;
+    //         }
+    //         else {
+    //             var begin = matchBeginTag(tokens, i);
+    //             if (!begin.__xml__.error) {
+    //                 xmls.push(begin);
+    //                 i = begin.__xml__.end;
+    //             }
+    //             else {
+    //                 var end = matchEndTag(tokens, i);
+    //                 if (!end.__xml__.error) {
+    //                     xmls.push(end);
+    //                     i = end.__xml__.end;
+    //                 }
+    //                 else {
+    //                     var cdata = matchCData(tokens, i);
+    //                     if (!cdata.__xml__.error) {
+    //                         xmls.push(cdata);
+    //                         i = cdata.__xml__.end;
+    //                     }
+    //                     else {
+    //                         ++i;//skip
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    // var unhandleTokens = [];
+    // var ofs = 0;
+    // for (var i = 0; i < xmls.length; ++i) {
+    //     var hdl = xmls[i];
+    //     if (hdl.__xml__.start > ofs) {
+    //         unhandleTokens.push(tokens.slice(ofs, hdl.__xml__.start));
+    //     }
+    //     ofs = hdl.__xml__.end;
+    // }
+    // if (ofs < tokens.length)
+    //     unhandleTokens.push(tokens.slice(ofs));
+
+    // var unhandleText = unhandleTokens.map(function (s) {
+    //     return s.map(function (x) { return x.text; }).join('');
+    // });
+    console.log(nodes);
     console.log('time', performance.now() - beginTime);
 }
 );
