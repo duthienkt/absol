@@ -1,4 +1,7 @@
-import XMLTest from '../test/XML';
+import XMLTest from '../../test/XML';
+import XMLDeclaretionNode from './XMLDeclaretionNode';
+import XMLElement from './XMLElement';
+import XMLTextNode from './XMLTextNode';
 
 /**
  * 
@@ -12,8 +15,8 @@ var BEGIN_TAG = 1;
 var END_TAG = 2;
 var CDATA = 3;
 var DECLARATION = 4;
-var COMMENT = 4;
-var TEXT = 5;
+var COMMENT = 5;
+var TEXT = 6;
 
 
 
@@ -108,6 +111,7 @@ function xmlTokenize(text) {
 /**
  * @typedef {Object} XMLPaseInfo
  * @property {Array<Token>} tokens
+ * @property {Number} type
  * @property {Number} start
  * @property {Number} end
  * @property {Error} error
@@ -117,6 +121,9 @@ function xmlTokenize(text) {
  * 
  * @typedef {Object} XMLParseNode 
  * @property {XMLPaseInfo} __xml__
+ * @property {String} tagName
+ * @property {*} attributes
+ * @property {String} text
  */
 
 /**
@@ -210,7 +217,7 @@ function matchBeginTag(tokens, i) {
             if (i < tokens.length) {
                 cToken = tokens[i];
                 if (cToken.matched['ident']) {
-                    result.tag = cToken.text;
+                    result.tagName = cToken.text;
                     ++i;
                     if (i < tokens.length) {
                         var finished = false;//when find the close symbol
@@ -218,7 +225,7 @@ function matchBeginTag(tokens, i) {
                             cToken = tokens[i];
                             if (cToken.matched['space']) {
                                 ++i;
-                            }//skip space between attribute
+                            }//skip space between attributes
                             if (i < tokens.length) {
                                 cToken = tokens[i];
                                 if (cToken.matched['shortClose']) {
@@ -236,13 +243,13 @@ function matchBeginTag(tokens, i) {
                                 else if (tokens[i - 1].matched['space']) {
                                     var assign = matchAssign(tokens, i);
                                     if (!assign.__xml__.error) {
-                                        result.attr = result.attr || {};
-                                        result.attr[assign.key] = assign.value;
+                                        result.attributes = result.attributes || {};
+                                        result.attributes[assign.key] = assign.value;
                                         i = assign.__xml__.end;
                                     }
                                     else if (cToken.matched['ident']) {
-                                        result.attr = result.attr || {};
-                                        result.attr[cToken.text] = null;// a flag
+                                        result.attributes = result.attributes || {};
+                                        result.attributes[cToken.text] = null;// a flag
                                         ++i;
                                     }
                                     else {
@@ -298,7 +305,7 @@ function matchBeginTag(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchEndTag(tokens, i) {
-    var result = { __xml__: { type: END_TAG, tokens: tokens, start: i } };
+    var result = { __xml__: { type: END_TAG, closed: true, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -307,7 +314,7 @@ function matchEndTag(tokens, i) {
             if (i < tokens.length) {
                 cToken = tokens[i];
                 if (cToken.matched['ident']) {
-                    result.tag = cToken.text;
+                    result.tagName = cToken.text;
                     ++i;
                     if (i < tokens.length) {
                         var finished = false;//when find the close symbol
@@ -315,11 +322,11 @@ function matchEndTag(tokens, i) {
                             cToken = tokens[i];
                             if (cToken.matched['space']) {
                                 ++i;
-                            }//skip space between attribute
+                            }//skip space between attributes
                             if (i < tokens.length) {
                                 cToken = tokens[i];
                                 if (cToken.matched['close']) {
-                                    result.__xml__.closed = false;
+
                                     ++i;
                                     finished = true;
                                     break;
@@ -327,13 +334,13 @@ function matchEndTag(tokens, i) {
                                 else if (tokens[i - 1].matched['space']) {
                                     var assign = matchAssign(tokens, i);
                                     if (!assign.__xml__.error) {
-                                        result.attr = result.attr || {};
-                                        result.attr[assign.key] = assign.value;
+                                        result.attributes = result.attributes || {};
+                                        result.attributes[assign.key] = assign.value;
                                         i = assign.__xml__.end;
                                     }
                                     else if (cToken.matched['ident']) {
-                                        result.attr = result.attr || {};
-                                        result.attr[cToken.text] = null;// a flag
+                                        result.attributes = result.attributes || {};
+                                        result.attributes[cToken.text] = null;// a flag
                                         ++i;
                                     }
                                     else {
@@ -393,7 +400,7 @@ function matchDeclaration(tokens, i) {
             if (i < tokens.length) {
                 cToken = tokens[i];
                 if (cToken.matched['ident']) {
-                    result.tag = cToken.text;
+                    result.tagName = cToken.text;
                     ++i;
                     if (i < tokens.length) {
                         var finished = false;//when find the close symbol
@@ -401,7 +408,7 @@ function matchDeclaration(tokens, i) {
                             cToken = tokens[i];
                             if (cToken.matched['space']) {
                                 ++i;
-                            }//skip space between attribute
+                            }//skip space between attributes
                             if (i < tokens.length) {
                                 cToken = tokens[i];
                                 if (cToken.matched['declarationClose']) {
@@ -413,13 +420,13 @@ function matchDeclaration(tokens, i) {
                                 else if (tokens[i - 1].matched['space']) {
                                     var assign = matchAssign(tokens, i);
                                     if (!assign.__xml__.error) {
-                                        result.attr = result.attr || {};
-                                        result.attr[assign.key] = assign.value;
+                                        result.attributes = result.attributes || {};
+                                        result.attributes[assign.key] = assign.value;
                                         i = assign.__xml__.end;
                                     }
                                     else if (cToken.matched['ident']) {
-                                        result.attr = result.attr || {};
-                                        result.attr[cToken.text] = null;// a flag
+                                        result.attributes = result.attributes || {};
+                                        result.attributes[cToken.text] = null;// a flag
                                         ++i;
                                     }
                                     else {
@@ -517,7 +524,7 @@ function matchCData(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchComment(tokens, i) {
-    var result = { __xml__: { type: CDATA, tokens: tokens, start: i } };
+    var result = { __xml__: { type: COMMENT, tokens: tokens, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -699,76 +706,83 @@ function parseXMLTextToXMLParseNode(text) {
     var tabs = parseXMLTab(tokens);
     var texts = parseXMLText(tokens, tabs);
     return mergeNodes(tabs, texts);
+}
 
+
+/**
+ * 
+ * @param {Array<XMLParseNode>} nodes
+ * @returns {Array}
+ */
+function paresNodesToXMLs(nodes) {
+    var node;
+    var parentXMLElement = new XMLElement();
+    parentXMLElement.tagName = "FAKE_DOCUMENT";
+    var newXMLNode;
+    for (var i = 0; i < nodes.length; ++i) {
+        node = nodes[i];
+        newXMLNode = undefined;
+        switch (node.__xml__.type) {
+            case DECLARATION:
+                newXMLNode = new XMLDeclaretionNode();
+                newXMLNode.tagName = node.tagName;
+                if (node.attributes)
+                    Object.keys(node.attributes).forEach(function (key) {
+                        newXMLNode.setAttribute(key, node.attributes[key]);
+                    })
+                parentXMLElement.appendChild(newXMLNode);
+                break;
+            case BEGIN_TAG:
+                newXMLNode = new XMLElement();
+                newXMLNode.tagName = node.tagName;
+                if (node.attributes)
+                    Object.keys(node.attributes).forEach(function (key) {
+                        newXMLNode.setAttribute(key, node.attributes[key]);
+                    })
+                parentXMLElement.appendChild(newXMLNode);
+                if (!node.__xml__.closed)
+                    parentXMLElement = newXMLNode;
+                break;
+            case END_TAG:
+                if (parentXMLElement && node.tagName == parentXMLElement.tagName) {
+                    parentXMLElement = parentXMLElement.parentNode;
+                }
+                else if (parentXMLElement && parentXMLElement.tagName == 'img') {
+                    // image can be not close
+                    while (parentXMLElement.tagName == 'img') {
+                        parentXMLElement = parentXMLElement.parentNode;
+                    }
+
+                    parentXMLElement = parentXMLElement.parentNode;
+                }
+
+                else {
+                    throw new Error("Unknow close of tagName " + node.tagName
+                        + ', but ' + (parentXMLElement ? parentXMLElement.tagName : "EOF") + ' expected');
+                    return;
+                }
+                break;
+            case TEXT:
+                newXMLNode = new XMLTextNode(node.text);
+                parentXMLElement.appendChild(newXMLNode);
+                break;
+        }
+
+    }
+    return parentXMLElement.childNodes.map(function (e) {
+        e.remove();
+        return e;
+    });
 }
 
 
 
 
 XMLTest.testcase.slice().forEach(function (testcase) {
-    var beginTime = performance.now();
     var nodes = parseXMLTextToXMLParseNode(testcase.code);
-    // var tokens = xmlTokenize(testcase.code.trim());
-    // var xmls = [];
-    // var i = 0;
-    // while (i < tokens.length) {
-    //     var comment = matchComment(tokens, i);
-    //     if (!comment.__xml__.error) {
-    //         xmls.push(comment);
-    //         i = comment.__xml__.end;
-    //     }
-    //     else {
-    //         var declaration = matchDeclaration(tokens, i);
-    //         if (!declaration.__xml__.error) {
-    //             xmls.push(declaration);
-    //             i = declaration.__xml__.end;
-    //         }
-    //         else {
-    //             var begin = matchBeginTag(tokens, i);
-    //             if (!begin.__xml__.error) {
-    //                 xmls.push(begin);
-    //                 i = begin.__xml__.end;
-    //             }
-    //             else {
-    //                 var end = matchEndTag(tokens, i);
-    //                 if (!end.__xml__.error) {
-    //                     xmls.push(end);
-    //                     i = end.__xml__.end;
-    //                 }
-    //                 else {
-    //                     var cdata = matchCData(tokens, i);
-    //                     if (!cdata.__xml__.error) {
-    //                         xmls.push(cdata);
-    //                         i = cdata.__xml__.end;
-    //                     }
-    //                     else {
-    //                         ++i;//skip
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-    // var unhandleTokens = [];
-    // var ofs = 0;
-    // for (var i = 0; i < xmls.length; ++i) {
-    //     var hdl = xmls[i];
-    //     if (hdl.__xml__.start > ofs) {
-    //         unhandleTokens.push(tokens.slice(ofs, hdl.__xml__.start));
-    //     }
-    //     ofs = hdl.__xml__.end;
-    // }
-    // if (ofs < tokens.length)
-    //     unhandleTokens.push(tokens.slice(ofs));
-
-    // var unhandleText = unhandleTokens.map(function (s) {
-    //     return s.map(function (x) { return x.text; }).join('');
-    // });
-    console.log(nodes);
-    console.log('time', performance.now() - beginTime);
-}
-);
-
+    var xmls = paresNodesToXMLs(nodes);
+    console.log(xmls);
+});
 
 function XML() {
 
@@ -786,3 +800,33 @@ XML.prototype.stringify = function (o) {
 };
 
 export default XML;
+
+
+function Animal(x) {
+    this.value = x;
+}
+
+
+Animal.prototype.say = function () {
+    console.log('gao');
+};
+
+
+Object.defineProperty(Animal.prototype, 'xi', {
+    get: function () {
+        return this.value + 1;
+    }
+});
+
+
+Object.defineProperty(Dog.prototype, 'xi', Object.getOwnPropertyDescriptor(Animal.prototype, 'xi'))
+
+
+function Dog() {
+    Animal.call(this, 3);
+}
+
+
+window.d = new Dog();
+
+console.log(d);

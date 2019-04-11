@@ -1,8 +1,14 @@
 function XMLDeclaretionNode() {
+    
+    this.parentNode;
     /**
      * @type {String}
      */
     this.tagName = '';
+     /**
+     * @type {XMLElement}
+     */
+    this.parentNode;
     this.attributes = {};
 }
 
@@ -26,6 +32,12 @@ XMLDeclaretionNode.prototype.setAttribute = function (name, value) {
  */
 XMLDeclaretionNode.prototype.removeAttribute = function (name) {
     delete this.attributes[name];
+};
+
+XMLDeclaretionNode.prototype.remove = function () {
+    if (this.parentNode) {
+        this.parentNode.removeChild(this);
+    }
 };
 
 export default XMLDeclaretionNode;

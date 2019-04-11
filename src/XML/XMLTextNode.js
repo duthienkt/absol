@@ -2,7 +2,7 @@ function XMLTextNode(data) {
     /**
      * @type {XMLNode}
      */
-    this.parentNode = undefined;
+    this.parentNode;
     this.data = data || '';
 }
 

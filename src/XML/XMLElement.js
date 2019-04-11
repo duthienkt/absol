@@ -6,7 +6,7 @@ function XMLElement() {
     /**
      * @type {XMLElement}
      */
-    this.parentNode = undefined;
+    this.parentNode;
     this.attributes = {};
     /**
      * @type {Array} Array of  XMLElement or XMLText
@@ -39,6 +39,7 @@ XMLElement.prototype.removeAttribute = function (name) {
 XMLElement.prototype.appendChild = function (child) {
     child.remove();
     this.childNodes.push(child);
+    child.parentNode = this;
 };
 
 /**
