@@ -36,10 +36,11 @@ XMLElement.prototype.removeAttribute = function (name) {
     delete this.attributes[name];
 };
 
-XMLElement.prototype.appendChild = function (child) {
-    child.remove();
-    this.childNodes.push(child);
-    child.parentNode = this;
+XMLElement.prototype.appendChild = function (node) {
+    node.remove();
+    this.childNodes.push(node);
+    node.parentNode = this;
+    return node;
 };
 
 /**
@@ -66,6 +67,34 @@ XMLElement.prototype.removeChild = function (child) {
     }
     return result;
 };
+
+/**
+ * @param {XMLElement|XMLText|XMLDeclaretionNode} node
+ */
+XMLElement.prototype.inserBefore = function (node, child) {
+    if (node == child) return;
+    var childIndex = -1;
+    for (var i = 0; i < this.childNodes.length; ++i) {
+        if (this.childNodes[i] == child) {
+            childIndex = i;
+            break;
+        }
+    }
+    if (childIndex < 0) return;
+    node.remove();
+    node.parentNode = this;
+    this.childNodes.push(null);
+    var cIndex = this.childNodes.length - 2;
+    while (cIndex >= 0) {
+        if (this.childNodes[cIndex] == child) {
+            this.childNodes[cIndex + 1] = node;
+        }
+        else
+            this.childNodes[cIndex + 1] = this.childNodes[cIndex];
+    }
+};
+
+
 
 XMLElement.prototype.remove = function () {
     if (this.parentNode) {
