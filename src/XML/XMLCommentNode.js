@@ -1,7 +1,7 @@
 import XMLConstant from "./XMLConstant";
 
-function XMLTextNode(data) {
-    this.nodeType = XMLConstant.TYPE_TEXT;
+function XMLCommentNode(data) {
+    this.nodeType = XMLConstant.TYPE_COMMENT;
     /**
      * @type {XMLNode}
      */
@@ -13,12 +13,11 @@ function XMLTextNode(data) {
 }
 
 
-XMLTextNode.prototype.remove = function () {
+XMLCommentNode.prototype.remove = function () {
     if (this.parentNode) {
         this.parentNode.removeChild(this);
     }
 };
 
 
-
-export default XMLTextNode;
+export default XMLCommentNode;

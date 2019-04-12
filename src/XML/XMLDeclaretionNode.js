@@ -1,5 +1,7 @@
+import XMLConstant from "./XMLConstant";
+
 function XMLDeclaretionNode() {
-    
+    this.nodeType = XMLConstant.TYPE_DECLARETION;
     this.parentNode;
     /**
      * @type {String}

@@ -1,4 +1,9 @@
+import XMLClassList from './XMLClassList';
+import XMLConstant from './XMLConstant';
+
 function XMLElement() {
+    this.nodeType = XMLConstant.TYPE_ELEMENT;
+
     /**
      * @type {String}
      */
@@ -12,6 +17,11 @@ function XMLElement() {
      * @type {Array} Array of  XMLElement or XMLText
      */
     this.childNodes = [];
+
+    Object.defineProperty(this, 'classList',{
+        value: new XMLClassList(this),
+        writable: false
+    })
 }
 
 /**

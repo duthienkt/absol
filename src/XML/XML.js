@@ -2,6 +2,8 @@ import XMLTest from '../../test/XML';
 import XMLDeclaretionNode from './XMLDeclaretionNode';
 import XMLElement from './XMLElement';
 import XMLTextNode from './XMLTextNode';
+import XMLConstant from './XMLConstant';
+import XMLCommentNode from './XMLCommentNode';
 
 /**
  * 
@@ -766,67 +768,222 @@ function paresNodesToXMLs(nodes) {
                 newXMLNode = new XMLTextNode(node.text);
                 parentXMLElement.appendChild(newXMLNode);
                 break;
+            case COMMENT:
+                newXMLNode = new XMLCommentNode(node.text);
+                parentXMLElement.appendChild(newXMLNode);
+                break;
         }
 
     }
-    return parentXMLElement.childNodes.map(function (e) {
+    return parentXMLElement.childNodes.slice().map(function (e) {
         e.remove();
         return e;
     });
 }
 
 
+/**
+ * 
+ * @param {XMLElement} node 
+ */
+function makeOpenXMLElementTab(node) {
+    var res = '<' + node.tagName;
+    var attributesText = Object.keys(node.attributes)
+        .map(function (key) {
+            var value = node.attributes[key];
+            if (value === null) {
+                return key;
+            }
+            else {
+                return key + '=' + '"' + value + '"';
+            }
 
+        }).join(' ');
+    if (attributesText.length > 0) {
+        res += ' ' + attributesText;
+    }
+    res += '>';
+    return res;
+}
 
-XMLTest.testcase.slice().forEach(function (testcase) {
-    var nodes = parseXMLTextToXMLParseNode(testcase.code);
-    var xmls = paresNodesToXMLs(nodes);
-    console.log(xmls);
-});
+/**
+ * 
+ * @param {XMLDeclaretionNode} node 
+ */
+function makeXMLDeclaretionTab(node) {
+    var res = '<?' + node.tagName;
+    var attributesText = Object.keys(node.attributes)
+        .map(function (key) {
+            var value = node.attributes[key];
+            if (value === null) {
+                return key;
+            }
+            else {
+                return key + '=' + '"' + value + '"';
+            }
 
-function XML() {
-
+        }).join(' ');
+    if (attributesText.length > 0) {
+        res += ' ' + attributesText;
+    }
+    res += '?>';
+    return res;
 }
 
 
-XML.prototype.parse = function (code) {
-    var result;
+/**
+ * 
+ * @param {XMLDeclaretionNode} node 
+ */
+function makeXMLCommentTab(node) {
+    var res = '<!--' + node.data + '-->';
+    return res;
+}
 
-    return result;
+
+
+
+
+
+
+var XML = {};
+
+/**
+ * @param {String} code
+ * @returns {XMLElement}
+ */
+XML.parse = function (code) {
+    var nodes = parseXMLTextToXMLParseNode(code);
+    var xmls = paresNodesToXMLs(nodes);
+    return xmls;
 };
 
-XML.prototype.stringify = function (o) {
 
+XML.DFNodeVisit = function (node, handlers, accumulator) {
+    if (!node.childNodes || node.childNodes.length == 0) {
+        if (handlers.leaf) handlers.leaf(accumulator, node)
+    }
+    else {
+        if (handlers.open) handlers.open(accumulator, node);
+        for (var i = 0; i < node.childNodes.length; ++i) {
+            this.DFNodeVisit(node.childNodes[i], handlers, accumulator);
+        }
+        if (handlers.close) handlers.close(accumulator, node);
+        return accumulator;
+    }
 };
+
+
+/**
+ * @typedef {Object} XMLBeautifyOption
+ * @property {String} indent
+ * @property {Number} initDepth 
+ */
+
+/**
+ * @param {Array<XMLElement>} o 
+ * @param {XMLBeautifyOption} beautifyOption 
+ * 
+ * 
+ */
+XML.stringify = function (o, beautifyOption) {
+    var texts = [];
+    var indent = '';
+    var lineBreak = '';
+    var depth = 0;
+    if (beautifyOption) {
+        lineBreak = '\n';
+        indent = typeof (beautifyOption.indent) == 'string' ? beautifyOption.indent : '    ';
+        depth = beautifyOption.initDepth || 0;
+    }
+
+    if (!(o instanceof Array)) {
+        o = [o];
+    }
+
+    for (var i = 0; i < o.length; ++i) {
+        this.DFNodeVisit(o[i],
+            {
+                open: function (ac, node) {
+                    var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
+
+                    var openTabText = makeOpenXMLElementTab(node);
+                    ac.texts.push(currentLineIndent + openTabText);
+                    ac.lineIndentStack.push(currentLineIndent + ac.indent);
+                },
+                close: function (ac, node) {
+                    ac.lineIndentStack.pop();
+                    var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
+                    var endTab = '</' + node.tagName + '>';
+                    if (node.childNodes.length == 1 && node.childNodes[0].nodeType == XMLConstant.TYPE_TEXT) {
+                        ac.texts[ac.texts.length - 1] += endTab;
+                    }
+                    else {
+                        ac.texts.push(currentLineIndent + endTab);
+                    }
+
+                },
+                leaf: function (ac, node) {
+                    var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
+
+                    if (node.nodeType == XMLConstant.TYPE_TEXT) {
+                        if (node.parentNode && node.parentNode.childNodes.length == 1) {
+                            ac.texts[ac.texts.length - 1] += node.data;
+                        }
+                        else {
+                            ac.texts.push(currentLineIndent + node.data);
+                        }
+                    }
+                    else if (node.nodeType == XMLConstant.TYPE_ELEMENT) {
+                        var openTabText = makeOpenXMLElementTab(node);
+                        var endTab = '</' + node.tagName + '>';
+                        ac.texts.push(currentLineIndent + openTabText + endTab);
+                    }
+                    else if (node.nodeType == XMLConstant.TYPE_DECLARETION) {
+                        var tab = makeXMLDeclaretionTab(node);
+                        ac.texts.push(currentLineIndent + tab);
+                    }
+                    else if (node.nodeType == XMLConstant.TYPE_COMMENT) {
+                        var tab = makeXMLCommentTab(node);
+                        ac.texts.push(currentLineIndent + tab);
+                    }
+                }
+            },
+            {
+                depth: 0,
+                texts: texts,
+                lineIndentStack: [''],
+                indent: indent
+            });
+    }
+    return texts.join(lineBreak);
+};
+
+
+
+XMLTest.testcase.slice(XMLTest.testcase.length-1).forEach(function (testcase) {
+    var xmls = XML.parse(testcase.code)
+    var text = XML.stringify(xmls, false);
+    
+
+    var mystring = text
+    var myblob = new Blob([mystring], {
+        type: 'text/plain'
+    });
+    setTimeout(function(){
+        var scr = URL.createObjectURL(myblob);
+        var x = document.createElement('a');
+        x.href = scr;
+  
+        x.setAttribute('download', Math.random().toString()+'.txt');
+        document.body.appendChild(x);
+        x.click();
+
+    }, 2000);
+
+});
+
+
 
 export default XML;
 
-
-function Animal(x) {
-    this.value = x;
-}
-
-
-Animal.prototype.say = function () {
-    console.log('gao');
-};
-
-
-Object.defineProperty(Animal.prototype, 'xi', {
-    get: function () {
-        return this.value + 1;
-    }
-});
-
-
-Object.defineProperty(Dog.prototype, 'xi', Object.getOwnPropertyDescriptor(Animal.prototype, 'xi'))
-
-
-function Dog() {
-    Animal.call(this, 3);
-}
-
-
-window.d = new Dog();
-
-console.log(d);
