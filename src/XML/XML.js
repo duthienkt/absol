@@ -29,7 +29,7 @@ var textRgx = /[^\<\-]+/;
 var commentOpenRgx = /\<!\-\-/;
 var commentCloseRgx = /\-\-\>/;
 var cdataOpenRgx = /\<\!\[CDATA\[/;
-var cdataCloseRgx = /]]>/;
+var cdataCloseRgx = /\]\]\>/;
 var openRgx = /\</;
 var openEndTagRgx = /\<\//;
 var closeRgx = /\>/;
@@ -163,7 +163,7 @@ function matchAssign(tokens, i) {
                                     ++i;
                                 }
                                 else {
-                                    esult.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected string');
+                                    result.__xml__.error = new Error('"' + cToken.text + '"' + 'found, expected string');
                                 }
                             }
                             else {
@@ -962,8 +962,10 @@ XML.stringify = function (o, beautifyOption) {
 
 
 XMLTest.testcase.slice(XMLTest.testcase.length-1).forEach(function (testcase) {
-    var xmls = XML.parse(testcase.code)
+    var xmls = XML.parse(testcase.code);
+    console.log(xmls);
     var text = XML.stringify(xmls, false);
+    return;
     
 
     var mystring = text
