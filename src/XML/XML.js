@@ -1,5 +1,5 @@
 import XMLTest from '../../test/XML';
-import XMLDeclaretionNode from './XMLDeclaretionNode';
+import XMLDeclaretionNode from './XMLDeclarationNode';
 import XMLElement from './XMLElement';
 import XMLTextNode from './XMLTextNode';
 import XMLConstant from './XMLConstant';
@@ -939,7 +939,7 @@ XML.stringify = function (o, beautifyOption) {
                         var endTab = '</' + node.tagName + '>';
                         ac.texts.push(currentLineIndent + openTabText + endTab);
                     }
-                    else if (node.nodeType == XMLConstant.TYPE_DECLARETION) {
+                    else if (node.nodeType == XMLConstant.TYPE_DECLARATION) {
                         var tab = makeXMLDeclaretionTab(node);
                         ac.texts.push(currentLineIndent + tab);
                     }
