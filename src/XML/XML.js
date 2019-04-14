@@ -256,7 +256,7 @@ function matchBeginTag(tokens, i) {
                                     }
                                     else if (cToken.matched['ident']) {
                                         result.attributes = result.attributes || {};
-                                        result.attributes[cToken.text] = null;// a flag
+                                        result.attributes[cToken.text] = true;// a flag
                                         ++i;
                                     }
                                     else {
@@ -347,7 +347,7 @@ function matchEndTag(tokens, i) {
                                     }
                                     else if (cToken.matched['ident']) {
                                         result.attributes = result.attributes || {};
-                                        result.attributes[cToken.text] = null;// a flag
+                                        result.attributes[cToken.text] = true;// a flag
                                         ++i;
                                     }
                                     else {
@@ -433,7 +433,7 @@ function matchDeclaration(tokens, i) {
                                     }
                                     else if (cToken.matched['ident']) {
                                         result.attributes = result.attributes || {};
-                                        result.attributes[cToken.text] = null;// a flag
+                                        result.attributes[cToken.text] = true;// a flag
                                         ++i;
                                     }
                                     else {
@@ -681,6 +681,7 @@ function mergeNodes(tabs, texts) {
     do {
         choose = undefined;
         diTabs = 0, diTexts = 0;
+        minStart = 100000000;
         if (iTabs < tabs.length) {
             choose = tabs[iTabs];
             minStart = choose.__xml__.start;
@@ -712,8 +713,10 @@ function parseXMLTextToXMLParseNode(text) {
     var text = text.trim();
 
     var tokens = xmlTokenize(text.trim());
+    console.log('token', tokens);
     console.log('time', performance.now()- now);
     var tabs = parseXMLTab(tokens);
+    console.log(tabs);
     var texts = parseXMLText(tokens, tabs);
     return mergeNodes(tabs, texts);
 }
