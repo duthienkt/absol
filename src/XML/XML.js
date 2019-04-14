@@ -26,6 +26,7 @@ var identRgx = /[^\s\"\r\n\'\!\/=\>\<\]\[\?]+/;
 var spaceRgx = /[\s\r\n]+/;
 var stringRgx = /\"(([^\"\\]*|(\\.))*)\"/;
 var textRgx = /[^\<\-]+/;
+var doctypeOpen = /\<!DOCTYPE/;
 var commentOpenRgx = /\<!\-\-/;
 var commentCloseRgx = /\-\-\>/;
 var cdataOpenRgx = /\<\!\[CDATA\[/;
@@ -41,6 +42,7 @@ var assignOpRgx = /=/;
 var tokenRgxBody = '(' +
     [
         spaceRgx,
+        doctypeOpen,
         declarationOpenRgx,
         cdataOpenRgx,
         commentOpenRgx,
@@ -62,6 +64,7 @@ var tokenRgxBody = '(' +
 
 var tokenType = {
     space: spaceRgx,
+    doctypeOpen,
     declarationOpen: declarationOpenRgx,
     cdataOpen: cdataOpenRgx,
     commentOpen: commentOpenRgx,
@@ -94,9 +97,11 @@ var tokenRgx = new RegExp(tokenRgxBody);
  * @returns {Array<Token>}
  */
 function xmlTokenize(text) {
+    var texts = text.match(new RegExp(tokenRgxBody, 'g'));
     return text.match(new RegExp(tokenRgxBody, 'g'))
-        .map(function (tokenText) {
+        .map(function (tokenText, i) {
             var result = { text: tokenText, matched: {} };
+           
             for (var tType in tokenType) {
                 var matched = tokenText.match(tokenType[tType]);
                 if (matched) {
@@ -135,7 +140,7 @@ function xmlTokenize(text) {
  * @returns {XMLParseNode}
  */
 function matchAssign(tokens, i) {
-    var result = { __xml__: { tokens: tokens, start: i } };
+    var result = { __xml__: { start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -210,7 +215,7 @@ function matchAssign(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchBeginTag(tokens, i) {
-    var result = { __xml__: { type: BEGIN_TAG, tokens: tokens, start: i } };
+    var result = { __xml__: { type: BEGIN_TAG, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -307,7 +312,7 @@ function matchBeginTag(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchEndTag(tokens, i) {
-    var result = { __xml__: { type: END_TAG, closed: true, tokens: tokens, start: i } };
+    var result = { __xml__: { type: END_TAG, closed: true, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -393,7 +398,7 @@ function matchEndTag(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchDeclaration(tokens, i) {
-    var result = { __xml__: { type: DECLARATION, tokens: tokens, start: i } };
+    var result = { __xml__: { type: DECLARATION, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -481,7 +486,7 @@ function matchDeclaration(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchCData(tokens, i) {
-    var result = { __xml__: { type: CDATA, tokens: tokens, start: i } };
+    var result = { __xml__: { type: CDATA, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -526,7 +531,7 @@ function matchCData(tokens, i) {
  * @returns {XMLParseNode}
  */
 function matchComment(tokens, i) {
-    var result = { __xml__: { type: COMMENT, tokens: tokens, start: i } };
+    var result = { __xml__: { type: COMMENT, start: i } };
     var cToken;
     if (i < tokens.length) {
         cToken = tokens[i];
@@ -703,8 +708,11 @@ function mergeNodes(tabs, texts) {
  * @return {Array<XMLParseNode>} 
  */
 function parseXMLTextToXMLParseNode(text) {
+    var now = performance.now();
     var text = text.trim();
+
     var tokens = xmlTokenize(text.trim());
+    console.log('time', performance.now()- now);
     var tabs = parseXMLTab(tokens);
     var texts = parseXMLText(tokens, tabs);
     return mergeNodes(tabs, texts);
