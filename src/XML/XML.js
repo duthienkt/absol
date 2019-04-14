@@ -26,7 +26,7 @@ var identRgx = /[^\s\"\r\n\'\!\/=\>\<\]\[\?]+/;
 var spaceRgx = /[\s\r\n]+/;
 var stringRgx = /\"(([^\"\\]*|(\\.))*)\"/;
 var textRgx = /[^\<\-]+/;
-var doctypeOpen = /\<!DOCTYPE/;
+var doctypeOpenRgx = /\<\!DOCTYPE/;
 var commentOpenRgx = /\<!\-\-/;
 var commentCloseRgx = /\-\-\>/;
 var cdataOpenRgx = /\<\!\[CDATA\[/;
@@ -42,7 +42,7 @@ var assignOpRgx = /=/;
 var tokenRgxBody = '(' +
     [
         spaceRgx,
-        doctypeOpen,
+        doctypeOpenRgx,
         declarationOpenRgx,
         cdataOpenRgx,
         commentOpenRgx,
@@ -64,7 +64,7 @@ var tokenRgxBody = '(' +
 
 var tokenType = {
     space: spaceRgx,
-    doctypeOpen,
+    doctypeOpen: doctypeOpenRgx,
     declarationOpen: declarationOpenRgx,
     cdataOpen: cdataOpenRgx,
     commentOpen: commentOpenRgx,
