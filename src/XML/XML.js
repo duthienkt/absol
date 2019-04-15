@@ -1,4 +1,4 @@
-import XMLTest from '../../test/XML';
+// import XMLTest from '../../test/XML';
 import XMLDeclaretionNode from './XMLDeclarationNode';
 import XMLElement from './XMLElement';
 import XMLTextNode from './XMLTextNode';
@@ -22,7 +22,7 @@ var TEXT = 6;
 
 
 
-var identRgx = /[^\s\"\r\n\'\!\/=\>\<\]\[\?]+/;
+var identRgx = /[^\s\"\r\n\'\!\/=\>\<\]\[\?\+\.]+/;
 var spaceRgx = /[\s\r\n]+/;
 var stringRgx = /\"(([^\"\\]*|(\\.))*)\"/;
 var textRgx = /[^\<\-]+/;
@@ -101,7 +101,7 @@ function xmlTokenize(text) {
     return text.match(new RegExp(tokenRgxBody, 'g'))
         .map(function (tokenText, i) {
             var result = { text: tokenText, matched: {} };
-           
+
             for (var tType in tokenType) {
                 var matched = tokenText.match(tokenType[tType]);
                 if (matched) {
@@ -713,11 +713,12 @@ function parseXMLTextToXMLParseNode(text) {
     var text = text.trim();
 
     var tokens = xmlTokenize(text.trim());
-    console.log('token', tokens);
-    console.log('time', performance.now()- now);
+    // console.log('time', performance.now()- now);
+    // console.log('token', tokens);
     var tabs = parseXMLTab(tokens);
-    console.log(tabs);
+    // console.log(tabs);
     var texts = parseXMLText(tokens, tabs);
+    // console.log(texts);
     return mergeNodes(tabs, texts);
 }
 
@@ -861,13 +862,27 @@ var XML = {};
 
 /**
  * @param {String} code
- * @returns {XMLElement}
+ * @returns {Array<XMLElement>}
  */
-XML.parse = function (code) {
+XML.parseLikeHTML = function (code) {
     var nodes = parseXMLTextToXMLParseNode(code);
+    // console.log('nodes', nodes);
     var xmls = paresNodesToXMLs(nodes);
     return xmls;
 };
+
+/**
+ * @param {String} code
+ * @returns {XMLElement}
+ */
+XML.parse = function (code) {
+    var xmls = this.parseLikeHTML(code);
+    if (xmls.length == 0) return undefined;
+    var obj = xmls[xmls.length-1].toObject();
+    return obj;
+};
+
+
 
 
 XML.DFNodeVisit = function (node, handlers, accumulator) {
@@ -972,29 +987,30 @@ XML.stringify = function (o, beautifyOption) {
 
 
 
-XMLTest.testcase.slice(XMLTest.testcase.length-1).forEach(function (testcase) {
-    var xmls = XML.parse(testcase.code);
-    console.log(xmls);
-    var text = XML.stringify(xmls, false);
-    return;
-    
+// XMLTest.testcase.slice(XMLTest.testcase.length-1).forEach(function (testcase) {
+//     var xmls = XML.parse(testcase.code);
+//     console.log(xmls);
+//     var text = XML.stringify(xmls, true);
+//     console.log(text);
+//     return;
 
-    var mystring = text
-    var myblob = new Blob([mystring], {
-        type: 'text/plain'
-    });
-    setTimeout(function(){
-        var scr = URL.createObjectURL(myblob);
-        var x = document.createElement('a');
-        x.href = scr;
-  
-        x.setAttribute('download', Math.random().toString()+'.txt');
-        document.body.appendChild(x);
-        x.click();
 
-    }, 2000);
+//     var mystring = text
+//     var myblob = new Blob([mystring], {
+//         type: 'text/plain'
+//     });
+//     setTimeout(function(){
+//         var scr = URL.createObjectURL(myblob);
+//         var x = document.createElement('a');
+//         x.href = scr;
 
-});
+//         x.setAttribute('download', Math.random().toString()+'.txt');
+//         document.body.appendChild(x);
+//         x.click();
+
+//     }, 2000);
+
+// });
 
 
 

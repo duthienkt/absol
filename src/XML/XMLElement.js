@@ -18,7 +18,7 @@ function XMLElement() {
      */
     this.childNodes = [];
 
-    Object.defineProperty(this, 'classList',{
+    Object.defineProperty(this, 'classList', {
         value: new XMLClassList(this),
         writable: false
     })
@@ -111,6 +111,15 @@ XMLElement.prototype.remove = function () {
         this.parentNode.removeChild(this);
     }
 }
+
+XMLElement.prototype.toObject = function () {
+    return {
+        nodeType: this.nodeType, tagName: this.tagName, attributes: Object.assign({}, this.attributes),
+        childNodes: this.childNodes.map(function (child) {
+            return child.toObject();
+        })
+    };
+};
 
 
 

@@ -20,4 +20,11 @@ XMLCommentNode.prototype.remove = function () {
 };
 
 
+XMLCommentNode.prototype.toOject = function () {
+    return { nodeType: this.nodeType, data: this.data };
+};
+
+
+
+
 export default XMLCommentNode;

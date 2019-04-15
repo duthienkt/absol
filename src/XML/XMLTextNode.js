@@ -20,5 +20,9 @@ XMLTextNode.prototype.remove = function () {
 };
 
 
+XMLTextNode.prototype.toObject = function () {
+    return { nodeType: this.nodeType, data: this.data };
+};
+
 
 export default XMLTextNode;
