@@ -1,4 +1,5 @@
 const path = require('path');
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = {
     mode: process.env.MODE || "development",
@@ -27,5 +28,8 @@ module.exports = {
     },
     performance: {
         hints: false
-    }
+    },
+    plugins: [
+        new MinifyPlugin()
+      ]
 };
