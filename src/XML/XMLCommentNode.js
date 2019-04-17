@@ -20,7 +20,7 @@ XMLCommentNode.prototype.remove = function () {
 };
 
 
-XMLCommentNode.prototype.toOject = function () {
+XMLCommentNode.prototype.toObject = function () {
     return { nodeType: this.nodeType, data: this.data };
 };
 
