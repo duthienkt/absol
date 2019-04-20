@@ -1,4 +1,3 @@
-// import XMLTest from '../../test/XML';
 import XMLDeclaretionNode from './XMLDeclarationNode';
 import XMLElement from './XMLElement';
 import XMLTextNode from './XMLTextNode';
@@ -202,9 +201,6 @@ function matchAssign(tokens, i) {
     result.__xml__.end = i;
     return result;
 }
-
-
-
 
 
 
@@ -520,7 +516,7 @@ function matchCData(tokens, i) {
     }
     result.__xml__.end = i
     return result;
-};
+}
 
 
 
@@ -565,7 +561,7 @@ function matchComment(tokens, i) {
     }
     result.__xml__.end = i
     return result;
-};
+}
 
 /**
  * 
@@ -709,16 +705,11 @@ function mergeNodes(tabs, texts) {
  * @return {Array<XMLParseNode>} 
  */
 function parseXMLTextToXMLParseNode(text) {
-    var now = performance.now();
     var text = text.trim();
-
     var tokens = xmlTokenize(text.trim());
-    // console.log('time', performance.now()- now);
-    // console.log('token', tokens);
+
     var tabs = parseXMLTab(tokens);
-    // console.log(tabs);
     var texts = parseXMLText(tokens, tabs);
-    // console.log(texts);
     return mergeNodes(tabs, texts);
 }
 
@@ -771,7 +762,7 @@ function paresNodesToXMLs(nodes) {
                 }
 
                 else {
-                    throw new Error("Unknow close of tagName " + node.tagName
+                    throw new Error("Unknown close of tagName " + node.tagName
                         + ', but ' + (parentXMLElement ? parentXMLElement.tagName : "EOF") + ' expected');
                     return;
                 }
@@ -852,12 +843,6 @@ function makeXMLCommentTab(node) {
     return res;
 }
 
-
-
-
-
-
-
 var XML = {};
 
 /**
@@ -881,8 +866,6 @@ XML.parse = function (code) {
     var obj = xmls[xmls.length-1].toObject();
     return obj;
 };
-
-
 
 
 XML.DFNodeVisit = function (node, handlers, accumulator) {
@@ -986,31 +969,6 @@ XML.stringify = function (o, beautifyOption) {
 };
 
 
-
-// XMLTest.testcase.slice(XMLTest.testcase.length-1).forEach(function (testcase) {
-//     var xmls = XML.parse(testcase.code);
-//     console.log(xmls);
-//     var text = XML.stringify(xmls, true);
-//     console.log(text);
-//     return;
-
-
-//     var mystring = text
-//     var myblob = new Blob([mystring], {
-//         type: 'text/plain'
-//     });
-//     setTimeout(function(){
-//         var scr = URL.createObjectURL(myblob);
-//         var x = document.createElement('a');
-//         x.href = scr;
-
-//         x.setAttribute('download', Math.random().toString()+'.txt');
-//         document.body.appendChild(x);
-//         x.click();
-
-//     }, 2000);
-
-// });
 
 
 
