@@ -9,7 +9,6 @@ function Element() {
 }
 
 Object.defineProperties(Element.prototype, Object.getOwnPropertyDescriptors(EventEmitor.prototype));
-
 Element.prototype.init = function (props) {
     Object.assign(this, props || {});
 };
@@ -34,7 +33,7 @@ Element.prototype.defineAttributes = function (defs) {
     }
 };
 
-Element.prototype.attr = function () {
+Element.prototype.attr = function () {      
     if (arguments.length == 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {

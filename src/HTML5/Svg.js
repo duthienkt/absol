@@ -6,11 +6,9 @@ function Svg(option){
     this.defaultTag = 'g';
     this.svgNS = "http://www.w3.org/2000/svg";
 
-    this.creator.svg = this.creator.svg || function () {
-        var temp = document.createElement('div');
-        temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
-        return temp.childNodes[0];
-    };
+    this.creator.svg =  function(){
+        return Dom.ShareInstance._('svg', true);
+    }; 
 
     delete this.buidDom;
     this.buildSvg = this.create.bind(this);

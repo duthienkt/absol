@@ -5,14 +5,14 @@ function ElementNS() {
 
 Object.defineProperties(ElementNS.prototype, Object.getOwnPropertyDescriptors(Element.prototype));
 
-Element.prototype.attr = function () {
+ElementNS.prototype.attr = function () {
     if (arguments.length == 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {
                 return this._azar_extendAttributes[arguments[0]].get.call(this);
             }
             else
-                return this.getAttribute(null, arguments[0]);
+                return this.getAttributeNS(null, arguments[0]);
         }
         else {
             for (var key in arguments[0]) {
@@ -27,14 +27,14 @@ Element.prototype.attr = function () {
                     return this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[0]);
                 }
                 else
-                    this.removeAttribute(null,arguments[0]);
+                    this.removeAttributeNS(null,arguments[0]);
             }
             else {
                 if (this._azar_extendAttributes[arguments[0]]) {
                     return this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
                 }
                 else
-                    this.setAttribute(null, arguments[0], arguments[1]);
+                    this.setAttributeNS(null, arguments[0], arguments[1]);
             }
         }
     }

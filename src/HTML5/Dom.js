@@ -3,6 +3,7 @@ import JSPath from './JSPath';
 import OOP from './OOP';
 import TemplateXML from '../JSMaker/TemplateXML';
 
+
 function Dom(option) {
     option = option || {};
     this.creator = option.creator || {};
@@ -70,7 +71,6 @@ Dom.prototype.makeNewTextNode = function (data) {
  * @returns {Element} 
  */
 Dom.prototype.create = function (option, isInherited) {
-
     var res;
     var prototype;
     var property;
@@ -168,10 +168,6 @@ Dom.prototype.create = function (option, isInherited) {
     }
     if (attributes) {
         res.defineAttributes(attributes);
-    }
-
-    if (option && option.tag && option.tag == 'vscroller') {
-        console.log(option.attr);
     }
 
     option.attr && res.attr(option.attr);
@@ -443,5 +439,31 @@ Dom.updateResizeSystem = function () {
 window.addEventListener('resize', Dom.updateResizeSystem);
 
 
+
+
+/***
+ * if this element is attached, error event will be fired
+ * @returns {HTMLElement}
+ * 
+ */
+Dom.ShareInstance.creator.attachhook = function () {
+    var res = Dom.ShareInstance._({
+        tag: 'img',
+        class: 'absol-attachhook',
+        style: {
+            display: 'none'
+        },
+        attr: {
+            src: ''
+        }
+    });
+    return res;
+};
+
+Dom.ShareInstance.creator.svg = function () {
+    var temp = document.createElement('div');
+    temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
+    return temp.childNodes[0];
+};
 
 export default Dom;
