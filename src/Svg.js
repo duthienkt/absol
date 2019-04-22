@@ -1,4 +1,3 @@
-import ElementMatcher from "./ElementMatcher";
 import OOP from "./OOP";
 import ElementNS from './ElementNS';
 /********************  SVG LIB ******************/

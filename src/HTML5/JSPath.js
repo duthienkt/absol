@@ -186,7 +186,7 @@ JSPath.parseQuery = function (s) {
  * @returns {JSPath}
  */
 JSPath.compileJSPath = function (text) {
-    var tagTexts = text.match(this.__tagRegex);
+    var tagTexts = text.match(this.__tagRegex)||[''];
     var path = [];
     var childCombinate = false;
     for (var i = 0; i < tagTexts.length; ++i) {

@@ -752,9 +752,9 @@ function paresNodesToXMLs(nodes) {
                 if (parentXMLElement && node.tagName == parentXMLElement.tagName) {
                     parentXMLElement = parentXMLElement.parentNode;
                 }
-                else if (parentXMLElement && parentXMLElement.tagName == 'img') {
+                else if (parentXMLElement && (parentXMLElement.tagName == 'img' || parentXMLElement.tagName == 'input') ) {
                     // image can be not close
-                    while (parentXMLElement.tagName == 'img') {
+                    while (parentXMLElement.tagName == 'img' || parentXMLElement.tagName == 'input') {
                         parentXMLElement = parentXMLElement.parentNode;
                     }
 

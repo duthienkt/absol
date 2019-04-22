@@ -3,7 +3,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = {
     mode: process.env.MODE || "development",
-    entry: "./src/index.js",
+    entry: ['babel-polyfill', "./src/index.js"],
     output: {
         path: path.join(__dirname, "."),
         filename: "./dist/Azar.js"
@@ -15,14 +15,14 @@ module.exports = {
     },
     module: {
         rules: [
-          {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            loader: 'babel-loader',
-            options: { presets: [ [ 'es2015', { modules: false } ] ] }
-          }
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                options: { presets: [['es2015', { modules: false }]] }
+            }
         ]
-      },
+    },
     devServer: {
         compress: true
     },
@@ -31,5 +31,5 @@ module.exports = {
     },
     plugins: [
         new MinifyPlugin()
-      ]
+    ]
 };

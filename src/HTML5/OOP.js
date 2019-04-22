@@ -21,7 +21,7 @@ OOP.overideMethod = function (object, key, method) {
         })(_superMethod, method);
     }
 };
-
+ 
 
 OOP.extends = function (object, prototype) {
     // do not use setter, getter

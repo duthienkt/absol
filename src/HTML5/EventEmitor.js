@@ -1,5 +1,5 @@
 function EventEmittor() {
-    this._azar_supportEvents = this._azar_supportEvents || { supported: {}, prioritize: {}, nonprioritize: {} };
+    this._azar_extendEvents = this._azar_extendEvents || { supported: {}, prioritize: {}, nonprioritize: {} };
     this.__azar_force = !(typeof Node === "object" ? this instanceof Node : this && typeof this === "object" && typeof this.nodeType === "number" && typeof this.nodeName === "string");
 
 }
@@ -9,15 +9,15 @@ function EventEmittor() {
 EventEmittor.prototype.defineEvent = function (name) {
     if (name instanceof Array) {
         for (var i = 0; i < name.length; ++i)
-            this.extendEvents.supported[name[i]] = true;
+            this._azar_extendEvents.supported[name[i]] = true;
     }
     else
-        this.extendEvents.supported[name] = true;
+        this._azar_extendEvents.supported[name] = true;
     return this;
 };
 
 EventEmittor.prototype.isSupportedEvent = function (name) {
-    return this.__azar_force || !!this.extendEvents.supported[name];
+    return this.__azar_force || !!this._azar_extendEvents.supported[name];
 };
 
 
@@ -25,16 +25,16 @@ EventEmittor.prototype.emit = function (eventName, data) {
     var others = Array.prototype.slice.call(arguments, 1);
     if (this.isSupportedEvent(eventName)) {
         var listenerList;
-        if (this.extendEvents.prioritize[eventName]) {
-            listenerList = this.extendEvents.prioritize[eventName].slice();
+        if (this._azar_extendEvents.prioritize[eventName]) {
+            listenerList = this._azar_extendEvents.prioritize[eventName].slice();
             for (var i = 0; i < listenerList.length; ++i) {
                 listenerList[i].wrappedCallback.apply(this, others);
             }
 
         }
 
-        if (this.extendEvents.nonprioritize[eventName]) {
-            listenerList = this.extendEvents.nonprioritize[eventName].slice();
+        if (this._azar_extendEvents.nonprioritize[eventName]) {
+            listenerList = this._azar_extendEvents.nonprioritize[eventName].slice();
             for (var i = 0; i < listenerList.length; ++i) {
                 listenerList[i].wrappedCallback.apply(this, others);
             }
@@ -63,7 +63,7 @@ EventEmittor.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
         if (typeof arg1 == 'object') {
             return this.eventEmittorOnWithTime(isOnce, arg0, arg1.callback, arg1.cap);
         } else {
-            var eventArr = this.extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
+            var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var eventIndex = -1;
             for (var i = 0; i < eventArr.length; ++i) {
                 if (eventArr[i].wrappedCallback == arg1) {
@@ -94,7 +94,7 @@ EventEmittor.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
                 }
 
                 eventArr.push(event);
-                this.extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] = eventArr;
+                this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] = eventArr;
             }
             else {
                 console.warn("dupplicate event");
@@ -130,7 +130,7 @@ EventEmittor.prototype.off = function (arg0, arg1, arg2) {
         if (typeof arg1 == 'object') {
             return this.off(arg0, arg1.callback, arg1.cap);
         } else {
-            var eventArr = this.extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
+            var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var newEventArray = [];
             for (var i = 0; i < eventArr.length; ++i) {
                 var event = eventArr[i];
@@ -151,7 +151,7 @@ EventEmittor.prototype.off = function (arg0, arg1, arg2) {
                     newEventArray.push(event);
                 }
             }
-            this.extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] = newEventArray;
+            this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] = newEventArray;
             return this;
         }
     }

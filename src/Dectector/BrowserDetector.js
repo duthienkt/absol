@@ -12,6 +12,10 @@ function BrowserDectector(rulesheet) {
     this.device = this.detectByRules(this.rulesheet.device);
     this.engine = this.detectByRules(this.rulesheet.engine);
     this.browser = this.detectByRules(this.rulesheet.browser);
+    this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    this.isCococ = navigator.userAgent.toLowerCase().indexOf('coc_coc_browser') >= 1;
+    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('win') < 0;
+    this.isMobile = navigator.userAgent.indexOf('KFFOWI') > -1 || navigator.userAgent.toLowerCase().indexOf('mobile') > -1;
 }
 
 
@@ -27,16 +31,16 @@ BrowserDectector.prototype.detectByRules = function (rules) {
         }
         if (Object.prototype.toString.call(rgx).indexOf('RegExp')) {
             var matched = this.au.toLowerCase().match(rgx);
-            if (matched){
+            if (matched) {
                 result.type = type;
-                if (matched[1]){
+                if (matched[1]) {
                     result.version = matched[1];
                 }
                 break;
             }
         }
         else if (typeof (rgx) == 'string') {
-            if (this.au.indexOf(rgx)>=0){
+            if (this.au.indexOf(rgx) >= 0) {
                 result.type = type;
             }
         }

@@ -1,11 +1,18 @@
 import EventEmitor from './EventEmitor';
+import BrowserDetector from '../Dectector/BrowserDetector';
+import JSPath from './JSPath';
+
 
 function Element() {
+    EventEmitor.call(this);
     this._azar_extendAttributes = this._azar_extendAttributes || [];
 }
 
-Object.defineProperties(Element.prototype, Object.getOwnPropertyDescriptors(EventEmitor));
+Object.defineProperties(Element.prototype, Object.getOwnPropertyDescriptors(EventEmitor.prototype));
 
+Element.prototype.init = function (props) {
+    Object.assign(this, props || {});
+};
 
 /**
  * @typedef {Object} AttributeDefiner
@@ -38,6 +45,7 @@ Element.prototype.attr = function () {
         }
         else {
             for (var key in arguments[0]) {
+            
                 this.attr(key, arguments[0][key]);
             }
         }
@@ -46,17 +54,21 @@ Element.prototype.attr = function () {
         if (arguments.length == 2) {
             if (arguments[1] === null || arguments[1] === undefined) {
                 if (this._azar_extendAttributes[arguments[0]]) {
-                    return this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[0]);
+                    this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[0]);
                 }
                 else
                     this.removeAttribute(arguments[0]);
             }
             else {
                 if (this._azar_extendAttributes[arguments[0]]) {
-                    return this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
+                    this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
                 }
-                else
+                else{
+                    if (!arguments[0]) {
+                        console.error(arguments);
+                    }
                     this.setAttribute(arguments[0], arguments[1]);
+                }
             }
         }
     }
@@ -124,6 +136,12 @@ Element.prototype.addTo = function (parent) {
     return this;
 };
 
+
+Element.prototype.selfRemove = function () {
+    if (this.parentElement)
+        this.parentElement.removeChild(this);
+    return this;
+};
 
 
 
@@ -236,7 +254,7 @@ Element.prototype.addChildAfter = function (newItem, at) {
  * @returns {DOMRect}
  */
 Element.prototype.getBoundingRecursiveRect = function () {
-    var matcher = new ElementMatcher();
+    var matcher = JSPath.compileJSPath('');
     var bound = this.getBoundingClientRect();
     var ac = { left: bound.left, right: bound.right, top: bound.top, bottom: bound.bottom, width: bound.right - bound.left, height: bound.bottom - bound.top };
     return matcher.findAll(this).reduce(function (ac, cr) {
@@ -344,5 +362,75 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
         trace();
     });
 };
+
+
+
+!(function () {
+    var origin = Element.prototype.on;
+    if (BrowserDetector.isSafari && !BrowserDetector.isMobile) {
+        Element.prototype.on = function () {
+            if (!this.isSupportedEvent('mouseleave') && arguments[0] == 'mouseleave') {
+                this.defineEvent('mouseleave');
+                var mouseLeaveEventHandler = function (event) {
+                    var bound = this.getBoundingClientRect();
+                    var ok = false;
+                    ok |= event.clientX < bound.left + 1;
+                    ok |= event.clientX >= bound.right - 1;
+                    ok |= event.clientY < bound.top + 1;
+                    ok |= event.clientY >= bound.bottom - 1;
+                    if (ok) this.emit('mouseleave', event);
+                };
+                this.addEventListener('mouseleave', mouseLeaveEventHandler, true);
+            }
+            origin.apply(this, arguments);
+        }
+    }
+
+    if (BrowserDetector.isFirefox) {
+        Element.prototype.on = function () {
+            if (!this.isSupportedEvent('wheel') && arguments[0] == 'wheel') {
+
+                this.defineEvent('wheel');
+                var wheelEventHandler = function (oldEvent) {
+                    //clone event to avoid some lib fix it
+                    var event = oldEvent.absolEvent;
+                    if (!event) {
+                        event = Object.assign({}, oldEvent);
+                        for (var i = 0; i < Element.eventProperties.length; ++i) {
+                            var key = Element.eventProperties[i];
+                            if (typeof (event[key]) == 'function') {
+                                event[key] = event[key].bind(oldEvent);
+                            }
+                        }
+
+                        event.preventDefault = function () {
+                            oldEvent.preventDefault();
+                        }
+                        if (!event.mozFixWheelScale) {
+                            event.mozDeltaY = oldEvent.deltaY;
+                            event.mozFixWheelScale = true;
+                            Object.defineProperty(event, 'deltaY', { get: function () { return this.mozDeltaY * 100 / 3; } });
+                        }
+                        oldEvent.absolEvent = event;
+                    }
+                    this.emit('wheel', event);
+                };
+                this.addEventListener('wheel', wheelEventHandler);
+            }
+            origin.apply(this, arguments);
+        };
+    }
+
+}());
+
+Element.eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
+    "ctrlKey", "currentTarget", "defaultPrevented", "deltaMode", "deltaX", "deltaY", "deltaZ", "detail", "eventPhase",
+    "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
+    "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
+    "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
+    "deltaMode", "deltaX", "deltaY", "deltaZ"];
+
+
+
 
 export default Element;
