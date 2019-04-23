@@ -5,7 +5,7 @@ import JSPath from './JSPath';
 
 function Element() {
     EventEmitor.call(this);
-    this._azar_extendAttributes = this._azar_extendAttributes || [];
+    this._azar_extendAttributes = this._azar_extendAttributes || {};
 }
 
 Object.defineProperties(Element.prototype, Object.getOwnPropertyDescriptors(EventEmitor.prototype));
@@ -63,9 +63,7 @@ Element.prototype.attr = function () {
                     this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
                 }
                 else{
-                    if (!arguments[0]) {
-                        console.error(arguments);
-                    }
+                  
                     this.setAttribute(arguments[0], arguments[1]);
                 }
             }
