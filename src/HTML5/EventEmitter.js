@@ -1,4 +1,4 @@
-function EventEmittor() {
+function EventEmitter() {
     this._azar_extendEvents = this._azar_extendEvents || { supported: {}, prioritize: {}, nonprioritize: {} };
     this.__azar_force = !(typeof Node === "object" ? this instanceof Node : this && typeof this === "object" && typeof this.nodeType === "number" && typeof this.nodeName === "string");
 
@@ -6,7 +6,7 @@ function EventEmittor() {
 
 
 
-EventEmittor.prototype.defineEvent = function (name) {
+EventEmitter.prototype.defineEvent = function (name) {
     if (name instanceof Array) {
         for (var i = 0; i < name.length; ++i)
             this._azar_extendEvents.supported[name[i]] = true;
@@ -16,12 +16,12 @@ EventEmittor.prototype.defineEvent = function (name) {
     return this;
 };
 
-EventEmittor.prototype.isSupportedEvent = function (name) {
+EventEmitter.prototype.isSupportedEvent = function (name) {
     return this.__azar_force || !!this._azar_extendEvents.supported[name];
 };
 
 
-EventEmittor.prototype.emit = function (eventName, data) {
+EventEmitter.prototype.emit = function (eventName, data) {
     var others = Array.prototype.slice.call(arguments, 1);
     if (this.isSupportedEvent(eventName)) {
         var listenerList;
@@ -52,7 +52,7 @@ EventEmittor.prototype.emit = function (eventName, data) {
 
 
 
-EventEmittor.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, arg2) {
+EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, arg2) {
     if (typeof arg0 == 'object') {
         for (var key in arg0) {
             this.eventEmittorOnWithTime(isOnce, key, arg0[key]);
@@ -108,18 +108,18 @@ EventEmittor.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
 
 
 
-EventEmittor.prototype.on = function (arg0, arg1, arg2) {
+EventEmitter.prototype.on = function (arg0, arg1, arg2) {
     this.eventEmittorOnWithTime(false, arg0, arg1, arg2);
     return this;
 };
 
 
-EventEmittor.prototype.once = function (arg0, arg1, arg2) {
+EventEmitter.prototype.once = function (arg0, arg1, arg2) {
     this.eventEmittorOnWithTime(true, arg0, arg1, arg2);
     return this;
 };
 
-EventEmittor.prototype.off = function (arg0, arg1, arg2) {
+EventEmitter.prototype.off = function (arg0, arg1, arg2) {
     if (typeof arg0 == 'object') {
         for (var key in arg0) {
             this.off(key, arg0[key]);
@@ -159,7 +159,7 @@ EventEmittor.prototype.off = function (arg0, arg1, arg2) {
 
 
 
-EventEmittor.isMouseRight = function (event) {
+EventEmitter.isMouseRight = function (event) {
     var isRightMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
         isRightMB = event.which == 3;
@@ -168,7 +168,7 @@ EventEmittor.isMouseRight = function (event) {
     return isRightMB;
 };
 
-EventEmittor.hitElement = function (element, event) {
+EventEmitter.hitElement = function (element, event) {
     var current = event.target;
     while (current) {
         if (current == element) return true;
@@ -177,7 +177,7 @@ EventEmittor.hitElement = function (element, event) {
     return false;
 };
 
-EventEmittor.copyEvent = function (event, props) {
+EventEmitter.copyEvent = function (event, props) {
     var result = {};
     Object.assign(result, event);
     for (var key in result) {
@@ -192,7 +192,7 @@ EventEmittor.copyEvent = function (event, props) {
 };
 
 
-EventEmittor.eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
+EventEmitter.eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
     "ctrlKey", "currentTarget", "defaultPrevented", "deltaMode", "deltaX", "deltaY", "deltaZ", "detail", "eventPhase",
     "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
     "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
@@ -200,4 +200,4 @@ EventEmittor.eventProperties = ["altKey", "bubbles", "button", "buttons", "cance
     "deltaMode", "deltaX", "deltaY", "deltaZ"];
 
 
-export default EventEmittor;
+export default EventEmitter;

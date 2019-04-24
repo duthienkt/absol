@@ -37,8 +37,8 @@ TemplateXML.prototype._xmlNodeToJSCode = function (node) {
             }).filter(function (e) {
                 return !!e;
             });
-
-            if (StyleSheet.length > 0) {
+       
+            if (styleSheet.length > 0) {
                 body.push('style:{' + styleSheet.join(',') + '}');
             }
         }

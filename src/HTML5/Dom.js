@@ -7,6 +7,24 @@ import TemplateXML from '../JSMaker/TemplateXML';
 function Dom(option) {
     option = option || {};
     this.creator = option.creator || {};
+
+
+    this.creator.__svg__ = function () {
+        var temp = document.createElement('div');
+        temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
+        return temp.childNodes[0];
+    };
+
+    Object.defineProperty(this.creator, 'svg', {
+        set: function () {
+            console.error(new Error());
+        },
+        get: function () {
+            return this.__svg__;
+        }
+
+    });
+
     this.$ = this.selectAttacth.bind(this);
     this._ = this.create.bind(this);
     this.buildDom = this._;
@@ -169,7 +187,6 @@ Dom.prototype.create = function (option, isInherited) {
     if (attributes) {
         res.defineAttributes(attributes);
     }
-
     option.attr && res.attr(option.attr);
     option.extendEvent && res.defineEvent(option.extendEvent);
     option.on && res.on(option.on);
@@ -460,21 +477,6 @@ Dom.ShareInstance.creator.attachhook = function () {
     return res;
 };
 
-Dom.ShareInstance.creator.__svg__ = function () {
-    var temp = document.createElement('div');
-    temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
-    return temp.childNodes[0];
-};
-
-Object.defineProperty(Dom.ShareInstance.creator, 'svg', {
-    set: function () {
-        console.error(new Error());
-    },
-    get:function(){
-        return this.__svg__;
-    }
-
-});
 
 
 export default Dom;

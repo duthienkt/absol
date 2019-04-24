@@ -1,14 +1,14 @@
-import EventEmitor from './EventEmitor';
+import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Dectector/BrowserDetector';
 import JSPath from './JSPath';
 
 
 function Element() {
-    EventEmitor.call(this);
+    EventEmitter.call(this);
     this._azar_extendAttributes = this._azar_extendAttributes || {};
 }
 
-Object.defineProperties(Element.prototype, Object.getOwnPropertyDescriptors(EventEmitor.prototype));
+Object.defineProperties(Element.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
 Element.prototype.init = function (props) {
     Object.assign(this, props || {});
 };

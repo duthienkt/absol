@@ -6,10 +6,6 @@ function Svg(option){
     this.defaultTag = 'g';
     this.svgNS = "http://www.w3.org/2000/svg";
 
-    this.creator.svg =  function(){
-        return Dom.ShareInstance._('svg', true);
-    }; 
-
     delete this.buidDom;
     this.buildSvg = this.create.bind(this);
 }

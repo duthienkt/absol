@@ -1,55 +1,5 @@
-// import './polyfill';
 
-// import EventEmittor from "./EventEmittor";
-// import Dom from "./Dom";
-// import OOP from "./OOP";
-// import BrowserDetector from './BrowserDectector';
-// import XML from './XML/XML';
-
-// var absol = {};
-// window.absol = absol;
-
-// absol.event = EventEmittor;
-// absol.Dom = Dom;
-// absol.OOP = OOP;
-// absol.ShareDom = new Dom();
-// absol.ShareCreator = absol.ShareDom.creator;
-// absol.ShareSvg = new Dom();
-// absol.ShareSvgCreator = absol.ShareSvg.creator;
-
-// absol.$ = absol.ShareDom.$;
-// absol._ = absol.ShareDom._;
-
-// absol._svg = absol.ShareSvg._;
-// absol.$svg = absol.ShareSvg.$;
-
-
-// Object.defineProperties(absol,{
-//     isDomNode:{
-//         get:function(){
-//             console.warn("absol.isDomNode to Dom.isDomNode");
-//             return Dom.isDomNode;
-//         }
-//     },
-//     isSvgNode:{
-//         get:function(){
-//             console.warn("absol.isSvgNode to Dom.isSvgNode");
-//             return Dom.isSvgNode;
-//         }
-//     },
-//     dom:{
-//         get:function(){
-//             return Dom;
-//         }
-//     },
-
-//     browser:{
-//         get:function(){
-//             return BrowserDetector;
-//         }
-//     }
-// });
-
+import EventEmitter from './HTML5/EventEmitter';
 import BrowserDetector from './Dectector/BrowserDetector';
 import Element from './HTML5/Element';
 
@@ -66,6 +16,7 @@ window.BrowserDetector = BrowserDetector;
 
 window.absol = {
     Element: Element,
+    HTMLElement: Element,//oldName
     JSPath: JSPath,
     TemplateString: TemplateString,
     TemplateXML: TemplateXML, 
@@ -74,7 +25,8 @@ window.absol = {
     BrowserDectector: BrowserDetector,
     OOP:OOP,
     Event: Event, 
-    XML: XML
+    XML: XML,
+    EventEmitter:EventEmitter
 };
 
 Object.defineProperty(absol, 'event', {
@@ -100,9 +52,11 @@ window.absol._svg = window.absol.ShareSvg._;
 window.absol.$svg = window.absol.ShareSvg.$;
 window.absol.buildSvg = window.absol.ShareSvg._;
 
-
+window.absol.documentReady = Dom.documentReady;
 
 // window.XMLParser = XML;
 
 
 // export default absol;
+console.log(absol.TemplateXML.parse('<path id="oxy" d="m0 -1v1 h1" style="fill:none" />').toJSCode());
+
