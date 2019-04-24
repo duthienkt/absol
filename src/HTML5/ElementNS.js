@@ -5,7 +5,7 @@ function ElementNS() {
 
 Object.defineProperties(ElementNS.prototype, Object.getOwnPropertyDescriptors(Element.prototype));
 
-Element.prototype.attr = function () {      
+ElementNS.prototype.attr = function () {      
     if (arguments.length == 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {
@@ -35,7 +35,6 @@ Element.prototype.attr = function () {
                     this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
                 }
                 else{
-                  
                     this.setAttributeNS(null,arguments[0], arguments[1]);
                 }
             }

@@ -48,6 +48,7 @@ EventEmitter.prototype.emit = function (eventName, data) {
         } else
             throw new Error("Not support event " + eventName);
     }
+    return this;
 };
 
 
@@ -155,6 +156,7 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
             return this;
         }
     }
+    
 };
 
 

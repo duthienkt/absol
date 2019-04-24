@@ -12,7 +12,11 @@ function Dom(option) {
     this.creator.__svg__ = function () {
         var temp = document.createElement('div');
         temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
-        return temp.childNodes[0];
+        var element = temp.childNodes[0];
+        var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+        Object.defineProperties(element, prototypes);
+        Element.call(element);
+        return element;
     };
 
     Object.defineProperty(this.creator, 'svg', {
@@ -22,7 +26,6 @@ function Dom(option) {
         get: function () {
             return this.__svg__;
         }
-
     });
 
     this.$ = this.selectAttacth.bind(this);
@@ -31,6 +34,20 @@ function Dom(option) {
     this.defaultTag = 'div';
 }
 
+
+Dom.prototype.fromCode = function (code) {
+    code = code.trim().replace(/>\s+</gm, '><');
+    var temTag = 'div';
+    if (code.startsWith('<td')) temTag = 'tr';
+    if (code.startsWith('<tr')) temTag = 'tbody';
+    var tempDiv = document.createElement(temTag);
+    tempDiv.innerHTML = code;
+    var element = tempDiv.childNodes[0];
+    var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+    Object.defineProperties(element, prototypes);
+    Element.call(element);
+    return element;
+};
 
 
 /**
@@ -101,34 +118,37 @@ Dom.prototype.create = function (option, isInherited) {
     else if (typeof option == 'string') {
         option = option.trim();
         if (option[0] == '<') {
+            
             option = option.trim();
-            try {
-                option = TemplateXML.compileToFunction(option)();
+            res = this.fromCode(option);
+            option = {};
+            // try {
+            //     option = TemplateXML.compileToFunction(option)();
 
-            }
-            catch (e) {
-                console.error('Worng HTML code', option);
-            }
+            // }
+            // catch (e) {
+            //     console.error('Worng HTML code', option);
+            // }
 
 
-            if (option.text) {//is textNode
-                return this.makeNewTextNode(option.text);
-            }
-            else {
-                option.tag = option.tag || this.defaultTag;
-                if (!this.creator[option.tag]) {
-                    res = this.makeNewElement(option.tag);
-                    option.data && Object.assign(res, option.data);
-                }
-                else {
-                    res = this.creator[option.tag](option.data);
-                    res._azar_extendTags = res._azar_extendTags || {};
-                    res._azar_extendTags[option.tag] = true;
-                    prototype = this.creator[option.tag].prototype;
-                    property = this.creator[option.tag].property;
-                    attributes = this.creator[option.tag].attributes;
-                }
-            }
+            // if (option.text) {//is textNode
+            //     return this.makeNewTextNode(option.text);
+            // }
+            // else {
+            //     option.tag = option.tag || this.defaultTag;
+            //     if (!this.creator[option.tag]) {
+            //         res = this.makeNewElement(option.tag);
+            //         option.data && Object.assign(res, option.data);
+            //     }
+            //     else {
+            //         res = this.creator[option.tag](option.data);
+            //         res._azar_extendTags = res._azar_extendTags || {};
+            //         res._azar_extendTags[option.tag] = true;
+            //         prototype = this.creator[option.tag].prototype;
+            //         property = this.creator[option.tag].property;
+            //         attributes = this.creator[option.tag].attributes;
+            //     }
+            // }
         }
         else {
             var queryObj = JSPath.parseQuery(option);

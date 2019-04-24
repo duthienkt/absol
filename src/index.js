@@ -14,6 +14,8 @@ import XML from './XML/XML';
 
 window.BrowserDetector = BrowserDetector;
 
+
+/************************** ABSOL adapter ***********************/
 window.absol = {
     Element: Element,
     HTMLElement: Element,//oldName
@@ -53,10 +55,3 @@ window.absol.$svg = window.absol.ShareSvg.$;
 window.absol.buildSvg = window.absol.ShareSvg._;
 
 window.absol.documentReady = Dom.documentReady;
-
-// window.XMLParser = XML;
-
-
-// export default absol;
-console.log(absol.TemplateXML.parse('<path id="oxy" d="m0 -1v1 h1" style="fill:none" />').toJSCode());
-

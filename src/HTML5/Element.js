@@ -380,6 +380,7 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
                 this.addEventListener('mouseleave', mouseLeaveEventHandler, true);
             }
             origin.apply(this, arguments);
+            return this;
         }
     }
 
@@ -415,6 +416,7 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
                 this.addEventListener('wheel', wheelEventHandler);
             }
             origin.apply(this, arguments);
+            return this;
         };
     }
 
