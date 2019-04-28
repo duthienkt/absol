@@ -281,7 +281,7 @@ Element.prototype.isDescendantOf = function (parent) {
 
 
 /*************************** **********************/
-Element.prototype.getCssRules = function () {
+Element.prototype.getCSSRules = function () {
     var sheets = document.styleSheets;
     var ret = [];
     this.matches = this.matches || this.webkitMatchesSelector || this.mozMatchesSelector
