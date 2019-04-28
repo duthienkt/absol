@@ -6,7 +6,7 @@ module.exports = {
     entry: ['babel-polyfill', "./src/index.js"],
     output: {
         path: path.join(__dirname, "."),
-        filename: "./dist/Azar.js"
+        filename: "./dist/absol.js"
     },
     resolve: {
         modules: [
@@ -20,6 +20,10 @@ module.exports = {
                 exclude: /node_modules/,
                 loader: 'babel-loader',
                 options: { presets: [['es2015', { modules: false }]] }
+            },
+            {
+                test: /\.(tpl|txt|xml|rels)$/i,
+                use: 'raw-loader',
             }
         ]
     },

@@ -1,4 +1,4 @@
-
+import './Polyfill/polyfill';
 import EventEmitter from './HTML5/EventEmitter';
 import BrowserDetector from './Dectector/BrowserDetector';
 import Element from './HTML5/Element';
@@ -11,6 +11,9 @@ import Svg from './HTML5/Svg';
 import OOP from './HTML5/OOP';
 import Event from './HTML5/Event';
 import XML from './XML/XML';
+
+import JSZip from 'jszip';
+import JSDocx from './JSDocx/JSDocx'
 
 window.BrowserDetector = BrowserDetector;
 
@@ -28,7 +31,9 @@ window.absol = {
     OOP:OOP,
     Event: Event, 
     XML: XML,
-    EventEmitter:EventEmitter
+    EventEmitter:EventEmitter,
+    JSZip: JSZip,
+    JSDocx:JSDocx
 };
 
 Object.defineProperty(absol, 'event', {

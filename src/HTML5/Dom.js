@@ -118,37 +118,10 @@ Dom.prototype.create = function (option, isInherited) {
     else if (typeof option == 'string') {
         option = option.trim();
         if (option[0] == '<') {
-            
+
             option = option.trim();
             res = this.fromCode(option);
             option = {};
-            // try {
-            //     option = TemplateXML.compileToFunction(option)();
-
-            // }
-            // catch (e) {
-            //     console.error('Worng HTML code', option);
-            // }
-
-
-            // if (option.text) {//is textNode
-            //     return this.makeNewTextNode(option.text);
-            // }
-            // else {
-            //     option.tag = option.tag || this.defaultTag;
-            //     if (!this.creator[option.tag]) {
-            //         res = this.makeNewElement(option.tag);
-            //         option.data && Object.assign(res, option.data);
-            //     }
-            //     else {
-            //         res = this.creator[option.tag](option.data);
-            //         res._azar_extendTags = res._azar_extendTags || {};
-            //         res._azar_extendTags[option.tag] = true;
-            //         prototype = this.creator[option.tag].prototype;
-            //         property = this.creator[option.tag].property;
-            //         attributes = this.creator[option.tag].attributes;
-            //     }
-            // }
         }
         else {
             var queryObj = JSPath.parseQuery(option);
@@ -370,9 +343,47 @@ Dom.getScreenSize = function () {
 };
 
 
+Dom.waitImageLoaded = function (img) {
+    var isLoaded = true;
+    if (!img.complete) {
+        isLoaded = false;
+    }
+    if (img.naturalWidth === 0) {
+        isLoaded = false;
+    }
+    if (isLoaded) return Promise.resolve();
+    return new Promise(function (rs) {
+        img.onload = function () {
+            rs();
+        }
+        setTimeout(5000, rs);
+    });
+    // No other way of checking: assume it’s ok.
+}
 
+Dom.imageToCanvas = function (image) {
+    var preRender = Dom.ShareInstance._('div');
+    preRender.addStyle({
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        zIndex: '-10000',
+        opacity: '0'
+    }).addTo(document.body);
 
+    var canvas = document.createElement("canvas");
+    preRender.addChild(canvas);
 
+    
+    return Dom.waitImageLoaded(image).then(function () {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        var context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0);
+        preRender.selfRemove();
+        return canvas;
+    });
+};
 
 
 Dom.ShareInstance = new Dom();
