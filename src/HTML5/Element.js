@@ -33,7 +33,7 @@ Element.prototype.defineAttributes = function (defs) {
     }
 };
 
-Element.prototype.attr = function () {      
+Element.prototype.attr = function () {
     if (arguments.length == 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {
@@ -44,7 +44,7 @@ Element.prototype.attr = function () {
         }
         else {
             for (var key in arguments[0]) {
-            
+
                 this.attr(key, arguments[0][key]);
             }
         }
@@ -62,8 +62,8 @@ Element.prototype.attr = function () {
                 if (this._azar_extendAttributes[arguments[0]]) {
                     this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
                 }
-                else{
-                  
+                else {
+
                     this.setAttribute(arguments[0], arguments[1]);
                 }
             }
@@ -277,6 +277,24 @@ Element.prototype.isDescendantOf = function (parent) {
         child = child.parentNode;
     }
     return false;
+};
+
+
+/*************************** **********************/
+Element.prototype.getCssRules = function () {
+    var sheets = document.styleSheets;
+    var ret = [];
+    this.matches = this.matches || this.webkitMatchesSelector || this.mozMatchesSelector
+        || this.msMatchesSelector || this.oMatchesSelector;
+    for (var i in sheets) {
+        var rules = sheets[i].rules || sheets[i].cssRules;
+        for (var r in rules) {
+            if (this.matches(rules[r].selectorText)) {
+                ret.push(rules[r]);
+            }
+        }
+    }
+    return ret;
 };
 
 
