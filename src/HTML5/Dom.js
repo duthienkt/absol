@@ -361,28 +361,36 @@ Dom.waitImageLoaded = function (img) {
     // No other way of checking: assume it’s ok.
 }
 
-Dom.imageToCanvas = function (image) {
-    var preRender = Dom.ShareInstance._('div');
-    preRender.addStyle({
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        zIndex: '-10000',
-        opacity: '0'
-    }).addTo(document.body);
+Dom.imageToCanvas = function (element) {
+    if (typeof element == 'string') {
+        element = Dom.ShareInstance.$(element);
+    }
+    if (element.tagName.toLowerCase() == 'img') {
+        var preRender = Dom.ShareInstance._('div');
+        preRender.addStyle({
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            zIndex: '-10000',
+            opacity: '0'
+        }).addTo(document.body);
 
-    var canvas = document.createElement("canvas");
-    preRender.addChild(canvas);
+        var canvas = document.createElement("canvas");
+        preRender.addChild(canvas);
 
-    
-    return Dom.waitImageLoaded(image).then(function () {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        var context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0);
-        preRender.selfRemove();
-        return canvas;
-    });
+
+        return Dom.waitImageLoaded(element).then(function () {
+            canvas.width = element.width;
+            canvas.height = element.height;
+            var context = canvas.getContext("2d");
+            context.drawImage(element, 0, 0);
+            preRender.selfRemove();
+            return canvas;
+        });
+    }
+    else {
+        throw new Error("Element must be image");
+    }
 };
 
 

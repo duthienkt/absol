@@ -5,6 +5,7 @@ import document_xml_rels from './assets/document.xml.rels';
 import JSZip from 'jszip';
 
 import Dom from '../HTML5/Dom';
+import Svg from '../HTML5/Svg';
 
 
 
@@ -194,7 +195,22 @@ JSDocx.fromHTMLElement = function (element, options, getOuter, isWorkingElement)
         }
         return false;
     });
-    return Promise.all(imageTask).then(function(){
+
+    Dom.ShareInstance.$('svg', preRender, function (e) {
+        var task = Svg.svgToCanvas(e).then(function (canvas) {
+            var newSrc = canvas.toDataURL();
+            var image = Dom.ShareInstance._('img');
+            image.src = newSrc;
+            Dom.ShareInstance.$(e).selfReplace(image);
+
+        });
+        imageTask.push(task);
+
+        return false;
+    });
+
+
+    return Promise.all(imageTask).then(function () {
         var code;
         if (getOuter) {
             code = preRender.outerHTML;
