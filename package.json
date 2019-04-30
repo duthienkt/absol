@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.js",
-    "dist": "webpack --config webpack.config.js --progress --profile --colors"
+    "dist": "webpack --config webpack.config.js --progress --profile --colors",
+    "dist-xml": "webpack --config webpack.config.xml.js --progress --profile --colors"
   },
   "repository": {
     "type": "git",

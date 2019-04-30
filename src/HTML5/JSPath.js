@@ -208,4 +208,3 @@ JSPath.compileJSPath = function (text) {
 
 
 export default JSPath;
-
