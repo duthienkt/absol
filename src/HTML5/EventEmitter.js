@@ -28,7 +28,12 @@ EventEmitter.prototype.emit = function (eventName, data) {
         if (this._azar_extendEvents.prioritize[eventName]) {
             listenerList = this._azar_extendEvents.prioritize[eventName].slice();
             for (var i = 0; i < listenerList.length; ++i) {
-                listenerList[i].wrappedCallback.apply(this, others);
+                try {
+                    listenerList[i].wrappedCallback.apply(this, others);
+                }
+                catch (e) {
+                    console.error(e);
+                }
             }
 
         }
@@ -36,7 +41,12 @@ EventEmitter.prototype.emit = function (eventName, data) {
         if (this._azar_extendEvents.nonprioritize[eventName]) {
             listenerList = this._azar_extendEvents.nonprioritize[eventName].slice();
             for (var i = 0; i < listenerList.length; ++i) {
-                listenerList[i].wrappedCallback.apply(this, others);
+                try {
+                    listenerList[i].wrappedCallback.apply(this, others);
+                }
+                catch (e) {
+                    console.error(e);
+                }
             }
         }
     }
@@ -156,7 +166,7 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
             return this;
         }
     }
-    
+
 };
 
 
