@@ -263,22 +263,22 @@ Dom.traceOutBoundingClientRect = function (current) {
     var top = 0;
     var bottom = 10000;
     while (current) {
-        if (current.getComputedStyleValue) {
-            var ox = Element.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
-            var oy = Element.prototype.getComputedStyleValue.call(current, 'overflow-y') != "visible";
-            var isBody = current.tagName.toLowerCase() == 'body';
-            if (ox || oy || isBody) {
-                var bound = current.getBoundingClientRect();
-                if (ox || isBody) {
-                    left = Math.max(left, bound.left);
-                    right = Math.min(right, bound.right);
-                }
-                if (oy || isBody) {
-                    top = Math.max(top, bound.top);
-                    bottom = Math.min(bottom, bound.bottom);
-                }
+
+        var ox = Element.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
+        var oy = Element.prototype.getComputedStyleValue.call(current, 'overflow-y') != "visible";
+        var isBody = current.tagName.toLowerCase() == 'body';
+        if (ox || oy || isBody) {
+            var bound = current.getBoundingClientRect();
+            if (ox || isBody) {
+                left = Math.max(left, bound.left);
+                right = Math.min(right, bound.right);
+            }
+            if (oy || isBody) {
+                top = Math.max(top, bound.top);
+                bottom = Math.min(bottom, bound.bottom);
             }
         }
+
         if (isBody) break;
         current = current.parentElement;
 
