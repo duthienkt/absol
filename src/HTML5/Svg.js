@@ -33,7 +33,6 @@ Svg.prototype.fromCode = function (code) {
         var prototypes = Object.getOwnPropertyDescriptors(ElementNS.prototype);
         Object.defineProperties(element, prototypes);
         ElementNS.call(element);
-
     }
     return element;
 };

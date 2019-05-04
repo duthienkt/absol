@@ -13,7 +13,10 @@ import Event from './HTML5/Event';
 import XML from './XML/XML';
 
 import JSZip from 'jszip';
-import JSDocx from './JSDocx/JSDocx'
+import JSDocx from './JSDocx/JSDocx';
+
+import * as esprima from 'esprima';
+import AceDiff from 'ace-diff';
 
 window.BrowserDetector = BrowserDetector;
 
@@ -24,37 +27,39 @@ window.absol = {
     HTMLElement: Element,//oldName
     JSPath: JSPath,
     TemplateString: TemplateString,
-    TemplateXML: TemplateXML, 
-    Dom: Dom, 
-    Svg:Svg,
+    TemplateXML: TemplateXML,
+    Dom: Dom,
+    Svg: Svg,
     BrowserDectector: BrowserDetector,
-    OOP:OOP,
-    Event: Event, 
+    OOP: OOP,
+    Event: Event,
     XML: XML,
-    EventEmitter:EventEmitter,
+    EventEmitter: EventEmitter,
     JSZip: JSZip,
-    JSDocx:JSDocx
+    JSDocx: JSDocx,
+    esprima: esprima,
+    AceDiff: AceDiff
 };
 
 Object.defineProperty(absol, 'event', {
-    get:function(){
+    get: function () {
         return this.Event;
     }
 });
 Object.defineProperty(absol, 'dom', {
-    get:function(){
+    get: function () {
         return this.Dom;
     }
 });
 
 window.absol.ShareDom = window.absol.Dom.ShareInstance;
-window.absol.ShareCreator  = window.absol.Dom.ShareInstance.creator;
+window.absol.ShareCreator = window.absol.Dom.ShareInstance.creator;
 window.absol._ = window.absol.ShareDom._;
 window.absol.$ = window.absol.ShareDom.$;
 window.absol.buildDom = window.absol.ShareDom._;
 
 window.absol.ShareSvg = window.absol.Svg.ShareInstance;
-window.absol.ShareSvgCreator  = window.absol.Svg.ShareInstance.creator;
+window.absol.ShareSvgCreator = window.absol.Svg.ShareInstance.creator;
 window.absol._svg = window.absol.ShareSvg._;
 window.absol.$svg = window.absol.ShareSvg.$;
 window.absol.buildSvg = window.absol.ShareSvg._;

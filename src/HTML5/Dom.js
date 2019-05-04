@@ -1,7 +1,7 @@
 import Element from './Element';
 import JSPath from './JSPath';
 import OOP from './OOP';
-import TemplateXML from '../JSMaker/TemplateXML';
+
 
 
 function Dom(option) {

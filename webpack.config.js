@@ -3,6 +3,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = {
     mode: process.env.MODE || "development",
+    // mode: 'production',
     entry: ['babel-polyfill', "./src/index.js"],
     output: {
         path: path.join(__dirname, "."),
@@ -22,7 +23,7 @@ module.exports = {
                 options: { presets: [['es2015', { modules: false }]] }
             },
             {
-                test: /\.(tpl|txt|xml|rels)$/i,
+                test: /\.(tpl|txt|xml|rels|css)$/i,
                 use: 'raw-loader',
             }
         ]

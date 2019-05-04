@@ -35,7 +35,6 @@ EventEmitter.prototype.emit = function (eventName, data) {
                     console.error(e);
                 }
             }
-
         }
 
         if (this._azar_extendEvents.nonprioritize[eventName]) {
@@ -109,7 +108,6 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
             }
             else {
                 console.warn("dupplicate event");
-
             }
 
         }
