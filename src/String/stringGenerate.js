@@ -1,22 +1,23 @@
 
-absol.string.identCharacters = function () {
+export var identCharacters = function () {
     var chars = 'qwertyuiopasdfghjklzxcvbnm';
     chars = chars + chars.toUpperCase();
     var num = '0123456789';
     var spect = '$_';
     return (chars + spect + num).split('');
 
-}();
+};
 
-absol.string.randomIdent = function (length) {
+
+export function randomIdent(length) {
     if (!(length > 0)) length = 4;
-    var factor = absol.string.identCharacters;
+    var factor = identCharacters;
     return [factor[(Math.random() * (factor.length - 10)) >> 0]].concat(Array(length - 1).fill('').map(function () {
         return factor[(Math.random() * factor.length) >> 0];
     })).join('');
 };
 
-absol.string.parallelMatch = function (a, b) {
+export function parallelMatch(a, b) {
     var l = Math.min(a.length, b.length);
     var res = 0;
     for (var i = 0; i < l; ++i) {
@@ -25,7 +26,7 @@ absol.string.parallelMatch = function (a, b) {
     return res;
 };
 
-absol.string.ipsumLoremWord = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit', 'sed', 'do',
+export var ipsumLoremWord = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit', 'sed', 'do',
     'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore', 'magna', 'aliqua', 'enim', 'ad', 'minim',
     'veniam', 'quis', 'nostrud', 'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
     'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate', 'velit', 'esse', 'cillum',
@@ -60,18 +61,18 @@ absol.string.ipsumLoremWord = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consec
 ];
 
 
-absol.string.randomWord = function () {
-    var arr = absol.string.ipsumLoremWord;
+export function randomWord() {
+    var arr = ipsumLoremWord;
     var idx = Math.randomInt(0, arr.length - 1);
     return arr[idx];
 };
 
-absol.string.randomPhrase = function (limitLenght) {
+export function randomPhrase(limitLenght) {
     if (!limitLenght) limitLenght = 50;
     var length = Math.ceil(Math.random() * limitLenght / 7);
     return new Array(length)
         .fill(null)
-        .map(absol.string.randomWord.bind(absol.string))
+        .map(randomWord)
         .reduce(function (ac, cr) {
             if (ac.length + cr.length < limitLenght) {
                 ac.parts.push(cr);
@@ -82,18 +83,18 @@ absol.string.randomPhrase = function (limitLenght) {
 
 };
 
-absol.string.randomSentence = function (limitLenght) {
+export function randomSentence(limitLenght) {
     if (!limitLenght) limitLenght = 300;
     var length = Math.ceil(Math.random() * limitLenght / 70);
     var res = new Array(length)
         .fill(null)
-        .map(absol.string.randomPhrase.bind(absol.string))
-        .reduce(function (ac, cr) {
-            if (ac.length + cr.length < limitLenght) {
-                ac.parts.push(cr);
-            }
-            return ac;
-        }, { parts: [], length: 0 }).parts
+        .map(randomPhrase
+            .reduce(function (ac, cr) {
+                if (ac.length + cr.length < limitLenght) {
+                    ac.parts.push(cr);
+                }
+                return ac;
+            }, { parts: [], length: 0 }).parts)
         .join(', ');
     if (Math.random() < 0.03) {
         res = res.replace(/\,/i, ':');
@@ -105,16 +106,16 @@ absol.string.randomSentence = function (limitLenght) {
     return res;
 };
 
-absol.string.randomParagraph = function (limitLenght) {
+export function randomParagraph(limitLenght) {
     if (!limitLenght) limitLenght = 1000;
     var length = Math.ceil(Math.random() * limitLenght / 200);
     return new Array(length).fill(null)
-        .map(absol.string.randomSentence.bind(absol.string))
-        .reduce(function (ac, cr) {
-            if (ac.length + cr.length < limitLenght) {
-                ac.parts.push(cr);
-            }
-            return ac;
-        }, { parts: [], length: 0 }).parts
+        .map(randomSentence
+            .reduce(function (ac, cr) {
+                if (ac.length + cr.length < limitLenght) {
+                    ac.parts.push(cr);
+                }
+                return ac;
+            }, { parts: [], length: 0 }).parts)
         .join(' ');
 };
