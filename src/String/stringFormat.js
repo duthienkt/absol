@@ -1,43 +1,41 @@
-// absol.string = {};
+/**
+ * 
+ * @param {String} s 
+ * @param {Number} maxLength 
+ */
+export function wrapToLines(s, maxLength) {
+    var res = [];
+    var currentWord = '';
+    var currentLine = '';
+    for (var i = 0; i < s.length; ++i) {
+        if (s[i].match(/\s/)) {
+            if (currentWord.length + currentLine.length >= maxLength) {
+                if (currentLine.length > 0) {
+                    res.push(currentLine.trim());
+                    currentLine = '';
+                    currentWord = currentWord.trimLeft() + s[i];
+                }
+                else {
+                    currentLine = currentLine + currentWord;
+                    res.push(currentLine.trim());
+                    currentLine = '';
+                    currentWord = '';
 
-// /**
-//  * 
-//  * @param {String} s 
-//  * @param {Number} maxLength 
-//  */
-// absol.string.wrapToLines = function (s, maxLength) {
-//     var res = [];
-//     var currentWord = '';
-//     var currentLine = '';
-//     for (var i = 0; i < s.length; ++i) {
-//         if (s[i].match(/\s/)) {
-//             if (currentWord.length + currentLine.length >= maxLength) {
-//                 if (currentLine.length > 0) {
-//                     res.push(currentLine.trim());
-//                     currentLine = '';
-//                     currentWord = currentWord.trimLeft() + s[i];
-//                 }
-//                 else {
-//                     currentLine = currentLine + currentWord;
-//                     res.push(currentLine.trim());
-//                     currentLine = '';
-//                     currentWord = '';
-
-//                 }
-//             }
-//             else {
-//                 currentLine = currentLine + currentWord;
-//                 currentWord = s[i];
-//             }
-//         }
-//         else {
-//             currentWord = currentWord + s[i];
-//         }
-//     }
-//     currentLine = (currentLine + currentWord).trim();
-//     if (currentLine.length > 0) res.push(currentLine);
-//     return res;
-// };
+                }
+            }
+            else {
+                currentLine = currentLine + currentWord;
+                currentWord = s[i];
+            }
+        }
+        else {
+            currentWord = currentWord + s[i];
+        }
+    }
+    currentLine = (currentLine + currentWord).trim();
+    if (currentLine.length > 0) res.push(currentLine);
+    return res;
+};
 
 export function nonAccentVietnamese(s) {
     return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
