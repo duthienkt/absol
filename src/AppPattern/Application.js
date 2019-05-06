@@ -21,7 +21,7 @@ Application.prototype.startActivity = function (activity) {
     }
     this.currentActivity = activity;
     activity.attach(this);
-    this.setContentView(activity.getView());
+    this.setContentView(activity.getView(), true);
     activity.start();
 };
 
@@ -48,7 +48,7 @@ Application.prototype.stopActivity = function (activity) {
 /**
  * @param {HTMLElement} view
  */
-Application.prototype.setContentView = function (view) {
+Application.prototype.setContentView = function (view, overlay) {
     throw new Error("Not Implement!");
 };
 
