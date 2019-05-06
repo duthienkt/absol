@@ -6,7 +6,7 @@ export var identCharacters = function () {
     var spect = '$_';
     return (chars + spect + num).split('');
 
-};
+}();
 
 
 export function randomIdent(length) {
