@@ -10,3 +10,9 @@ export function base64DecodeUnicode(str) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
 }
+
+
+export var UnicodeBase64Converter = {
+    encode: base64EncodeUnicode,
+    decode: base64DecodeUnicode
+};
