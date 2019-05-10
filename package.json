@@ -7,7 +7,7 @@
         "test": "test"
     },
     "scripts": {
-        "dev": "webpack-dev-server --config webpack.config.js",
+        "dev": "webpack-dev-server --config webpack.config.absol.js",
         "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production",
         "dist-xml": "webpack --config webpack.config.xml.js --progress --profile --colors --mode production",
         "dist-absol": "webpack --config webpack.config.absol.js --progress --profile --colors --mode production"

@@ -1,4 +1,5 @@
 import './Polyfill/polyfill';
+
 import EventEmitter from './HTML5/EventEmitter';
 import BrowserDetector from './Dectector/BrowserDetector';
 import Element from './HTML5/Element';
@@ -9,19 +10,23 @@ import TemplateXML from './JSMaker/TemplateXML';
 import Dom from './HTML5/Dom';
 import Svg from './HTML5/Svg';
 import OOP from './HTML5/OOP';
-import Event from './HTML5/Event';
+
 import XML from './XML/XML';
 
-import JSZip from 'jszip';
-import JSDocx from './JSDocx/JSDocx';
+// import JSZip from 'jszip';
+// import JSDocx from './JSDocx/JSDocx';
 
-import * as esprima from 'esprima';
-import AceDiff from 'ace-diff';
-
-window.BrowserDetector = BrowserDetector;
+// import * as esprima from 'esprima';
+// import AceDiff from 'ace-diff';
 
 
-/************************** ABSOL adapter ***********************/
+
+import AComp from './AComp/AComp';
+
+// window.BrowserDetector = BrowserDetector;
+
+
+// /************************** ABSOL adapter ***********************/
 window.absol = {
     Element: Element,
     HTMLElement: Element,//oldName
@@ -32,13 +37,13 @@ window.absol = {
     Svg: Svg,
     BrowserDectector: BrowserDetector,
     OOP: OOP,
-    Event: Event,
+    Event: EventEmitter,
     XML: XML,
     EventEmitter: EventEmitter,
-    JSZip: JSZip,
-    JSDocx: JSDocx,
-    esprima: esprima,
-    AceDiff: AceDiff
+    //     JSZip: JSZip,
+    //     JSDocx: JSDocx,
+    //     esprima: esprima,
+    //     AceDiff: AceDiff
 };
 
 Object.defineProperty(absol, 'event', {
@@ -52,16 +57,20 @@ Object.defineProperty(absol, 'dom', {
     }
 });
 
-window.absol.ShareDom = window.absol.Dom.ShareInstance;
-window.absol.ShareCreator = window.absol.Dom.ShareInstance.creator;
+window.absol.ShareDom = AComp;
+window.absol.ShareDom.fromCode = AComp.core.fromCode.bind(AComp.core);
+window.absol.ShareCreator = AComp.creator;
 window.absol._ = window.absol.ShareDom._;
 window.absol.$ = window.absol.ShareDom.$;
 window.absol.buildDom = window.absol.ShareDom._;
 
-window.absol.ShareSvg = window.absol.Svg.ShareInstance;
-window.absol.ShareSvgCreator = window.absol.Svg.ShareInstance.creator;
+window.absol.ShareSvg = Svg.ShareInstance;
+window.absol.ShareSvgCreator = Svg.ShareInstance.creator;
 window.absol._svg = window.absol.ShareSvg._;
 window.absol.$svg = window.absol.ShareSvg.$;
 window.absol.buildSvg = window.absol.ShareSvg._;
 
 window.absol.documentReady = Dom.documentReady;
+
+
+window.AComp = AComp;
