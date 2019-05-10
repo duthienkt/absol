@@ -22,6 +22,7 @@ import XML from './XML/XML';
 
 
 import AComp from './AComp/AComp';
+import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 
 // window.BrowserDetector = BrowserDetector;
 
@@ -74,3 +75,6 @@ window.absol.documentReady = Dom.documentReady;
 
 
 window.AComp = AComp;
+
+
+window.PhotoSwipeViewer = PhotoSwipeViewer;
