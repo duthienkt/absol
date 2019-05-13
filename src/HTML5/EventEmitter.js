@@ -21,7 +21,11 @@ EventEmitter.prototype.isSupportedEvent = function (name) {
 };
 
 
-EventEmitter.prototype.emit = function (eventName, data) {
+EventEmitter.prototype.emit = function(eventName, data){
+    this.fire.apply(this, arguments);
+};
+
+EventEmitter.prototype.fire = function (eventName, data) {
     var others = Array.prototype.slice.call(arguments, 1);
     if (this.isSupportedEvent(eventName)) {
         var listenerList;
