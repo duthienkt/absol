@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/dist/absol.js"></script>
+
 
     <!-- <script src="/dist/XMLParser.js"></script> -->
     <!-- <script src="https://absol.volcanion.cf/package?name=Math"></script> -->
@@ -13,778 +16,520 @@
 </head>
 
 <body>
-    <script src="/dist/absol.js"></script>
+    <div id="iframe-container">
+        <script>
+            var _ = AComp._;
+            var $ = AComp.$;
+
+            function initIframe(event) {
+
+                var bridge = new IFrameBridge.fromIFrame(this);
+                var testTimeout;
+                var texta = _('<textarea id="test-inner-html" style="width:50%;height:300px"></textarea>').on('keyup', function (event) {
+                    if (testTimeout) clearTimeout(testTimeout);
+                    setTimeout(function () {
+                        var value = this.value;
+                        bridge.emit('innerHTML', value);
+                    }.bind(this), 300);
+                });
+                // console.log();
+                $('#iframe-container').addChild(texta);
+                setTimeout(function(){
+                    var now = performance.now(); 
+                    bridge.invoke('getInnerHTML').then(function(result){
+                        console.log(result, performance.now()- now);
+                        texta.value = result;
+                    });
+    
+                    bridge.on('tick', function(data){
+                        console.log('tick',new Date().getTime() - data);
+                    })
+                }, 1000);
+            }
+        </script>
+        <iframe src="./slave.html" style="width:50%;height:300px"></iframe>
+
+    </div>
     <div id="e"></div>
-</body>
+    <div id="select-table-sorted"></div>
 
-<script>
-    var _ = AComp._;
-    var $ = AComp._;
-
-    var now = performance.now();
-    var menudata = {
-        items: [
-            { text: "Dashboard" },
-            {
-                text: 'File',
-                items: [
-                    { text: "New Node", key: 'Ctrl+N', cmd: 'new', disable: true },
-                    { text: "New Node from template", cmd: 'template_new', disable: true },
-                    { text: "Open Node", key: 'Ctrl+O', cmd: 'open', disable: true },
-                    {
-                        disable: true,
-                        text: "Open Recent",
-                        items: [
-                            { text: "Node A" },
-                            { text: "Node B" },
-                            { text: "Node C" },
-                            {
-                                text: "Node D",
-                                items: [
-                                    { text: "Node D" },
-                                    { text: "Node E" },
-                                    { text: "Node F" },
-                                    { text: "Node G" }]
-                            }
-                        ]
-                    },
-                    '=================================',
-                    { text: "Save", key: 'Ctrl+S', disable: true },
-                    { text: "Save As", key: 'Ctrl+Shift+S', disable: true },
-                    { text: "Save All", disable: true },
-                    '=================================',
-                    { text: "Auto Save", disable: true },
-                    { text: "Prereferences" },
-                    '=================================',
-                    { text: "Open Project", key: 'Ctrl+Alt+O', cmd: 'open_project' },
-                    {
-                        text: "Open Recent Project",
-
-                        items: [
-                            { text: "Project A" },
-                            { text: "Project E" },
-                            { text: "Project F" },
-                            { text: "Project G" }]
-                        , disable: true
-                    },
-                    {
-                        text: 'Logout', cmd: 'logout'
-                    }
-                ]
-            },
-            {
-                text: 'Edit',
-                items: [
-                    { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
-                    { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
-                    "================================",
-                    { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
-                    { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
-                    { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
-                    "==============================",
-                    { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
-                    { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
-                    "=============================",
-                    { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
-                    { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
-                ]
-            },
-            {
-                text: 'Selection',
-                items: [
-                    { text: 'Select All', key: 'Ctrl+A', cmd: 'selectall' },
-                    { text: 'Expand Selection', key: 'Ctrl+Shift+M', cmd: 'expandToMatching' },
-                    { text: 'Delete Line', key: 'Ctrl+D', cmd: 'removeline' },
-                    "================================",
-                    { text: 'Copy Line Up', key: 'Alt+Shift+ArrowUp', cmd: 'copylinesup' },
-                    { text: 'Copy Line Down', key: 'Alt+Shift+ArrowDown', cmd: 'copylinesdown' },
-                    { text: 'Move Line Up', key: 'Alt+ArrowUp' },
-                    { text: 'Move Line Down', key: 'Alt+ArrowDown' },
-                ]
-            },
-            {
-                text: 'View',
-                items: [{ text: 'Nothing to View' }]
-            },
-            {
-                text: 'Help',
-                items: [{ text: "About Frame" }]
-            },
-            {
-                text: 'File',
-                items: [
-                    { text: "New Node", key: 'Ctrl+N', cmd: 'new', disable: true },
-                    { text: "New Node from template", cmd: 'template_new', disable: true },
-                    { text: "Open Node", key: 'Ctrl+O', cmd: 'open', disable: true },
-                    {
-                        disable: true,
-                        text: "Open Recent",
-                        items: [
-                            { text: "Node A" },
-                            { text: "Node B" },
-                            { text: "Node C" },
-                            {
-                                text: "Node D",
-                                items: [
-                                    { text: "Node D" },
-                                    { text: "Node E" },
-                                    { text: "Node F" },
-                                    { text: "Node G" }]
-                            }
-                        ]
-                    },
-                    '=================================',
-                    { text: "Save", key: 'Ctrl+S', disable: true },
-                    { text: "Save As", key: 'Ctrl+Shift+S', disable: true },
-                    { text: "Save All", disable: true },
-                    '=================================',
-                    { text: "Auto Save", disable: true },
-                    { text: "Prereferences" },
-                    '=================================',
-                    { text: "Open Project", key: 'Ctrl+Alt+O', cmd: 'open_project' },
-                    {
-                        text: "Open Recent Project",
-
-                        items: [
-                            { text: "Project A" },
-                            { text: "Project E" },
-                            { text: "Project F" },
-                            { text: "Project G" }]
-                        , disable: true
-                    },
-                    {
-                        text: 'Logout', cmd: 'logout'
-                    }
-                ]
-            },
-            {
-                text: 'Edit',
-                items: [
-                    { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
-                    { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
-                    "================================",
-                    { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
-                    { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
-                    { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
-                    "==============================",
-                    { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
-                    { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
-                    "=============================",
-                    { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
-                    { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
-                ]
-            },
-            {
-                text: 'Selection',
-                items: [
-                    { text: 'Select All', key: 'Ctrl+A', cmd: 'selectall' },
-                    { text: 'Expand Selection', key: 'Ctrl+Shift+M', cmd: 'expandToMatching' },
-                    { text: 'Delete Line', key: 'Ctrl+D', cmd: 'removeline' },
-                    "================================",
-                    { text: 'Copy Line Up', key: 'Alt+Shift+ArrowUp', cmd: 'copylinesup' },
-                    { text: 'Copy Line Down', key: 'Alt+Shift+ArrowDown', cmd: 'copylinesdown' },
-                    { text: 'Move Line Up', key: 'Alt+ArrowUp' },
-                    { text: 'Move Line Down', key: 'Alt+ArrowDown' },
-                ]
-            },
-            {
-                text: 'View',
-                items: [{ text: 'Nothing to View' }]
-            },
-            {
-                text: 'Help',
-                items: [{ text: "About Frame" }]
-            },
-            {
-                text: 'File',
-                items: [
-                    { text: "New Node", key: 'Ctrl+N', cmd: 'new', disable: true },
-                    { text: "New Node from template", cmd: 'template_new', disable: true },
-                    { text: "Open Node", key: 'Ctrl+O', cmd: 'open', disable: true },
-                    {
-                        disable: true,
-                        text: "Open Recent",
-                        items: [
-                            { text: "Node A" },
-                            { text: "Node B" },
-                            { text: "Node C" },
-                            {
-                                text: "Node D",
-                                items: [
-                                    { text: "Node D" },
-                                    { text: "Node E" },
-                                    { text: "Node F" },
-                                    { text: "Node G" }]
-                            }
-                        ]
-                    },
-                    '=================================',
-                    { text: "Save", key: 'Ctrl+S', disable: true },
-                    { text: "Save As", key: 'Ctrl+Shift+S', disable: true },
-                    { text: "Save All", disable: true },
-                    '=================================',
-                    { text: "Auto Save", disable: true },
-                    { text: "Prereferences" },
-                    '=================================',
-                    { text: "Open Project", key: 'Ctrl+Alt+O', cmd: 'open_project' },
-                    {
-                        text: "Open Recent Project",
-
-                        items: [
-                            { text: "Project A" },
-                            { text: "Project E" },
-                            { text: "Project F" },
-                            { text: "Project G" }]
-                        , disable: true
-                    },
-                    {
-                        text: 'Logout', cmd: 'logout'
-                    }
-                ]
-            },
-            {
-                text: 'Edit',
-                items: [
-                    { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
-                    { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
-                    "================================",
-                    { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
-                    { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
-                    { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
-                    "==============================",
-                    { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
-                    { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
-                    "=============================",
-                    { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
-                    { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
-                ]
-            },
-            {
-                text: 'Selection',
-                items: [
-                    { text: 'Select All', key: 'Ctrl+A', cmd: 'selectall' },
-                    { text: 'Expand Selection', key: 'Ctrl+Shift+M', cmd: 'expandToMatching' },
-                    { text: 'Delete Line', key: 'Ctrl+D', cmd: 'removeline' },
-                    "================================",
-                    { text: 'Copy Line Up', key: 'Alt+Shift+ArrowUp', cmd: 'copylinesup' },
-                    { text: 'Copy Line Down', key: 'Alt+Shift+ArrowDown', cmd: 'copylinesdown' },
-                    { text: 'Move Line Up', key: 'Alt+ArrowUp' },
-                    { text: 'Move Line Down', key: 'Alt+ArrowDown' },
-                ]
-            },
-            {
-                text: 'View',
-                items: [{ text: 'Nothing to View' }]
-            },
-            {
-                text: 'Help',
-                items: [{ text: "About Frame" }]
-            }
+    <script>
+        initIframe.call($('iframe'));
 
 
-        ]
-    };
-    _({ tag: 'hmenu', props: menudata, style: { height: '2em' } }).addTo(document.body).on('press', function (event) {
-    });
-    console.log('time', performance.now() - now);
+        var now = performance.now();
+        var menudata = {
+            items: [
+                { text: "Dashboard" },
+                {
+                    text: 'File',
+                    items: [
+                        { text: "New Node", key: 'Ctrl+N', cmd: 'new', disable: true },
+                        { text: "New Node from template", cmd: 'template_new', disable: true },
+                        { text: "Open Node", key: 'Ctrl+O', cmd: 'open', disable: true },
+                        {
+                            disable: true,
+                            text: "Open Recent",
+                            items: [
+                                { text: "Node A" },
+                                { text: "Node B" },
+                                { text: "Node C" },
+                                {
+                                    text: "Node D",
+                                    items: [
+                                        { text: "Node D" },
+                                        { text: "Node E" },
+                                        { text: "Node F" },
+                                        { text: "Node G" }]
+                                }
+                            ]
+                        },
+                        '=================================',
+                        { text: "Save", key: 'Ctrl+S', disable: true },
+                        { text: "Save As", key: 'Ctrl+Shift+S', disable: true },
+                        { text: "Save All", disable: true },
+                        '=================================',
+                        { text: "Auto Save", disable: true },
+                        { text: "Prereferences" },
+                        '=================================',
+                        { text: "Open Project", key: 'Ctrl+Alt+O', cmd: 'open_project' },
+                        {
+                            text: "Open Recent Project",
 
-
-    AComp._('iconbutton').addTo(document.body).addChild(AComp._('i.fas.fa-address-card')).addChild(AComp._('<span>Danh bạ</span>')).addStyle('margin-left', '30px');
-    var pokemons = [
-        {
-            name: "Rattata jsfjsjf sofskfksf sfjsfk skfksf skdfsd fksdf skfsd fsdkf sfk s fskgdkgkdfg kgdfkg gkfdkgk kgfkkk kfgkfk dkfsd fkdsf sdfksd fsdkfs ddkfkkfkdsfkdskf sfkksfk",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-02/a_rattata.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Dark", "Normal"], maxCP: 588, baseHP: 60, baseATK: 103, baseDFN: 70
-        },
-        {
-            name: "Rattata",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-02/a_rattata.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Dark", "Normal"], maxCP: 588, baseHP: 60, baseATK: 103, baseDFN: 70
-        },
-        {
-            name: "Raticate",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_raticate.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Dark", "Normal"], maxCP: 1587, baseHP: 150, baseATK: 135, baseDFN: 159
-        },
-        {
-            name: "Raichu",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_raichu.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Electric", "Psychic"], maxCP: 2143, baseHP: 120, baseATK: 201, baseDFN: 172
-        },
-        {
-            name: "Sandshrew",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_sandshrew.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Ice", "Steel"], maxCP: 1219, baseHP: 100, baseATK: 125, baseDFN: 154
-        },
-        {
-            name: "Sandslash",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_sandslash.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Ice", "Steel"], maxCP: 2366, baseHP: 150, baseATK: 177, baseDFN: 221
-        },
-        {
-            name: "Vulpix",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_vulpix.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Ice"], maxCP: 774, baseHP: 76, baseATK: 96, baseDFN: 122
-        },
-        {
-            name: "Ninetales",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_ninetales.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Ice"], maxCP: 2184, baseHP: 146, baseATK: 170, baseDFN: 207
-        },
-        {
-            name: "Diglett",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_diglett.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Ground", "Steel"], maxCP: 463, baseHP: 20, baseATK: 108, baseDFN: 89
-        },
-        {
-            name: "Dugtrio",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_dugtrio.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Ground", "Steel"], maxCP: 1587, baseHP: 70, baseATK: 201, baseDFN: 148
-        },
-        {
-            name: "Meowth",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_meowth.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Dark"], maxCP: 679, baseHP: 80, baseATK: 99, baseDFN: 81
-        },
-        {
-            name: "Persian",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/persian_alola_form.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Dark"], maxCP: 1614, baseHP: 130, baseATK: 158, baseDFN: 139
-        },
-        {
-            name: "Geodude",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/j193ui17mj.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Rock", "Electric"], maxCP: 1193, baseHP: 80, baseATK: 132, baseDFN: 163
-        },
-        {
-            name: "Graveler",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/9cnmm0p2eu.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Rock", "Electric"], maxCP: 1815, baseHP: 110, baseATK: 164, baseDFN: 196
-        },
-        {
-            name: "Golem",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/tr481eys0m.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Rock", "Electric"], maxCP: 2916, baseHP: 160, baseATK: 211, baseDFN: 229
-        },
-        {
-            name: "Grimer",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_grimer.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Poison", "Dark"], maxCP: 1269, baseHP: 160, baseATK: 135, baseDFN: 90
-        },
-        {
-            name: "Muk",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_muk.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Poison", "Dark"], maxCP: 2709, baseHP: 210, baseATK: 190, baseDFN: 184
-        },
-        {
-            name: "Exeggutor",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_exeggutor.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Grass", "Dragon"], maxCP: 2881, baseHP: 190, baseATK: 230, baseDFN: 158
-        },
-        {
-            name: "Marowak",
-            img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_marowak.jpg/EG11/resize/256x-1/quality/65/format/jpg",
-            type: ["Fire", "Ghost"], maxCP: 1691, baseHP: 120, baseATK: 144, baseDFN: 200
-        }];
-
-
-    var pokemonNames = pokemons.map(function (e) {
-        return e.name;
-    });
-
-    var selectTableParam = {
-        tag: 'selecttable',
-        props: {
-            selectedItems: [],
-            nonselectedItems: pokemonNames
-        },
-        on: {
-            remove: function (event, sender) {
-                console.log('remove', event.item);
-            },
-            add: function (event, sender) {
-                console.log('add', event.item);
-
-            },
-            addall: function (event) {
-                console.log('addall')
-            },
-            removeall: function (event) {
-                console.log('removeall')
-
-            }
-
-        }
-    };
-    AComp._(selectTableParam).addTo(document.body);
-    AComp._(Object.assign({ style: { width: '500px', height: '160px' } }, selectTableParam)).addTo(document.body);
-    var sortedSelectTable = AComp._(selectTableParam).addTo($('#select-table-sorted'));
-    sortedSelectTable.sorted = true;
-
-    AComp._('contextcaptor').addTo(document.body).attachTo(document.body);
-
-    var testContext = AComp._({
-        extendEvent: ['contextmenu'],
-        child:'Nhấn chuột phải vào đây',
-        style: {
-            marginTop:'100px',
-            height: '200px',
-            background: 'rgb(10, 10, 200, 0.2)'
-        },
-        on: {
-            contextmenu: function (event) {
-               
-                event.showContextMenu({
-                    items: [{
-                        text: 'row 1'
-                    }, {
-                        text: 'row 2',
-                        items: [{
-                            text: 'child 1'
+                            items: [
+                                { text: "Project A" },
+                                { text: "Project E" },
+                                { text: "Project F" },
+                                { text: "Project G" }]
+                            , disable: true
                         },
                         {
-                            text: 'child 2'
-                        }]
-                    }
+                            text: 'Logout', cmd: 'logout'
+                        }
                     ]
-                })
+                },
+                {
+                    text: 'Edit',
+                    items: [
+                        { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
+                        { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
+                        "================================",
+                        { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
+                        { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
+                        { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
+                        "==============================",
+                        { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
+                        { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
+                        "=============================",
+                        { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
+                        { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
+                    ]
+                },
+                {
+                    text: 'Selection',
+                    items: [
+                        { text: 'Select All', key: 'Ctrl+A', cmd: 'selectall' },
+                        { text: 'Expand Selection', key: 'Ctrl+Shift+M', cmd: 'expandToMatching' },
+                        { text: 'Delete Line', key: 'Ctrl+D', cmd: 'removeline' },
+                        "================================",
+                        { text: 'Copy Line Up', key: 'Alt+Shift+ArrowUp', cmd: 'copylinesup' },
+                        { text: 'Copy Line Down', key: 'Alt+Shift+ArrowDown', cmd: 'copylinesdown' },
+                        { text: 'Move Line Up', key: 'Alt+ArrowUp' },
+                        { text: 'Move Line Down', key: 'Alt+ArrowDown' },
+                    ]
+                },
+                {
+                    text: 'View',
+                    items: [{ text: 'Nothing to View' }]
+                },
+                {
+                    text: 'Help',
+                    items: [{ text: "About Frame" }]
+                },
+                {
+                    text: 'File',
+                    items: [
+                        { text: "New Node", key: 'Ctrl+N', cmd: 'new', disable: true },
+                        { text: "New Node from template", cmd: 'template_new', disable: true },
+                        { text: "Open Node", key: 'Ctrl+O', cmd: 'open', disable: true },
+                        {
+                            disable: true,
+                            text: "Open Recent",
+                            items: [
+                                { text: "Node A" },
+                                { text: "Node B" },
+                                { text: "Node C" },
+                                {
+                                    text: "Node D",
+                                    items: [
+                                        { text: "Node D" },
+                                        { text: "Node E" },
+                                        { text: "Node F" },
+                                        { text: "Node G" }]
+                                }
+                            ]
+                        },
+                        '=================================',
+                        { text: "Save", key: 'Ctrl+S', disable: true },
+                        { text: "Save As", key: 'Ctrl+Shift+S', disable: true },
+                        { text: "Save All", disable: true },
+                        '=================================',
+                        { text: "Auto Save", disable: true },
+                        { text: "Prereferences" },
+                        '=================================',
+                        { text: "Open Project", key: 'Ctrl+Alt+O', cmd: 'open_project' },
+                        {
+                            text: "Open Recent Project",
+
+                            items: [
+                                { text: "Project A" },
+                                { text: "Project E" },
+                                { text: "Project F" },
+                                { text: "Project G" }]
+                            , disable: true
+                        },
+                        {
+                            text: 'Logout', cmd: 'logout'
+                        }
+                    ]
+                },
+                {
+                    text: 'Edit',
+                    items: [
+                        { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
+                        { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
+                        "================================",
+                        { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
+                        { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
+                        { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
+                        "==============================",
+                        { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
+                        { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
+                        "=============================",
+                        { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
+                        { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
+                    ]
+                },
+                {
+                    text: 'Selection',
+                    items: [
+                        { text: 'Select All', key: 'Ctrl+A', cmd: 'selectall' },
+                        { text: 'Expand Selection', key: 'Ctrl+Shift+M', cmd: 'expandToMatching' },
+                        { text: 'Delete Line', key: 'Ctrl+D', cmd: 'removeline' },
+                        "================================",
+                        { text: 'Copy Line Up', key: 'Alt+Shift+ArrowUp', cmd: 'copylinesup' },
+                        { text: 'Copy Line Down', key: 'Alt+Shift+ArrowDown', cmd: 'copylinesdown' },
+                        { text: 'Move Line Up', key: 'Alt+ArrowUp' },
+                        { text: 'Move Line Down', key: 'Alt+ArrowDown' },
+                    ]
+                },
+                {
+                    text: 'View',
+                    items: [{ text: 'Nothing to View' }]
+                },
+                {
+                    text: 'Help',
+                    items: [{ text: "About Frame" }]
+                },
+                {
+                    text: 'File',
+                    items: [
+                        { text: "New Node", key: 'Ctrl+N', cmd: 'new', disable: true },
+                        { text: "New Node from template", cmd: 'template_new', disable: true },
+                        { text: "Open Node", key: 'Ctrl+O', cmd: 'open', disable: true },
+                        {
+                            disable: true,
+                            text: "Open Recent",
+                            items: [
+                                { text: "Node A" },
+                                { text: "Node B" },
+                                { text: "Node C" },
+                                {
+                                    text: "Node D",
+                                    items: [
+                                        { text: "Node D" },
+                                        { text: "Node E" },
+                                        { text: "Node F" },
+                                        { text: "Node G" }]
+                                }
+                            ]
+                        },
+                        '=================================',
+                        { text: "Save", key: 'Ctrl+S', disable: true },
+                        { text: "Save As", key: 'Ctrl+Shift+S', disable: true },
+                        { text: "Save All", disable: true },
+                        '=================================',
+                        { text: "Auto Save", disable: true },
+                        { text: "Prereferences" },
+                        '=================================',
+                        { text: "Open Project", key: 'Ctrl+Alt+O', cmd: 'open_project' },
+                        {
+                            text: "Open Recent Project",
+
+                            items: [
+                                { text: "Project A" },
+                                { text: "Project E" },
+                                { text: "Project F" },
+                                { text: "Project G" }]
+                            , disable: true
+                        },
+                        {
+                            text: 'Logout', cmd: 'logout'
+                        }
+                    ]
+                },
+                {
+                    text: 'Edit',
+                    items: [
+                        { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
+                        { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
+                        "================================",
+                        { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
+                        { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
+                        { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
+                        "==============================",
+                        { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
+                        { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
+                        "=============================",
+                        { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
+                        { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
+                    ]
+                },
+                {
+                    text: 'Selection',
+                    items: [
+                        { text: 'Select All', key: 'Ctrl+A', cmd: 'selectall' },
+                        { text: 'Expand Selection', key: 'Ctrl+Shift+M', cmd: 'expandToMatching' },
+                        { text: 'Delete Line', key: 'Ctrl+D', cmd: 'removeline' },
+                        "================================",
+                        { text: 'Copy Line Up', key: 'Alt+Shift+ArrowUp', cmd: 'copylinesup' },
+                        { text: 'Copy Line Down', key: 'Alt+Shift+ArrowDown', cmd: 'copylinesdown' },
+                        { text: 'Move Line Up', key: 'Alt+ArrowUp' },
+                        { text: 'Move Line Down', key: 'Alt+ArrowDown' },
+                    ]
+                },
+                {
+                    text: 'View',
+                    items: [{ text: 'Nothing to View' }]
+                },
+                {
+                    text: 'Help',
+                    items: [{ text: "About Frame" }]
+                }
+
+
+            ]
+        };
+        _({ tag: 'hmenu', props: menudata, style: { height: '2em' } }).addTo(document.body).on('press', function (event) {
+        });
+        console.log('time', performance.now() - now);
+
+
+        AComp._('iconbutton').addTo(document.body).addChild(AComp._('i.fas.fa-address-card')).addChild(AComp._('<span>Danh bạ</span>')).addStyle('margin-left', '30px');
+        var pokemons = [
+            {
+                name: "Rattata jsfjsjf sofskfksf sfjsfk skfksf skdfsd fksdf skfsd fsdkf sfk s fskgdkgkdfg kgdfkg gkfdkgk kgfkkk kfgkfk dkfsd fkdsf sdfksd fsdkfs ddkfkkfkdsfkdskf sfkksfk",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-02/a_rattata.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Dark", "Normal"], maxCP: 588, baseHP: 60, baseATK: 103, baseDFN: 70
+            },
+            {
+                name: "Rattata",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-02/a_rattata.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Dark", "Normal"], maxCP: 588, baseHP: 60, baseATK: 103, baseDFN: 70
+            },
+            {
+                name: "Raticate",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_raticate.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Dark", "Normal"], maxCP: 1587, baseHP: 150, baseATK: 135, baseDFN: 159
+            },
+            {
+                name: "Raichu",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_raichu.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Electric", "Psychic"], maxCP: 2143, baseHP: 120, baseATK: 201, baseDFN: 172
+            },
+            {
+                name: "Sandshrew",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_sandshrew.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Ice", "Steel"], maxCP: 1219, baseHP: 100, baseATK: 125, baseDFN: 154
+            },
+            {
+                name: "Sandslash",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_sandslash.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Ice", "Steel"], maxCP: 2366, baseHP: 150, baseATK: 177, baseDFN: 221
+            },
+            {
+                name: "Vulpix",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_vulpix.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Ice"], maxCP: 774, baseHP: 76, baseATK: 96, baseDFN: 122
+            },
+            {
+                name: "Ninetales",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_ninetales.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Ice"], maxCP: 2184, baseHP: 146, baseATK: 170, baseDFN: 207
+            },
+            {
+                name: "Diglett",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_diglett.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Ground", "Steel"], maxCP: 463, baseHP: 20, baseATK: 108, baseDFN: 89
+            },
+            {
+                name: "Dugtrio",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_dugtrio.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Ground", "Steel"], maxCP: 1587, baseHP: 70, baseATK: 201, baseDFN: 148
+            },
+            {
+                name: "Meowth",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_meowth.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Dark"], maxCP: 679, baseHP: 80, baseATK: 99, baseDFN: 81
+            },
+            {
+                name: "Persian",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/persian_alola_form.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Dark"], maxCP: 1614, baseHP: 130, baseATK: 158, baseDFN: 139
+            },
+            {
+                name: "Geodude",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/j193ui17mj.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Rock", "Electric"], maxCP: 1193, baseHP: 80, baseATK: 132, baseDFN: 163
+            },
+            {
+                name: "Graveler",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/9cnmm0p2eu.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Rock", "Electric"], maxCP: 1815, baseHP: 110, baseATK: 164, baseDFN: 196
+            },
+            {
+                name: "Golem",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/tr481eys0m.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Rock", "Electric"], maxCP: 2916, baseHP: 160, baseATK: 211, baseDFN: 229
+            },
+            {
+                name: "Grimer",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_grimer.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Poison", "Dark"], maxCP: 1269, baseHP: 160, baseATK: 135, baseDFN: 90
+            },
+            {
+                name: "Muk",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/alolan_muk.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Poison", "Dark"], maxCP: 2709, baseHP: 210, baseATK: 190, baseDFN: 184
+            },
+            {
+                name: "Exeggutor",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_exeggutor.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Grass", "Dragon"], maxCP: 2881, baseHP: 190, baseATK: 230, baseDFN: 158
+            },
+            {
+                name: "Marowak",
+                img: "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-05-22-10-23/a_marowak.jpg/EG11/resize/256x-1/quality/65/format/jpg",
+                type: ["Fire", "Ghost"], maxCP: 1691, baseHP: 120, baseATK: 144, baseDFN: 200
+            }];
+
+
+        var pokemonNames = pokemons.map(function (e) {
+            return e.name;
+        });
+
+        var selectTableParam = {
+            tag: 'selecttable',
+            props: {
+                selectedItems: [],
+                nonselectedItems: pokemonNames
+            },
+            on: {
+                remove: function (event, sender) {
+                    console.log('remove', event.item);
+                },
+                add: function (event, sender) {
+                    console.log('add', event.item);
+
+                },
+                addall: function (event) {
+                    console.log('addall')
+                },
+                removeall: function (event) {
+                    console.log('removeall')
+
+                }
+
             }
-        }
+        };
+        AComp._(selectTableParam).addTo(document.body);
+        AComp._(Object.assign({ style: { width: '500px', height: '160px' } }, selectTableParam)).addTo(document.body);
+        var sortedSelectTable = AComp._(selectTableParam).addTo($('#select-table-sorted'));
+        sortedSelectTable.sorted = true;
 
-    }).addTo(document.body);
-    
-    _('mediainput').addStyle('marginTop', '40px').addTo(document.body);
+        AComp._('contextcaptor').addTo(document.body).attachTo(document.body);
 
-    var hscroller = _('hscroller.limited-width').addStyle({
-        height:'50px',
-        'max-width':'500px',
-        'background':'rgb(30, 30, 80)',
-        'white-space': 'nowrap'
-    }).addTo(document.body);
-    Array(80).fill('<button style="margin:5px">text</button>').map(_).forEach(function(e){
-        e.addTo(hscroller);
-    })
+        var testContext = AComp._({
+            extendEvent: ['contextmenu'],
+            child: 'Nhấn chuột phải vào đây',
+            style: {
+                marginTop: '100px',
+                height: '200px',
+                background: 'rgb(10, 10, 200, 0.2)'
+            },
+            on: {
+                contextmenu: function (event) {
 
-    var photoSwipeViewer = PhotoSwipeViewer.newInstance();
-//<a href="https://wall.alphacoders.com/big.php?i=458495"><img src="https://images2.alphacoders.com/458/458495.jpg"></a>
-    var imgE = _('<img src="https://images2.alphacoders.com/458/458495.jpg">')
-    .addStyle('margin', '50px')
-    .addStyle('max-height', '200px')
-    .on('click', function(){
-        photoSwipeViewer.pickImageElement(this);
-    })
-    .addTo(document.body);
-    
-    // // var x = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 700,
-    // //         canvasHeight: 600,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         ranges: [
-    // //             [4, 7],
-    // //             [5, 7],
-    // //             [6, 8],
-    // //             [4, 5],
-    // //             [6, 9],
-    // //             [3, 5],
-    // //             [1, 4],
-    // //             [4, 7],
-    // //             [7, 9]
-    // //         ],
-    // //         // rangesColor:'rgba()',
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0.5, 3.5, 2, 2, 3, 0.7, 8.2, 7]
-    // //             }//,
-    // //             // {
-    // //             //     name: 'ThirdYear',
-    // //             //     values: [6, 2, 4, 3, 6, 1, 3, 3, 3]
+                    event.showContextMenu({
+                        items: [{
+                            text: 'row 1'
+                        }, {
+                            text: 'row 2',
+                            items: [{
+                                text: 'child 1'
+                            },
+                            {
+                                text: 'child 2'
+                            }]
+                        }
+                        ]
+                    })
+                }
+            }
 
-    // //             // },
-    // //             // {
-    // //             //     name: 'FifthtYear',
-    // //             //     values: [8, 5, 5, 6, 5, 1, 4, 2, 2]
-    // //             // },
-    // //             // {
-    // //             //     name: 'FinalYear',
-    // //             //     values: [7, 9, 3, 8, 5, 0, 3, 0, 2]
-    // //             // }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
+        }).addTo(document.body);
 
-    // // }).addTo(document.body);
+        _('mediainput').addStyle('marginTop', '40px').addTo(document.body);
 
-    // // var a = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 900,
-    // //         canvasHeight: 900,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0]
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3]
+        var hscroller = _('hscroller.limited-width').addStyle({
+            height: '50px',
+            'max-width': '500px',
+            'background': 'rgb(30, 30, 80)',
+            'white-space': 'nowrap'
+        }).addTo(document.body);
+        Array(80).fill('<button style="margin:5px">text</button>').map(_).forEach(function (e) {
+            e.addTo(hscroller);
+        })
 
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2]
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0]
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
+        var photoSwipeViewer = PhotoSwipeViewer.newInstance();
+        //<a href="https://wall.alphacoders.com/big.php?i=458495"><img src="https://images2.alphacoders.com/458/458495.jpg"></a>
+        var imgE = _('<img src="https://images2.alphacoders.com/458/458495.jpg">')
+            .addStyle('margin', '50px')
+            .addStyle('max-height', '200px')
+            .on('click', function () {
+                photoSwipeViewer.pickImageElement(this);
+            })
+            .addTo(document.body);
 
-    // // }).addTo(document.body);
-    // // var b = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 300,
-    // //         canvasHeight: 400,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7]
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3]
+        var imgE2 = _('<img src="http://lab.daithangminh.vn/online_support/uploads/images/238_%E1%BA%A3nh.png.upload">')
+            .addStyle('margin', '50px')
+            .addStyle('max-height', '200px')
+            .on('click', function () {
+                photoSwipeViewer.pickImageElement(this);
+            })
+            .addTo(document.body);
 
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2]
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2]
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
 
-    // // }).addTo(document.body);
 
-    // // var y = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 400,
-    // //         canvasHeight: 400,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7]
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3]
 
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2]
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2]
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
+        var resizableLayout = _('resizablelayout.debug').addStyle({
+            width: '80%',
+            height: '400px',
+            background: 'rgb(200, 200, 200)'
+        }).addTo(document.body);
 
-    // // }).addTo(document.body);
 
-    // // var z = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 300,
-    // //         canvasHeight: 500,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7]
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3]
-
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2]
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2]
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
-
-    // // }).addTo(document.body);
-    // // var t = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)', width: '600px', height: '750px' },
-    // //     props: {
-    // //         title: 'Programming skill(scale 1.5)',
-    // //         canvasWidth: 400,
-    // //         canvasHeight: 500,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7]
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3]
-
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2]
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2]
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
-
-    // // }).addTo(document.body);
-    // // var m = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 400,
-    // //         canvasHeight: 500,
-    // //         levels: ['0.0', '1.0', '2.0', '3.0', '4.0', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7]
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3]
-
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2]
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2]
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
-
-    // // }).addTo(document.body);
-
-    // // function div2(x) {
-    // //     return x / 2;
-    // // }
-
-    // // var m = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 500,
-    // //         canvasHeight: 800,
-    // //         levels: ['0.0', '1.0', 'Đậu', '3.0', '4.0', 'Xuất sắc'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7].map(div2)
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3].map(div2)
-
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2].map(div2)
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2].map(div2)
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
-
-    // // }).addTo(document.body);
-
-    // // var m = absol.buildDom({
-    // //     tag: 'assessmentchart',
-    // //     style: { background: 'rgb(230, 230, 232)' },
-    // //     props: {
-    // //         title: 'Programming skill',
-    // //         canvasWidth: 1300,
-    // //         canvasHeight: 800,
-    // //         levels: ['0.0', '1.0', 'Đậu', '3.0', '4.0', 'Xuất sắc'],
-    // //         keys: ['C/C++', 'Javascript', 'Matlab', 'CSS', 'C#', 'R', 'Python', 'ASM', 'Pascal'],
-    // //         areas: [
-    // //             {
-    // //                 name: 'FirstYear',
-    // //                 values: [5, 0, 3, 2, 2, 3, 0, 0, 7].map(div2)
-    // //             },
-    // //             {
-    // //                 name: 'ThirdYear',
-    // //                 values: [6, 2, 4, 3, 6, 1, 3, 3, 3].map(div2)
-
-    // //             },
-    // //             {
-    // //                 name: 'FifthtYear',
-    // //                 values: [8, 5, 5, 6, 5, 1, 4, 2, 2].map(div2)
-    // //             },
-    // //             {
-    // //                 name: 'FinalYear',
-    // //                 values: [7, 9, 3, 8, 5, 0, 3, 0, 2].map(div2)
-    // //             }
-    // //         ]//,
-    // //         // numberToString: vchart.lambda.toLocalString(0)
-    // //     }
-
-    // // }).addTo(document.body);
-
-</script>
+    </script>
+</body>
 
 </html>
