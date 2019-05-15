@@ -13,23 +13,12 @@ import OOP from './HTML5/OOP';
 
 import XML from './XML/XML';
 
-// import JSZip from 'jszip';
-// import JSDocx from './JSDocx/JSDocx';
-
-// import * as esprima from 'esprima';
-// import AceDiff from 'ace-diff';
-
-
-
 import AComp from './AComp/AComp';
 import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
 
-// window.BrowserDetector = BrowserDetector;
 
-
-// /************************** ABSOL adapter ***********************/
 window.absol = {
     Element: Element,
     HTMLElement: Element,//oldName
@@ -42,24 +31,14 @@ window.absol = {
     OOP: OOP,
     Event: EventEmitter,
     XML: XML,
+    Color: Color,
     EventEmitter: EventEmitter,
-    //     JSZip: JSZip,
-    //     JSDocx: JSDocx,
-    //     esprima: esprima,
-    //     AceDiff: AceDiff
+    JSZip: JSZip,
+    dom: Dom,//old alias
+    event: EventEmitter,//old alias
+    color: Color
 };
-
-Object.defineProperty(absol, 'event', {
-    get: function () {
-        return this.Event;
-    }
-});
-Object.defineProperty(absol, 'dom', {
-    get: function () {
-        return this.Dom;
-    }
-});
-
+//for old plugin
 window.absol.ShareDom = AComp;
 window.absol.ShareDom.fromCode = AComp.core.fromCode.bind(AComp.core);
 window.absol.ShareCreator = AComp.creator;
@@ -72,15 +51,7 @@ window.absol.ShareSvgCreator = Svg.ShareInstance.creator;
 window.absol._svg = window.absol.ShareSvg._;
 window.absol.$svg = window.absol.ShareSvg.$;
 window.absol.buildSvg = window.absol.ShareSvg._;
-
 window.absol.documentReady = Dom.documentReady;
-
-
 window.AComp = AComp;
-
-
-window.absol.Color = Color;
-
 window.PhotoSwipeViewer = PhotoSwipeViewer;
-
 window.IFrameBridge = IFrameBridge;
