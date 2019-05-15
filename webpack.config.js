@@ -4,7 +4,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 module.exports = {
     mode: process.env.MODE || "development",
     // mode: 'production',
-    entry: ['babel-polyfill', "./src/index.js"],
+    entry: ['babel-polyfill', "./src/absol.js"],
     output: {
         path: path.join(__dirname, "."),
         filename: "./dist/absol.js"
