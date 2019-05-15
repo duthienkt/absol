@@ -24,6 +24,7 @@ import XML from './XML/XML';
 import AComp from './AComp/AComp';
 import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 import Color from './Color/Color';
+import IFrameBridge from './Network/IFrameBridge';
 
 // window.BrowserDetector = BrowserDetector;
 
@@ -81,3 +82,5 @@ window.AComp = AComp;
 window.absol.Color = Color;
 
 window.PhotoSwipeViewer = PhotoSwipeViewer;
+
+window.IFrameBridge = IFrameBridge;
