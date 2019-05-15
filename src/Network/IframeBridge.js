@@ -29,7 +29,7 @@ IFrameBridge.prototype.detach = function () {
 
 IFrameBridge.fromIFrame = function (iframe) {
     var host = iframe.contentWindow || iframe.contentDocument;
-    if (!host) return new IFrameBridge(host);
+    if (host) return new IFrameBridge(host);
     else {
         var result = new IFrameBridge();
         var attachedHost = function () {
@@ -117,7 +117,7 @@ IFrameBridge.prototype.emit = function () {
     this.sync.then(function () {
         this.host.postMessage({
             type: "EMIT",
-            params:params
+            params: params
         });
     }.bind(this));
     return this;
