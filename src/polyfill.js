@@ -24,13 +24,6 @@
 }());
 
 
-if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function (search, pos) {
-        return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
-    };
-}
-
-
 if (!Object.merge) {
     Object.merge = function () {
         var res = arguments[0];
@@ -43,74 +36,4 @@ if (!Object.merge) {
         return res;
     }
 }
-
-
-if (!Object.assign) {
-    Object.assign = function () {
-        var res = arguments[0];
-        for (var i = 1; i < arguments.length; ++i) {
-            var o = arguments[i];
-            for (var key in o)
-                res[key] = o[key] != undefined ? o[key] : res[key];
-        }
-        return res;
-    }
-}
-
-if (!Array.prototype.fill) {
-    Object.defineProperty(Array.prototype, 'fill', {
-        value: function (value) {
-            if (this == null) {
-                throw new TypeError('this is null or not defined');
-            }
-            var O = Object(this);
-            var len = O.length >>> 0;
-            var start = arguments[1];
-            var relativeStart = start >> 0;
-            var k = relativeStart < 0 ?
-                Math.max(len + relativeStart, 0) :
-                Math.min(relativeStart, len);
-            var end = arguments[2];
-            var relativeEnd = end === undefined ?
-                len : end >> 0;
-            var final = relativeEnd < 0 ?
-                Math.max(len + relativeEnd, 0) :
-                Math.min(relativeEnd, len);
-            while (k < final) {
-                O[k] = value;
-                k++;
-            }
-            return O;
-        }
-    });
-}
-
-if (!Function.prototype.bind) {
-    Function.prototype.bind = function (oThis) {
-        if (typeof this !== 'function') {
-            // closest thing possible to the ECMAScript 5
-            // internal IsCallable function
-            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-        }
-
-        var aArgs = Array.prototype.slice.call(arguments, 1),
-            fToBind = this,
-            fNOP = function () { },
-            fBound = function () {
-                return fToBind.apply(this instanceof fNOP
-                    ? this
-                    : oThis,
-                    aArgs.concat(Array.prototype.slice.call(arguments)));
-            };
-
-        if (this.prototype) {
-            // Function.prototype doesn't have a prototype property
-            fNOP.prototype = this.prototype;
-        }
-        fBound.prototype = new fNOP();
-
-        return fBound;
-    };
-}
-
 
