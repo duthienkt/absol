@@ -1,6 +1,6 @@
 {
     "name": "azar",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "HTML5 Framework",
     "main": "src/index.js",
     "directories": {
@@ -12,18 +12,20 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@gitlab.com/duthienkt/Azar.git"
+        "url": "https://github.com/duthienkt/absol.git"
     },
     "keywords": [
         "html",
-        "xml"
+        "xml",
+        "framework",
+        "html5 components"
     ],
     "author": "Pham Quoc Du Thien",
     "license": "ISC",
     "bugs": {
-        "url": "https://gitlab.com/duthienkt/Azar/issues"
+        "url": "https://github.com/duthienkt/absol/issues"
     },
-    "homepage": "https://gitlab.com/duthienkt/Azar#readme",
+    "homepage": "https://github.com/duthienkt/absol",
     "dependencies": {
         "ace-diff": "^2.3.0",
         "atob": "^2.1.2",
