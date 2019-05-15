@@ -112,10 +112,12 @@ IFrameBridge.prototype.__azarRelfInvoke = function (name, params) {
 
 
 IFrameBridge.prototype.emit = function () {
+    var params = [];
+    params.push.apply(params, arguments);
     this.sync.then(function () {
         this.host.postMessage({
             type: "EMIT",
-            params: Array.apply(null, arguments)
+            params:params
         });
     }.bind(this));
     return this;
@@ -123,10 +125,11 @@ IFrameBridge.prototype.emit = function () {
 
 
 IFrameBridge.prototype.invoke = function (name) {
+    var params = [];
+    params.push.apply(params, arguments);
+    params.shift();
     return this.sync.then(function () {
         var indent = randomIdent(32);
-        var params = Array.apply(null, arguments);
-        params.shift();
         this.host.postMessage({
             type: 'INVOKE',
             params: params,
