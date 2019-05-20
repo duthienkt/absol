@@ -17,6 +17,7 @@ import AComp from './AComp/AComp';
 import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
+import JSZip from 'jszip';
 
 
 window.absol = {
