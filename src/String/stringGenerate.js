@@ -3,7 +3,7 @@ export var identCharacters = function () {
     var chars = 'qwertyuiopasdfghjklzxcvbnm';
     chars = chars + chars.toUpperCase();
     var num = '0123456789';
-    var spect = '$_';
+    var spect = '_';
     return (chars + spect + num).split('');
 
 }();
