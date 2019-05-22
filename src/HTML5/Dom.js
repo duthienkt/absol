@@ -474,8 +474,10 @@ Dom.updateResizeSystem = function () {
             child.updateSize();
             return true;
         }
-
-
+        else if (typeof child.onresize == 'function') {
+            child.onresize();
+            return true;
+        }
     }
     if (Dom.ResizeSystemCacheElts === undefined) {
         Dom.ResizeSystemCacheElts = [];
