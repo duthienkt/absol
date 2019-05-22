@@ -18,8 +18,9 @@ import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
 import JSZip from 'jszip';
+import JSDocx from './JSDocx/JSDocx';
 
-window.absol = {
+var absol = {
     Element: Element,
     HTMLElement: Element,//oldName
     JSPath: JSPath,
@@ -36,22 +37,13 @@ window.absol = {
     JSZip: JSZip,
     dom: Dom,//old alias
     event: EventEmitter,//old alias
-    color: Color
+    PhotoSwipeViewer: PhotoSwipeViewer,
+    IFrameBridge: IFrameBridge,
+    AComp: AComp,
+    JSDocx: JSDocx
 };
-//for old plugin
-window.absol.ShareDom = AComp;
-window.absol.ShareDom.fromCode = AComp.core.fromCode.bind(AComp.core);
-window.absol.ShareCreator = AComp.creator;
-window.absol._ = window.absol.ShareDom._;
-window.absol.$ = window.absol.ShareDom.$;
-window.absol.buildDom = window.absol.ShareDom._;
 
-window.absol.ShareSvg = Svg.ShareInstance;
-window.absol.ShareSvgCreator = Svg.ShareInstance.creator;
-window.absol._svg = window.absol.ShareSvg._;
-window.absol.$svg = window.absol.ShareSvg.$;
-window.absol.buildSvg = window.absol.ShareSvg._;
-window.absol.documentReady = Dom.documentReady;
-window.AComp = AComp;
-window.PhotoSwipeViewer = PhotoSwipeViewer;
-window.IFrameBridge = IFrameBridge;
+
+
+
+export default absol;
