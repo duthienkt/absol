@@ -1,3 +1,4 @@
+import { randomInt } from "../Math/random";
 
 export var identCharacters = function () {
     var chars = 'qwertyuiopasdfghjklzxcvbnm';
@@ -63,7 +64,7 @@ export var ipsumLoremWord = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consecte
 
 export function randomWord() {
     var arr = ipsumLoremWord;
-    var idx = Math.randomInt(0, arr.length - 1);
+    var idx = randomInt(0, arr.length - 1);
     return arr[idx];
 };
 
