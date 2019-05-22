@@ -440,17 +440,17 @@ Dom.ResizeSystemCacheElts = undefined;
 
 Dom.removeResizeSystemTrash = function () {
     Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (element) {
-        return absol.HTMLElement.prototype.isDescendantOf.call(element, document.body);
+        return Element.prototype.isDescendantOf.call(element, document.body);
     });
 };
 
 Dom.addToResizeSystem = function (element) {
     for (var i = 0; i < Dom.ResizeSystemElts.length; ++i)
-        if (absol.HTMLElement.prototype.isDescendantOf.call(element, Dom.ResizeSystemElts[i])) {
+        if (Element.prototype.isDescendantOf.call(element, Dom.ResizeSystemElts[i])) {
             return false;
         }
     Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (e) {
-        return !absol.HTMLElement.prototype.isDescendantOf.call(e, element);
+        return !Element.prototype.isDescendantOf.call(e, element);
     });
     Dom.ResizeSystemElts.push(element);
     return true;
