@@ -266,20 +266,20 @@ Dom.traceOutBoundingClientRect = function (current) {
 
         var ox = Element.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
         var oy = Element.prototype.getComputedStyleValue.call(current, 'overflow-y') != "visible";
-        var isBody = current.tagName.toLowerCase() == 'body';
-        if (ox || oy || isBody) {
+        var isHtml = current.tagName.toLowerCase() == 'html';
+        if (ox || oy || isHtml) {
             var bound = current.getBoundingClientRect();
-            if (ox || isBody) {
+            if (ox || isHtml) {
                 left = Math.max(left, bound.left);
                 right = Math.min(right, bound.right);
             }
-            if (oy || isBody) {
+            if (oy || isHtml) {
                 top = Math.max(top, bound.top);
                 bottom = Math.min(bottom, bound.bottom);
             }
         }
 
-        if (isBody) break;
+        if (isHtml) break;
         current = current.parentElement;
 
     }
