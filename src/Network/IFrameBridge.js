@@ -14,8 +14,11 @@ IFrameBridge.prototype.attach = function (host) {
     if (this.host.addEventListener) {
         this.host.addEventListener("message", this.__azarMessageListener.bind(this), false);
     }
-    else {
+    else if (this.host.attachEvent) {
         this.host.attachEvent("onmessage", this.__azarMessageListener.bind(this));
+    }
+    else {
+        this.host.onmessage = this.__azarMessageListener.bind(this);
     }
     this.__IFrameBridge_resolve();
 };
@@ -49,7 +52,7 @@ IFrameBridge.fromIFrame = function (iframe) {
 
 IFrameBridge.getInstance = function () {
     if (!IFrameBridge.shareInstance) {
-        IFrameBridge.shareInstance = new IFrameBridge(window);
+        IFrameBridge.shareInstance = new IFrameBridge(self);
     }
     return IFrameBridge.shareInstance;
 }
