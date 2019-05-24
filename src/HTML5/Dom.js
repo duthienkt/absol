@@ -258,10 +258,11 @@ Dom.isFullScreen = function () {
  * @returns {ClientRect}
  */
 Dom.traceOutBoundingClientRect = function (current) {
+    var screenSize = Dom.getScreenSize();
     var left = 0;
-    var right = 10000;
+    var right = screenSize.width;
     var top = 0;
-    var bottom = 10000;
+    var bottom = screenSize.height;
     while (current) {
 
         var ox = Element.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
@@ -281,7 +282,6 @@ Dom.traceOutBoundingClientRect = function (current) {
 
         if (isHtml) break;
         current = current.parentElement;
-
     }
     return { left: left, right: right, top: top, bottom: bottom, width: right - left, height: bottom - top };
 };
