@@ -17,8 +17,8 @@ export function dataURItoBlob(dataURI) {
 
 export function blobToArrayBuffer(blob) {
     var fileReader = new FileReader();
-    return new Promise(function(rs) {
-        fileReader.onload = function(event) {
+    return new Promise(function (rs) {
+        fileReader.onload = function (event) {
             var arrayBuffer = event.target.result;
             rs(arrayBuffer)
         };
@@ -26,3 +26,8 @@ export function blobToArrayBuffer(blob) {
     });
 }
 
+export function stringToBlob(text, type) {
+    return new Blob([text], {
+        type: type || 'text/plain'
+    });
+}
