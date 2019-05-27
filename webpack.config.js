@@ -35,7 +35,7 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
-                options: { presets: [['es2015', { modules: false }]] }
+                options: { presets: [[ '@babel/preset-env', { modules: false }]] }
             },
             {
                 test: /\.(tpl|txt|xml|rels|css)$/i,
