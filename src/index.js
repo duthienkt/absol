@@ -13,7 +13,6 @@ import OOP from './HTML5/OOP';
 
 import XML from './XML/XML';
 
-import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
 import JSZip from 'jszip';
@@ -36,7 +35,6 @@ var absol = {
     JSZip: JSZip,
     dom: Dom,//old alias
     event: EventEmitter,//old alias
-    PhotoSwipeViewer: PhotoSwipeViewer,
     IFrameBridge: IFrameBridge,
     JSDocx: JSDocx
 };
