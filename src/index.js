@@ -13,7 +13,6 @@ import OOP from './HTML5/OOP';
 
 import XML from './XML/XML';
 
-import AComp from './AComp/AComp';
 import PhotoSwipeViewer from './PhotoViewer/PhotoSwipeViewer';
 import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
@@ -39,7 +38,6 @@ var absol = {
     event: EventEmitter,//old alias
     PhotoSwipeViewer: PhotoSwipeViewer,
     IFrameBridge: IFrameBridge,
-    AComp: AComp,
     JSDocx: JSDocx
 };
 
