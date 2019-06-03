@@ -147,7 +147,6 @@ Dom.prototype.create = function (option, isInherited) {
             }
         }
     } else {
-
         option = option || {};
         if (option.text) {//is textNode
             return this.makeNewTextNode(option.text);
@@ -168,8 +167,6 @@ Dom.prototype.create = function (option, isInherited) {
             }
         }
     }
-    console.log(option.tag, this.creator[option.tag]&& this.creator[option.tag])
-
     this.attach(res);
     if (property) {
         Object.defineProperties(res, property);
