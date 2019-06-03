@@ -109,7 +109,7 @@ Dom.prototype.create = function (option, isInherited) {
     var res;
     var prototype;
     var property;
-    var attributes;
+    var attribute;
     if (Dom.isDomNode(option)) {
         res = option;
         option = {};
@@ -142,7 +142,7 @@ Dom.prototype.create = function (option, isInherited) {
                 res._azar_extendTags[option.tag] = true;
                 prototype = this.creator[option.tag].prototype;
                 property = this.creator[option.tag].property;
-                attributes = this.creator[option.tag].attributes;
+                attribute = this.creator[option.tag].attribute;
 
             }
         }
@@ -164,11 +164,11 @@ Dom.prototype.create = function (option, isInherited) {
                 res._azar_extendTags[option.tag] = true;
                 prototype = this.creator[option.tag].prototype;
                 property = this.creator[option.tag].property;
-                attributes = this.creator[option.tag].attributes;
+                attribute = this.creator[option.tag].attribute;
             }
         }
     }
-
+    console.log(option.tag, this.creator[option.tag]&& this.creator[option.tag])
 
     this.attach(res);
     if (property) {
@@ -177,8 +177,8 @@ Dom.prototype.create = function (option, isInherited) {
     if (prototype) {
         OOP.extends(res, prototype);
     }
-    if (attributes) {
-        res.defineAttributes(attributes);
+    if (attribute) {
+        res.defineAttributes(attribute);
     }
     option.attr && res.attr(option.attr);
     option.extendEvent && res.defineEvent(option.extendEvent);

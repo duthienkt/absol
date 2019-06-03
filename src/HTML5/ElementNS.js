@@ -25,14 +25,14 @@ ElementNS.prototype.attr = function () {
         if (arguments.length == 2) {
             if (arguments[1] === null || arguments[1] === undefined) {
                 if (this._azar_extendAttributes[arguments[0]]) {
-                    this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[0]);
+                    this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[1]);
                 }
                 else
                     this.removeAttributeNS(null,arguments[0]);
             }
             else {
                 if (this._azar_extendAttributes[arguments[0]]) {
-                    this._azar_extendAttributes[arguments[0]].set.call(this, arguments[0]);
+                    this._azar_extendAttributes[arguments[0]].set.call(this, arguments[1]);
                 }
                 else{
                     this.setAttributeNS(null,arguments[0], arguments[1]);
