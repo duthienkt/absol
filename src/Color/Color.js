@@ -80,16 +80,16 @@ Color.prototype.toString = function (mode) {
 Color.templates = [
     ['rgba', 'bytes', 'rgba({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}}, {{x[3]}})'],
     ['rgb', 'bytes', 'rgb({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}})'],
-    ['hsl', 'toHSLA()', 'hsl({{x[0] * 360}}deg, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
-    ['hsla', 'toHSLA()', 'hsla({{x[0] * 360}}deg, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
-    ['hsb', 'toHSBA()', 'hsb({{x[0] * 360}}deg, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
-    ['hsba', 'toHSBA()', 'hsba({{x[0] * 360}}deg, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
+    ['hsl', 'toHSLA()', 'hsl({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
+    ['hsla', 'toHSLA()', 'hsla({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
+    ['hsb', 'toHSBA()', 'hsb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
+    ['hsba', 'toHSBA()', 'hsba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
     ['hex3', 'toHex3()', '#{{x}}'],
     ['hex4', 'toHex4()', '#{{x}}'],
     ['hex6', 'toHex6()', '#{{x}}'],
     ['hex8', 'toHex8()', '#{{x}}'],
-    ['hwb', 'toHWBA()', 'hwb({{x[0] * 360}}deg, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
-    ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}deg, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})']
+    ['hwb', 'toHWBA()', 'hwb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
+    ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})']
 ].reduce(function (ac, cr) {
     ac[cr[0]] = new Function('color', [
         'var x = color.' + cr[1] + ';',
@@ -183,6 +183,7 @@ Color.regexes.hsl = new RegExp(
     [
         '^hsl\\(',
         Color.regexes.integer.source,
+        '[deg]*',
         ',',
         Color.regexes.percent.source,
         ',',
@@ -197,6 +198,7 @@ Color.regexes.hsla = new RegExp(
     [
         '^hsla\\(',
         Color.regexes.integer.source,
+        '[deg]*',
         ',',
         Color.regexes.percent.source,
         ',',
@@ -213,6 +215,7 @@ Color.regexes.hsb = new RegExp(
     [
         '^hsb\\(',
         Color.regexes.integer.source,
+        '[deg]*',
         ',',
         Color.regexes.percent.source,
         ',',
@@ -227,6 +230,7 @@ Color.regexes.hsba = new RegExp(
     [
         '^hsba\\(',
         Color.regexes.integer.source,
+        '[deg]*',
         ',',
         Color.regexes.percent.source,
         ',',
@@ -242,6 +246,7 @@ Color.regexes.hwb = new RegExp(
     [
         '^hwb\\(',
         Color.regexes.integer.source,
+        '[deg]*',
         ',',
         Color.regexes.percent.source,
         ',',
@@ -256,6 +261,7 @@ Color.regexes.hwba = new RegExp(
     [
         '^hwba\\(',
         Color.regexes.integer.source,
+        '[deg]*',
         ',',
         Color.regexes.percent.source,
         ',',
