@@ -89,13 +89,13 @@ export function randomSentence(limitLenght) {
     var length = Math.ceil(Math.random() * limitLenght / 70);
     var res = new Array(length)
         .fill(null)
-        .map(randomPhrase
-            .reduce(function (ac, cr) {
-                if (ac.length + cr.length < limitLenght) {
-                    ac.parts.push(cr);
-                }
-                return ac;
-            }, { parts: [], length: 0 }).parts)
+        .map(randomPhrase)
+        .reduce(function (ac, cr) {
+            if (ac.length + cr.length < limitLenght) {
+                ac.parts.push(cr);
+            }
+            return ac;
+        }, { parts: [], length: 0 }).parts
         .join(', ');
     if (Math.random() < 0.03) {
         res = res.replace(/\,/i, ':');
@@ -111,12 +111,12 @@ export function randomParagraph(limitLenght) {
     if (!limitLenght) limitLenght = 1000;
     var length = Math.ceil(Math.random() * limitLenght / 200);
     return new Array(length).fill(null)
-        .map(randomSentence
-            .reduce(function (ac, cr) {
-                if (ac.length + cr.length < limitLenght) {
-                    ac.parts.push(cr);
-                }
-                return ac;
-            }, { parts: [], length: 0 }).parts)
+        .map(randomSentence)
+        .reduce(function (ac, cr) {
+            if (ac.length + cr.length < limitLenght) {
+                ac.parts.push(cr);
+            }
+            return ac;
+        }, { parts: [], length: 0 }).parts
         .join(' ');
 };
