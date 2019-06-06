@@ -1,6 +1,6 @@
 {
     "name": "absol",
-    "version": "1.1.7",
+    "version": "1.2.0",
     "description": "HTML5 Framework",
     "main": "src/index.js",
     "directories": {
@@ -27,12 +27,9 @@
     },
     "homepage": "https://github.com/duthienkt/absol",
     "dependencies": {
-        "ace-diff": "^2.3.0",
         "atob": "^2.1.2",
         "babel-polyfill": "^6.26.0",
-        "brace": "^0.11.1",
         "btoa": "^1.2.1",
-        "esprima": "^4.0.1",
         "jszip": "^3.2.1",
         "lz-string": "^1.4.4"
     },

@@ -2,12 +2,12 @@ const path = require('path');
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 
-var packages ={
+var packages = {
     default: {
         entry: ['babel-polyfill', "./src/absol.js"],
         filename: "./dist/absol.js"
     },
-    wordfinder :{
+    wordfinder: {
         entry: ["./src/wordfinder.js"],
         filename: "./dist/wordfinder.js"
     }
@@ -35,11 +35,15 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
-                options: { presets: [[ '@babel/preset-env', { modules: false }]] }
+                options: { presets: [['@babel/preset-env', { modules: false }]] }
             },
             {
-                test: /\.(tpl|txt|xml|rels|css)$/i,
+                test: /\.(tpl|txt|xml|rels)$/i,
                 use: 'raw-loader',
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
             }
         ]
     },
