@@ -1,6 +1,7 @@
 import Element from './Element';
 import JSPath from './JSPath';
 import OOP from './OOP';
+import getFunctionName from '../String/getFunctionName';
 
 
 
@@ -195,6 +196,87 @@ Dom.prototype.create = function (option, isInherited) {
     if (!isInherited) res.init(option.props);
     return res;
 };
+
+
+Dom.prototype.install = function () {
+    var _this = this;
+    if (arguments.length == 1) {
+        if (arguments[0].creator && arguments[0].create && arguments[0].select) {
+            // is a dom core
+            Object.keys(arguments[0].creator).forEach(function (key) {
+                if (key.startsWith('_') || key.startsWith('$')) return;
+                var func = arguments[0].creator[key];
+                if (typeof (func) == 'function')
+                    if (_this.create[key] != func)
+                        _this.create[key] = func;
+            })
+        }
+        else if (typeof (arguments[0]) == 'function') {
+            var name = getFunctionName(arguments[0]) || arguments[0].name;
+            if (name) {
+                this.creator[name.toLowerCase()] = arguments[0];
+            }
+            else {
+                console.error('No ident name of creator function', arguments[0])
+            }
+        }
+        else if (typeof arguments[0] == 'object') {
+            Object.keys(arguments[0]).forEach(function (key) {
+                if (key.startsWith('_') || key.startsWith('$')) return;
+                var func = arguments[0][key];
+                if (typeof (func) == 'function')
+                    if (_this.create[key] != func)
+                        _this.create[key] = func;
+            })
+        }
+        else if (arguments[0] instanceof Array) {
+            arguments[0].forEach(function (func) {
+                var name = getFunctionName(func) || func.name;
+                if (name) {
+                    _this.creator[name.toLowerCase()] = func;
+                }
+            });
+        }
+        else {
+            console.error('Unknow data', arguments[0]);
+        }
+    } else if (arguments.length == 2) {
+        if (arguments[0] instanceof Array) {
+            arguments[0].forEach(function (key) {
+                if (key.match(arguments[0])) {
+                    var func = arguments[1][key];
+                    if (typeof (func) == 'function')
+                        if (_this.create[key] != func)
+                            _this.create[key] = func;
+                }
+            });
+        }
+        else if (arguments[0] instanceof RegExp) {
+            Object.keys(arguments[1]).forEach(function (key) {
+                if (key.match(arguments[0])) {
+                    var func = arguments[1][key];
+                    if (typeof (func) == 'function')
+                        if (_this.create[key] != func)
+                            _this.create[key] = func;
+                }
+            });
+        }
+        else if (typeof (arguments[0]) == 'string' && arguments[0] > 0) {
+            if (typeof (arguments[1]) == 'function') {
+                this.creator[arguments[0]] = arguments[1];
+            }
+            else {
+                console.error('arguments[1] is not a function');
+            }
+        }
+    }
+    else {
+        console.error('Invalid param');
+    }
+
+    return this;
+};
+
 
 /**
  * 
