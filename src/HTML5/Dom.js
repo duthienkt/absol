@@ -208,8 +208,8 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = creator[key];
                 if (typeof (func) == 'function')
-                    if (_this.create[key] != func)
-                        _this.create[key] = func;
+                    if (_this.creator[key] != func)
+                        _this.creator[key] = func;
             })
         }
         else if (typeof (arg0) == 'function') {
@@ -226,8 +226,8 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = arg0[key];
                 if (typeof (func) == 'function')
-                    if (_this.create[key] != func)
-                        _this.create[key] = func;
+                    if (_this.creator[key] != func)
+                        _this.creator[key] = func;
             })
         }
         else if (arg0 instanceof Array) {
