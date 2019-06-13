@@ -198,39 +198,40 @@ Dom.prototype.create = function (option, isInherited) {
 };
 
 
-Dom.prototype.install = function () {
+Dom.prototype.install = function (arg0, arg1) {
     var _this = this;
     if (arguments.length == 1) {
-        if (arguments[0].creator && arguments[0].create && arguments[0].select) {
+        if (arg0.creator && arg0.create && arg0.select) {
             // is a dom core
-            Object.keys(arguments[0].creator).forEach(function (key) {
+            var creator = arg0.creator;
+            Object.keys(creator).forEach(function (key) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
-                var func = arguments[0].creator[key];
+                var func = creator[key];
                 if (typeof (func) == 'function')
                     if (_this.create[key] != func)
                         _this.create[key] = func;
             })
         }
-        else if (typeof (arguments[0]) == 'function') {
-            var name = getFunctionName(arguments[0]) || arguments[0].name;
+        else if (typeof (arg0) == 'function') {
+            var name = getFunctionName(arg0) || arg0.name;
             if (name) {
-                this.creator[name.toLowerCase()] = arguments[0];
+                this.creator[name.toLowerCase()] = arg0;
             }
             else {
-                console.error('No ident name of creator function', arguments[0])
+                console.error('No ident name of creator function', arg0)
             }
         }
-        else if (typeof arguments[0] == 'object') {
-            Object.keys(arguments[0]).forEach(function (key) {
+        else if (typeof arg0 == 'object') {
+            Object.keys(arg0).forEach(function (key) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
-                var func = arguments[0][key];
+                var func = arg0[key];
                 if (typeof (func) == 'function')
                     if (_this.create[key] != func)
                         _this.create[key] = func;
             })
         }
-        else if (arguments[0] instanceof Array) {
-            arguments[0].forEach(function (func) {
+        else if (arg0 instanceof Array) {
+            arg0.forEach(function (func) {
                 var name = getFunctionName(func) || func.name;
                 if (name) {
                     _this.creator[name.toLowerCase()] = func;
@@ -238,35 +239,35 @@ Dom.prototype.install = function () {
             });
         }
         else {
-            console.error('Unknow data', arguments[0]);
+            console.error('Unknow data', arg0);
         }
     } else if (arguments.length == 2) {
-        if (arguments[0] instanceof Array) {
-            arguments[0].forEach(function (key) {
-                if (key.match(arguments[0])) {
-                    var func = arguments[1][key];
+        if (arg0 instanceof Array) {
+            arg0.forEach(function (key) {
+                if (key.match(arg0)) {
+                    var func = arg1[key];
                     if (typeof (func) == 'function')
                         if (_this.create[key] != func)
                             _this.create[key] = func;
                 }
             });
         }
-        else if (arguments[0] instanceof RegExp) {
-            Object.keys(arguments[1]).forEach(function (key) {
-                if (key.match(arguments[0])) {
-                    var func = arguments[1][key];
+        else if (arg0 instanceof RegExp) {
+            Object.keys(arg1).forEach(function (key) {
+                if (key.match(arg0)) {
+                    var func = arg1[key];
                     if (typeof (func) == 'function')
                         if (_this.create[key] != func)
                             _this.create[key] = func;
                 }
             });
         }
-        else if (typeof (arguments[0]) == 'string' && arguments[0] > 0) {
-            if (typeof (arguments[1]) == 'function') {
-                this.creator[arguments[0]] = arguments[1];
+        else if (typeof (arg0) == 'string' && arg0 > 0) {
+            if (typeof (arg1) == 'function') {
+                this.creator[arg0] = arg1;
             }
             else {
-                console.error('arguments[1] is not a function');
+                console.error('arg1 is not a function');
             }
         }
     }
