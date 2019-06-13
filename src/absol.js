@@ -3,9 +3,7 @@ import absol from ".";
 
 //for old plugin
 absol.color = absol.Color;
-absol.ShareDom = absol.AComp;
-absol.ShareDom.fromCode = absol.AComp.core.fromCode.bind(absol.AComp.core);
-absol.ShareCreator = absol.AComp.creator;
+absol.ShareDom = absol.Dom.ShareInstance;
 absol._ = absol.ShareDom._;
 absol.$ = absol.ShareDom.$;
 absol.buildDom = absol.ShareDom._;

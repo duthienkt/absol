@@ -7,13 +7,17 @@ var packages = {
         entry: ['babel-polyfill', "./src/absol.js"],
         filename: "./dist/absol.js"
     },
+    test: {
+        entry: ['babel-polyfill', "./src/String/diff.js"],
+        filename: "./dist/test.js"
+    },
     wordfinder: {
         entry: ["./src/wordfinder.js"],
         filename: "./dist/wordfinder.js"
     }
 }
 
-const PACKAGE = 'default';
+const PACKAGE = 'test';
 
 
 module.exports = {

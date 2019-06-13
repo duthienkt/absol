@@ -18,8 +18,8 @@
 <body>
     <div id="iframe-container">
         <script>
-            var _ = AComp._;
-            var $ = AComp.$;
+            var _ = absol._;
+            var $ = absol.$;
 
             function initIframe(event) {
 
@@ -325,7 +325,7 @@
         console.log('time', performance.now() - now);
 
 
-        AComp._('iconbutton').addTo(document.body).addChild(AComp._('i.fas.fa-address-card')).addChild(AComp._('<span>Danh bạ</span>')).addStyle('margin-left', '30px');
+        _('iconbutton').addTo(document.body).addChild(_('i.fas.fa-address-card')).addChild(_('<span>Danh bạ</span>')).addStyle('margin-left', '30px');
         var pokemons = [
             {
                 name: "Rattata jsfjsjf sofskfksf sfjsfk skfksf skdfsd fksdf skfsd fsdkf sfk s fskgdkgkdfg kgdfkg gkfdkgk kgfkkk kfgkfk dkfsd fkdsf sdfksd fsdkfs ddkfkkfkdsfkdskf sfkksfk",
@@ -452,14 +452,14 @@
 
             }
         };
-        AComp._(selectTableParam).addTo(document.body);
-        AComp._(Object.assign({ style: { width: '500px', height: '160px' } }, selectTableParam)).addTo(document.body);
-        var sortedSelectTable = AComp._(selectTableParam).addTo($('#select-table-sorted'));
+        _(selectTableParam).addTo(document.body);
+        _(Object.assign({ style: { width: '500px', height: '160px' } }, selectTableParam)).addTo(document.body);
+        var sortedSelectTable = _(selectTableParam).addTo($('#select-table-sorted'));
         sortedSelectTable.sorted = true;
 
-        AComp._('contextcaptor').addTo(document.body).attachTo(document.body);
+        _('contextcaptor').addTo(document.body).attachTo(document.body);
 
-        var testContext = AComp._({
+        var testContext = _({
             extendEvent: ['contextmenu'],
             child: 'Nhấn chuột phải vào đây',
             style: {
