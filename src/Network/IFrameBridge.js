@@ -1,6 +1,10 @@
 import EventEmitter from "../HTML5/EventEmitter";
 import { randomIdent } from "../String/stringGenerate";
 
+/**
+ * 
+ * @param {Worker} host 
+ */
 function IFrameBridge(host) {
     EventEmitter.call(this);
     this.detach();

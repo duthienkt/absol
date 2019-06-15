@@ -262,7 +262,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 }
             });
         }
-        else if (typeof (arg0) == 'string' && arg0 > 0) {
+        else if (typeof (arg0) == 'string' && arg0.length > 0) {
             if (typeof (arg1) == 'function') {
                 this.creator[arg0] = arg1;
             }
