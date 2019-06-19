@@ -56,8 +56,5 @@ module.exports = {
     },
     performance: {
         hints: false
-    },
-    plugins: [
-        new MinifyPlugin()
-    ]
+    }
 };
