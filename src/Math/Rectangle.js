@@ -1,4 +1,4 @@
-import Vec2 from "./Vect2";
+import Vec2 from "./Vec2";
 
 
 
@@ -84,6 +84,25 @@ Rectangle.prototype.collapsedSquare = function (r) {
     return (maxX - minX) * (maxY - minY);
 };
 
+/**
+ * @param {Rectangle} other
+ * @returns {Rectangle}
+ */
+Rectangle.prototype.merge = function (other) {
+    var left = Math.min(this.x, other.x);
+    var top = Math.min(this.y, other.y);
+    var right = Math.max(this.x + this.width, other.x + other.width);
+    var bottom = Math.max(this.y + this.height, other.y + other.height);
+    return new Rectangle(left, top, right - left, bottom - top);
+};
+
+
+/**
+ * @returns {Rectangle}
+ */
+Rectangle.prototype.clone = function () {
+    return new Rectangle(this.x, this.y, this.width, this.height);
+};
 
 Rectangle.make = function (x, y, width, height) {
     return new Rectangle(x, y, width, height);
@@ -94,5 +113,6 @@ Rectangle.make = function (x, y, width, height) {
 Rectangle.makeCenter = function (x, y, width, height) {
     return new Rectangle(x - width / 2, y - height / 2, width, height);
 };
+
 
 export default Rectangle;
