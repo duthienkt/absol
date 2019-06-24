@@ -5,7 +5,7 @@ import BrowserRules from './BrowserRules';
  * 
  * @param {BrowserRules} rulesheet 
  */
-function BrowserDectector(rulesheet) {
+function BrowserDetector(rulesheet) {
     this.au = global.navigator ? (navigator.userAgent || '') : '';
     this.rulesheet = rulesheet;
     this.os = this.detectByRules(this.rulesheet.os);
@@ -20,7 +20,7 @@ function BrowserDectector(rulesheet) {
 
 
 
-BrowserDectector.prototype.detectByRules = function (rules) {
+BrowserDetector.prototype.detectByRules = function (rules) {
     var result = {};
     for (var i = 0; i < rules.length; ++i) {
         var os = rules[i];
@@ -52,4 +52,4 @@ BrowserDectector.prototype.detectByRules = function (rules) {
 
 
 
-export default new BrowserDectector(BrowserRules);
+export default new BrowserDetector(BrowserRules);
