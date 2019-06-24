@@ -314,7 +314,10 @@ Color.fromHWBA = function (h, s, b, a) {
 };
 
 
-
+/**
+ * @param {String} text
+ * @returns {Color}
+ */
 Color.parse = function (text) {
     if (this.namedColors[text]) text = this.namedColors[text];
     if (this.regexes.hex8.test(text)) {
