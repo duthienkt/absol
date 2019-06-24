@@ -88,3 +88,31 @@ var hct  = myColor.getHightContrastColor();
 
 <div style="color:rgba(70, 72, 72, 1);background:rgba(200, 100, 95, 0.54)">yiq => color:rgba(70, 72, 72, 1); background:rgba(200, 100, 95, 0.54)</div>
 
+### converter
+
+#### base64
+
+```js
+import { UnicodeBase64Converter, base64EncodeUnicode, base64DecodeUnicode } from "absol/src/Converter/base64";
+var raw = "Tôi yêu Việt Nam!";
+var endcoded = base64EncodeUnicode(raw);//VMO0aSB5w6p1IFZp4buHdCBOYW0h
+var decoded = base64DecodeUnicode(endcoded);//Tôi yêu Việt Nam!
+//or
+var  endcoded1 = UnicodeBase64Converter.encode(raw);
+var decode1 = UnicodeBase64Converter.decode(endcoded1);
+```
+
+#### file, blob, dataUrl
+
+```js
+import { blobToFile, dataURItoBlob, base64DecodeUnicode } from "absol/src/Converter/file";
+
+function blobToFile(theBlob:Blob, fileName:String): File;
+
+function dataURItoBlob(dataURI:String): Blob;
+
+function blobToArrayBuffer(blob:Blob): Promise<ArrayBuffer>;
+
+function stringToBlob(text:String, type:String):Blob;
+```
+
