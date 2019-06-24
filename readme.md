@@ -105,7 +105,7 @@ var decode1 = UnicodeBase64Converter.decode(endcoded1);
 #### file, blob, dataUrl
 
 ```js
-import { blobToFile, dataURItoBlob, base64DecodeUnicode } from "absol/src/Converter/file";
+import { blobToArrayBuffer, dataURItoBlob, blobToFile, stringToBlob } from "absol/src/Converter/file";
 
 function blobToFile(theBlob:Blob, fileName:String): File;
 
@@ -116,3 +116,17 @@ function blobToArrayBuffer(blob:Blob): Promise<ArrayBuffer>;
 function stringToBlob(text:String, type:String):Blob;
 ```
 
+## CookieStore
+
+```js
+import CookieStore from "absol/src/Cookie/CookieStore";
+```
+
+```js
+CookieStore.isEnabled():Boolean;  //check if cookie is enabled
+CookieStore.secure(); //secure cookie
+CookieStore.get(key:String):String;
+CookieStore.get(key:String, value:String);
+```
+
+> Note: data saved by CookieStore will be encode and decoded by `UnicodeBase64Converter` (both key and value).
