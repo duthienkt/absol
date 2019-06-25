@@ -27,7 +27,7 @@ BrowserDetector.prototype.detectByRules = function (rules) {
         var type = os[0];
         var rgx = os[1];
         if (typeof (rgx) == 'function') {
-            rgx = rgx(this.au);
+            rgx = rgx(this.au.toLowerCase());
         }
         if (Object.prototype.toString.call(rgx).indexOf('RegExp')) {
             var matched = this.au.toLowerCase().match(rgx);
@@ -40,7 +40,7 @@ BrowserDetector.prototype.detectByRules = function (rules) {
             }
         }
         else if (typeof (rgx) == 'string') {
-            if (this.au.indexOf(rgx) >= 0) {
+            if (this.au.toLowerCase().indexOf(rgx) >= 0) {
                 result.type = type;
             }
         }
