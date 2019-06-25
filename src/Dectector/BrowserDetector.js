@@ -14,7 +14,7 @@ function BrowserDetector(rulesheet) {
     this.browser = this.detectByRules(this.rulesheet.browser);
     this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     this.isCococ = navigator.userAgent.toLowerCase().indexOf('coc_coc_browser') >= 1;
-    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('win') < 0;
+    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('win') < 0 &&navigator.userAgent.toLowerCase().indexOf('android')<0;
     this.isMobile = navigator.userAgent.indexOf('KFFOWI') > -1 || navigator.userAgent.toLowerCase().indexOf('mobile') > -1;
 }
 
