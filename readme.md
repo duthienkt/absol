@@ -86,7 +86,7 @@ var hct  = myColor.getHightContrastColor();
 
 <div style="color:rgba(0, 0, 0, 1);background:rgba(200, 100, 95, 0.54)">yiq => color:rgba(0, 0, 0, 1); background:rgba(200, 100, 95, 0.54)</div>
 
-<div style="color:rgba(70, 72, 72, 1);background:rgba(200, 100, 95, 0.54)">yiq => color:rgba(70, 72, 72, 1); background:rgba(200, 100, 95, 0.54)</div>
+<div style="color:rgba(70, 72, 72, 1);background:rgba(200, 100, 95, 0.54)">hct => color:rgba(70, 72, 72, 1); background:rgba(200, 100, 95, 0.54)</div>
 
 ### converter
 
@@ -184,7 +184,17 @@ var imgGoogle =   mJSPath.findFirst(document.body, function(elt){
 
 ## Dom
 
+Project: 
 
+[absol-acomp](https://github.com/duthienkt/absol-acomp)
 
+[absol-brace](https://github.com/duthienkt/absol-brace)
 
+[absol-brace](https://github.com/duthienkt/absol-colorpicker)
+
+[absol-photoswipeviewer](https://github.com/duthienkt/absol-photoswipeviewer)
+
+## SVG
+
+[absol-vchart](https://github.com/duthienkt/vchart)
 
