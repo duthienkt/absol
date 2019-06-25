@@ -61,15 +61,28 @@ Svg.svgToCanvas = function (element) {
     }
     if (element && element.tagName == 'svg') {
         var cssTexts = {};
-        Dom.ShareInstance.$('', element, function (e) {
-            var cssRules = Element.prototype.getCSSRules.call(e); cssRules.forEach(function (rule) {
-                cssTexts[rule.cssText] = true;
-            });
+        function depthClone(originElt) {
+            var newElt = originElt.cloneNode();//no deep
+            if (!originElt.getAttributeNS) return newElt;//is text node
+            var cssRules = Element.prototype.getCSSRules.call(originElt);
+            var cssKey = cssRules.reduce(function(ac, rule){
+                for (var i = 0; i<rule.style.length; ++i){
+                    ac[rule.style[i]] = true;
+                }
+                return ac;
+            }, {});
+            for (var key in cssKey){
+                newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
+            }
+            var children = Array.prototype.map.call(originElt.childNodes, depthClone);
+            for (var i = 0; i < children.length; ++i){
+                newElt.appendChild(children[i]);
+            }
+            return newElt;
+        }
 
-
-        });
-        var fullCss = Object.keys(cssTexts).join('\n');
-
+        var cloneElement = depthClone(element);
+        
         var renderSpace = Dom.ShareInstance._({
             style: {
                 // opacity:0,
@@ -79,10 +92,7 @@ Svg.svgToCanvas = function (element) {
                 bottom: 0
             }
         }).addTo(document.body);
-        var cloneElement = element.cloneNode(true);
         renderSpace.addChild(cloneElement);
-        var newCSS = Dom.ShareInstance._('style').addTo(cloneElement);
-        newCSS.innerHTML = fullCss;
 
         var svgCode = renderSpace.innerHTML;
         renderSpace.clearChild();
@@ -107,8 +117,53 @@ Svg.svgToCanvas = function (element) {
     else {
         throw new Error('Element must be svg');
     }
-
 };
 
+
+Svg.svgToExportedString = function(element){
+    if (typeof element == 'string') {
+        element = Dom.ShareInstance.$(element);
+    }
+    if (element && element.tagName == 'svg') {
+        var cssTexts = {};
+        function depthClone(originElt) {
+            var newElt = originElt.cloneNode();//no deep
+            if (!originElt.getAttributeNS) return newElt;//is text node
+            var cssRules = Element.prototype.getCSSRules.call(originElt);
+            var cssKey = cssRules.reduce(function(ac, rule){
+                for (var i = 0; i<rule.style.length; ++i){
+                    ac[rule.style[i]] = true;
+                }
+                return ac;
+            }, {});
+            for (var key in cssKey){
+                newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
+            }
+            var children = Array.prototype.map.call(originElt.childNodes, depthClone);
+            for (var i = 0; i < children.length; ++i){
+                newElt.appendChild(children[i]);
+            }
+            return newElt;
+        }
+
+        var cloneElement = depthClone(element);
+        var renderSpace = Dom.ShareInstance._({
+            style: {
+                // opacity:0,
+                zIndex: -1000,
+                position: 'fixed',
+                top: 0,
+                bottom: 0
+            }
+        }).addTo(document.body);
+        renderSpace.addChild(cloneElement);
+        var svgCode = renderSpace.innerHTML;
+        renderSpace.selfRemove();
+        return svgCode;
+    }
+    else {
+        throw new Error('Element must be svg');
+    }
+};
 
 export default Svg;
