@@ -17,6 +17,7 @@ import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
 import JSZip from 'jszip';
 import JSDocx from './JSDocx/JSDocx';
+import Broadcast from './Network/Broadcast';
 
 var absol = {
     Element: Element,
@@ -36,7 +37,8 @@ var absol = {
     dom: Dom,//old alias
     event: EventEmitter,//old alias
     IFrameBridge: IFrameBridge,
-    JSDocx: JSDocx
+    JSDocx: JSDocx,
+    Broadcast: Broadcast
 };
 
 

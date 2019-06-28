@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <title>Azar</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/dist/absol.js"></script>
+</head>
+<body>
+    <script>
+        var br = new absol.Broadcast('chating', (Math.random()+''.replace('.', '')));    
+        var ip = absol._('input[type="text"]').addTo(document.body)
+        .on('keydown', function(ev){
+            var value = this.value;
+            if (value.length == 0) return;
+            if(event.key != 'Enter') return;
+            this.value = '';
+            br.emit('mess', value, br.id);
+        }); 
+
+        br.on('mess',function(value, id){
+            absol._({
+                tag:'p',
+                child:['<span style="color:red">'+id+': </span>', '<span style="color:red">'+ value+'</span>']
+            }).addTo(document.body)
+        } )
+    </script>
+</body>
