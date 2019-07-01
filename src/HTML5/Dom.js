@@ -149,7 +149,7 @@ Dom.prototype.create = function (option, isInherited) {
         }
     } else {
         option = option || {};
-        if (option.text) {//is textNode
+        if (typeof (option.text) == 'string') {//is textNode
             return this.makeNewTextNode(option.text);
         }
         else {
