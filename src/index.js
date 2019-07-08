@@ -19,6 +19,8 @@ import JSZip from 'jszip';
 import JSDocx from './JSDocx/JSDocx';
 import Broadcast from './Network/Broadcast';
 
+import * as text from './HTML5/Text';
+
 var absol = {
     Element: Element,
     HTMLElement: Element,//oldName
@@ -38,7 +40,8 @@ var absol = {
     event: EventEmitter,//old alias
     IFrameBridge: IFrameBridge,
     JSDocx: JSDocx,
-    Broadcast: Broadcast
+    Broadcast: Broadcast,
+    text:text
 };
 
 
