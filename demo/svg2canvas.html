@@ -1,0 +1,367 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Azar</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="../dist/absol.js?"></script>
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
+
+    <style type="text/css">
+        .base-chart,
+        .range-chart {
+            font-size: 12;
+            font-family: Arial;
+        }
+
+        /*Cheat if in bsc*/
+
+        table .base-chart-title {
+            font-size: 15px;
+        }
+
+
+        .range-chart:not(:hover) .vchart-vscrollbar {
+            display: none;
+        }
+
+        .base-chart-title {
+            font-size: 15;
+            font-weight: bold;
+        }
+
+        .base-chart-oxy-text {
+            font-style: italic;
+            fill: rgb(70, 70, 70);
+            stroke: none;
+        }
+
+        .range-chart-value-plot {
+            fill: #f7941d;
+            stroke: none;
+        }
+
+        .range-chart-limit-line {
+            stroke-width: 4;
+            fill: none;
+        }
+
+        .range-chart-range-line {
+            stroke-width: 1;
+            fill: none;
+            stroke: black;
+        }
+
+        .range-chart-limit-line.max {
+            stroke: #ED1C24;
+        }
+
+        .range-chart-limit-line.mid {
+            stroke: #58EBF4;
+        }
+
+        .range-chart-limit-line.min {
+            stroke: #2C82FF;
+        }
+
+        .range-chart:not(.show-inline-value) .range-chart-inline-value {
+            display: none;
+        }
+
+        /* .show-inline-value .range-chart-note, */
+
+        .show-inline-value .range-char-note-value {
+            display: none;
+        }
+    </style>
+    <style type="text/css">
+        .vchart-hidden {
+            display: none;
+        }
+
+        .base-chart:not(:hover) .vchart-vscrollbar {
+            display: none;
+        }
+
+        .vchart-hitbox {
+            fill: rgba(0, 0, 0, 0);
+            /* stroke: none; */
+        }
+
+
+        .vchart-debug .vchart-hitbox {
+            fill: rgba(22, 129, 216, 0.247);
+            stroke: rgba(22, 129, 216, 0.87);
+        }
+    </style>
+    <style type="text/css">
+        .line-chart-line {
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .line-chart-plot {
+            stroke: none;
+        }
+    </style>
+
+    <style type="text/css">
+        .vchart-tooltip-higne {
+            position: relative;
+        }
+
+        .vchart-tooltip-container {
+            background-color: rgba(20, 20, 22, 1);
+            color: rgb(231, 230, 157);
+            position: absolute;
+            white-space: nowrap;
+            padding: 5px;
+            line-height: 1.5;
+            border-radius: 4px;
+            bottom: 0;
+            left: 0;
+        }
+
+        .vchart-tooltip-container.vchart-hidden {
+            visibility: hidden;
+        }
+
+        .vchart-tooltip-anchor-container {
+            z-index: 999;
+            position: absolute;
+            top: -1000px;
+            left: -100px;
+        }
+
+        .vchart-tooltip-anchor {
+            position: relative;
+        }
+    </style>
+
+    <style type="text/css">
+        .vchart-vscrollbar-bar {
+            fill: rgba(0, 0, 0, 0.07);
+        }
+
+        .vchart-vscrollbar-button {
+            fill: rgba(0, 0, 0, 0.1);
+            ;
+        }
+
+
+        .vchart-segment-line,
+        .vchart-axis,
+        .vchart-line-arrow {
+            stroke-width: 1;
+            stroke: rgb(68, 114, 196);
+            fill: rgb(68, 114, 196);
+        }
+
+        .vchart-scroll-arrow {
+            opacity: 0.2;
+        }
+
+        .vchart-scroll-arrow:hover {
+            opacity: 0.6;
+        }
+    </style>
+    <!-- <script src="/dist/XMLParser.js"></script> -->
+    <!-- <script src="https://absol.volcanion.cf/package?name=Math"></script> -->
+    <!-- <script src="https://absol.volcanion.cf/package?name=vchart"></script> -->
+    <style>
+        .red-theme #oxy {
+            stroke: red;
+            stroke-width: 4;
+        }
+
+        .red-theme #ox-arrow,
+        .red-theme #oy-arrow {
+            fill: red;
+            stroke: red;
+
+        }
+    </style>
+</head>
+
+<body class="red-theme">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" class="base-chart dualchart" width="900" height="600"
+        viewBox="0 0 900 600">
+        <g class="vchart-axis" id="axis" transform="translate(40.8125, 434.6294642857143)">
+            <path id="oy-arrow" d="m-5 0h10l-5-6.8z" transform="translate(0, -384.6294642857143)"></path>
+            <path id="ox-arrow" d="m0 -5v10l6.8 -5z" transform="translate(849.1875, 0)"></path>
+            <path id="oxy" d="m0 -384.6294642857143v384.6294642857143 h849.1875" style="fill:none"></path>
+        </g>
+        <mask id="contentMask022965282004800902">
+            <rect id="maskRect" x="40.8125" y="10" width="849.1875" height="590" fill="white"></rect>
+        </mask>
+        <g id="contentBox" mask="url(#contentMask022965282004800902)">
+            <g id="content" transform="translate(40.8125,434.6294642857143)">
+                <g transform="translate(29.799479166666664, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 1</text>
+                </g>
+                <g transform="translate(99.3984375, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 2</text></g>
+                <g transform="translate(168.99739583333331, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 3</text>
+                </g>
+                <g transform="translate(238.59635416666666, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 4</text>
+                </g>
+                <g transform="translate(308.1953125, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 5</text></g>
+                <g transform="translate(377.7942708333333, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 6</text>
+                </g>
+                <g transform="translate(447.39322916666663, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 7</text>
+                </g>
+                <g transform="translate(516.9921875, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 8</text></g>
+                <g transform="translate(586.5911458333333, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 9</text>
+                </g>
+                <g transform="translate(656.1901041666666, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 10</text>
+                </g>
+                <g transform="translate(725.7890625, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 11</text></g>
+                <g transform="translate(795.3880208333333, 12)"><text x="0" y="5" transform="rotate(45)">Tháng 12</text>
+                </g>
+                <path class="dualchart-area"
+                    d="M34.799479166666664 -1L34.799479166666664 -364.6294642857143L104.3984375 -364.6294642857143L173.99739583333331 -364.6294642857143L243.59635416666666 -364.6294642857143L313.1953125 -364.6294642857143L382.7942708333333 -364.6294642857143L452.39322916666663 -364.6294642857143L521.9921875 -364.6294642857143L591.5911458333333 -364.6294642857143L661.1901041666666 -364.6294642857143L730.7890625 -364.6294642857143L800.3880208333333 -364.6294642857143L800.3880208333333 -1z"
+                    style="fill: rgb(255, 204, 127); stroke: rgb(255, 204, 127);"></path>
+                <path class="dualchart-area"
+                    d="M34.799479166666664 -1L34.799479166666664 -241.69724489795917L104.3984375 -200.54620535714287L173.99739583333331 -229.1956632653061L243.59635416666666 -251.59433035714284L313.1953125 -197.94170918367345L382.7942708333333 -218.25677933673467L452.39322916666663 -240.65544642857142L521.9921875 -202.10890306122448L591.5911458333333 -179.71023596938775L661.1901041666666 -246.38533801020407L730.7890625 -188.56552295918365L800.3880208333333 -166.16685586734695L800.3880208333333 -1z"
+                    style="fill: rgb(204, 204, 127); stroke: rgb(204, 204, 127);"></path>
+                <path class="dualchart-area"
+                    d="M34.799479166666664 -1L34.799479166666664 -98.97085459183673L104.3984375 -67.71690051020408L173.99739583333331 -110.43063775510204L243.59635416666666 -81.2602806122449L313.1953125 -55.7362181122449L382.7942708333333 -89.59466836734694L452.39322916666663 -147.41448341836735L521.9921875 -59.38251275510204L591.5911458333333 -125.5367155612245L661.1901041666666 -133.87110331632653L730.7890625 -128.14121173469388L800.3880208333333 -119.80682397959184L800.3880208333333 -1z"
+                    style="fill: rgb(231, 228, 227); stroke: rgb(231, 228, 227);"></path>
+                <g style="fill: red; stroke: red;">
+                    <path class="line-chart-line"
+                        d="M34.799479166666664 -155.74887117346938L104.3984375 -272.9511989795918L173.99739583333331 -59.38251275510204L243.59635416666666 -72.92589285714286L313.1953125 -30.733054846938774L382.7942708333333 -196.37901147959184L452.39322916666663 -109.38883928571428L521.9921875 -189.60732142857142L591.5911458333333 -81.78117984693877L661.1901041666666 -258.36602040816325L730.7890625 -230.23746173469388L800.3880208333333 -92.7200637755102">
+                    </path>
+                    <circle cx="34.799479166666664" cy="-155.74887117346938" r="6" class="line-chart-plot"
+                        style="fill: blue;"></circle>
+                    <circle cx="104.3984375" cy="-272.9511989795918" r="6" class="line-chart-plot"></circle>
+                    <circle cx="173.99739583333331" cy="-59.38251275510204" r="6" class="line-chart-plot"></circle>
+                    <circle cx="243.59635416666666" cy="-72.92589285714286" r="6" class="line-chart-plot"></circle>
+                    <circle cx="313.1953125" cy="-30.733054846938774" r="6" class="line-chart-plot"></circle>
+                    <circle cx="382.7942708333333" cy="-196.37901147959184" r="6" class="line-chart-plot"></circle>
+                    <circle cx="452.39322916666663" cy="-109.38883928571428" r="6" class="line-chart-plot"></circle>
+                    <circle cx="521.9921875" cy="-189.60732142857142" r="6" class="line-chart-plot"></circle>
+                    <circle cx="591.5911458333333" cy="-81.78117984693877" r="6" class="line-chart-plot"></circle>
+                    <circle cx="661.1901041666666" cy="-258.36602040816325" r="6" class="line-chart-plot"></circle>
+                    <circle cx="730.7890625" cy="-230.23746173469388" r="6" class="line-chart-plot"></circle>
+                    <circle cx="800.3880208333333" cy="-92.7200637755102" r="6" class="line-chart-plot"></circle>
+                </g>
+                <g style="fill: pink; stroke: pink;">
+                    <path class="line-chart-line"
+                        d="M34.799479166666664 -12.501581632653062L104.3984375 -275.03479591836737L173.99739583333331 -118.2441262755102L243.59635416666666 -91.67826530612246L313.1953125 -152.10257653061225L382.7942708333333 -225.02846938775508L452.39322916666663 -190.6491198979592L521.9921875 -246.90623724489797L591.5911458333333 -320.35302933673466L661.1901041666666 -215.1313839285714L730.7890625 -294.3080676020408L800.3880208333333 -214.61048469387754">
+                    </path>
+                    <circle cx="34.799479166666664" cy="-12.501581632653062" r="6" class="line-chart-plot"
+                        style="fill: cyan;"></circle>
+                    <circle cx="104.3984375" cy="-275.03479591836737" r="6" class="line-chart-plot"></circle>
+                    <circle cx="173.99739583333331" cy="-118.2441262755102" r="6" class="line-chart-plot"></circle>
+                    <circle cx="243.59635416666666" cy="-91.67826530612246" r="6" class="line-chart-plot"></circle>
+                    <circle cx="313.1953125" cy="-152.10257653061225" r="6" class="line-chart-plot"></circle>
+                    <circle cx="382.7942708333333" cy="-225.02846938775508" r="6" class="line-chart-plot"></circle>
+                    <circle cx="452.39322916666663" cy="-190.6491198979592" r="6" class="line-chart-plot"></circle>
+                    <circle cx="521.9921875" cy="-246.90623724489797" r="6" class="line-chart-plot"></circle>
+                    <circle cx="591.5911458333333" cy="-320.35302933673466" r="6" class="line-chart-plot"></circle>
+                    <circle cx="661.1901041666666" cy="-215.1313839285714" r="6" class="line-chart-plot"></circle>
+                    <circle cx="730.7890625" cy="-294.3080676020408" r="6" class="line-chart-plot"></circle>
+                    <circle cx="800.3880208333333" cy="-214.61048469387754" r="6" class="line-chart-plot"></circle>
+                </g>
+            </g>
+        </g>
+        <g class="vchart-vscrollbar vchart-hidden" transform="translate(40.8125, 424.6294642857143)">
+            <rect x="0" y="0" class="vchart-vscrollbar-bar" height="10" width="835.1875"></rect>
+            <rect class="vchart-vscrollbar-button"></rect>
+        </g>
+        <g transform="translate(40.8125,434.6294642857143)"><text x="-10" y="5" text-anchor="end">0</text><text x="-10"
+                y="-47.089923469387756" text-anchor="end">100</text><text x="-10" y="-99.17984693877551"
+                text-anchor="end">200</text><text x="-10" y="-151.26977040816325" text-anchor="end">300</text><text
+                x="-10" y="-203.35969387755102" text-anchor="end">400</text><text x="-10" y="-255.4496173469388"
+                text-anchor="end">500</text><text x="-10" y="-307.5395408163265" text-anchor="end">600</text><text
+                x="-10" y="-359.6294642857143" text-anchor="end">700</text></g>
+        <g transform="translate(40.8125,434.6294642857143)">
+            <path class="vchart-segment-line" d="m-2 0h4"></path>
+            <path class="vchart-segment-line" d="m-2 -52.089923469387756h4"></path>
+            <path class="vchart-segment-line" d="m-2 -104.17984693877551h4"></path>
+            <path class="vchart-segment-line" d="m-2 -156.26977040816325h4"></path>
+            <path class="vchart-segment-line" d="m-2 -208.35969387755102h4"></path>
+            <path class="vchart-segment-line" d="m-2 -260.4496173469388h4"></path>
+            <path class="vchart-segment-line" d="m-2 -312.5395408163265h4"></path>
+            <path class="vchart-segment-line" d="m-2 -364.6294642857143h4"></path>
+        </g><text x="450" y="19" class="base-chart-title" text-anchor="middle">Bão lãnh thanh toán</text><text
+            x="40.8125" y="30" class="base-chart-oxy-text" text-anchor="end">$</text><text x="850.53125"
+            y="425.6294642857143" class="base-chart-oxy-text">Tháng</text>
+        <g transform="translate(224.6328125, 595)">
+            <path d="m0 -5h14" class="line-chart-line" style="stroke: red;"></path><text x="19" y="0">Đường 1</text>
+        </g>
+        <g transform="translate(224.6328125, 575)">
+            <path d="m0 -5h14" class="line-chart-line" style="stroke: pink;"></path><text x="19" y="0">Đường 2</text>
+        </g>
+        <g transform="translate(224.6328125, 555)">
+            <rect x="0" y="-14" width="14" height="14" class="dualchart-note-rect" style="fill: rgb(255, 204, 127);">
+            </rect><text x="17" y="0" class="dualchart-note-text">Tối đa(enim ad minima veniam, quis nostrum
+                exercitationem)</text>
+        </g>
+        <g transform="translate(224.6328125, 535)">
+            <rect x="0" y="-14" width="14" height="14" class="dualchart-note-rect" style="fill: rgb(204, 204, 127);">
+            </rect><text x="17" y="0" class="dualchart-note-text">Trung bình(aut odit aut fugit, sed quia
+                consequuntur)</text>
+        </g>
+        <g transform="translate(224.6328125, 515)">
+            <rect x="0" y="-14" width="14" height="14" class="dualchart-note-rect" style="fill: rgb(231, 228, 227);">
+            </rect><text x="17" y="0" class="dualchart-note-text">Thấp(magnam aliquam quaerat voluptatem)</text>
+        </g>
+        <g class="vchart-scroll-arrow" transform="translate(47.8125, 252.31473214285714)">
+            <g style="display: none;">
+                <g class="vchart-scroll-arrow-left" transform="translate(0,-270)">
+                    <g transform="matrix(-.26164 0 0 .26164 20.762 218.56)" style="fill:#00a5d6">
+                        <path d="m0.99976 198 49.214 48.519-49.213 49.481v-14.201l35.215-35.079-35.164-34.611z"
+                            style="fill:#00a5d6"></path>
+                        <path d="m28.531 198.44v13.96l35.057 34.608-35.057 34.963v13.555l48.91-48.844z"
+                            style="fill:#00a5d6"></path>
+                    </g>
+                </g>
+                <rect x="-5" y="-5" width="30" height="37" rx="5" ry="5" style="fill: rgba(0, 0, 255, 0.1);"></rect>
+            </g>
+            <g transform="translate(820.1875, 0)" style="display: none;">
+                <g transform="translate(0,-270)">
+                    <g transform="matrix(.26164 0 0 .26164 .23843 218.56)" style="fill:#00a5d6">
+                        <path d="m0.99976 198 49.214 48.519-49.213 49.481v-14.201l35.215-35.079-35.164-34.611z"
+                            style="fill:#00a5d6"></path>
+                        <path d="m28.531 198.44v13.96l35.057 34.608-35.057 34.963v13.555l48.91-48.844z"
+                            style="fill:#00a5d6"></path>
+                    </g>
+                </g>
+                <rect x="-5" y="-5" width="30" height="37" rx="5" ry="5" style="fill: rgba(0, 0, 255, 0.1);"></rect>
+            </g>
+        </g>
+    </svg>
+
+    <script>
+        absol.Svg.svgToCanvas('.base-chart.dualchart').then(x => {
+            document.body.appendChild(x)
+        });
+    </script>
+
+    <script>
+        var viewableScript = document.querySelectorAll('script.viewable');
+        viewableScript.forEach(function (elt) {
+            absol.$(elt).selfReplace(absol._({
+                tag: 'pre',
+                child: {
+                    tag: 'code',
+                    class: 'js',
+                    child: { text: elt.innerHTML }
+                }
+            }));
+        });
+        setTimeout(function () {
+            var href = location.href;
+            var mathedscroll = href.match(/\#([a-z0-9\_A-Z\-]+)/);
+            if (mathedscroll) {
+                var e = absol.$(mathedscroll[0]);
+                if (e) e.scrollIntoView();
+            }
+        }, 1000)
+    </script>
+</body>
+
+</html>
