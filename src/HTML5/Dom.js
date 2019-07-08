@@ -577,8 +577,6 @@ Dom.updateResizeSystem = function () {
 window.addEventListener('resize', Dom.updateResizeSystem);
 
 
-
-
 /***
  * if this element is attached, error event will be fired
  * @returns {HTMLElement}
