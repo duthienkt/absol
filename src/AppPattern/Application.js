@@ -1,14 +1,23 @@
+import ContextManager from "./ContextManager";
+import Context from "./Context";
+
 /**
  * @class
  */
 function Application() {
+    Context.call(this);
     this.activityStack = [];
     /** @type {Activity} */
     this.currentActivity = null;
+    this.contextManager = new ContextManager();
 };
 
-Application.prototype.getView = function () {
-    throw new Error("Not Implement!");
+Object.defineProperties(Application.prototype, Object.getOwnPropertyDescriptors(Context.prototype));
+Application.prototype.constructor = Application;
+
+Application.prototype.getContextManager = function () {
+
+    return this.contextManager;
 };
 
 /**
@@ -20,6 +29,7 @@ Application.prototype.startActivity = function (activity) {
         this.activityStack.push(this.currentActivity);
     }
     this.currentActivity = activity;
+    this.appendChild(activity);
     activity.attach(this);
     this.setContentView(activity.getView(), true);
     activity.start();
@@ -34,7 +44,8 @@ Application.prototype.stopActivity = function (activity) {
             //todo
         }
         else {
-            activity.stop();
+            activity.detach();
+            this.removeChild(this.currentActivity);
             this.currentActivity = this.activityStack.pop();
             this.setContentView(this.currentActivity.getView());
             this.currentActivity.resume();
