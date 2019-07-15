@@ -185,6 +185,7 @@ Dom.prototype.create = function (option, isInherited) {
     option.class && res.addClass(option.class);
     option.style && res.addStyle(option.style);
     option.id && res.attr('id', option.id);
+    if (!isInherited) res.init(option.props);
     //todo:attach option
     if (option.child) {
         option.child = option.child instanceof Array ? option.child : [option.child];
@@ -193,7 +194,6 @@ Dom.prototype.create = function (option, isInherited) {
         }
     }
 
-    if (!isInherited) res.init(option.props);
     return res;
 };
 
