@@ -23,6 +23,18 @@ ContextManager.prototype.set = function(key, value){
 
 ContextManager.prototype.assign = function(obj){
     Object.assign(this.__contextData__, obj);
+    return this;
 };
+
+ContextManager.prototype.remove = function(key){
+    delete this.__contextData__[key];
+    return this;
+};
+
+ContextManager.prototype.contains = function(key){
+    return  (key in this.__contextData__);
+};
+
+
 
 export default ContextManager;
