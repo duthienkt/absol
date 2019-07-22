@@ -1,6 +1,7 @@
 import absol from ".";
 
 
+
 //for old plugin
 absol.color = absol.Color;
 absol.ShareDom = absol.Dom.ShareInstance;

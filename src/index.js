@@ -20,6 +20,8 @@ import JSDocx from './JSDocx/JSDocx';
 import Broadcast from './Network/Broadcast';
 
 import * as text from './HTML5/Text';
+import * as file from './Converter/file';
+import * as base64 from './Converter/base64';
 
 var absol = {
     Element: Element,
@@ -41,7 +43,9 @@ var absol = {
     IFrameBridge: IFrameBridge,
     JSDocx: JSDocx,
     Broadcast: Broadcast,
-    text:text
+    text:text,
+    file: file,
+    base64: base64
 };
 
 

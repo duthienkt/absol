@@ -250,23 +250,35 @@ Element.prototype.addChildAfter = function (newItem, at) {
 /**
  * @returns {DOMRect}
  */
-Element.prototype.getBoundingRecursiveRect = function () {
-    var matcher = JSPath.compileJSPath('');
-    var bound = this.getBoundingClientRect();
-    var ac = { left: bound.left, right: bound.right, top: bound.top, bottom: bound.bottom, width: bound.right - bound.left, height: bound.bottom - bound.top };
-    return matcher.findAll(this).reduce(function (ac, cr) {
-        if (!cr.getBoundingClientRect) return ac;
-        var cRect = cr.getBoundingClientRect();
-        //it not display
-        if (!cRect || cRect.width * cRect.height == 0) return ac;
-        ac.left = Math.min(ac.left, cRect.left);
-        ac.top = Math.min(ac.top, cRect.top);
-        ac.bottom = Math.max(ac.bottom, cRect.bottom);
-        ac.right = Math.max(ac.right, cRect.right);
-        ac.height = ac.bottom - ac.top;
-        ac.width = ac.right - ac.left;
-        return ac;
-    }, ac);
+Element.prototype.getBoundingRecursiveRect = function (depth) {
+    if (depth === undefined) depth = 10000;
+
+    var current, next;
+    var oo = 1000000;
+    var ac = { left: oo, right: -oo, top: oo, bottom: -oo, width: 0, height: 0 };
+    var stacks = [{ e: this, d: 0 }];
+    while (stacks.length > 0) {
+        current = stacks.pop();
+        if (current.getBoundingClientRect) {
+            var cRect = current.e.getBoundingClientRect();
+            if (!cRect || cRect.width * cRect.height == 0) return ac;
+            ac.left = Math.min(ac.left, cRect.left);
+            ac.top = Math.min(ac.top, cRect.top);
+            ac.bottom = Math.max(ac.bottom, cRect.bottom);
+            ac.right = Math.max(ac.right, cRect.right);
+            ac.height = ac.bottom - ac.top;
+            ac.width = ac.right - ac.left;
+            var childNodes = current.childNodes;
+            if (childNodes && childNodes.length > 0 && current.d < depth) {
+                for (var i = 0; i < childNodes.length; ++i) {
+                    next = {e:childNodes[i], d:current.d + 1};
+                    stacks.push(next);
+                }
+            }
+        }
+    }
+
+    return ac;
 };
 
 
