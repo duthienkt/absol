@@ -259,19 +259,20 @@ Element.prototype.getBoundingRecursiveRect = function (depth) {
     var stacks = [{ e: this, d: 0 }];
     while (stacks.length > 0) {
         current = stacks.pop();
-        if (current.getBoundingClientRect) {
+
+        if (current.e.getBoundingClientRect) {
             var cRect = current.e.getBoundingClientRect();
-            if (!cRect || cRect.width * cRect.height == 0) return ac;
+            if (!cRect || cRect.width * cRect.height == 0) continue;
             ac.left = Math.min(ac.left, cRect.left);
             ac.top = Math.min(ac.top, cRect.top);
             ac.bottom = Math.max(ac.bottom, cRect.bottom);
             ac.right = Math.max(ac.right, cRect.right);
             ac.height = ac.bottom - ac.top;
             ac.width = ac.right - ac.left;
-            var childNodes = current.childNodes;
+            var childNodes = current.e.childNodes;
             if (childNodes && childNodes.length > 0 && current.d < depth) {
                 for (var i = 0; i < childNodes.length; ++i) {
-                    next = {e:childNodes[i], d:current.d + 1};
+                    next = { e: childNodes[i], d: current.d + 1 };
                     stacks.push(next);
                 }
             }
