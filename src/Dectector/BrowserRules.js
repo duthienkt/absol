@@ -199,7 +199,7 @@ const BROWSER = [
             return /\bliebaofast\/([0-9.]+)/;
         }
         if (ua.indexOf("lbbrowser") === -1) { return false; }
-        let version;
+        var version;
         try {
             if (external && external.LiebaoGetVersion) {
                 version = external.LiebaoGetVersion();
@@ -253,8 +253,8 @@ const BROWSER = [
     }],
     ["baiduboxapp",
         function (ua) {
-            let back = 0;
-            let a;
+            var back = 0;
+            var a;
             if (/ baiduboxapp\//i.test(ua)) {
                 if (a = /([\d+.]+)_(?:diordna|enohpi)_/.exec(ua)) {
                     a = a[1].split(".");
