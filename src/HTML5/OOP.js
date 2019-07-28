@@ -94,6 +94,7 @@ OOP.bindFunctions = function (_this, handlers) {
 
 
 OOP.inheritCreator = function (parent, child) {
+    var i;
     if (child.property) {
         if (parent.property) {
             for (i in parent.property) {
@@ -101,7 +102,7 @@ OOP.inheritCreator = function (parent, child) {
             }
         }
     }
-    for (var i in parent.prototype) {
+    for (i in parent.prototype) {
         if (!child.prototype[i]) {
             child.prototype[i] = parent.prototype[i];
         }
