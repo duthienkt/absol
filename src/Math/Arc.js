@@ -7,7 +7,7 @@ function Arc(x, y, r, start, end) {
     this.r = r;
     this.start = start;
     this.end = end;
-};
+}
 
 Arc.prototype.isPointInBound = function (p) {
     if (distance(this.x, this.y, p.x, p.y) > r) return false;

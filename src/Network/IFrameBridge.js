@@ -11,7 +11,7 @@ function IFrameBridge(host) {
 
     if (host) this.attach(host);
     this.__azarResolveCallbacks = {};
-};
+}
 
 IFrameBridge.prototype.attach = function (host) {
     this.host = host;
@@ -42,7 +42,7 @@ IFrameBridge.fromIFrame = function (iframe) {
         var attachedHost = function () {
             var host = iframe.contentWindow || iframe.contentDocument;
             result.attach(host);
-        }
+        };
         if (iframe.addEventListener) {
             iframe.addEventListener("load", attachedHost);
         }
@@ -59,7 +59,7 @@ IFrameBridge.getInstance = function () {
         IFrameBridge.shareInstance = new IFrameBridge(self);
     }
     return IFrameBridge.shareInstance;
-}
+};
 
 
 Object.defineProperties(IFrameBridge.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
@@ -110,7 +110,7 @@ IFrameBridge.prototype.__azarResolve = function (taskId, result) {
 
 IFrameBridge.prototype.__azarRelfInvoke = function (name, params) {
     if (typeof this[name] == 'function') {
-        return this[name].apply(this, params)
+        return this[name].apply(this, params);
     }
     else {
         return this[name];

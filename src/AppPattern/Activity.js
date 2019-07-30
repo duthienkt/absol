@@ -6,7 +6,7 @@ import Context from "./Context";
  */
 function Activity() {
     Context.call(this);
-};
+}
 
 
 Object.defineProperties(Activity.prototype, Object.getOwnPropertyDescriptors(Context.prototype));
@@ -18,9 +18,9 @@ Activity.prototype.startActivity = function (activity) {
         this.parent.startActivity(activity);
     }
     else {
-    } 
+    }
 };
- 
+
 Activity.prototype.finish = function () {
     if (this.parent) {
         this.parent.stopActivity(this);

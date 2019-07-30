@@ -11,7 +11,7 @@ export function getTextNodesIn(node) {
         }
     }
     return textNodes;
-};
+}
 
 /**
  * 
@@ -123,8 +123,9 @@ export function setSelectionRange(el, start, end) {
     if (document.createRange && window.getSelection) {
         var range = document.createRange();
         range.selectNodeContents(el);
+        var delta;
         if (start >= 0) {
-            var delta = setSelectionRangeStart(el, range, start);
+            delta = setSelectionRangeStart(el, range, start);
             if (delta >= 0) range.setStart(el, el.childNodes.length);
         }
         else {
@@ -132,7 +133,7 @@ export function setSelectionRange(el, start, end) {
             range.setStart(el, 0);
         }
         if (end >= start) {
-            var delta = setSelectionRangeEnd(el, range, end);
+            delta = setSelectionRangeEnd(el, range, end);
             if (delta >= 0) range.setEnd(el, el.childNodes.length);
         }
         var sel = window.getSelection();
@@ -146,7 +147,7 @@ export function setSelectionRange(el, start, end) {
         textRange.moveStart("character", start);
         textRange.select();
     }
-};
+}
 
 export function getTextIn(e) {
     if (e.nodeType == Node.TEXT_NODE) {
@@ -189,4 +190,4 @@ export function textToNodes(text) {
             });
         }
     });
-};
+}

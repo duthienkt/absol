@@ -17,7 +17,6 @@ export function wordLike(a, b) {
                 if (Q[map(i + 1, j + 1)]) {
                     if (Q[map(i + 1, j + 1)] < Q[map(i, j)] + 1)
                         Q[map(i + 1, j + 1)] = Q[map(i, j)] + 1;
-
                 }
                 else
                     Q[map(i + 1, j + 1)] = Q[map(i, j)] + 1;

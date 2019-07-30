@@ -51,7 +51,7 @@ TemplateXML.prototype._xmlNodeToJSCode = function (node) {
 
         if (node.childNodes && node.childNodes.length > 0) {
             var childList = '[' + node.childNodes.filter(function (e) {
-                return e.nodeType == XMLConstant.TYPE_ELEMENT || e.nodeType == XMLConstant.TYPE_TEXT
+                return e.nodeType == XMLConstant.TYPE_ELEMENT || e.nodeType == XMLConstant.TYPE_TEXT;
             }).map(function (e) {
                 return this._xmlNodeToJSCode(e);
             }.bind(this)).filter(function (e) { return !!e; }).join(', ') + ']';
@@ -92,7 +92,7 @@ TemplateXML.parse = function (text) {
     if (xml) {
         return new TemplateXML({
             xml: xml
-        })
+        });
     }
     else
         return undefined;

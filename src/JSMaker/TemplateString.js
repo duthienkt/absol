@@ -45,13 +45,13 @@ TemplateString.parse = function (text) {
                 return {
                     type: this.TYPE_EXPRESSION,
                     data: matchedExp[1]
-                }
+                };
             }
             else {
                 return {
                     type: this.TYPE_STRING,
                     data: e
-                }
+                };
             }
         }.bind(this));
         return new TemplateString({ parts: parts });

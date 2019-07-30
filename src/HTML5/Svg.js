@@ -19,10 +19,11 @@ Svg.prototype.fromCode = function (code) {
     code = code.trim();
     var receptacle = document.createElement('div');
     var element;
+    var prototypes;
     if (code.startsWith('<svg')) {
         receptacle.innerHTML = code;
         element = receptacle.childNodes[0];
-        var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+        prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
         Object.defineProperties(element, prototypes);
         Element.call(element);
     }
@@ -30,7 +31,7 @@ Svg.prototype.fromCode = function (code) {
         var svgfragment = '<svg  version="1.1" xmlns="http://www.w3.org/2000/svg">' + code + '</svg>';
         receptacle.innerHTML = '' + svgfragment;
         element = receptacle.childNodes[0].childNodes[0];
-        var prototypes = Object.getOwnPropertyDescriptors(ElementNS.prototype);
+        prototypes = Object.getOwnPropertyDescriptors(ElementNS.prototype);
         Object.defineProperties(element, prototypes);
         ElementNS.call(element);
     }
@@ -61,28 +62,28 @@ Svg.svgToCanvas = function (element) {
     }
     if (element && element.tagName == 'svg') {
         var cssTexts = {};
-        function depthClone(originElt) {
+        var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
             var cssRules = Element.prototype.getCSSRules.call(originElt);
-            var cssKey = cssRules.reduce(function(ac, rule){
-                for (var i = 0; i<rule.style.length; ++i){
+            var cssKey = cssRules.reduce(function (ac, rule) {
+                for (var i = 0; i < rule.style.length; ++i) {
                     ac[rule.style[i]] = true;
                 }
                 return ac;
             }, {});
-            for (var key in cssKey){
+            for (var key in cssKey) {
                 newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
             }
             var children = Array.prototype.map.call(originElt.childNodes, depthClone);
-            for (var i = 0; i < children.length; ++i){
+            for (var i = 0; i < children.length; ++i) {
                 newElt.appendChild(children[i]);
             }
             return newElt;
-        }
+        };
 
         var cloneElement = depthClone(element);
-        
+
         var renderSpace = Dom.ShareInstance._({
             style: {
                 // opacity:0,
@@ -120,31 +121,31 @@ Svg.svgToCanvas = function (element) {
 };
 
 
-Svg.svgToExportedString = function(element){
+Svg.svgToExportedString = function (element) {
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
     if (element && element.tagName == 'svg') {
         var cssTexts = {};
-        function depthClone(originElt) {
+        var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
             var cssRules = Element.prototype.getCSSRules.call(originElt);
-            var cssKey = cssRules.reduce(function(ac, rule){
-                for (var i = 0; i<rule.style.length; ++i){
+            var cssKey = cssRules.reduce(function (ac, rule) {
+                for (var i = 0; i < rule.style.length; ++i) {
                     ac[rule.style[i]] = true;
                 }
                 return ac;
             }, {});
-            for (var key in cssKey){
+            for (var key in cssKey) {
                 newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
             }
             var children = Array.prototype.map.call(originElt.childNodes, depthClone);
-            for (var i = 0; i < children.length; ++i){
+            for (var i = 0; i < children.length; ++i) {
                 newElt.appendChild(children[i]);
             }
             return newElt;
-        }
+        };
 
         var cloneElement = depthClone(element);
         var renderSpace = Dom.ShareInstance._({

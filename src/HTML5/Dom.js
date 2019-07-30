@@ -210,7 +210,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (typeof (func) == 'function')
                     if (_this.creator[key] != func)
                         _this.creator[key] = func;
-            })
+            });
         }
         else if (typeof (arg0) == 'function') {
             var name = getFunctionName(arg0) || arg0.name;
@@ -218,7 +218,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 this.creator[name.toLowerCase()] = arg0;
             }
             else {
-                console.error('No ident name of creator function', arg0)
+                console.error('No ident name of creator function', arg0);
             }
         }
         else if (typeof arg0 == 'object') {
@@ -228,7 +228,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (typeof (func) == 'function')
                     if (_this.creator[key] != func)
                         _this.creator[key] = func;
-            })
+            });
         }
         else if (arg0 instanceof Array) {
             arg0.forEach(function (func) {
@@ -435,11 +435,11 @@ Dom.waitImageLoaded = function (img) {
     return new Promise(function (rs) {
         img.onload = function () {
             rs();
-        }
+        };
         setTimeout(5000, rs);
     });
     // No other way of checking: assume it’s ok.
-}
+};
 
 Dom.imageToCanvas = function (element) {
     if (typeof element == 'string') {
@@ -483,7 +483,7 @@ Dom.scrollWidthPromise;
 
 Dom.documentReady = new Promise(function (resolve) {
     if (document.body) {
-        resolve()
+        resolve();
     }
     else {
         window.addEventListener("load", resolve);
@@ -500,7 +500,7 @@ Dom.getScrollSize = function () {
                 requestAnimationFrame(function () {
                     var parentBound = parent.getBoundingClientRect();
                     var childBound = child.getBoundingClientRect();
-                    resolve({ width: parentBound.width - childBound.width, height: parentBound.height - childBound.height })
+                    resolve({ width: parentBound.width - childBound.width, height: parentBound.height - childBound.height });
                     parent.selfRemove();
                 });
             }

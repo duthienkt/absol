@@ -10,7 +10,7 @@ function Application() {
     /** @type {Activity} */
     this.currentActivity = null;
     this.contextManager = new ContextManager();
-};
+}
 
 Object.defineProperties(Application.prototype, Object.getOwnPropertyDescriptors(Context.prototype));
 Application.prototype.constructor = Application;
@@ -70,6 +70,6 @@ Application.prototype.backToTopActivity = function () {
     }
     this.setContentView(this.currentActivity.getView());
     this.currentActivity.resume();
-}
+};
 
 export default Application;

@@ -1,7 +1,5 @@
 import Vec2 from "./Vec2";
 
-
-
 function Rectangle(x, y, width, height) {
     this.width = width;
     this.height = height;
@@ -9,7 +7,7 @@ function Rectangle(x, y, width, height) {
     this.y = y;
 
 
-};
+}
 
 Rectangle.prototype.A = function () {
     return new Vec2(this.x, this.y);

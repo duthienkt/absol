@@ -2,7 +2,7 @@ import TemplateString from "../JSMaker/TemplateString";
 
 function Color(bytes) {
     this.bytes = bytes.slice();
-};
+}
 
 
 
@@ -10,28 +10,28 @@ Color.prototype.toHex6 = function () {
     return this.bytes.slice(0, 3).map(function (b) {
         b = b * 255 >> 0;
         return (b < 16 ? '0' : '') + b.toString(16);
-    }).join('')
+    }).join('');
 };
 
 Color.prototype.toHex8 = function () {
     return this.bytes.map(function (b) {
         b = b * 255 >> 0;
         return (b < 16 ? '0' : '') + b.toString(16);
-    }).join('')
+    }).join('');
 };
 
 Color.prototype.toHex3 = function () {
     return this.bytes.slice(0, 3).map(function (b) {
         b = b * 255 / 17 >> 0;
         return b.toString(16);
-    }).join('')
+    }).join('');
 };
 
 Color.prototype.toHex4 = function () {
     return this.bytes.map(function (b) {
         b = b * 255 / 17 >> 0;
         return b.toString(16);
-    }).join('')
+    }).join('');
 };
 
 
@@ -65,7 +65,7 @@ Color.prototype.getContrastYIQ = function () {
     var b = this.bytes[2] * 255;
     var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
     return (yiq >= 128) ? new Color([0, 0, 0, 1]) : new Color([1, 1, 1, 1]);
-}
+};
 
 Color.prototype.clone = function () {
     return new Color(this.bytes.slice());

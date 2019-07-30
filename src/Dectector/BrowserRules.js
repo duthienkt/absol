@@ -165,7 +165,7 @@ const ENGINE = [
     ["u3", /\bu3\/([0-9.]+)/],
 ];
 const BROWSER = [
-    ['coccoc', /coc\_coc\_browser\/([0-9.]+)/ ],
+    ['coccoc', /coc\_coc\_browser\/([0-9.]+)/],
     // Microsoft Edge Browser, Default browser in Windows 10.
     ["edge", /edge\/([0-9.]+)/],
     ["chrome-edge", /chrome.+edg\/([0-9.]+)/],
@@ -256,7 +256,8 @@ const BROWSER = [
             var back = 0;
             var a;
             if (/ baiduboxapp\//i.test(ua)) {
-                if (a = /([\d+.]+)_(?:diordna|enohpi)_/.exec(ua)) {
+                a = /([\d+.]+)_(?:diordna|enohpi)_/.exec(ua);
+                if (a) {
                     a = a[1].split(".");
                     back = a.reverse().join(".");
                 } else if ((a = /baiduboxapp\/([\d+.]+)/.exec(ua))) {

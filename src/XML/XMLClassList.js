@@ -20,7 +20,7 @@ XMLClassList.prototype.contains = function (name) {
         return false;
     }
     else return false;
-}
+};
 
 /**
  * @param {Number} index
@@ -33,7 +33,7 @@ XMLClassList.prototype.item = function (index) {
         return classes[index];
     }
     else return undefined;
-}
+};
 
 
 /**

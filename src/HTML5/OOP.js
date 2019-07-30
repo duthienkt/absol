@@ -114,7 +114,7 @@ OOP.inheritCreator = function (parent, child) {
                     var result = childFunction.apply(this, arguments);
                     this.super = _super;
                     return result;
-                }
+                };
             })(parent.prototype[i], child.prototype[i]);
         }
     }

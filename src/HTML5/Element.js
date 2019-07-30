@@ -76,7 +76,7 @@ Element.prototype.attr = function () {
 Element.prototype._azar_styleIndex = function (string) {
     return string.replace(/\-(.)/g, function (full, c) {
         return c.toUpperCase();
-    })
+    });
 };
 
 
@@ -91,8 +91,9 @@ Element.prototype.addStyle = function (arg0, arg1) {
 };
 
 Element.prototype.removeStyle = function (arg0) {
+    var key;
     if (typeof arg0 == 'string') {
-        var key = this._azar_styleIndex(arg0);
+        key = this._azar_styleIndex(arg0);
         this.style[key] = null;
         delete this.style[key];
     }
@@ -102,7 +103,7 @@ Element.prototype.removeStyle = function (arg0) {
                 this.removeStyle(arg0[i]);
         }
         else {
-            for (var key in arg0)
+            for (key in arg0)
                 this.removeStyle(key);
         }
     }
@@ -355,7 +356,7 @@ Element.prototype.afterAttached = function (frameTimeOut) {
                     }
                 }
             }
-        };
+        }
         setTimeout(trace, 0);
     });
 };
@@ -387,7 +388,7 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
                     return;
                 }
             }
-        };
+        }
         trace();
     });
 };
@@ -413,7 +414,7 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
             }
             origin.apply(this, arguments);
             return this;
-        }
+        };
     }
 
     if (BrowserDetector.isFirefox) {
@@ -435,7 +436,7 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
 
                         event.preventDefault = function () {
                             oldEvent.preventDefault();
-                        }
+                        };
                         if (!event.mozFixWheelScale) {
                             event.mozDeltaY = oldEvent.deltaY;
                             event.mozFixWheelScale = true;

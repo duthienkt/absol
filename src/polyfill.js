@@ -42,7 +42,7 @@
             Object.defineProperty(document.createElement('div'), 'theRandomName', {
                 set: function () { },
                 get: function () { }
-            })
+            });
         }
     }
     catch (error) {

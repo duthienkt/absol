@@ -16,7 +16,7 @@ export function randomIdent(length) {
     return [factor[(Math.random() * (factor.length - 10)) >> 0]].concat(Array(length - 1).fill('').map(function () {
         return factor[(Math.random() * factor.length) >> 0];
     })).join('');
-};
+}
 
 export function parallelMatch(a, b) {
     var l = Math.min(a.length, b.length);
@@ -25,7 +25,7 @@ export function parallelMatch(a, b) {
         if (a[i] == b[i])++res;
     }
     return res;
-};
+}
 
 export var ipsumLoremWord = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit', 'sed', 'do',
     'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore', 'magna', 'aliqua', 'enim', 'ad', 'minim',
@@ -66,7 +66,7 @@ export function randomWord() {
     var arr = ipsumLoremWord;
     var idx = randomInt(0, arr.length - 1);
     return arr[idx];
-};
+}
 
 export function randomPhrase(limitLenght) {
     if (!limitLenght) limitLenght = 50;
@@ -82,7 +82,7 @@ export function randomPhrase(limitLenght) {
         }, { parts: [], length: 0 }).parts
         .join(' ');
 
-};
+}
 
 export function randomSentence(limitLenght) {
     if (!limitLenght) limitLenght = 300;
@@ -102,10 +102,10 @@ export function randomSentence(limitLenght) {
     }
     res = res.replace(/^./, function (x) {
         return x.toUpperCase();
-    })
+    });
     res += '.';
     return res;
-};
+}
 
 export function randomParagraph(limitLenght) {
     if (!limitLenght) limitLenght = 1000;
@@ -119,4 +119,4 @@ export function randomParagraph(limitLenght) {
             return ac;
         }, { parts: [], length: 0 }).parts
         .join(' ');
-};
+}

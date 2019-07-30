@@ -54,7 +54,7 @@ XHR.getRequest = function (url, props, success, failure) {
 
         request.onerror = function () {
             rj(new Error("Network Error!"));
-        }
+        };
     });
 };
 
@@ -83,7 +83,7 @@ XHR.postRepquest = function (url, bodyJson, props, success, failure) {
             var error = new Error("Network Error!");
             if (failure) failure(error);
             rj(error);
-        }
+        };
 
         request.open(method, url, shouldBeAsync);
         if (typeof props == 'string')

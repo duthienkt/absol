@@ -36,7 +36,7 @@ JSPath.prototype.match = function (element, query) {
         }
     }
     return true;
-}
+};
 
 /**
  * Warning : still fail in some testcase

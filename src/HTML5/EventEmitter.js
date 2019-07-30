@@ -21,7 +21,7 @@ EventEmitter.prototype.isSupportedEvent = function (name) {
 };
 
 
-EventEmitter.prototype.emit = function(eventName, data){
+EventEmitter.prototype.emit = function (eventName, data) {
     this.fire.apply(this, arguments);
 };
 
@@ -29,9 +29,10 @@ EventEmitter.prototype.fire = function (eventName, data) {
     var others = Array.prototype.slice.call(arguments, 1);
     if (this.isSupportedEvent(eventName)) {
         var listenerList;
+        var i;
         if (this._azar_extendEvents.prioritize[eventName]) {
             listenerList = this._azar_extendEvents.prioritize[eventName].slice();
-            for (var i = 0; i < listenerList.length; ++i) {
+            for (i = 0; i < listenerList.length; ++i) {
                 try {
                     listenerList[i].wrappedCallback.apply(this, others);
                 }
@@ -43,7 +44,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
 
         if (this._azar_extendEvents.nonprioritize[eventName]) {
             listenerList = this._azar_extendEvents.nonprioritize[eventName].slice();
-            for (var i = 0; i < listenerList.length; ++i) {
+            for (i = 0; i < listenerList.length; ++i) {
                 try {
                     listenerList[i].wrappedCallback.apply(this, others);
                 }
@@ -198,7 +199,7 @@ EventEmitter.copyEvent = function (event, props) {
         if (typeof result[key] == 'function') {
             result[key] = result[key].bind(event);
         }
-    };
+    }
 
     if (props)
         Object.assign(result, props);

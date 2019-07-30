@@ -74,7 +74,7 @@ JSDocx._getMHTdocument = function (htmlSource) {
     return DocxTpl.mht_document(htmlSource,
         imageContentParts.join('\n')
     );
-}
+};
 
 /**
  * @param {JSZip} zip
@@ -83,9 +83,9 @@ JSDocx._generateDocument = function (zip) {
     return zip.generateAsync({ type: 'arraybuffer' }).then(function (buffer) {
         var props = {};
         if (global.Blob)
-            props.blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+            props.blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
         else if (global.Buffer)
-            props.buffer = new Buffer(new Uint8Array(buffer))
+            props.buffer = new Buffer(new Uint8Array(buffer));
         else
             throw new Error("Neither Blob nor Buffer are accessible in this environment. " +
                 "Consider adding Blob.js shim");
@@ -115,22 +115,22 @@ JSDocx._createPageSetting = function (documentOptions) {
     if (documentOptions.orientation == 'landscape') {
         Object.assign(pageSetting, {
             height: 12240, width: 15840, orient: 'landscape'
-        })
+        });
     }
     else {
         Object.assign(pageSetting, {
             width: 12240, height: 15840, orient: 'portrait'
-        })
+        });
     }
     if (documentOptions.margins) {
         Object.assign(pageSetting, documentOptions.margins);
     }
     return pageSetting;
-}
+};
 
 
 JSDocx._addFiles = function (zip, htmlSource, pageSetting) {
-    zip.file('[Content_Types].xml', content_types_xml)
+    zip.file('[Content_Types].xml', content_types_xml);
     zip.folder('_rels')
         .file('.rels', rels_xml);
     zip.folder('word')
@@ -147,13 +147,12 @@ JSDocx._addFiles = function (zip, htmlSource, pageSetting) {
 };
 
 JSDocx.fromHTMLCode = function (html, options) {
-    var zip = new JSZip()
+    var zip = new JSZip();
     JSDocx._addFiles(zip, html, JSDocx._createPageSetting(options));
     return JSDocx._generateDocument(zip);
-}
+};
 
 JSDocx.fromHTMLElement = function (element, options, getOuter, isWorkingElement) {
-
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
@@ -228,4 +227,3 @@ JSDocx.fromHTMLElement = function (element, options, getOuter, isWorkingElement)
 };
 
 export default JSDocx;
-

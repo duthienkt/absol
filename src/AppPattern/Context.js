@@ -10,7 +10,7 @@ function Context (){
 Context.prototype.appendChild = function(){
     for (var i = 0; i < arguments.length; ++i){
         this.children.push(arguments[i]);
-    };
+    }
 };
 
 Context.prototype.removeChild = function(child){

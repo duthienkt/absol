@@ -21,7 +21,7 @@ function XMLElement() {
     Object.defineProperty(this, 'classList', {
         value: new XMLClassList(this),
         writable: false
-    })
+    });
 }
 
 /**
@@ -110,7 +110,7 @@ XMLElement.prototype.remove = function () {
     if (this.parentNode) {
         this.parentNode.removeChild(this);
     }
-}
+};
 
 XMLElement.prototype.toObject = function () {
     return {

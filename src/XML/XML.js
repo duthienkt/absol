@@ -559,7 +559,7 @@ function matchComment(tokens, i) {
     else {
         result.__xml__.error = new Error('End of data found, expected <!--');
     }
-    result.__xml__.end = i
+    result.__xml__.end = i;
     return result;
 }
 
@@ -622,10 +622,12 @@ function parseXMLTab(tokens) {
 function parseXMLText(tokens, tabs) {
     var texts = [];
     var ofs = 0;
+    var text;
+    var tab;
     for (var i = 0; i < tabs.length; ++i) {
-        var tab = tabs[i];
+        tab = tabs[i];
         if (tab.__xml__.start > ofs) {
-            var text = tokens.slice(ofs, tab.__xml__.start)
+            text = tokens.slice(ofs, tab.__xml__.start)
                 .map(function (token) {
                     return token.text;
                 }).join('').trim();
@@ -643,7 +645,7 @@ function parseXMLText(tokens, tabs) {
         ofs = tab.__xml__.end;
     }
     if (ofs < tokens.length) {
-        var text = tokens.slice(ofs)
+        text = tokens.slice(ofs)
             .map(function (token) {
                 return token.text;
             }).join('').trim();
@@ -705,7 +707,7 @@ function mergeNodes(tabs, texts) {
  * @return {Array<XMLParseNode>} 
  */
 function parseXMLTextToXMLParseNode(text) {
-    var text = text.trim();
+    text = text.trim();
     var tokens = xmlTokenize(text.trim());
 
     var tabs = parseXMLTab(tokens);
@@ -723,6 +725,13 @@ function paresNodesToXMLs(nodes) {
     var node;
     var parentXMLElement = new XMLElement();
     parentXMLElement.tagName = "FAKE_DOCUMENT";
+
+    var assignAttributes = function (node, attributes) {
+        Object.keys(attributes).forEach(function (key) {
+            node.setAttribute(key, attributes[key]);
+        })
+    }
+
     var newXMLNode;
     for (var i = 0; i < nodes.length; ++i) {
         node = nodes[i];
@@ -732,18 +741,15 @@ function paresNodesToXMLs(nodes) {
                 newXMLNode = new XMLDeclaretionNode();
                 newXMLNode.tagName = node.tagName;
                 if (node.attributes)
-                    Object.keys(node.attributes).forEach(function (key) {
-                        newXMLNode.setAttribute(key, node.attributes[key]);
-                    })
+                    assignAttributes(newXMLNode, node.attributes);
+
                 parentXMLElement.appendChild(newXMLNode);
                 break;
             case BEGIN_TAG:
                 newXMLNode = new XMLElement();
                 newXMLNode.tagName = node.tagName;
                 if (node.attributes)
-                    Object.keys(node.attributes).forEach(function (key) {
-                        newXMLNode.setAttribute(key, node.attributes[key]);
-                    })
+                    assignAttributes(newXMLNode, node.attributes);
                 parentXMLElement.appendChild(newXMLNode);
                 if (!node.__xml__.closed)
                     parentXMLElement = newXMLNode;
@@ -752,7 +758,7 @@ function paresNodesToXMLs(nodes) {
                 if (parentXMLElement && node.tagName == parentXMLElement.tagName) {
                     parentXMLElement = parentXMLElement.parentNode;
                 }
-                else if (parentXMLElement && (parentXMLElement.tagName == 'img' || parentXMLElement.tagName == 'input') ) {
+                else if (parentXMLElement && (parentXMLElement.tagName == 'img' || parentXMLElement.tagName == 'input')) {
                     // image can be not close
                     while (parentXMLElement.tagName == 'img' || parentXMLElement.tagName == 'input') {
                         parentXMLElement = parentXMLElement.parentNode;
@@ -764,7 +770,7 @@ function paresNodesToXMLs(nodes) {
                 else {
                     throw new Error("Unknown close of tagName " + node.tagName
                         + ', but ' + (parentXMLElement ? parentXMLElement.tagName : "EOF") + ' expected');
-                    return;
+
                 }
                 break;
             case TEXT:
@@ -863,14 +869,14 @@ XML.parseLikeHTML = function (code) {
 XML.parse = function (code) {
     var xmls = this.parseLikeHTML(code);
     if (xmls.length == 0) return undefined;
-    var obj = xmls[xmls.length-1].toObject();
+    var obj = xmls[xmls.length - 1].toObject();
     return obj;
 };
 
 
 XML.DFNodeVisit = function (node, handlers, accumulator) {
     if (!node.childNodes || node.childNodes.length == 0) {
-        if (handlers.leaf) handlers.leaf(accumulator, node)
+        if (handlers.leaf) handlers.leaf(accumulator, node);
     }
     else {
         if (handlers.open) handlers.open(accumulator, node);
@@ -909,55 +915,56 @@ XML.stringify = function (o, beautifyOption) {
     if (!(o instanceof Array)) {
         o = [o];
     }
+    var visitor = {
+        open: function (ac, node) {
+            var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
+
+            var openTabText = makeOpenXMLElementTab(node);
+            ac.texts.push(currentLineIndent + openTabText);
+            ac.lineIndentStack.push(currentLineIndent + ac.indent);
+        },
+        close: function (ac, node) {
+            ac.lineIndentStack.pop();
+            var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
+            var endTab = '</' + node.tagName + '>';
+            if (node.childNodes.length == 1 && node.childNodes[0].nodeType == XMLConstant.TYPE_TEXT) {
+                ac.texts[ac.texts.length - 1] += endTab;
+            }
+            else {
+                ac.texts.push(currentLineIndent + endTab);
+            }
+
+        },
+        leaf: function (ac, node) {
+            var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
+            var tab;
+            if (node.nodeType == XMLConstant.TYPE_TEXT) {
+                if (node.parentNode && node.parentNode.childNodes.length == 1) {
+                    ac.texts[ac.texts.length - 1] += node.data;
+                }
+                else {
+                    ac.texts.push(currentLineIndent + node.data);
+                }
+            }
+            else if (node.nodeType == XMLConstant.TYPE_ELEMENT) {
+                var openTabText = makeOpenXMLElementTab(node);
+                var endTab = '</' + node.tagName + '>';
+                ac.texts.push(currentLineIndent + openTabText + endTab);
+            }
+            else if (node.nodeType == XMLConstant.TYPE_DECLARATION) {
+                tab = makeXMLDeclaretionTab(node);
+                ac.texts.push(currentLineIndent + tab);
+            }
+            else if (node.nodeType == XMLConstant.TYPE_COMMENT) {
+                tab = makeXMLCommentTab(node);
+                ac.texts.push(currentLineIndent + tab);
+            }
+        }
+    };
 
     for (var i = 0; i < o.length; ++i) {
         this.DFNodeVisit(o[i],
-            {
-                open: function (ac, node) {
-                    var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
-
-                    var openTabText = makeOpenXMLElementTab(node);
-                    ac.texts.push(currentLineIndent + openTabText);
-                    ac.lineIndentStack.push(currentLineIndent + ac.indent);
-                },
-                close: function (ac, node) {
-                    ac.lineIndentStack.pop();
-                    var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
-                    var endTab = '</' + node.tagName + '>';
-                    if (node.childNodes.length == 1 && node.childNodes[0].nodeType == XMLConstant.TYPE_TEXT) {
-                        ac.texts[ac.texts.length - 1] += endTab;
-                    }
-                    else {
-                        ac.texts.push(currentLineIndent + endTab);
-                    }
-
-                },
-                leaf: function (ac, node) {
-                    var currentLineIndent = ac.lineIndentStack[ac.lineIndentStack.length - 1];
-
-                    if (node.nodeType == XMLConstant.TYPE_TEXT) {
-                        if (node.parentNode && node.parentNode.childNodes.length == 1) {
-                            ac.texts[ac.texts.length - 1] += node.data;
-                        }
-                        else {
-                            ac.texts.push(currentLineIndent + node.data);
-                        }
-                    }
-                    else if (node.nodeType == XMLConstant.TYPE_ELEMENT) {
-                        var openTabText = makeOpenXMLElementTab(node);
-                        var endTab = '</' + node.tagName + '>';
-                        ac.texts.push(currentLineIndent + openTabText + endTab);
-                    }
-                    else if (node.nodeType == XMLConstant.TYPE_DECLARATION) {
-                        var tab = makeXMLDeclaretionTab(node);
-                        ac.texts.push(currentLineIndent + tab);
-                    }
-                    else if (node.nodeType == XMLConstant.TYPE_COMMENT) {
-                        var tab = makeXMLCommentTab(node);
-                        ac.texts.push(currentLineIndent + tab);
-                    }
-                }
-            },
+            visitor,
             {
                 depth: 0,
                 texts: texts,
@@ -967,8 +974,6 @@ XML.stringify = function (o, beautifyOption) {
     }
     return texts.join(lineBreak);
 };
-
-
 
 
 

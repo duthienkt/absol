@@ -36,7 +36,7 @@ Element.fixBrowserEvent = function (element) {
 
                     event.preventDefault = function () {
                         oldEvent.preventDefault();
-                    }
+                    };
                     if (!event.mozFixWheelScale) {
                         event.mozDeltaY = oldEvent.deltaY;
                         event.mozFixWheelScale = true;

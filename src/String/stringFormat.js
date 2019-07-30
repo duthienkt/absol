@@ -35,7 +35,7 @@ export function wrapToLines(s, maxLength) {
     currentLine = (currentLine + currentWord).trim();
     if (currentLine.length > 0) res.push(currentLine);
     return res;
-};
+}
 
 export function nonAccentVietnamese(s) {
     return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
@@ -54,10 +54,10 @@ export function nonAccentVietnamese(s) {
         .replace(/Đ/g, "D")
         .replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "")
         .replace(/\u02C6|\u0306|\u031B/g, "");
-};
+}
 
 String.nonAccentVietnamese = nonAccentVietnamese;
 
 String.prototype.nonAccentVietnamese = function () {
     return String.nonAccentVietnamese(this);
-}
+};

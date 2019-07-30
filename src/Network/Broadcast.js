@@ -71,7 +71,7 @@ Broadcast.prototype.emit = function () {
  */
 Broadcast.prototype.postMessage = function (message) {
     if (this.nativeBroadcastChannel) {
-        this.nativeBroadcastChannel.postMessage(message)
+        this.nativeBroadcastChannel.postMessage(message);
     }
     else {
         localStorage.setItem(this.storageKey, JSON.stringify({ message: message, sourceId: this.id }));

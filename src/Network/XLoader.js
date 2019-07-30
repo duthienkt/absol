@@ -2,7 +2,7 @@ var XLoader = {};
 
 XLoader.loadScript = function (url, callback) {
     return new Promise(function (resolve, reject) {
-        var script = document.createElement("script")
+        var script = document.createElement("script");
         script.type = "text/javascript";
         if (script.readyState) {  //IE
             script.onreadystatechange = function () {

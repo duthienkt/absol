@@ -1,7 +1,7 @@
 import Element from './Element';
 function ElementNS() {
     Element.call(this);
-};
+}
 
 Object.defineProperties(ElementNS.prototype, Object.getOwnPropertyDescriptors(Element.prototype));
 
