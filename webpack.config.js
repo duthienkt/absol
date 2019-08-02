@@ -3,7 +3,7 @@ const path = require('path');
 
 var packages = {
     default: {
-        entry: ['babel-polyfill', "./src/absol.js"],
+        entry: ["./src/absol.js"],
         filename: "./dist/absol.js"
     },
     wordfinder: {

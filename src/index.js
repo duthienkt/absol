@@ -22,6 +22,7 @@ import Broadcast from './Network/Broadcast';
 import * as text from './HTML5/Text';
 import * as file from './Converter/file';
 import * as base64 from './Converter/base64';
+import Alarm from './Time/Alarm';
 
 var absol = {
     Element: Element,
@@ -45,7 +46,8 @@ var absol = {
     Broadcast: Broadcast,
     text:text,
     file: file,
-    base64: base64
+    base64: base64,
+    Alarm : Alarm
 };
 
 
