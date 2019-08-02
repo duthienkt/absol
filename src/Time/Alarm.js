@@ -11,9 +11,12 @@ function Alarm(time, callback) {
     if (typeof time == 'number')
         this.time = time;
     else this.time = time.getTime();
-    this.args = Array.prototype.slice.call(arguments, 2);    
+    this.args = Array.prototype.slice.call(arguments, 2);
     this.tick = this.tick.bind(this);
-    this.start();
+    if (this.time >= new Date.getTime())
+        this.start();
+    else
+        this.kill();
 }
 
 
