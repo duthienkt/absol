@@ -59,7 +59,7 @@ XHR.getRequest = function (url, props, success, failure) {
 };
 
 
-XHR.postRepquest = function (url, bodyJson, props, success, failure) {
+XHR.postRepquest = function (url, bodyJson, props, headers, success, failure) {
     return new Promise(function (rs, rj) {
         var method = "POST";
         var shouldBeAsync = true;
@@ -91,8 +91,11 @@ XHR.postRepquest = function (url, bodyJson, props, success, failure) {
         else if (props && (typeof props == 'object')) {
             Object.assign(request, props);
         }
-
-        request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        headers = headers || {};
+        headers["Content-Type"] = headers["Content-Type"] || "application/json;charset=UTF-8";
+        Object.keys(headers).forEach(function (key) {
+            request.setRequestHeader(key, headers[key]);
+        });
 
         request.send(JSON.stringify(bodyJson));
     });
