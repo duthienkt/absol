@@ -1,5 +1,15 @@
 const path = require('path');
 
+var processFolder = process.cwd().replace(/\\/, '/');
+var relative = path.relative(processFolder, __dirname);
+
+
+function resolveEntry(entryInProject){
+    var entryInProcess = path.join(relative, entryInProject);
+    if (!entryInProcess.startsWith('./')) entryInProcess = './' + entryInProcess;
+    return entryInProcess;
+
+}
 
 var packages = {
     default: {
@@ -18,7 +28,7 @@ const PACKAGE = 'default';
 module.exports = {
     mode: process.env.MODE || "development",
     // mode: 'production',
-    entry: packages[PACKAGE].entry,
+    entry: packages[PACKAGE].entry.map(resolveEntry),
     output: {
         path: path.join(__dirname, "."),
         filename: packages[PACKAGE].filename
