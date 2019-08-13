@@ -59,7 +59,7 @@ XHR.getRequest = function (url, props, success, failure) {
 };
 
 
-XHR.postRepquest = function (url, bodyJson, props, headers, success, failure) {
+XHR.postRepquest = function (url, payload, props, headers, success, failure) {
     return new Promise(function (rs, rj) {
         var method = "POST";
         var shouldBeAsync = true;
@@ -97,7 +97,7 @@ XHR.postRepquest = function (url, bodyJson, props, headers, success, failure) {
             request.setRequestHeader(key, headers[key]);
         });
 
-        request.send(JSON.stringify(bodyJson));
+        request.send(payload);
     });
 };
 
