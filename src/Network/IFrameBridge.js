@@ -5,10 +5,10 @@ import { randomIdent } from "../String/stringGenerate";
  * 
  * @param {Worker} host 
  */
-function IFrameBridge(host) {
+function IFrameBridge(host, origin) {
     EventEmitter.call(this);
     this.detach();
-
+    this.origin = origin;
     if (host) this.attach(host);
     this.__azarResolveCallbacks = {};
 }
@@ -36,9 +36,19 @@ IFrameBridge.prototype.detach = function () {
 
 IFrameBridge.fromIFrame = function (iframe) {
     var host = iframe.contentWindow || iframe.contentDocument;
-    if (host) return new IFrameBridge(host);
+    var src = iframe.src;
+    var rootOrigin = location.origin;
+    var iframeOrigin = src.match(/^(http|https):\/\/[^/]+/);
+    if (iframeOrigin){
+        iframeOrigin = iframeOrigin[0];
+    }
+    else{
+        iframeOrigin = rootOrigin;
+    }
+    
+    if (host) return new IFrameBridge(host,  rootOrigin == iframeOrigin? undefined: '*' ||iframeOrigin);
     else {
-        var result = new IFrameBridge();
+        var result = new IFrameBridge(undefined, rootOrigin == iframeOrigin? undefined: '*' ||iframeOrigin  );
         var attachedHost = function () {
             var host = iframe.contentWindow || iframe.contentDocument;
             result.attach(host);
@@ -56,7 +66,16 @@ IFrameBridge.fromIFrame = function (iframe) {
 
 IFrameBridge.getInstance = function () {
     if (!IFrameBridge.shareInstance) {
-        IFrameBridge.shareInstance = new IFrameBridge(self);
+        var origin = location.origin;
+        var rootOrigin = IFrameBridge.getParentUrl().match(/^(http|https):\/\/[^/]+/);
+        if (rootOrigin){
+            rootOrigin = rootOrigin[0];
+        }
+        else{
+            rootOrigin = origin;
+        }
+
+        IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin == origin? undefined: "*" || rootOrigin );
     }
     return IFrameBridge.shareInstance;
 };
@@ -67,6 +86,14 @@ IFrameBridge.prototype.constructor = IFrameBridge;
 
 IFrameBridge.isInIFrame = function () {
     return (top !== self);
+};
+
+
+IFrameBridge.getParentUrl = function(){
+    var parentUrl = (window.location != window.parent.location)
+                ? document.referrer
+                : document.location.href;
+    return parentUrl;
 };
 
 IFrameBridge.prototype.__azarMessageListener = function (event) {
@@ -100,11 +127,18 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
 
 
 IFrameBridge.prototype.__azarResolve = function (taskId, result) {
-    this.host.postMessage({
+    var data = {
         type: "INVOKE_RESULT",
         taskId: taskId,
         result: result
-    });
+    };
+
+    if (this.origin) {
+        this.host.postMessage(data, this.origin);
+    }
+    else {
+        this.host.postMessage(data);
+    }
 };
 
 
@@ -122,10 +156,16 @@ IFrameBridge.prototype.emit = function () {
     var params = [];
     params.push.apply(params, arguments);
     this.sync.then(function () {
-        this.host.postMessage({
+        var data = {
             type: "EMIT",
             params: params
-        });
+        };
+        if (this.origin) {
+            this.host.postMessage(data, this.origin);
+        }
+        else {
+            this.host.postMessage(data);
+        }
     }.bind(this));
     return this;
 };
@@ -137,12 +177,18 @@ IFrameBridge.prototype.invoke = function (name) {
     params.shift();
     return this.sync.then(function () {
         var indent = randomIdent(32);
-        this.host.postMessage({
+        var data = {
             type: 'INVOKE',
             params: params,
             taskId: indent,
             name: name
-        });
+        };
+        if (this.origin) {
+            this.host.postMessage(data, this.origin);
+        }
+        else {
+            this.host.postMessage(data);
+        }
         return new Promise(function (resolve) {
             this.__azarResolveCallbacks[indent] = resolve;
         }.bind(this));
