@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>Master</title>
+    <script src="../dist/absol.js"></script>
+    <style>
+        iframe {
+            width: 50vw;
+            height: 100px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Same Origin</h1>
+    <iframe id="i0" src="./IFrameBidgeSlave.html"></iframe>
+    <div>
+        <label>Try type here </label><input id="same-origin" type="text" />
+    </div>
+    <h1>Different Origin</h1>
+    <iframe id="i1" src="//volcanion.cf/absol/demo/IFrameBidgeSlave.html"></iframe>
+    <div>
+        <label>Try type here </label><input id="dif-origin-1" type="text" />
+    </div>
+
+    <iframe id="i2" src="https://volcanion.cf/absol/demo/IFrameBidgeSlave.html"></iframe>
+    <div>
+        <label>Try type here </label><input id="dif-origin-2" type="text" />
+    </div>
+    <script>
+        var bridge0 = absol.IFrameBridge.fromIFrame(absol.$("#i0"));
+        var inp0 = absol.$('#same-origin').on('keyup', function () {
+            var text = this.value;
+            bridge0.emit("text", text);
+        });
+        bridge0.on('text', function (text) {
+            inp0.value = text;
+        });
+
+
+        var bridge1 = absol.IFrameBridge.fromIFrame(absol.$("#i1"));
+        var inp1 = absol.$('#dif-origin-1').on('keyup', function () {
+            var text = this.value;
+            bridge1.emit("text", text);
+        });
+        bridge1.on('text', function (text) {
+            inp1.value = text;
+        });
+
+        var bridge2 = absol.IFrameBridge.fromIFrame(absol.$("#i2"));
+        var inp2 = absol.$('#dif-origin-2').on('keyup', function () {
+            var text = this.value;
+            bridge2.emit("text", text);
+        });
+        bridge2.on('text', function (text) {
+            inp2.value = text;
+        });
+
+    </script>
+</body>
+
+</html>

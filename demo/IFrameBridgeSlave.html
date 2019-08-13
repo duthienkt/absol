@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Slave</title>
+    <script src="../dist/absol.js?"></script>
+</head>
+
+<body>
+    <label>Try type here </label><input type="text" />
+    <div id="info"></div>
+    <script>
+        var infoDiv = absol.$('#info');
+        if (absol.IFrameBridge.isInIFrame()) {
+            var parentUrl = absol.IFrameBridge.getParentUrl();
+            absol._(`<div>ParentUrl: ${parentUrl}</div>`).addTo(infoDiv);
+            absol._(`<div>Url: ${location.href}</div>`).addTo(infoDiv);
+            var bridge = absol.IFrameBridge.getInstance();
+            var inp = absol.$('input[type="text"]').on('keyup', function () {
+                var text = this.value;
+                bridge.emit("text", text);
+            });
+
+            bridge.on('text', function (text) {
+                inp.value = text;
+            });
+
+        };
+    </script>
+</body>
+
+</html>
