@@ -263,7 +263,7 @@ Element.prototype.getBoundingRecursiveRect = function (depth) {
 
         if (current.e.getBoundingClientRect) {
             var cRect = current.e.getBoundingClientRect();
-            if (!cRect || cRect.width * cRect.height == 0) continue;
+            if (!cRect || !(cRect.width || cRect.height || cRect.left || cRect.right)) continue;
             ac.left = Math.min(ac.left, cRect.left);
             ac.top = Math.min(ac.top, cRect.top);
             ac.bottom = Math.max(ac.bottom, cRect.bottom);
