@@ -433,9 +433,12 @@ Dom.waitImageLoaded = function (img) {
     }
     if (isLoaded) return Promise.resolve();
     return new Promise(function (rs) {
-        img.onload = function () {
-            rs();
-        };
+        if (img.addEventListener) {
+            img.addEventListener('load', rs, false);
+        }
+        else {
+            img.attachEvent('onload', rs, false);
+        }
         setTimeout(5000, rs);
     });
     // No other way of checking: assume it’s ok.
