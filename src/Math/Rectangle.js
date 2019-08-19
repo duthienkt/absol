@@ -78,7 +78,8 @@ Rectangle.prototype.collapsedSquare = function (r) {
     minX = this.x > r.x ? this.x : r.x;
     minY = this.y > r.y ? this.y : r.y;
     maxX = this.x + this.width < r.x + r.width ? this.x + this.width : r.x + r.width;
-    maxY = this.y + this.height < r.x + r.height;
+    maxY = this.y + this.height < r.x + r.height?this.y + this.height : r.x + r.height ;
+    
     return (maxX - minX) * (maxY - minY);
 };
 
