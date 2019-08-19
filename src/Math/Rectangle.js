@@ -83,6 +83,22 @@ Rectangle.prototype.collapsedSquare = function (r) {
     return (maxX - minX) * (maxY - minY);
 };
 
+Rectangle.prototype.collapsedRect = function(r){
+    var margin = 0;
+    var maxX, minX, maxY, minY;
+    if (this.x > r.x + r.width + margin) return null;
+    if (this.y > r.y + r.height + margin) return null;
+
+    if (r.x > this.x + this.width + margin) return null;
+    if (r.y > this.y + this.height + margin) return null;
+    minX = this.x > r.x ? this.x : r.x;
+    minY = this.y > r.y ? this.y : r.y;
+    maxX = this.x + this.width < r.x + r.width ? this.x + this.width : r.x + r.width;
+    maxY = this.y + this.height < r.y + r.height ? this.y + this.height : r.y + r.height;
+
+    return new Rectangle(minX, minX, maxX- minX, maxY - minY);
+};
+
 /**
  * @param {Rectangle} other
  * @returns {Rectangle}
