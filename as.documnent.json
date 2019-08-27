@@ -1,7 +1,7 @@
 {
     "name": "absol/src",
     "type": "FOLDER",
-    "src":"./readme.md",
+    "src": "./readme.md",
     "content": [
         {
             "name": "AppPattern",
@@ -10,12 +10,22 @@
         {
             "name": "Color",
             "type": "FOLDER",
-            "src":"./src/Color/readme.md"
+            "src": "./src/Color/readme.md"
         },
         {
-            "name":"Converter",
-            "type":"FOLDER",
-            "src":"./Converter/readme.md"
+            "name": "Converter",
+            "type": "FOLDER",
+            "src": "./src/Converter/readme.md"
+        },
+        {
+            "name": "HTML5",
+            "type": "FOLDER",
+            "src": "./src/Converter/readme.md"
+        },
+        {
+            "name": "Detector",
+            "type": "FOLDER",
+            "src": "./src/Detector/readme.md"
         }
     ]
 }
