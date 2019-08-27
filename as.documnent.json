@@ -1,0 +1,21 @@
+{
+    "name": "absol/src",
+    "type": "FOLDER",
+    "src":"./readme.md",
+    "content": [
+        {
+            "name": "AppPattern",
+            "type": "FOLDER"
+        },
+        {
+            "name": "Color",
+            "type": "FOLDER",
+            "src":"./src/Color/readme.md"
+        },
+        {
+            "name":"Converter",
+            "type":"FOLDER",
+            "src":"./Converter/readme.md"
+        }
+    ]
+}
