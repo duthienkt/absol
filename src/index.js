@@ -26,7 +26,6 @@ import Alarm from './Time/Alarm';
 
 var absol = {
     Element: Element,
-    HTMLElement: Element,//oldName
     JSPath: JSPath,
     TemplateString: TemplateString,
     TemplateXML: TemplateXML,
@@ -34,23 +33,24 @@ var absol = {
     Svg: Svg,
     BrowserDetector: BrowserDetector,
     OOP: OOP,
-    Event: EventEmitter,
     XML: XML,
     Color: Color,
     EventEmitter: EventEmitter,
     JSZip: JSZip,
-    dom: Dom,//old alias
-    event: EventEmitter,//old alias
     IFrameBridge: IFrameBridge,
     JSDocx: JSDocx,
     Broadcast: Broadcast,
-    text:text,
+    text: text,
     file: file,
     base64: base64,
-    Alarm : Alarm
+    Alarm: Alarm,
+    coreDom: Dom.ShareInstance,
+    coreSvg: Svg.ShareInstance,
+    _: Dom.ShareInstance._,
+    $: Dom.ShareInstance.$,
+    _svg: Svg.ShareInstance._,
+    $svg: Svg.ShareInstance.$
 };
-
-
 
 
 export default absol;

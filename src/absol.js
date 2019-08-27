@@ -1,12 +1,13 @@
 import absol from ".";
 
 
-
 //for old plugin
+absol.HTMLElement = absol.Element;
+absol.dom = absol.Dom;
+absol.event = absol.EventEmitter;
+absol.Event = absol.EventEmitter;
 absol.color = absol.Color;
 absol.ShareDom = absol.Dom.ShareInstance;
-absol._ = absol.ShareDom._;
-absol.$ = absol.ShareDom.$;
 absol.buildDom = absol.ShareDom._;
 
 absol.ShareSvg = absol.Svg.ShareInstance;
@@ -19,4 +20,3 @@ window.AComp = absol.AComp;
 window.PhotoSwipeViewer = absol.PhotoSwipeViewer;
 window.IFrameBridge = absol.IFrameBridge;
 window.absol = absol;
-
