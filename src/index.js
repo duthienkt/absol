@@ -1,7 +1,7 @@
 import './Polyfill/polyfill';
 
 import EventEmitter from './HTML5/EventEmitter';
-import BrowserDetector from './Dectector/BrowserDetector';
+import BrowserDetector from './Detector/BrowserDetector';
 import Element from './HTML5/Element';
 
 import JSPath from './HTML5/JSPath';
@@ -32,7 +32,7 @@ var absol = {
     TemplateXML: TemplateXML,
     Dom: Dom,
     Svg: Svg,
-    BrowserDectector: BrowserDetector,
+    BrowserDetector: BrowserDetector,
     OOP: OOP,
     Event: EventEmitter,
     XML: XML,

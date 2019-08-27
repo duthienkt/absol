@@ -1,4 +1,4 @@
-import BrowserDetector from '../Dectector/BrowserDetector';
+import BrowserDetector from '../Detector/BrowserDetector';
 
 
 

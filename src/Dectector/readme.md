@@ -2,7 +2,7 @@
 ## BrowserDetector
 
 ```js
-import BrowserDetector from "absol/src/Dectector/BrowserDetector";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 ```
 
 Data of BrowserDetector:

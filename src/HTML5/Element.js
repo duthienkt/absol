@@ -1,5 +1,5 @@
 import EventEmitter from './EventEmitter';
-import BrowserDetector from '../Dectector/BrowserDetector';
+import BrowserDetector from '../Detector/BrowserDetector';
 import JSPath from './JSPath';
 
 
