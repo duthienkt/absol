@@ -139,11 +139,11 @@ export function beginOfDay(date, gmt) {
  * @param {Boolean} gmt default:false
  * @return {Date} date at 00:00 
  */
-export function beginOfWeek (date, gmt, begin) {
+export function beginOfWeek(date, gmt, begin) {
     begin = begin || 0;
-    var res = Date.beginOfDay(date, gmt);
+    var res = beginOfDay(date, gmt);
     while ((gmt ? res.getUTCDay() : res.getDay()) != begin) {
-        res = Date.prevDate(res);
+        res = prevDate(res);
     }
     return res;
 };
@@ -153,7 +153,7 @@ export function beginOfWeek (date, gmt, begin) {
  * @param {Boolean} gmt default:false
  * @return {Date} date at 00:00 AM 
  */
-export function beginOfMonth (date, gmt) {
+export function beginOfMonth(date, gmt) {
     gmt = !!gmt;
     var d = gmt ? date.getUTCDate() : date.getDate();
     var m = gmt ? date.getUTCMonth() : date.getMonth();
@@ -163,7 +163,7 @@ export function beginOfMonth (date, gmt) {
         res.setUTCFullYear(y, m, 1);
     else
         res.setFullYear(y, m, 1);
-    return Date.beginOfDay(res, gmt);
+    return beginOfDay(res, gmt);
 };
 
 /**
@@ -171,7 +171,7 @@ export function beginOfMonth (date, gmt) {
  * @param {Boolean} gmt default:false
  * @return {Date} date at 00:00 AM 
  */
-export function beginOfYear (date, gmt) {
+export function beginOfYear(date, gmt) {
     gmt = !!gmt;
     var d = gmt ? date.getUTCDate() : date.getDate();
     var m = gmt ? date.getUTCMonth() : date.getMonth();
@@ -181,7 +181,7 @@ export function beginOfYear (date, gmt) {
         res.setUTCFullYear(y, 0, 1);
     else
         res.setFullYear(y, 0, 1);
-    return Date.beginOfDay(res, gmt);
+    return beginOfDay(res, gmt);
 };
 
 
@@ -191,9 +191,9 @@ export function beginOfYear (date, gmt) {
  * @param {Boolean} gmt default:false
  * @return {number} 
  */
-export function compareDate (date0, date1, gmt) {
-    var date0 = Date.beginOfDay(date0, !!gmt);
-    var date1 = Date.beginOfDay(date1, !!gmt);
+export function compareDate(date0, date1, gmt) {
+    var date0 = beginOfDay(date0, !!gmt);
+    var date1 = beginOfDay(date1, !!gmt);
     return (date0.getTime() - date1.getTime()) / (86400000);
 };
 
@@ -206,7 +206,7 @@ export function compareDate (date0, date1, gmt) {
  * @return {number} 
  */
 
-export function compareMonth (date0, date1, gmt) {
+export function compareMonth(date0, date1, gmt) {
     gmt = !!gmt;
     var m0 = gmt ? date0.getUTCMonth() : date0.getMonth();
     var y0 = gmt ? date0.getUTCFullYear() : date0.getFullYear();
@@ -217,12 +217,43 @@ export function compareMonth (date0, date1, gmt) {
     return (y0 - y1) * 12 + (m0 - m1);
 };
 
-export function compareYear (date0, date1, gmt) {
+export function compareYear(date0, date1, gmt) {
     gmt = !!gmt;
     var y0 = gmt ? date0.getUTCFullYear() : date0.getFullYear();
     var y1 = gmt ? date1.getUTCFullYear() : date1.getFullYear();
-
     return y0 - y1;
 };
 
 
+
+/**
+ * 
+ * @param {Date} date
+ * @returns {Date} 
+ */
+export function nextMonth(date) {
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    if (m == 11) {
+        return new Date(y + 1, 0, 1, 0, 0, 0, 0);
+    }
+    else {
+        return new Date(y, m + 1, 1, 0, 0, 0, 0);
+    }
+}
+
+/**
+ * 
+ * @param {Date} date
+ * @returns {Date} 
+ */
+export function prevMonth(date) {
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    if (m == 0) {
+        return new Date(y - 1, 11, 1, 0, 0, 0, 0);
+    }
+    else {
+        return new Date(y, m - 1, 1, 0, 0, 0, 0);
+    }
+}
