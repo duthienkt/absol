@@ -1,7 +1,7 @@
 # absol
 
 <p style="text-align: center">
-  <img width="300" height="300" src="./logo.svg">
+  <img width="300" height="300" src="https://raw.githubusercontent.com/duthienkt/absol/master/logo.svg?sanitize=true">
 </p>
 
 
