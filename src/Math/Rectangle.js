@@ -1,5 +1,12 @@
 import Vec2 from "./Vec2";
 
+/**
+ * 
+ * @param {Number} x 
+ * @param {Number} y 
+ * @param {Number} width 
+ * @param {Number} height 
+ */
 function Rectangle(x, y, width, height) {
     this.width = width;
     this.height = height;
@@ -83,7 +90,7 @@ Rectangle.prototype.collapsedSquare = function (r) {
     return (maxX - minX) * (maxY - minY);
 };
 
-Rectangle.prototype.collapsedRect = function(r){
+Rectangle.prototype.collapsedRect = function (r) {
     var margin = 0;
     var maxX, minX, maxY, minY;
     if (this.x > r.x + r.width + margin) return null;
@@ -96,7 +103,7 @@ Rectangle.prototype.collapsedRect = function(r){
     maxX = this.x + this.width < r.x + r.width ? this.x + this.width : r.x + r.width;
     maxY = this.y + this.height < r.y + r.height ? this.y + this.height : r.y + r.height;
 
-    return new Rectangle(minX, minX, maxX- minX, maxY - minY);
+    return new Rectangle(minX, minX, maxX - minX, maxY - minY);
 };
 
 /**
@@ -119,15 +126,35 @@ Rectangle.prototype.clone = function () {
     return new Rectangle(this.x, this.y, this.width, this.height);
 };
 
+/**
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
+ * @returns {Rectangle}
+ */
 Rectangle.make = function (x, y, width, height) {
     return new Rectangle(x, y, width, height);
 };
 
 
-
+/**
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
+ * @returns {Rectangle}
+ */
 Rectangle.makeCenter = function (x, y, width, height) {
     return new Rectangle(x - width / 2, y - height / 2, width, height);
 };
 
+/**
+ * @param {ClientRect} clientRect
+ * @returns {Rectangle}
+ */
+Rectangle.fromClientRect = function (clientRect) {
+    return new Rectangle(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
+};
 
 export default Rectangle;
