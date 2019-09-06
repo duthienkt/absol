@@ -23,6 +23,7 @@ import * as text from './HTML5/Text';
 import * as file from './Converter/file';
 import * as base64 from './Converter/base64';
 import Alarm from './Time/Alarm';
+import Ref from './AppPattern/Ref';
 
 var absol = {
     Element: Element,
@@ -49,7 +50,8 @@ var absol = {
     _: Dom.ShareInstance._,
     $: Dom.ShareInstance.$,
     _svg: Svg.ShareInstance._,
-    $svg: Svg.ShareInstance.$
+    $svg: Svg.ShareInstance.$,
+    Ref: Ref
 };
 
 
