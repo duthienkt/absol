@@ -46,9 +46,9 @@ IFrameBridge.fromIFrame = function (iframe) {
         iframeOrigin = rootOrigin;
     }
     
-    if (host) return new IFrameBridge(host,  rootOrigin == iframeOrigin? undefined: '*' ||iframeOrigin);
+    if (host) return new IFrameBridge(host,  iframeOrigin);
     else {
-        var result = new IFrameBridge(undefined, rootOrigin == iframeOrigin? undefined: '*' ||iframeOrigin  );
+        var result = new IFrameBridge(undefined, iframeOrigin  );
         var attachedHost = function () {
             var host = iframe.contentWindow || iframe.contentDocument;
             result.attach(host);
@@ -75,7 +75,8 @@ IFrameBridge.getInstance = function () {
             rootOrigin = origin;
         }
 
-        IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin == origin? undefined: "*" || rootOrigin );
+        // IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin == origin? undefined: "*" || rootOrigin );
+        IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin );
     }
     return IFrameBridge.shareInstance;
 };
