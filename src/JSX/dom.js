@@ -113,7 +113,7 @@ export function parseDom(jsxCode) {
             ]
         });
     var xmlData = {};
-    domVisitor().acept(ast, xmlData);
+    domVisitor(jsxCode).acept(ast, xmlData);
     if (xmlData.child.length > 1) return xmlData.child;
     return xmlData.child[0];
 };
