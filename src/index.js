@@ -25,11 +25,10 @@ import * as base64 from './Converter/base64';
 import Alarm from './Time/Alarm';
 import Ref from './AppPattern/Ref';
 
-import * as JSX from './JSX/JSX';
 import XHR from './Network/XHR';
 import * as string from './String/stringGenerate';
 
-import * as jsxdom from './JSX/JSX';
+import * as jsxdom from './JSX/dom';
 import * as jsxattribute from './JSX/attribute';
 
 var absol = {
@@ -59,7 +58,6 @@ var absol = {
     _svg: Svg.ShareInstance._,
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
-    JSX: JSX,
     XHR: XHR,
     string: string,
     jsx: {
