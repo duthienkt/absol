@@ -17,7 +17,7 @@ Broadcast.prototype.constructor = Broadcast;
 
 
 Broadcast.prototype._init = function () {
-    if ('BroadcastChannel' in window && false) {
+    if ('BroadcastChannel' in window) {
         this.nativeBroadcastChannel = new BroadcastChannel(this.channel);
         this.nativeBroadcastChannel.onmessage = this._ev_message;
     }
