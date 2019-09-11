@@ -29,6 +29,8 @@ import * as JSX from './JSX/JSX';
 import XHR from './Network/XHR';
 import * as string from './String/stringGenerate';
 
+import * as jsxdom from './JSX/JSX';
+import * as jsxattribute from './JSX/attribute';
 
 var absol = {
     Element: Element,
@@ -58,8 +60,12 @@ var absol = {
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
     JSX: JSX,
-    XHR:XHR,
-    string: string
+    XHR: XHR,
+    string: string,
+    jsx: {
+        dom: jsxdom,
+        attribute: jsxattribute
+    }
 };
 
 

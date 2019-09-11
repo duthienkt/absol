@@ -1,7 +1,8 @@
 
 import * as babylon from 'babylon';
+import { parseStyleAttr, parseClassAttr } from './attribute';
 
-var DomVisitor = {
+export var domVisitor = {
     File: function (node, ac) {
         return acept(node.program, ac);
     },
@@ -45,9 +46,14 @@ var DomVisitor = {
                         ac.props = ac.props || {};
                         ac.props[attribute.key.replace('prop-', '')] = attribute.value;
                     }
-                    else {
-                        ac.attr = ac.attr || {};
-                        ac.attr[attribute.key] = attribute.value;
+                    else if (attribute.key == 'style') {
+                        ac.style = parseStyleAttr(attribute.value);
+                    }
+                    else if (attribute.key == 'class') {
+                        var classList = parseClassAttr(attribute.value);
+                        if (classList.length > 0)
+                            ac.class = classList;
+
                     }
                 }
             }, {});
@@ -69,10 +75,10 @@ var DomVisitor = {
         return ac;
     },
     StringLiteral: function (node, ac) {
-        ac.value = JSON.stringify(node.value);
+        ac.value = node.value;
     },
     JSXExpressionContainer: function (node, ac) {
-        ac.value = jsxCode.substring(node.expression.start, node.expression.end);
+        ac.value = { expression: jsxCode.substring(node.expression.start, node.expression.end) };
         return ac;
     },
     JSXText: function (node, ac) {
@@ -82,13 +88,13 @@ var DomVisitor = {
 };
 
 function acept(node, ac) {
-    return node && DomVisitor[node.type] && DomVisitor[node.type](node, ac);
+    return node && domVisitor[node.type] && domVisitor[node.type](node, ac);
 }
 
 /***
  * @param {String} jsxCode
  */
-export function parseRawDom(jsxCode) {
+export function parseDom(jsxCode) {
     jsxCode = jsxCode.trim().replace(/>\s+</gm, '><').replace(/<(\/?)(img|input|link|br|meta)([^>]*)>/g, function (sub, end, tag, content) {
         if (end == '/') return '';
         return '<' + tag + content + '/>';
@@ -102,5 +108,7 @@ export function parseRawDom(jsxCode) {
         });
     var xmlData = {};
     acept(ast, xmlData);
-    return xmlData;
+    if (xmlData.child.length > 1) return xmlData.child;
+    return xmlData.child[0];
 };
+
