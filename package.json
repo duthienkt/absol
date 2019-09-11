@@ -1,6 +1,6 @@
 {
     "name": "absol",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "description": "HTML5 Framework",
     "main": "src/index.js",
     "directories": {
@@ -29,6 +29,7 @@
     "dependencies": {
         "atob": "^2.1.2",
         "babel-polyfill": "^6.26.0",
+        "babylon": "^6.18.0",
         "btoa": "^1.2.1",
         "jszip": "^3.2.1",
         "lz-string": "^1.4.4"
