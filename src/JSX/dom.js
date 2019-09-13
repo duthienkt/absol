@@ -36,8 +36,6 @@ export function domVisitor(jsxCode) {
                 node.attributes.forEach(function (aNode) {
                     var attribute = {};
                     acept(aNode, attribute);
-                    // console.log(attribute);
-
                     if (attribute.key) {
                         if (attribute.key.startsWith('data-')) {
                             ac.data = ac.data || {};
@@ -47,6 +45,10 @@ export function domVisitor(jsxCode) {
                             ac.props = ac.props || {};
                             ac.props[attribute.key.replace('prop-', '')] = attribute.value;
                         }
+                        else if (attribute.key.startsWith('on-')) {
+                            ac.on = ac.props || {};
+                            ac.on[attribute.key.replace('on-', '')] = attribute.value;
+                        }
                         else if (attribute.key == 'style') {
                             ac.style = parseStyleAttr(attribute.value);
                         }
@@ -54,7 +56,10 @@ export function domVisitor(jsxCode) {
                             var classList = parseClassAttr(attribute.value);
                             if (classList.length > 0)
                                 ac.class = classList;
-
+                        }
+                        else{
+                            ac.attr = ac.attr || {};
+                            ac.attr[attribute.key] = attribute.value;
                         }
                     }
                 }, {});
@@ -83,7 +88,7 @@ export function domVisitor(jsxCode) {
             return ac;
         },
         JSXText: function (node, ac) {
-            ac.text = JSON.stringify(node.value)
+            ac.text = node.value
             return ac;
         }
     };
