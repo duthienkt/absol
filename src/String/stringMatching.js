@@ -70,7 +70,7 @@ export function phraseMatch(a, b, matchWordPow) {
     var notEmp = function (e) { return e.length > 0; };
     var sq1 = a.toLowerCase().split(spliter).filter(notEmp);
     var sq2 = b.toLowerCase().split(spliter).filter(notEmp);
-    wordsMatchScore = wordsMatch(sq1, sq2);
+    var wordsMatchScore = wordsMatch(sq1, sq2);
     return wordsMatchScore / Math.max(Math.min(m, n), 1);
 };
 
@@ -82,7 +82,7 @@ export function phraseLike(a, b, matchWordPow) {
     var sq2 = b.toLowerCase().split(spliter).filter(notEmp);
     var m = sq1.length;
     var n = sq2.length;
-    wordsMatchScore = wordsMatch(sq1, sq2);
+    var wordsMatchScore = wordsMatch(sq1, sq2);
     return wordsMatchScore / Math.max(Math.max(m, n), 1);
 }
 
