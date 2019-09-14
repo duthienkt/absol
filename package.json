@@ -1,6 +1,6 @@
 {
     "name": "absol",
-    "version": "1.8.5",
+    "version": "1.8.6",
     "description": "HTML5 Framework",
     "main": "src/index.js",
     "directories": {
