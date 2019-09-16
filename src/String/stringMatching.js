@@ -71,6 +71,8 @@ export function phraseMatch(a, b, matchWordPow) {
     var sq1 = a.toLowerCase().split(spliter).filter(notEmp);
     var sq2 = b.toLowerCase().split(spliter).filter(notEmp);
     var wordsMatchScore = wordsMatch(sq1, sq2);
+    var m = sq1.length;
+    var n = sq2.length;
     return wordsMatchScore / Math.max(Math.min(m, n), 1);
 };
 
