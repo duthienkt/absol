@@ -1,6 +1,6 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
-import JSPath from './JSPath';
+import { underScoreToCamelCase } from '../String/stringFormat';
 
 
 function Element() {
@@ -73,16 +73,9 @@ Element.prototype.attr = function () {
 };
 
 
-Element.prototype._azar_styleIndex = function (string) {
-    return string.replace(/\-(.)/g, function (full, c) {
-        return c.toUpperCase();
-    });
-};
-
-
 Element.prototype.addStyle = function (arg0, arg1) {
     if (typeof arg0 == 'string')
-        this.style[this._azar_styleIndex(arg0)] = arg1;
+        this.style[underScoreToCamelCase(arg0)] = arg1;
     else {
         for (var key in arg0)
             this.addStyle(key, arg0[key]);
@@ -93,7 +86,7 @@ Element.prototype.addStyle = function (arg0, arg1) {
 Element.prototype.removeStyle = function (arg0) {
     var key;
     if (typeof arg0 == 'string') {
-        key = this._azar_styleIndex(arg0);
+        key = underScoreToCamelCase(arg0);
         this.style[key] = null;
         delete this.style[key];
     }

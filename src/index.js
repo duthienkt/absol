@@ -26,7 +26,8 @@ import Alarm from './Time/Alarm';
 import Ref from './AppPattern/Ref';
 
 import XHR from './Network/XHR';
-import * as string from './String/stringGenerate';
+import * as stringGenerate from './String/stringGenerate';
+import * as stringFormat from './String/stringFormat';
 
 import * as jsxdom from './JSX/dom';
 import * as jsxattribute from './JSX/attribute';
@@ -59,7 +60,7 @@ var absol = {
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
     XHR: XHR,
-    string: string,
+    string: Object.assign({}, stringFormat, stringGenerate),
     jsx: {
         dom: jsxdom,
         attribute: jsxattribute

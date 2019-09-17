@@ -56,6 +56,203 @@ export function nonAccentVietnamese(s) {
         .replace(/\u02C6|\u0306|\u031B/g, "");
 }
 
+
+
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function pascalCaseToCamelCase(s) {
+    return s.substr(0, 1).toLowerCase() + s.substr(1);
+}
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function kebabCaseToCamelCase(s) {
+    return s.replace(/-+([^-])/g, function (full, c) {
+        return c.toUpperCase();
+    });
+}
+
+/**
+ * 
+ * @param {String} s 
+ * @returns {String} 
+ */
+export function underScoreToCamelCase(s) {
+    return s.replace(/(_+)?([^_]+)/g, function (full, underscore, word) {
+        if (underscore) {
+            if (word) {
+                return word.substr(0, 1).toUpperCase() + word.substr(1).toLowerCase();
+            }
+            else return '';
+        }
+        else {
+            return word.toLowerCase();
+        };
+    });
+}
+
+
+/**
+ * 
+ * @param {String} s 
+ * @returns {String} 
+ */
+export function camelCaseToPascalCase(s) {
+    return s.substr(0, 1).toUpperCase() + s.substr(1);
+}
+
+/**
+ * 
+ * @param {String} s 
+ * @returns {String} 
+ */
+export function underScoreToPascalCase(s) {
+    return s.replace(/(_+|^)?([^_]+)/g, function (full, underscore, word) {
+        return word.substr(0, 1).toUpperCase() + word.substr(1).toLowerCase();
+    });
+}
+
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function kebabCaseToPascalCase(s) {
+    return s.replace(/(-+|^)([^-])/g, function (full, u, c) {
+        return c.toUpperCase();
+    });
+}
+
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function pascalCaseToKebabCase(s) {
+    return s.replace(/[A-Z][^A-Z]*/g, function (full, index) {
+        if (index == 0)
+            return full.toLowerCase();
+        return '-' + full.toLowerCase()
+    });
+}
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function camelCaseToKebabCase(s) {
+    return s.replace(/(^|[A-Z])[^A-Z]*/g, function (full, index) {
+        if (index == 0)
+            return full.toLowerCase();
+        return '-' + full.toLowerCase()
+    });
+}
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function underScoreToKebabCase(s) {
+    return s.replace(/(^|_+)([^_]+)/g, function (full, score, word, index) {
+        if (index == 0)
+            return word.toLowerCase();
+        return '-' + word.toLowerCase()
+    });
+}
+
+
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function pascalCaseToUnderScore(s) {
+    return s.replace(/[A-Z][^A-Z]*/g, function (full, index) {
+        if (index == 0)
+            return full.toLowerCase();
+        return '_' + full.toLowerCase()
+    });
+}
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function pascalCaseToUpperUnderScore(s) {
+    return s.replace(/[A-Z][^A-Z]*/g, function (full, index) {
+        if (index == 0)
+            return full.toUpperCase();
+        return '_' + full.toUpperCase()
+    });
+}
+
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function camelCaseToUnderScore(s) {
+    return s.replace(/(^|[A-Z])[^A-Z]*/g, function (full, index) {
+        if (index == 0)
+            return full.toLowerCase();
+        return '_' + full.toLowerCase()
+    });
+}
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function camelCaseToUpperUnderScore(s) {
+    return s.replace(/(^|[A-Z])[^A-Z]*/g, function (full, index) {
+        if (index == 0)
+            return full.toUpperCase();
+        return '_' + full.toUpperCase()
+    });
+}
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function kebabCaseToUnderScore(s) {
+    return s.replace(/(-+|^)([^-]+)/g, function (full, u, word, index) {
+        if (index == 0) return word.toLowerCase();
+        return '_' + word.toLowerCase()
+    });
+}
+
+
+
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
+export function kebabCaseToUpperUnderScore(s) {
+    return s.replace(/(-+|^)([^-]+)/g, function (full, u, word, index) {
+        if (index == 0) return word.toUpperCase();
+        return '_' + word.toUpperCase()
+    });
+}
+
+
+
 String.nonAccentVietnamese = nonAccentVietnamese;
 
 String.prototype.nonAccentVietnamese = function () {
