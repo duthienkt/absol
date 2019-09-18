@@ -1,6 +1,6 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
-import { underScoreToCamelCase } from '../String/stringFormat';
+import { kebabCaseToCamelCase } from '../String/stringFormat';
 
 
 function Element() {
@@ -75,7 +75,7 @@ Element.prototype.attr = function () {
 
 Element.prototype.addStyle = function (arg0, arg1) {
     if (typeof arg0 == 'string')
-        this.style[underScoreToCamelCase(arg0)] = arg1;
+        this.style[kebabCaseToCamelCase(arg0)] = arg1;
     else {
         for (var key in arg0)
             this.addStyle(key, arg0[key]);
@@ -86,7 +86,7 @@ Element.prototype.addStyle = function (arg0, arg1) {
 Element.prototype.removeStyle = function (arg0) {
     var key;
     if (typeof arg0 == 'string') {
-        key = underScoreToCamelCase(arg0);
+        key = kebabCaseToCamelCase(arg0);
         this.style[key] = null;
         delete this.style[key];
     }
