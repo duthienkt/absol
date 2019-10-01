@@ -43,14 +43,14 @@ export function distance(x0, y0, x1, y1) {
  * @param {Number} floatFixed 
  * @param {"."|","} decimalSeparator 
  * @param {","|"."} thousandsSeparator 
- * @param {Number} paddingDecimal 
+ * @param {Number} decimalPadding 
  */
-export function numberToString(numb, floatFixed, decimalSeparator, thousandsSeparator, paddingDecimal) {
+export function numberToString(numb, floatFixed, decimalSeparator, thousandsSeparator, decimalPadding) {
     if (floatFixed === undefined || floatFixed === null || typeof floatFixed != "number" || isNaN(floatFixed) || floatFixed < -1) floatFixed = -1;
     if (decimalSeparator === undefined || decimalSeparator === null || (decimalSeparator != '.' && decimalSeparator != ',')) decimalSeparator = '.';
     if (thousandsSeparator === undefined || thousandsSeparator === null || (floatFixed >= 0 && thousandsSeparator == decimalSeparator)) thousandsSeparator = undefined;
     if (thousandsSeparator != ',' && thousandsSeparator != '.') thousandsSeparator = undefined;
-    if (paddingDecimal === undefined || paddingDecimal === null || typeof paddingDecimal != "number" || isNaN(paddingDecimal) || paddingDecimal < 0) paddingDecimal = 0;
+    if (decimalPadding === undefined || decimalPadding === null || typeof decimalPadding != "number" || isNaN(decimalPadding) || decimalPadding < 0) decimalPadding = 0;
 
     var text = numb.toString();
     var matched = text.match(/[+-]?([0-9]*)(\.([0-9]*))?(e([+-]?[0-9]+))?/);
@@ -107,7 +107,7 @@ export function numberToString(numb, floatFixed, decimalSeparator, thousandsSepa
     }
 
 
-    while (decDigits.length < paddingDecimal) {
+    while (decDigits.length < decimalPadding) {
         decDigits.unshift(0);
     }
 
