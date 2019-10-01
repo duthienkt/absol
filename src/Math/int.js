@@ -113,7 +113,7 @@ export function numberToString(numb, floatFixed, decimalSeparator, thousandsSepa
 
     var decText = numb < 0 ? '-' : '';
     var breadMod = (decDigits.length + 2) % 3;
-    if (decimalSeparator != '') {
+    if (thousandsSeparator) {
         for (i = 0; i < decDigits.length; ++i) {
             decText += decDigits[i];
             if (i % 3 == breadMod && i + 1 < decDigits.length) {
