@@ -514,6 +514,26 @@ Dom.getScrollSize = function () {
 };
 
 
+Dom.depthCloneWithStyle = function (originElt) {
+    var newElt = originElt.cloneNode();//no deep
+    if (!originElt.getAttributeNS) return newElt;//is text node
+    var cssRules = Element.prototype.getCSSRules.call(originElt);
+    var cssKey = cssRules.reduce(function (ac, rule) {
+        for (var i = 0; i < rule.style.length; ++i) {
+            ac[rule.style[i]] = true;
+        }
+        return ac;
+    }, {});
+    for (var key in cssKey) {
+        newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
+    }
+    var children = Array.prototype.map.call(originElt.childNodes, Dom.depthCloneWithStyle);
+    for (var i = 0; i < children.length; ++i) {
+        newElt.appendChild(children[i]);
+    }
+    return newElt;
+};
+
 
 Dom.lastResizeTime = 0;
 
