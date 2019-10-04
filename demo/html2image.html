@@ -17,7 +17,8 @@
         <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
     </code> -->
     <div class="demo">
-        <div><label>Url </label><input type="text" value="https://google.com"/><button>send</button></div>
+        <div><label>Url </label><input type="text" value="https://google.com" /><input type="number" value="0"
+                min="0" style="width: 5em" /><button>send</button></div>
         <img class="page-img" />
     </div>
     <script class="viewable">
@@ -25,20 +26,22 @@
         var _ = absol._;
         var mDemo = $('.demo');
         var mImage = $('.page-img', mDemo);
-        var mInput = $('input', mDemo);
+        var mInput = $('input[type="text"]', mDemo);
+        var mDelayInput = $('input[type="number"]', mDemo);
         var mButton = $('button', mDemo).on('click', function () {
             mImage.src = "https://volcanion.cf/exticons/other/ellipsis_loading.svg";
             mButton.disabled = true;
             absol.XHR.postRepquest("https://volcanion.cf:9095/html2image", JSON.stringify({
                 apiKey: "auKB8o83G7EONRE8rmqgPGfv_jaG3XitkwiKg-Ihxbi0i9loWMjnbjVFBV_NGFLp95-UPGqan5iTeMmllazVCaIRgdVlSBIS3ruR8W6JAF814JNftAu1IqQYWdK0aZdACVowdKac5iGe7_to3n6pewDkQ4ibZ8xXQv7D-zZblrk",
-                url: mInput.value
+                url: mInput.value,
+                delayTime: mDelayInput.value
             }), 'json').then(function (res) {
                 mButton.disabled = false;
                 if (res.img) {
                     mImage.src = res.img;
                 }
-                else{
-                    mImage.src = "https://volcanion.cf/exticons/other/error_2d3.svg"; 
+                else {
+                    mImage.src = "https://volcanion.cf/exticons/other/error_2d3.svg";
                 }
             });
         });
