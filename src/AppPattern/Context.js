@@ -4,37 +4,14 @@ function Context (){
      * @type {Context}
      */
     this.parent = null;
-    this.children = [];
 }
-
-Context.prototype.appendChild = function(){
-    for (var i = 0; i < arguments.length; ++i){
-        this.children.push(arguments[i]);
-    }
-};
-
-Context.prototype.removeChild = function(child){
-    var temp = this.children;
-    this.children = [];
-    for (var i = 0; i< this.children.length; ++i){
-        if (temp[i] == child){
-        }
-        else{
-            this.children.push(temp[i]);
-        }
-    }
-};
-
-Context.prototype.getView = function () {
-    throw new Error("Not Implement!");
-};
 
 
 /**
  * @returns {*}
  */
 Context.prototype.getContext = function(key){
-    return this.parent.getContextManager().get(key);
+    return this.getContextManager().get(key);
 };
 
 /**
