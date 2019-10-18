@@ -550,7 +550,7 @@ Dom.printElement = function (option) {
         option = { elt: option };
     }
     if (Dom.isDomNode(option.elt)) {
-        var newElt = Dom.depthCloneWithStyle(option.elt);
+        var newElt = option.computeStyle ? Dom.depthCloneWithStyle(option.elt) : option.elt.cloneNode(true);
         var renderSpace = _({
             style: {
                 position: 'fixed',
@@ -563,42 +563,53 @@ Dom.printElement = function (option) {
                 opacity: '0',
                 visibility: 'hidden'
             }
-        }).addTo(document.body);
+        });
 
-        $('link', false, function (elt) {
+        $('link', document.head, function (elt) {
             renderSpace.addChild(elt.cloneNode(false));
         });
+
+        if (!option.computeStyle) {
+            $('style', document.head, function (elt) {
+                renderSpace.addChild(elt.cloneNode(true));
+            });
+        }
+
         renderSpace.addChild(newElt);
         var eltCode = renderSpace.innerHTML;
         newElt.remove();
 
+
         var htmlCode = ['<ht' + 'ml>',
-        ' <h' + 'ead><title>Iframe page</title><meta charset="UTF-8"></he' + 'ad>',
+        ' <h' + 'ead><title>Iframe page</title><meta charset="UTF-8">',
+            '<style>html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important; }</style>',
+        '</he' + 'ad>',
+
         '<bod' + 'y>',
             eltCode,
         '<scr' + 'ipt>setTimeout(function(){ document.execCommand(\'print\')},1000);</scri' + 'pt>',//browser parse  script tag fail
         '</bod' + 'y>',
         '</ht' + 'ml>'].join('\n');
         var blob = new Blob([htmlCode], { type: 'text/html; charset=UTF-8' });
-
+        renderSpace.addTo(document.body);
         var iframe = _('iframe').attr('src', URL.createObjectURL(blob)).addStyle({ width: '100%', height: '100%' }).addTo(renderSpace);
-        return new Promise(function(rs, rj){
+        return new Promise(function (rs, rj) {
             function waitLoad() {
                 if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
                     if (typeof option.onLoad == 'function') option.onLoad();
                     setTimeout(function () {
-                        function waitFocusBack(){
-                            if (!document.hasFocus || document.hasFocus()){
+                        function waitFocusBack() {
+                            if (!document.hasFocus || document.hasFocus()) {
                                 renderSpace.remove();
                                 if (typeof option.onFinish == 'function') option.onFinish();
                                 rs();
                             }
-                            else{
+                            else {
                                 setTimeout(waitFocusBack, 300)
                             }
                         }
                         waitFocusBack();
-                     }, 4000);
+                    }, 4000);
                 }
                 else setTimeout(waitLoad, 1000)
             }
