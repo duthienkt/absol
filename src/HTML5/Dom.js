@@ -585,12 +585,12 @@ Dom.printElement = function (option) {
         return new Promise(function(rs, rj){
             function waitLoad() {
                 if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
-                    if (typeof option.onLoad) option.onLoad();
+                    if (typeof option.onLoad == 'function') option.onLoad();
                     setTimeout(function () {
                         function waitFocusBack(){
                             if (!document.hasFocus || document.hasFocus()){
                                 renderSpace.remove();
-                                if (typeof option.onFinish) option.onFinish();
+                                if (typeof option.onFinish == 'function') option.onFinish();
                                 rs();
                             }
                             else{
