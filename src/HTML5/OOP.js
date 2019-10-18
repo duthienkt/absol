@@ -1,4 +1,4 @@
-var OOP =  {};
+var OOP = {};
 
 /**
  * @param {Object} object
@@ -21,13 +21,19 @@ OOP.overideMethod = function (object, key, method) {
         })(_superMethod, method);
     }
 };
- 
+
 
 OOP.extends = function (object, prototype) {
     // do not use setter, getter
     for (var key in prototype) {
-        if (key != 'constructor' && (typeof prototype[key] == 'function'))
-            OOP.overideMethod(object, key, prototype[key]);
+        if (key != 'constructor' && key != '__proto__') {
+            if ((typeof prototype[key] == 'function')) {
+                OOP.overideMethod(object, key, prototype[key]);
+            }
+            else if (prototype[key] !== undefined && prototype[key] !== null) {
+                object[key] = prototype[key];//just copy
+            }
+        }
     }
 };
 
