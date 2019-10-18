@@ -294,7 +294,7 @@ Element.prototype.getCSSRules = function () {
     this.matches = this.matches || this.webkitMatchesSelector || this.mozMatchesSelector
         || this.msMatchesSelector || this.oMatchesSelector;
     for (var i in sheets) {
-        if (sheets[i].href) continue;//because can not access
+        if (sheets[i].href) continue;//because can not access, you must clone link node instead
         var rules = sheets[i].rules || sheets[i].cssRules;
         for (var r in rules) {
             if (this.matches(rules[r].selectorText)) {

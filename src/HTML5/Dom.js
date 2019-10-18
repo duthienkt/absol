@@ -516,8 +516,9 @@ Dom.getScrollSize = function () {
 
 Dom.depthCloneWithStyle = function (originElt) {
     var newElt = originElt.cloneNode();//no deep
-    if (!originElt.getAttributeNS) return newElt;//is text node
+    if (!originElt.getAttribute && !originElt.getAttributeNS) return newElt;//is text node
     var cssRules = Element.prototype.getCSSRules.call(originElt);
+
     var cssKey = cssRules.reduce(function (ac, rule) {
         for (var i = 0; i < rule.style.length; ++i) {
             ac[rule.style[i]] = true;
@@ -532,6 +533,79 @@ Dom.depthCloneWithStyle = function (originElt) {
         newElt.appendChild(children[i]);
     }
     return newElt;
+};
+
+
+Dom.printElement = function (option) {
+    var _ = Dom.ShareInstance._;
+    var $ = Dom.ShareInstance.$;
+    option = option || {};
+    if (typeof option == 'string') {
+        option = { elt: Dom.ShareInstance.$(option) };
+    }
+    else if (typeof option.elt == 'string') {
+        option.elt = $(option.elt);
+    }
+    else if (Dom.isDomNode(option)) {
+        option = { elt: option };
+    }
+    if (Dom.isDomNode(option.elt)) {
+        var newElt = Dom.depthCloneWithStyle(option.elt);
+        var renderSpace = _({
+            style: {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                overflow: 'auto',
+                zIndex: '10',
+                opacity: '0',
+                visibility: 'hidden'
+            }
+        }).addTo(document.body);
+
+        $('link', false, function (elt) {
+            renderSpace.addChild(elt.cloneNode(false));
+        });
+        renderSpace.addChild(newElt);
+        var eltCode = renderSpace.innerHTML;
+        newElt.remove();
+
+        var htmlCode = ['<ht' + 'ml>',
+        ' <h' + 'ead><title>Iframe page</title><meta charset="UTF-8"></he' + 'ad>',
+        '<bod' + 'y>',
+            eltCode,
+        '<scr' + 'ipt>setTimeout(function(){ document.execCommand(\'print\')},1000);</scri' + 'pt>',//browser parse  script tag fail
+        '</bod' + 'y>',
+        '</ht' + 'ml>'].join('\n');
+        var blob = new Blob([htmlCode], { type: 'text/html; charset=UTF-8' });
+
+        var iframe = _('iframe').attr('src', URL.createObjectURL(blob)).addStyle({ width: '100%', height: '100%' }).addTo(renderSpace);
+        return new Promise(function(rs, rj){
+            function waitLoad() {
+                if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
+                    setTimeout(function () {
+                        function waitFocusBack(){
+                            if (!document.hasFocus || document.hasFocus()){
+                                renderSpace.remove();
+                                rs();
+                            }
+                            else{
+                                setTimeout(waitFocusBack, 300)
+                            }
+                        }
+                        waitFocusBack();
+                     }, 4000);
+                }
+                else setTimeout(waitLoad, 1000)
+            }
+            waitLoad();
+        })
+    }
+    else {
+        throw new Error('Invalid param!');
+    }
 };
 
 
