@@ -439,9 +439,23 @@ Dom.waitImageLoaded = function (img) {
         else {
             img.attachEvent('onload', rs, false);
         }
-        setTimeout(5000, rs);
+        setTimeout(rs, 5000);
     });
     // No other way of checking: assume it’s ok.
+};
+
+Dom.waitIFrameLoaded = function (iframe) {
+    return new Promise(function (rs, rj) {
+        if (document.all) {
+            iframe.onreadystatechange = function () {
+                if (iframe.readyState == "complete" || iframe.readyState == "loaded")
+                    rs();
+            };
+        } else {
+            iframe.onload = rs;
+        }
+        setTimeout(rs, 5000)
+    });
 };
 
 Dom.imageToCanvas = function (element) {
@@ -535,7 +549,30 @@ Dom.depthCloneWithStyle = function (originElt) {
     return newElt;
 };
 
+Dom.copyStyleRule = function (sourceElt, destElt) {
+    if (!sourceElt.getAttribute && !sourceElt.getAttributeNS) return destElt;//is text node
+    if (!destElt.getAttribute && !destElt.getAttributeNS) return destElt;//is text node, nothing to copy
+    var cssRules = Element.prototype.getCSSRules.call(sourceElt);
 
+    var cssKey = cssRules.reduce(function (ac, rule) {
+        for (var i = 0; i < rule.style.length; ++i) {
+            ac[rule.style[i]] = true;
+        }
+        return ac;
+    }, {});
+    for (var key in cssKey) {
+        destElt.style[key] = Element.prototype.getComputedStyleValue.call(sourceElt, key);
+    }
+    return destElt;
+};
+
+
+Dom.$printStyle = Dom.ShareInstance._('style[id="absol-print-preparing"]').addTo(document.head);
+Dom.$printStyle.innerHTML = [
+    '.absol-export-canvas-image{',
+    '    display: none !important;',
+    '}'
+].join('\n');
 Dom.printElement = function (option) {
     var _ = Dom.ShareInstance._;
     var $ = Dom.ShareInstance.$;
@@ -550,7 +587,81 @@ Dom.printElement = function (option) {
         option = { elt: option };
     }
     if (Dom.isDomNode(option.elt)) {
+        var canvases = [], imageExported = [];
+        var canvas, images, img, src, scripts, i;
+
+        if (option.elt.querySelectorAll) {
+            canvases = option.elt.querySelectorAll('canvas');
+        }
+        else {
+            $('canvas', option.elt, function (elt) {
+                canvases.push(elt);
+            });
+        }
+        for (i = 0; i < canvases.length; ++i) {
+            canvas = canvases[i];
+            src = canvas.toDataURL();
+            img = _({
+                tag: 'img',
+                class: 'absol-export-canvas-image',
+                attr: {
+                    src: src
+                }
+            });
+            imageExported.push(img);
+            Dom.copyStyleRule(canvas, img);
+            canvas.parentElement.insertBefore(img, canvas);
+        }
+
         var newElt = option.computeStyle ? Dom.depthCloneWithStyle(option.elt) : option.elt.cloneNode(true);
+
+        //remove canvas that will be empty when clone
+        canvas = [];
+        if (newElt.querySelectorAll) {
+            canvases = newElt.querySelectorAll('canvas');
+        }
+        else {
+            $('canvas', newElt, function (elt) {
+                canvases.push(elt);
+            });
+        }
+        for (i = 0; i < canvases.length; ++i) {
+            canvases[i].remove();
+        }
+
+        scripts = [];
+        if (newElt.querySelectorAll) {
+            scripts = newElt.querySelectorAll('script');
+        }
+        else {
+            $('canvas', newElt, function (elt) {
+                scripts.push(elt);
+            });
+        }
+        for (i = 0; i < canvases.length; ++i) {
+            scripts[i].remove();
+        }
+
+
+        images = [];
+        //for performance
+        if (newElt.querySelectorAll) {
+            images = newElt.querySelectorAll('img');
+        }
+        else {
+            $('img', newElt, function (elt) {
+                images.push(elt);
+            });
+        }
+       
+        for (i = 0; i < images.length; ++i) {
+            if (images[i].classList.contains('absol-export-canvas-image')) continue;
+            src = images[i].src;
+            images[i].setAttribute('src', src);
+        }
+
+
+
         var renderSpace = _({
             style: {
                 position: 'fixed',
@@ -571,23 +682,38 @@ Dom.printElement = function (option) {
 
         if (!option.computeStyle) {
             $('style', document.head, function (elt) {
+                if (elt == Dom.$printStyle) return;
                 renderSpace.addChild(elt.cloneNode(true));
             });
         }
 
         renderSpace.addChild(newElt);
         var eltCode = renderSpace.innerHTML;
-        newElt.remove();
-
+        renderSpace.clearChild();
 
         var htmlCode = ['<ht' + 'ml>',
         ' <h' + 'ead><title>Iframe page</title><meta charset="UTF-8">',
-            '<style>html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important; }</style>',
+            '<style>',
+            'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }',
+            '@media print {',//still not work
+            '    body{',
+            '      -webkit-print-color-adjust: exact;',
+            '       color-adjust: exact;',
+            '    } ',
+            '    div, tr, td, table{',
+            '    }',
+            '  }',
+            'div, table, tr, td{',
+            '    page-break-inside: initial;',
+            '    page-break-before: avoid;',
+            '    page-break-after: avoid;',
+            '}',
+            '</style>',
         '</he' + 'ad>',
 
         '<bod' + 'y>',
             eltCode,
-        '<scr' + 'ipt>setTimeout(function(){ document.execCommand(\'print\')},1000);</scri' + 'pt>',//browser parse  script tag fail
+        '<scr' + 'ipt>setTimeout(function(){ window.print();},1000);</scri' + 'pt>',//browser parse  script tag fail
         '</bod' + 'y>',
         '</ht' + 'ml>'].join('\n');
         var blob = new Blob([htmlCode], { type: 'text/html; charset=UTF-8' });
@@ -597,6 +723,7 @@ Dom.printElement = function (option) {
             function waitLoad() {
                 if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
                     if (typeof option.onLoad == 'function') option.onLoad();
+                    iframe.contentWindow.focus();
                     setTimeout(function () {
                         function waitFocusBack() {
                             if (!document.hasFocus || document.hasFocus()) {
