@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>JSX</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="../dist/absol.js?"></script>
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+    <div id= "wrapper">
+        <h1>Print demo</h1>
+        <canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
+    </div>
+    <script>
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+
+        // Create gradient
+        var grd = ctx.createLinearGradient(0, 0, 200, 0);
+        grd.addColorStop(0, "red");
+        grd.addColorStop(1, "white");
+
+        // Fill with gradient
+        ctx.fillStyle = grd;
+        ctx.fillRect(10, 10, 150, 80);
+
+        absol.Dom.printElement('#wrapper');
+    </script>
+
+    <script src="./autohightlighting.js?"></script>
+</body>
