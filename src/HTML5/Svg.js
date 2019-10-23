@@ -120,13 +120,17 @@ Svg.svgToCanvas = function (element) {
     }
 };
 
+Svg.svgToRasterImageUrl = function (element) {
+    return Svg.svgToCanvas(element).then(function (canvas) {
+        return canvas.toDataURL();
+    });
+}
 
 Svg.svgToExportedString = function (element) {
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
     if (element && element.tagName == 'svg') {
-        var cssTexts = {};
         var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
@@ -166,5 +170,200 @@ Svg.svgToExportedString = function (element) {
         throw new Error('Element must be svg');
     }
 };
+
+
+Svg.svgToSvgUrl = function (element) {
+    var svg = Svg.svgToExportedString(element);
+    svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + svg;
+    var blob = new Blob([svg], { type: 'image/svg+xml' });
+    var url = URL.createObjectURL(blob);
+    return url;
+}
+
+
+Dom.printElement = function (option) {
+    var _ = Dom.ShareInstance._;
+    var $ = Dom.ShareInstance.$;
+    option = option || {};
+    if (typeof option == 'string') {
+        option = { elt: Dom.ShareInstance.$(option) };
+    }
+    else if (typeof option.elt == 'string') {
+        option.elt = $(option.elt);
+    }
+    else if (Dom.isDomNode(option)) {
+        option = { elt: option };
+    }
+    if (Dom.isDomNode(option.elt)) {
+        var canvases = [], imageExported = [];
+        var canvas, images, img, src, scripts, i;
+
+
+        if (option.elt.querySelectorAll) {
+            canvases = option.elt.querySelectorAll('canvas');
+        }
+        else {
+            $('canvas', option.elt, function (elt) {
+                canvases.push(elt);
+            });
+        }
+
+
+        for (i = 0; i < canvases.length; ++i) {
+            canvas = canvases[i];
+            src = canvas.toDataURL();
+            img = _({
+                tag: 'img',
+                class: 'absol-export-canvas-image',
+                attr: {
+                    src: src
+                }
+            });
+            imageExported.push(img);
+            Dom.copyStyleRule(canvas, img);
+            canvas.parentElement.insertBefore(img, canvas);
+        }
+
+
+
+
+        var newElt = option.computeStyle ? Dom.depthCloneWithStyle(option.elt) : option.elt.cloneNode(true);
+
+        //remove canvas that will be empty when clone
+        canvas = [];
+        if (newElt.querySelectorAll) {
+            canvases = newElt.querySelectorAll('canvas');
+        }
+        else {
+            $('canvas', newElt, function (elt) {
+                canvases.push(elt);
+            });
+        }
+        for (i = 0; i < canvases.length; ++i) {
+            canvases[i].remove();
+        }
+
+
+        scripts = [];
+        if (newElt.querySelectorAll) {
+            scripts = newElt.querySelectorAll('script');
+        }
+        else {
+            $('canvas', newElt, function (elt) {
+                scripts.push(elt);
+            });
+        }
+
+        for (i = 0; i < scripts.length; ++i) {
+            scripts[i].remove();
+        }
+
+
+        images = [];
+        //for performance
+        if (newElt.querySelectorAll) {
+            images = newElt.querySelectorAll('img');
+        }
+        else {
+            $('img', newElt, function (elt) {
+                images.push(elt);
+            });
+        }
+
+        for (i = 0; i < images.length; ++i) {
+            if (images[i].classList.contains('absol-export-canvas-image')) continue;
+            src = images[i].src;
+            images[i].setAttribute('src', src);
+        }
+
+
+
+        var renderSpace = _({
+            style: {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                overflow: 'auto',
+                zIndex: '10',
+                opacity: '0',
+                visibility: 'hidden'
+            }
+        });
+
+        $('link', document.head, function (elt) {
+            renderSpace.addChild(elt.cloneNode(false));
+        });
+
+        if (!option.computeStyle) {
+            $('style', document.head, function (elt) {
+                if (elt == Dom.$printStyle) return;
+                renderSpace.addChild(elt.cloneNode(true));
+            });
+        }
+
+        renderSpace.addChild(newElt);
+        var eltCode = renderSpace.innerHTML;
+        renderSpace.clearChild();
+
+        var htmlCode = ['<ht' + 'ml>',
+        ' <h' + 'ead><title>Iframe page</title><meta charset="UTF-8">',
+            '<style>',
+            'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }',
+            '@media print {',//still not work
+            '    body{',
+            '      -webkit-print-color-adjust: exact;',
+            '       color-adjust: exact;',
+            '    } ',
+            '    div, tr, td, table{',
+            '    }',
+            '  }',
+            'div, table, tr, td{',
+            '    page-break-inside: initial;',
+            '    page-break-before: avoid;',
+            '    page-break-after: avoid;',
+            '}',
+            '</style>',
+        '</he' + 'ad>',
+
+        '<bod' + 'y>',
+            eltCode,
+        '<scr' + 'ipt>setTimeout(function(){ window.print();},1000);</scri' + 'pt>',//browser parse  script tag fail
+        '</bod' + 'y>',
+        '</ht' + 'ml>'].join('\n');
+        var blob = new Blob([htmlCode], { type: 'text/html; charset=UTF-8' });
+        renderSpace.addTo(document.body);
+        var iframe = _('iframe').attr('src', URL.createObjectURL(blob)).addStyle({ width: '100%', height: '100%' }).addTo(renderSpace);
+        return new Promise(function (rs, rj) {
+            function waitLoad() {
+                if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
+                    if (typeof option.onLoad == 'function') option.onLoad();
+                    iframe.contentWindow.focus();
+                    setTimeout(function () {
+                        function waitFocusBack() {
+                            if (!document.hasFocus || document.hasFocus()) {
+                                renderSpace.remove();
+                                if (typeof option.onFinish == 'function') option.onFinish();
+                                rs();
+                            }
+                            else {
+                                setTimeout(waitFocusBack, 300)
+                            }
+                        }
+                        waitFocusBack();
+                    }, 4000);
+                }
+                else setTimeout(waitLoad, 1000)
+            }
+            waitLoad();
+        });
+    }
+    else {
+        throw new Error('Invalid param!');
+    }
+};
+
+
 
 export default Svg;
