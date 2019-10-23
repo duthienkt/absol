@@ -306,9 +306,9 @@ Dom.printElement = function (option) {
         renderSpace.addChild(newElt);
         var eltCode = renderSpace.innerHTML;
         renderSpace.clearChild();
-
+        option.title = option.title || ($('title', document.head) || { innerHTML: 'absol.js' }).innerHTML;
         var htmlCode = ['<ht' + 'ml>',
-        ' <h' + 'ead><title>Iframe page</title><meta charset="UTF-8">',
+            ' <h' + 'ead><title>' + option.title+'</title><meta charset="UTF-8">',
             '<style>',
             'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }',
             '@media print {',//still not work
