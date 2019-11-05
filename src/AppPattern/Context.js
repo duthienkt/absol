@@ -1,4 +1,4 @@
-function Context (){
+function Context() {
     this.state = "CREATE";
     /**
      * @type {Context}
@@ -10,14 +10,14 @@ function Context (){
 /**
  * @returns {*}
  */
-Context.prototype.getContext = function(key){
+Context.prototype.getContext = function (key) {
     return this.getContextManager().get(key);
 };
 
 /**
  * @returns {ContextManager}
  */
-Context.prototype.getContextManager = function(){
+Context.prototype.getContextManager = function () {
     return this.parent.getContextManager();
 };
 
@@ -56,6 +56,7 @@ Context.prototype.resume = function () {
         console.error(this, 'NOT READY!');
         return;
     }
+    if (this.state == "RUNNING") return;
     this.state = "RUNNING";
     this.onResume && this.onResume();
 };
