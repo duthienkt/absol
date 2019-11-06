@@ -87,7 +87,7 @@ Context.prototype.stop = function () {
 
 Context.prototype.destroy = function () {
     if (this.state.match(/DIE/)) return;
-    if (!this.state.match(/RUNNING||PAUSE/)) this.stop();
+    if (this.state.match(/RUNNING|PAUSE/)) this.stop();
     this.state = "DIE";
     this.onDestroy && this.onDestroy();
 };
