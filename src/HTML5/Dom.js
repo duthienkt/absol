@@ -107,84 +107,71 @@ Dom.prototype.makeNewTextNode = function (data) {
  */
 Dom.prototype.create = function (option, isInherited) {
     var res;
-    var prototype;
-    var property;
-    var attribute;
+    var creator;
     if (Dom.isDomNode(option)) {
-        res = option;
-        option = {};
-        isInherited = true;
+        option = { elt: option };
     }
-    else if (typeof option == 'string') {
-        option = option.trim();
-        if (option[0] == '<') {
-
+    else {
+        var optionType = typeof option;
+        if (optionType == 'string') {
             option = option.trim();
-            res = this.fromCode(option);
-            option = {};
-        }
-        else {
-            var queryObj = JSPath.parseQuery(option);
-            option = {};
-            option.tag = queryObj.tagName || this.defaultTag;
-            if (queryObj.classList && queryObj.classList.length > 0)
-                option.class = queryObj.classList;
-            if (queryObj.id) option.id = queryObj.id;
-            if (queryObj.attributes) option.attr = queryObj.attributes;
-
-            if (!this.creator[option.tag]) {
-                res = this.makeNewElement(option.tag);
-                option.data && Object.assign(res, option.data);
+            if (option[0] == '<') {
+                option = { elt: this.fromCode(option) };
             }
             else {
-                res = this.creator[option.tag](option.data);
-                res._azar_extendTags = res._azar_extendTags || {};
-                res._azar_extendTags[option.tag] = true;
-                prototype = this.creator[option.tag].prototype;
-                property = this.creator[option.tag].property;
-                attribute = this.creator[option.tag].attribute;
-
-            }
-        }
-    } else {
-        option = option || {};
-        if (typeof (option.text) == 'string') {//is textNode
-            return this.makeNewTextNode(option.text);
-        }
-        else {
-            option.tag = option.tag || this.defaultTag;
-            if (!this.creator[option.tag]) {
-                res = this.makeNewElement(option.tag);
-                option.data && Object.assign(res, option.data);
-            }
-            else {
-                res = this.creator[option.tag](option.data);
-                res._azar_extendTags = res._azar_extendTags || {};
-                res._azar_extendTags[option.tag] = true;
-                prototype = this.creator[option.tag].prototype;
-                property = this.creator[option.tag].property;
-                attribute = this.creator[option.tag].attribute;
+                var queryObj = JSPath.parseQuery(option);
+                option = {};
+                option.tag = queryObj.tagName || this.defaultTag;
+                if (queryObj.classList && queryObj.classList.length > 0)
+                    option.class = queryObj.classList;
+                if (queryObj.id) option.id = queryObj.id;
+                if (queryObj.attributes) option.attr = queryObj.attributes;
             }
         }
     }
+
+    if (typeof (option.text) == 'string') {//is textNode
+        return this.makeNewTextNode(option.text);
+    }
+
+    option.tag = option.tag || this.defaultTag;
+    creator = this.creator[option.tag];
+    if (!option.elt) {
+        if (creator) {
+            if (creator.render) {
+                option.elt = creator.render(option.data);
+            }
+            else {
+                option.elt = creator(option.data);
+            }
+
+        }
+        else {
+            option.elt = this.makeNewElement(option.tag);
+            Object.assign(option.elt, option.data);
+        }
+    }
+    res = option.elt;
     this.attach(res);
-    if (property) {
-        Object.defineProperties(res, property);
+    if (creator) {
+        res._azar_extendTags = res._azar_extendTags || {};
+        res._azar_extendTags[option.tag] = true;
+        creator.property && Object.defineProperties(res, creator.property);
+        creator.prototype && OOP.extends(res, creator.prototype);
+        creator.attribute && res.defineAttributes(creator.attribute);
+        creator.render && creator.call(res);
     }
-    if (prototype) {
-        OOP.extends(res, prototype);
-    }
-    if (attribute) {
-        res.defineAttributes(attribute);
-    }
-    option.attr && res.attr(option.attr);
+
     option.extendEvent && res.defineEvent(option.extendEvent);
+
+    option.attr && res.attr(option.attr);
     option.on && res.on(option.on);
     option.once && res.once(option.once);
     option.class && res.addClass(option.class);
     option.style && res.addStyle(option.style);
     option.id && res.attr('id', option.id);
     if (!isInherited) res.init(option.props);
+
     //todo:attach option
     if (option.child) {
         option.child = option.child instanceof Array ? option.child : [option.child];
@@ -192,7 +179,6 @@ Dom.prototype.create = function (option, isInherited) {
             res.addChild(this.create(option.child[i]));
         }
     }
-
     return res;
 };
 
