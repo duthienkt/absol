@@ -159,7 +159,10 @@ Dom.prototype.create = function (option, isInherited) {
         creator.property && Object.defineProperties(res, creator.property);
         creator.prototype && OOP.extends(res, creator.prototype);
         creator.attribute && res.defineAttributes(creator.attribute);
-        creator.render && creator.call(res);
+        if(creator.render) {
+            creator.eventHandler && OOP.bindFunctions(res, creator.eventHandler);
+            creator.call(res);
+        }
     }
 
     option.extendEvent && res.defineEvent(option.extendEvent);
