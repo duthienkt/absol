@@ -31,8 +31,16 @@ import * as stringFormat from './String/stringFormat';
 
 import * as jsxdom from './JSX/dom';
 import * as jsxattribute from './JSX/attribute';
-
+import Activity from './AppPattern/Activity';
+import Context from './AppPattern/Context';
+import ContextManager from './AppPattern/ContextManager';
+import Application from './AppPattern/Application';
 var absol = {
+    ContextManager: ContextManager,
+    Application:Application,
+    
+    Context: Context,
+    Activity: Activity,
     Element: Element,
     JSPath: JSPath,
     TemplateString: TemplateString,
