@@ -136,14 +136,16 @@ Dom.prototype.create = function (option, isInherited) {
     var res;
     var creator;
     if (Dom.isDomNode(option)) {
-        option = { elt: option };
+        res = option;
+        option = {};
     }
     else {
         var optionType = typeof option;
         if (optionType == 'string') {
             option = option.trim();
             if (option[0] == '<') {
-                option = { elt: this.fromCode(option) };
+                res = this.fromCode(option);
+                option = {};
             }
             else {
                 var queryObj = JSPath.parseQuery(option);
@@ -166,19 +168,20 @@ Dom.prototype.create = function (option, isInherited) {
     if (!option.elt) {
         if (creator) {
             if (creator.render) {
-                option.elt = creator.render(option.data);
+                res = creator.render(option.data);
             }
             else {
-                option.elt = creator(option.data);
+                res = creator(option.data);
             }
 
         }
         else {
-            option.elt = this.makeNewElement(option.tag);
-            Object.assign(option.elt, option.data);
+            res = this.makeNewElement(option.tag);
+            Object.assign(res, option.data);
         }
     }
-    res = option.elt;
+    else
+        res = option.elt;
     this.attach(res);
     if (creator) {
         res._azar_extendTags = res._azar_extendTags || {};
