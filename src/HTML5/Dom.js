@@ -165,23 +165,28 @@ Dom.prototype.create = function (option, isInherited) {
 
     option.tag = option.tag || this.defaultTag;
     creator = this.creator[option.tag];
-    if (!option.elt) {
-        if (creator) {
-            if (creator.render) {
-                res = creator.render(option.data);
+    if (option.elt) {
+        
+        res = option.elt;
+    }
+    else{
+        if (!res) {
+            if (creator) {
+                if (creator.render) {
+                    res = creator.render(option.data);
+                }
+                else {
+                    res = creator(option.data);
+                }
+
             }
             else {
-                res = creator(option.data);
+                res = this.makeNewElement(option.tag);
+                Object.assign(res, option.data);
             }
-
-        }
-        else {
-            res = this.makeNewElement(option.tag);
-            Object.assign(res, option.data);
         }
     }
-    else
-        res = option.elt;
+
     this.attach(res);
     if (creator) {
         res._azar_extendTags = res._azar_extendTags || {};
@@ -656,9 +661,6 @@ Dom.updateResizeSystem = function () {
 };
 
 window.addEventListener('resize', Dom.updateResizeSystem);
-
-
-
 
 
 export default Dom;
