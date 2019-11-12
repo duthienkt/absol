@@ -4,34 +4,61 @@ import OOP from './OOP';
 import getFunctionName from '../String/getFunctionName';
 
 
+var attachhookCreator = function () {
+    var res = Dom.ShareInstance._({
+        tag: 'img',
+        class: 'absol-attachhook',
+        style: {
+            display: 'none'
+        },
+        attr: {
+            src: ''
+        }
+    });
+    return res;
+};
+
+var svgCreator = function () {
+    var temp = document.createElement('div');
+    temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
+    var element = temp.childNodes[0];
+    var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+    Object.defineProperties(element, prototypes);
+    Element.call(element);
+    return element;
+};
+
 function Dom(option) {
+    this.defaultTag = 'div';
+
     option = option || {};
     this.creator = option.creator || {};
 
+    Object.defineProperties(this.creator,
+        {
+            svg: {
+                set: function () {
+                    //do nothing
+                },
+                get: function () {
+                    return svgCreator;
+                }
+            },
+            attachhook: {
+                set: function () {
+                    //do nothing
+                },
+                get: function () {
+                    return attachhookCreator;
+                }
+            }
+        });
 
-    this.creator.__svg__ = function () {
-        var temp = document.createElement('div');
-        temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
-        var element = temp.childNodes[0];
-        var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
-        Object.defineProperties(element, prototypes);
-        Element.call(element);
-        return element;
-    };
 
-    Object.defineProperty(this.creator, 'svg', {
-        set: function () {
-            console.error(new Error());
-        },
-        get: function () {
-            return this.__svg__;
-        }
-    });
 
     this.$ = this.selectAttacth.bind(this);
     this._ = this.create.bind(this);
     this.buildDom = this._;
-    this.defaultTag = 'div';
 }
 
 
@@ -628,24 +655,6 @@ Dom.updateResizeSystem = function () {
 window.addEventListener('resize', Dom.updateResizeSystem);
 
 
-/***
- * if this element is attached, error event will be fired
- * @returns {HTMLElement}
- * 
- */
-Dom.ShareInstance.creator.attachhook = function () {
-    var res = Dom.ShareInstance._({
-        tag: 'img',
-        class: 'absol-attachhook',
-        style: {
-            display: 'none'
-        },
-        attr: {
-            src: ''
-        }
-    });
-    return res;
-};
 
 
 

@@ -2,12 +2,26 @@ import Dom from './Dom';
 import ElementNS from './ElementNS';
 import Element from './Element';
 
+var sattachhookCreator = function () {
+    return Svg.ShareInstance._('<image  class="absol-attachhook" style:"display: none"  xlink:href=""/>');
+};
+
+
 function Svg(option) {
     Dom.call(this, option);
     this.defaultTag = 'g';
     this.svgNS = "http://www.w3.org/2000/svg";
-
-
+    Object.defineProperties(this.creator,
+        {
+            sattachhook: {
+                set: function () {
+                    //do nothing
+                },
+                get: function () {
+                    return sattachhookCreator;
+                }
+            }
+        });
     delete this.buidDom;
     this.buildSvg = this.create.bind(this);
 }
@@ -308,7 +322,7 @@ Dom.printElement = function (option) {
         renderSpace.clearChild();
         option.title = option.title || ($('title', document.head) || { innerHTML: 'absol.js' }).innerHTML;
         var htmlCode = ['<ht' + 'ml>',
-            ' <h' + 'ead><title>' + option.title+'</title><meta charset="UTF-8">',
+        ' <h' + 'ead><title>' + option.title + '</title><meta charset="UTF-8">',
             '<style>',
             'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }',
             '@media print {',//still not work
