@@ -70,7 +70,7 @@ From binary to binary
 var myColor = Color.parse('rgba(200, 100, 95, 0.54)');  
 var hsla = myColor.toHSBA();
 var hsba = Color.hsbaToHSLA(hsla); //[0.00793650793650793, 0.4883720930232559, 0.5784313725490197, 0.54]
-var hsba2 = Color.rgbaToHSLA(myColor.bytes);
+var hsba2 = Color.rgbaToHSLA(myColor.rgba);
 //same : hsbaToHSLA, hsbaToRGBA, hslaToHSBA, hslaToRGBA, rgbaToHSBA, rgbaToHSLA, hwbaToHSBA, hsbaToHWBA, rgbaToHWBA, hwbaToRGBA
 ```
 

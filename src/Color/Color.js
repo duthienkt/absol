@@ -1,34 +1,34 @@
 import TemplateString from "../JSMaker/TemplateString";
 
-function Color(bytes) {
-    this.bytes = bytes.slice();
+function Color(rgba) {
+    this.rgba = rgba.slice();
 }
 
 
 
 Color.prototype.toHex6 = function () {
-    return this.bytes.slice(0, 3).map(function (b) {
+    return this.rgba.slice(0, 3).map(function (b) {
         b = b * 255 >> 0;
         return (b < 16 ? '0' : '') + b.toString(16);
     }).join('');
 };
 
 Color.prototype.toHex8 = function () {
-    return this.bytes.map(function (b) {
+    return this.rgba.map(function (b) {
         b = b * 255 >> 0;
         return (b < 16 ? '0' : '') + b.toString(16);
     }).join('');
 };
 
 Color.prototype.toHex3 = function () {
-    return this.bytes.slice(0, 3).map(function (b) {
+    return this.rgba.slice(0, 3).map(function (b) {
         b = b * 255 / 17 >> 0;
         return b.toString(16);
     }).join('');
 };
 
 Color.prototype.toHex4 = function () {
-    return this.bytes.map(function (b) {
+    return this.rgba.map(function (b) {
         b = b * 255 / 17 >> 0;
         return b.toString(16);
     }).join('');
@@ -36,16 +36,16 @@ Color.prototype.toHex4 = function () {
 
 
 Color.prototype.toHSLA = function () {
-    return Color.rgbaToHSLA(this.bytes);
+    return Color.rgbaToHSLA(this.rgba);
 };
 
 
 Color.prototype.toHSBA = function () {
-    return Color.rgbaToHSBA(this.bytes);
+    return Color.rgbaToHSBA(this.rgba);
 };
 
 Color.prototype.toHWBA = function () {
-    return Color.rgbaToHWBA(this.bytes);
+    return Color.rgbaToHWBA(this.rgba);
 };
 
 
@@ -60,15 +60,15 @@ Color.prototype.getHightContrastColor = function () {
 
 
 Color.prototype.getContrastYIQ = function () {
-    var r = this.bytes[0] * 255;
-    var g = this.bytes[1] * 255;
-    var b = this.bytes[2] * 255;
+    var r = this.rgba[0] * 255;
+    var g = this.rgba[1] * 255;
+    var b = this.rgba[2] * 255;
     var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
     return (yiq >= 128) ? new Color([0, 0, 0, 1]) : new Color([1, 1, 1, 1]);
 };
 
 Color.prototype.clone = function () {
-    return new Color(this.bytes.slice());
+    return new Color(this.rgba.slice());
 };
 
 Color.prototype.toString = function (mode) {
@@ -78,8 +78,8 @@ Color.prototype.toString = function (mode) {
 };
 
 Color.templates = [
-    ['rgba', 'bytes', 'rgba({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}}, {{x[3]}})'],
-    ['rgb', 'bytes', 'rgb({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}})'],
+    ['rgba', 'rgba', 'rgba({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}}, {{x[3]}})'],
+    ['rgb', 'rgba', 'rgb({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}})'],
     ['hsl', 'toHSLA()', 'hsl({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
     ['hsla', 'toHSLA()', 'hsla({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
     ['hsb', 'toHSBA()', 'hsb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
@@ -283,34 +283,34 @@ Color.fromRGBA = function (r, g, b, a) {
 };
 
 Color.fromHSL = function (h, s, l) {
-    var bytes = this.hslaToRGBA([h, s, l, 1]);
-    return new Color(bytes);
+    var rgba = this.hslaToRGBA([h, s, l, 1]);
+    return new Color(rgba);
 
 };
 
 Color.fromHSLA = function (h, s, l, a) {
-    var bytes = this.hslaToRGBA([h, s, l, a]);
-    return new Color(bytes);
+    var rgba = this.hslaToRGBA([h, s, l, a]);
+    return new Color(rgba);
 };
 
 Color.fromHSB = function (h, s, b) {
-    var bytes = this.hsbaToRGBA([h, s, b, 1]);
-    return new Color(bytes);
+    var rgba = this.hsbaToRGBA([h, s, b, 1]);
+    return new Color(rgba);
 };
 
 Color.fromHSBA = function (h, s, b, a) {
-    var bytes = this.hsbaToRGBA([h, s, b, a]);
-    return new Color(bytes);
+    var rgba = this.hsbaToRGBA([h, s, b, a]);
+    return new Color(rgba);
 };
 
 Color.fromHWB = function (h, s, b) {
-    var bytes = this.hwbaToRGBA([h, s, b, 1]);
-    return new Color(bytes);
+    var rgba = this.hwbaToRGBA([h, s, b, 1]);
+    return new Color(rgba);
 };
 
 Color.fromHWBA = function (h, s, b, a) {
-    var bytes = this.hwbaToRGBA([h, s, b, a]);
-    return new Color(bytes);
+    var rgba = this.hwbaToRGBA([h, s, b, a]);
+    return new Color(rgba);
 };
 
 
