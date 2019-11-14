@@ -227,6 +227,23 @@ export function getCaretPosition(oField) {
 }
 
 
+export function setCaretPosition(oField, caretPos) {
+    var oField = document.getElementById(elemId);
+    if (oField.createTextRange) {
+        var range = oField.createTextRange();
+        range.move('character', caretPos);
+        range.select();
+    }
+    else {
+        if (oField.selectionStart) {
+            oField.focus();
+            oField.setSelectionRange(caretPos, caretPos);
+        }
+        else
+            oField.focus();
+    }
+}
+
 export function measureText(text, font) {
     // re-use canvas object for better performance
     var canvas = measureText.canvas || (measureText.canvas = document.createElement("canvas"));
