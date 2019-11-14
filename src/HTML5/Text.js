@@ -228,7 +228,6 @@ export function getCaretPosition(oField) {
 
 
 export function setCaretPosition(oField, caretPos) {
-    var oField = document.getElementById(elemId);
     if (oField.createTextRange) {
         var range = oField.createTextRange();
         range.move('character', caretPos);

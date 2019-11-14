@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>NoneVietnameseInput</title>
+
+    <script src="../dist/absol.js?"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+    <div id="wrapper">
+
+    </div>
+    <script>
+        var $ = absol.$;
+        var _ = absol._;
+        function noneVietnameseSpace(oField) {
+            var value = oField.value;
+            var newValue = '';
+            var caretPos = absol.text.getCaretPosition(oField);
+            var newCaretPos = 0;
+            var c;
+            for (var i = 0; i < caretPos; ++i){
+                 c = value[i];
+                if (!c.match(/\s/)){
+                    newValue += absol.string.nonAccentVietnamese(c);
+                    ++newCaretPos;
+                }
+            }
+            for (var i = caretPos; i< value.length; ++i){
+                c = value[i];
+                if (!c.match(/\s/)){
+                    newValue += absol.string.nonAccentVietnamese(c);
+                }
+            }
+            oField.value = newValue;
+            absol.text.setCaretPosition(oField, newCaretPos);
+        }
+        _('input[type="text"]')
+            .on('keydown', function () {
+                setTimeout(noneVietnameseSpace.bind(null, this), 1);
+            }).on('paste', function () {
+                setTimeout(noneVietnameseSpace.bind(null, this), 1);
+            })
+            .addTo($('#wrapper'))
+    </script>
+
+    <script src="./autohightlighting.js?"></script>
+</body>
+
+</html>
