@@ -35,10 +35,11 @@ import Activity from './AppPattern/Activity';
 import Context from './AppPattern/Context';
 import ContextManager from './AppPattern/ContextManager';
 import Application from './AppPattern/Application';
+import VarScope from './AppPattern/VarScope';
 var absol = {
     ContextManager: ContextManager,
-    Application:Application,
-    
+    Application: Application,
+    VarScope: VarScope,
     Context: Context,
     Activity: Activity,
     Element: Element,
