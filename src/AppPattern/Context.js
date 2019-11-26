@@ -15,6 +15,13 @@ Context.prototype.getContext = function (key) {
 };
 
 /**
+ * @returns {*}
+ */
+Context.prototype.setContext = function (key, value) {
+    return this.getContextManager().set(key, value);
+};
+
+/**
  * @returns {ContextManager}
  */
 Context.prototype.getContextManager = function () {
