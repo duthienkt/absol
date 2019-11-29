@@ -8,7 +8,7 @@ function Fragment(){
 }
 
 Object.defineProperties(Fragment.prototype, Object.getOwnPropertyDescriptors(Context.prototype));
-Fragment.prototype.constructor = Application;
+Fragment.prototype.constructor = Fragment;
 
 
 Fragment.prototype.getContextManager = function () {
