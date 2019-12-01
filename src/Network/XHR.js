@@ -101,6 +101,43 @@ XHR.postRepquest = function (url, payload, props, headers, success, failure) {
     });
 };
 
+XHR.request = function (method, url, props, headers, body, successCallback, failureCallback) {
+    return new Promise(function (rs, rj) {
+        var shouldBeAsync = true;
+        var request = new XMLHttpRequest();
 
+        request.onreadystatechange = function () {
+            if (request.readyState == 4) {
+                if (request.status == 200) {
+                    successCallback && successCallback(request.response);
+                    rs(request.response);
+                }
+                else if (failureCallback) {
+                    failureCallback && failureCallback(request.status, request.statusText);
+                    rj({ status: request.status, statusText: request.statusText });
+                }
+            }
+        };
+
+        request.onerror = function () {
+            var error = new Error("Network Error!");
+            if (failureCallback) failureCallback(error);
+            rj(error);
+        };
+
+        request.open(method, url, shouldBeAsync);
+        if (typeof props == 'string')
+            request.responseType = props || '';
+        else if (props && (typeof props == 'object')) {
+            Object.assign(request, props);
+        }
+        headers = headers || {};
+        headers["Content-Type"] = headers["Content-Type"] || "application/json;charset=UTF-8";
+        Object.keys(headers).forEach(function (key) {
+            request.setRequestHeader(key, headers[key]);
+        });
+        request.send(body);
+    });
+};
 
 export default XHR;
