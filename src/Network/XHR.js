@@ -112,7 +112,7 @@ XHR.request = function (method, url, props, headers, body, successCallback, fail
                     successCallback && successCallback(request.response);
                     rs(request.response);
                 }
-                else if (failureCallback) {
+                else {
                     failureCallback && failureCallback(request.status, request.statusText);
                     rj({ status: request.status, statusText: request.statusText });
                 }
