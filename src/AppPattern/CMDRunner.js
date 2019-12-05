@@ -1,6 +1,7 @@
 function CMDRunner(_this, commands) {
     this._this = _this;
-    this.commands = commands || {};
+    this.commands = {};
+    this.assign(commands);
 }
 
 
@@ -21,6 +22,13 @@ CMDRunner.prototype.remove = function (cmdName) {
     return this;
 };
 
+CMDRunner.prototype.assign = function (obj) {
+    for (var cmdName in obj) {
+        if (typeof obj[cmdName] == 'function') {
+            this.add(cmdName, obj[cmdName]);
+        }
+    }
+};
 
 CMDRunner.prototype.invoke = function () {
     if (this.commands[arguments[0]]) {
