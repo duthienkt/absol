@@ -324,7 +324,7 @@ Dom.printElement = function (option) {
         var htmlCode = ['<ht' + 'ml>',
         ' <h' + 'ead><title>' + option.title + '</title><meta charset="UTF-8">',
             '<style>',
-            'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }',
+        option.overideStyle ? 'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }' : '',
             '@media print {',//still not work
             '    body{',
             '      -webkit-print-color-adjust: exact;',
@@ -338,11 +338,13 @@ Dom.printElement = function (option) {
             '    page-break-before: avoid;',
             '    page-break-after: avoid;',
             '}',
+        option.extendCss || '',
             '</style>',
         '</he' + 'ad>',
 
         '<bod' + 'y>',
             eltCode,
+        '<scr' + 'ipt>' + (option.extendScript || '') + '</scri' + 'pt>',//browser parse  script tag fail
         '<scr' + 'ipt>setTimeout(function(){ window.print();},1000);</scri' + 'pt>',//browser parse  script tag fail
         '</bod' + 'y>',
         '</ht' + 'ml>'].join('\n');
