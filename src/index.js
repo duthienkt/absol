@@ -36,9 +36,12 @@ import Context from './AppPattern/Context';
 import ContextManager from './AppPattern/ContextManager';
 import Application from './AppPattern/Application';
 import VarScope from './AppPattern/VarScope';
+import Fragment from './AppPattern/Fragment';
+
 var absol = {
     ContextManager: ContextManager,
     Application: Application,
+    Fragment: Fragment,
     VarScope: VarScope,
     Context: Context,
     Activity: Activity,
@@ -63,6 +66,8 @@ var absol = {
     Alarm: Alarm,
     coreDom: Dom.ShareInstance,
     coreSvg: Svg.ShareInstance,
+    domCreator: Dom.ShareInstance.creator,
+    svgCreator: Dom.ShareInstance.creator,
     _: Dom.ShareInstance._,
     $: Dom.ShareInstance.$,
     _svg: Svg.ShareInstance._,
