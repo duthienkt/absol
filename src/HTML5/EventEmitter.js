@@ -183,6 +183,15 @@ EventEmitter.isMouseRight = function (event) {
     return isRightMB;
 };
 
+EventEmitter.isMouseLeft = function (event) {
+    var isLeftMB = false;
+    if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+        isLeftMB = event.which == 1;
+    else if ("button" in event)  // IE, Opera 
+        isLeftMB = event.button == 1;
+    return isLeftMB;
+};
+
 EventEmitter.hitElement = function (element, event) {
     var current = event.target;
     while (current) {
