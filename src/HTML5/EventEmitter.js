@@ -203,13 +203,19 @@ EventEmitter.hitElement = function (element, event) {
 
 EventEmitter.copyEvent = function (event, props) {
     var result = {};
-    Object.assign(result, event);
-    for (var key in result) {
-        if (typeof result[key] == 'function') {
-            result[key] = result[key].bind(event);
+    var key, value;
+    for (var i = 0;i< EventEmitter.eventProperties.length; ++i){
+        key =  EventEmitter.eventProperties[i];
+        value = event[key];
+        if (value !== undefined){
+            if (typeof value == "function"){
+                result[key] = event[key].bind(event);
+            }
+            else{
+                result[key] = event[key];
+            }
         }
     }
-
     if (props)
         Object.assign(result, props);
     return result;
@@ -221,7 +227,7 @@ EventEmitter.eventProperties = ["altKey", "bubbles", "button", "buttons", "cance
     "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
     "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
     "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
-    "deltaMode", "deltaX", "deltaY", "deltaZ"];
+    "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault'];
 
 
 export default EventEmitter;
