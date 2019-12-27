@@ -204,6 +204,7 @@ EventEmitter.hitElement = function (element, event) {
 EventEmitter.copyEvent = function (event, props) {
     var result = {};
     var key, value;
+    //copy native property
     for (var i = 0;i< EventEmitter.eventProperties.length; ++i){
         key =  EventEmitter.eventProperties[i];
         value = event[key];
@@ -216,6 +217,7 @@ EventEmitter.copyEvent = function (event, props) {
             }
         }
     }
+    Object.assign(result, event);
     if (props)
         Object.assign(result, props);
     return result;
