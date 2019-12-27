@@ -1,4 +1,4 @@
-import Vec2 from "./Vect2";
+import Vec2 from "./Vec2";
 import { distance, radianInRange } from "./int";
 
 function Arc(x, y, r, start, end) {
