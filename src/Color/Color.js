@@ -275,7 +275,7 @@ Color.regexes.hwba = new RegExp(
 
 
 Color.fromInt = function (code, bits) {
-    var r, g, b;
+    var r, g, b, a;
     if (bits == 32) {
         b = (code & 0xff) / 255;
         g = ((code & 0xff00) >> 8) / 255;
