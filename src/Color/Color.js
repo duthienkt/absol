@@ -290,7 +290,7 @@ Color.fromInt = function (code, bits) {
     }
     else if (bits == 16) {
         b = (code & 0b11111) / 0b11111;
-        g = ((code & 011111100000) >> 5) / 0b111111;
+        g = ((code & 0b11111100000) >> 5) / 0b111111;
         b = (code >> 10) / 0b11111;
         a = 1;
     }
