@@ -274,6 +274,36 @@ Color.regexes.hwba = new RegExp(
 );
 
 
+Color.fromInt = function (code, bits) {
+    var r, g, b;
+    if (bits == 32) {
+        b = (code & 0xff) / 255;
+        g = ((code & 0xff00) >> 8) / 255;
+        r = ((code & 0xff0000) >> 16) / 255;
+        a = (code >> 24) / 255;
+    }
+    else if (bits == 24) {
+        b = (code & 0xff) / 255;
+        g = ((code & 0xff00) >> 8) / 255;
+        r = ((code & 0xff0000) >> 16) / 255;
+        a = 1;
+    }
+    else if (bits == 16) {
+        b = (code & 0b11111) / 0b11111;
+        g = ((code & 011111100000) >> 5) / 0b111111;
+        b = (code >> 10) / 0b11111;
+        a = 1;
+    }
+    else if (bits == 8) {//gray-scale
+        b = (code & 0b11) / 0b11;
+        g = ((code & 0b11100) >> 2) / 0b111;
+        b = (code >> 5) / 0b111;
+        a = 1;
+    }
+    return new Color([r, g, b, a]);
+};
+
+
 Color.fromRGB = function (r, g, b) {
     return new Color([r, g, b, 1]);
 };
@@ -285,7 +315,6 @@ Color.fromRGBA = function (r, g, b, a) {
 Color.fromHSL = function (h, s, l) {
     var rgba = this.hslaToRGBA([h, s, l, 1]);
     return new Color(rgba);
-
 };
 
 Color.fromHSLA = function (h, s, l, a) {
