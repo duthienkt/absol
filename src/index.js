@@ -40,13 +40,14 @@ import Fragment from './AppPattern/Fragment';
 import Rectangle from './Math/Rectangle';
 import Arc from './Math/Arc';
 import NumRange from './Math/NumRange';
-
+import SJSON from './Converter/SJSON';
 
 var absol = {
+    SJSON: SJSON,
     Rectangle: Rectangle,
-    Arc:Arc,
-    NumRange:NumRange,
-    
+    Arc: Arc,
+    NumRange: NumRange,
+
     ContextManager: ContextManager,
     Application: Application,
     Fragment: Fragment,

@@ -161,7 +161,7 @@ Dom.prototype.create = function (option, isInherited) {
         }
     }
 
-    if (typeof (option.text) == 'string') {//is textNode
+    if (typeof (option.text) != 'undefined') {//is textNode
         return this.makeNewTextNode(option.text);
     }
 
