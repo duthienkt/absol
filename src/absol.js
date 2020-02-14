@@ -21,13 +21,18 @@ var mapKeys = {
     ShareCreator: 'domCreator'
 };
 
+absol.logData = [];
+absol.log = function () {
+    absol.logData.push([new Error('TraceError')].concat(Array.prototype.slice.call(arguments)))
+}
+
 Object.keys(mapKeys).forEach(function (key) {
     var valueKey = mapKeys[key];
     Object.defineProperty(absol, key, {
         get: function () {
             if (!this['__warn' + key + '__']) {
                 this['__warn' + key + '__'] = true;
-                console.trace("use " + valueKey + ' instead of ' + key);
+                absol.log("use " + valueKey + ' instead of ' + key);
             }
             return this[valueKey];
         }
