@@ -90,8 +90,8 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
                 var event = { isOnce: isOnce, eventName: arg0, callback: arg1, cap: !!arg2 };
                 //wrappedCallback will be call
                 if (isOnce) {
-                    event.wrappedCallback = function (data) {
-                        event.callback.call(this, data);
+                    event.wrappedCallback = function () {
+                        event.callback.apply(this, arguments);
                         this.off(event.eventName, event.wrappedCallback, event.cap);
                     };
                 }
@@ -154,10 +154,10 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
                     }
                     else {
                         if (this.removeEventListener) {
-                            this.removeEventListener(event.eventName, event.wrappedCallback, !!event.call);
+                            this.removeEventListener(event.eventName, event.wrappedCallback, !!event.cap);
                         }
                         else {
-                            this.detachEvent('on' + event.eventName, event.wrappedCallback, !!event.call);
+                            this.detachEvent('on' + event.eventName, event.wrappedCallback, !!event.cap);
                         }
                     }
                 }
