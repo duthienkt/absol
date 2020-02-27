@@ -43,7 +43,6 @@ import NumRange from './Math/NumRange';
 import SJSON from './Converter/SJSON';
 
 var absol = {
-    SJSON: SJSON,
     Rectangle: Rectangle,
     Arc: Arc,
     NumRange: NumRange,
