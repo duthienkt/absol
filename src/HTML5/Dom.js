@@ -168,10 +168,10 @@ Dom.prototype.create = function (option, isInherited) {
     option.tag = option.tag || this.defaultTag;
     creator = this.creator[option.tag];
     if (option.elt) {
-        
+
         res = option.elt;
     }
-    else{
+    else {
         if (!res) {
             if (creator) {
                 if (creator.render) {
@@ -266,22 +266,22 @@ Dom.prototype.install = function (arg0, arg1) {
         }
     } else if (arguments.length == 2) {
         if (arg0 instanceof Array) {
+            if (arg1.creator) arg1 = arg1.creator;
             arg0.forEach(function (key) {
-                if (key.match(arg0)) {
-                    var func = arg1[key];
-                    if (typeof (func) == 'function')
-                        if (_this.create[key] != func)
-                            _this.create[key] = func;
-                }
+                var func = arg1[key];
+                if (typeof (func) == 'function')
+                    if (_this.creator[key] != func)
+                        _this.creator[key] = func;
             });
         }
         else if (arg0 instanceof RegExp) {
+            if (arg1.creator) arg1 = arg1.creator;
             Object.keys(arg1).forEach(function (key) {
                 if (key.match(arg0)) {
                     var func = arg1[key];
                     if (typeof (func) == 'function')
-                        if (_this.create[key] != func)
-                            _this.create[key] = func;
+                        if (_this.creator[key] != func)
+                            _this.creator[key] = func;
                 }
             });
         }
