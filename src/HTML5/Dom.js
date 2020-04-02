@@ -446,7 +446,7 @@ Dom.getScreenSize = function () {
 };
 
 
-Dom.waitImageLoaded = function (img) {
+Dom.waitImageLoaded = function (img, timeout) {
     var isLoaded = true;
     if (!img.complete) {
         isLoaded = false;
@@ -462,7 +462,7 @@ Dom.waitImageLoaded = function (img) {
         else {
             img.attachEvent('onload', rs, false);
         }
-        setTimeout(rs, 5000);
+        setTimeout(rs, timeout||5000);
     });
     // No other way of checking: assume it’s ok.
 };
