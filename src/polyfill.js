@@ -131,7 +131,9 @@
                 return originObjectGetOwnPropertyDescriptor(obj, prop);
             }
         };
+    }
 
+    if (!supportDom || !Object.getOwnPropertyDescriptors){
         Object.getOwnPropertyDescriptors = function (o) {
             var res = {};
             for (var key in o) {
@@ -139,8 +141,10 @@
             }
             return res;
         };
+    }
 
-        // polifill is needed because it work on kindle
+
+    if (!supportDom || !Object.defineProperties) {
         Object.defineProperties = function (obj, props) {
             var prop;
             for (prop in props) {
@@ -149,9 +153,9 @@
                 }
             }
         };
-
     }
 
+    
 
     if (typeof Object.assign != 'function') {
         Object.assign = function (target, varArgs) {
