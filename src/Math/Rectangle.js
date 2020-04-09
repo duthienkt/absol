@@ -109,7 +109,15 @@ Rectangle.prototype.collapsedRect = function (r) {
  * @returns {Boolean}
  */
 Rectangle.prototype.contains = function (r) {
-    return (this.x <= r.x) && (this.y <= r.y) && (this.x + this.width >= r.y + r.width) && (this.y + this.height >= r.y + r.height);
+    return (this.x <= r.x) && (this.y <= r.y) && (this.x + this.width >= r.x + r.width) && (this.y + this.height >= r.y + r.height);
+};
+
+/**
+ * @param {Vec2} p
+ * @returns {Boolean}
+ */
+Rectangle.prototype.containsPoint = function (p) {
+    return (this.x <= p.x) && (this.y <= p.y) && (this.x + this.width >= p.x) && (this.y + this.height >= p.y);
 };
 
 /**
