@@ -289,17 +289,18 @@ Color.fromInt = function (code, bits) {
         a = 1;
     }
     else if (bits == 16) {
-        b = (code & 0b11111) / 0b11111;
-        g = ((code & 0b11111100000) >> 5) / 0b111111;
-        b = (code >> 10) / 0b11111;
+        b = (code & 0x1f) / 0x1f;
+        g = ((code & 0x7e0) >> 5) / 0x3f;
+        b = (code >> 10) / 0x1f;
         a = 1;
     }
     else if (bits == 8) {//gray-scale
-        b = (code & 0b11) / 0b11;
-        g = ((code & 0b11100) >> 2) / 0b111;
-        b = (code >> 5) / 0b111;
+        b = (code & 0x3) / 0x3;
+        g = ((code & 0x1c) >> 2) / 0x7;
+        b = (code >> 5) / 0x7;
         a = 1;
     }
+
     return new Color([r, g, b, a]);
 };
 
