@@ -197,7 +197,18 @@ Dom.prototype.create = function (option, isInherited) {
         creator.prototype && OOP.extends(res, creator.prototype);
         creator.attribute && res.defineAttributes(creator.attribute);
         if (creator.render) {
-            if (creator.eventHandler) res.eventHandler = OOP.bindFunctions(res, creator.eventHandler);
+            if (creator.eventHandler) {
+                res.eventHandler = res.eventHandler || {};
+                var eventHandler = OOP.bindFunctions(res, creator.eventHandler);
+                for (var eventHandlerKey in eventHandler) {
+                    if (res.eventHandler[eventHandlerKey]) {
+                        throw new Error("Same name of eventHandler[" + eventHandlerKey + "]");
+                    }
+                    else {
+                        res.eventHandler[eventHandlerKey] = eventHandler[eventHandlerKey];
+                    }
+                }
+            }
             creator.call(res);
         }
     }
@@ -462,7 +473,7 @@ Dom.waitImageLoaded = function (img, timeout) {
         else {
             img.attachEvent('onload', rs, false);
         }
-        setTimeout(rs, timeout||5000);
+        setTimeout(rs, timeout || 5000);
     });
     // No other way of checking: assume it’s ok.
 };
