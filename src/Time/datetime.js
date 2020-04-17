@@ -257,3 +257,15 @@ export function prevMonth(date) {
         return new Date(y, m - 1, 1, 0, 0, 0, 0);
     }
 }
+
+/**
+ * 
+ * @param {Number} year
+ * @param {Number} month
+ * @returns {Number}
+ */
+export function daysInMonth(year, month) {
+    var start = new Date(year, month, 1);
+    var end = nextMonth(start);
+    return compareDate(end, start);
+}
