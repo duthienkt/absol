@@ -37,6 +37,11 @@ export function wrapToLines(s, maxLength) {
     return res;
 }
 
+/**
+ * 
+ * @param {String} s
+ * @returns {String} 
+ */
 export function nonAccentVietnamese(s) {
     return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
         .replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A")
