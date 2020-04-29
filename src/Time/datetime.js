@@ -106,8 +106,6 @@ export function parseDateString(text, format) {
     for (var i = 0; i < n; ++i) {
         textToken = textTokens[i];
         formatToken = formatTokens[i];
-        console.log(textToken, formatToken);
-
         switch (formatToken) {
             case "dd": day = parseInt(textToken); break;
             case "d": day = parseInt(textToken); break;
