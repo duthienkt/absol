@@ -1,3 +1,5 @@
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
 export var MILLIS_PER_MINUTE = 60000;
@@ -51,7 +53,8 @@ export var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 
 //more https://www.myonlinetraininghub.com/excel-date-and-time-formatting
-export var formatTokenRegex = /([a-zA-Z]|[^\s\-$-/:-?{-~!"^_`\[\]])+/g;//more
+// export var formatTokenRegex = /([a-zA-Z]|[^\s\-$-/:-?{-~!"^_`\[\]])+/g;//more
+export var formatTokenRegex = /([,\.\-\/])|([a-zA-Z0-9]+)/g;//more
 
 /**
  * 
@@ -83,7 +86,62 @@ export function formartDateString(date, format) {
     });
 };
 
+/**
+ *
+ * @param {String} text
+ * @param {String} format
+ * @returns {String}
+ */
+export function parseDateString(text, format) {
+    text = nonAccentVietnamese(text).toLowerCase();
+    format = nonAccentVietnamese(format).toLowerCase();
+    var textTokens = text.match(formatTokenRegex) || [];
+    var formatTokens = format.match(formatTokenRegex) || [];
+    var year = -1;
+    var month = -1;
+    var day = -1;
+    var n = Math.min(textTokens.length, formatTokens.length);
+    var textToken;
+    var formatToken;
+    for (var i = 0; i < n; ++i) {
+        textToken = textTokens[i];
+        formatToken = formatTokens[i];
+        console.log(textToken, formatToken);
 
+        switch (formatToken) {
+            case "dd": day = parseInt(textToken); break;
+            case "d": day = parseInt(textToken); break;
+            case "mmmm": month = monthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase()); break;
+            case "mmm": month = shortMonthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase()); break;
+            case "mm": month = parseInt(textToken) - 1; break;
+            case "m": month = parseInt(textToken) - 1; break;
+            case 'yy': year = Math.floor((new Date().getFullYear()) / 100) * 100 + parseInt(textToken); break;
+            case 'yyyy': year = parseInt(textToken); break;
+            default:
+                if (textToken != formatToken)
+                    throw new Error('Unexpected token ' + textToken);
+        }
+    }
+
+    if (isNaN(year)) throw new Error('Invalid year');
+    if (isNaN(month) && month != -1) {
+        throw new Error('Invalid month');
+    }
+    else {
+        month = Math.max(0, Math.min(11, month));
+    }
+    if (!isNaN(day)) {
+        day = Math.max(1, Math.min(31, day));
+        if (!isNaN(month)) {
+            day = Math.min(daysInMonth(2000, month), day);
+            if (!isNaN(year)) day = Math.min(daysInMonth(year, month), day);
+        }
+    }
+    else {
+        throw new Error('Invalid day');
+    }
+    return new Date(year, month, day, 0, 0, 0, 0);
+}
 
 
 /**
