@@ -14,13 +14,26 @@ function BrowserDetector(rulesheet) {
     this.browser = this.detectByRules(this.rulesheet.browser);
     this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     this.isCococ = navigator.userAgent.toLowerCase().indexOf('coc_coc_browser') >= 1;
-    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('win') < 0 &&navigator.userAgent.toLowerCase().indexOf('android')<0;
+    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('win') < 0 && navigator.userAgent.toLowerCase().indexOf('android') < 0;
     this.isMobile = navigator.userAgent.indexOf('KFFOWI') > -1 || navigator.userAgent.toLowerCase().indexOf('mobile') > -1;
     this.hasTouch = 'ontouchstart' in window ||
         window.DocumentTouch && document instanceof window.DocumentTouch ||
         navigator.maxTouchPoints > 0 ||
         window.navigator.msMaxTouchPoints > 0;
-    this.isTouchDevice = this.isMobile && this.hasTouch;    
+    this.isTouchDevice = this.isMobile && this.hasTouch;
+    this.supportPassiveEvent = (function () {
+        var supportsPassiveOption = false;
+        try {
+            var opts = Object.defineProperty({}, 'passive', {
+                get: function () {
+                    supportsPassiveOption = true;
+                }
+            });
+            window.addEventListener('test', null, opts);
+            window.removeEventListener('test', null, opts);
+        } catch (e) { }
+        return supportsPassiveOption;
+    })();
 }
 
 
