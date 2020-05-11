@@ -247,7 +247,7 @@ Dom.prototype.install = function (arg0, arg1) {
             });
         }
         else if (typeof (arg0) == 'function') {
-            var name = getFunctionName(arg0) || arg0.name;
+            var name = arg0.tag || getFunctionName(arg0) || arg0.name;
             if (name) {
                 this.creator[name.toLowerCase()] = arg0;
             }
