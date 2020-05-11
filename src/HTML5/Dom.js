@@ -255,6 +255,14 @@ Dom.prototype.install = function (arg0, arg1) {
                 console.error('No ident name of creator function', arg0);
             }
         }
+        else if (arg0 instanceof Array) {
+            arg0.forEach(function (func) {
+                var name = arg0.tag || getFunctionName(func) || func.name;
+                if (name) {
+                    _this.creator[name.toLowerCase()] = func;
+                }
+            });
+        }
         else if (typeof arg0 == 'object') {
             Object.keys(arg0).forEach(function (key) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
@@ -264,14 +272,7 @@ Dom.prototype.install = function (arg0, arg1) {
                         _this.creator[key] = func;
             });
         }
-        else if (arg0 instanceof Array) {
-            arg0.forEach(function (func) {
-                var name = getFunctionName(func) || func.name;
-                if (name) {
-                    _this.creator[name.toLowerCase()] = func;
-                }
-            });
-        }
+        
         else {
             console.error('Unknow data', arg0);
         }
