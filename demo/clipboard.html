@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Page Image</title>
+    <script src="../dist/absol.js?"></script>
+</head>
+
+<body>
+    <div contenteditable="true" class="copyable">
+        <img src="https://avatars2.githubusercontent.com/u/9133017?s=460&v=4"
+            alt="Copy Image to Clipboard via Javascript." />
+    </div>
+    <script class="viewable">
+        var $ = absol.$;
+        var _ = absol._;
+        var contentModule = {};
+        contentModule.copyImageToClipboard = function (src) {
+            if ((navigator.clipboard) && ('ClipboardItem' in window)) {
+                var img = absol._({
+                    tag: 'img',
+                    style: {
+                        display: 'none'
+                    },
+                    props: {
+                        src: src,
+                        crossOrigin: "anonymous"
+                    }
+                });
+                document.body.appendChild(img);
+                return absol.Dom.imageToCanvas(img).then(function (canvas) {
+                    var url = canvas.toDataURL();
+                    blob = absol.file.dataURItoBlob(url);
+                    navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                });
+            } else {
+                var editable = _({
+                    style: {
+                        zIndex: '-1000',
+                        opacity: '0',
+                        position: 'fixed',
+                        left: '0',
+                        top: '0'
+                    },
+                    props: {
+                        contenteditable: true
+                    },
+                    child: { text: 'something' }
+                });
+                document.body.appendChild(editable);
+                function oncopy(event) {
+                    // Hide the event from the page to prevent tampering.
+                    event.stopImmediatePropagation();
+
+                    // Overwrite the clipboard content.
+                    event.preventDefault();
+                    let dt = event.clipboardData.dataTransfer || event.dataTransfer || event.clipboardData;
+                    console.log(event.clipboardData);
+
+
+                    console.log("dt is " + dt); // THIS DISPLAYS "dt is undefined"
+                    // event.clipboardData.mozSetDataAt("image/jpeg", dt.dataTransfer, 0);
+                }
+                document.addEventListener('copy', oncopy, true);
+                editable.focus();
+                document.execCommand("copy");
+            }
+        }
+        document.body.addEventListener('click', function () {
+            contentModule.copyImageToClipboard($('.copyable img').src)
+        });
+
+    </script>
+
+    <!-- <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script> -->
+</body>

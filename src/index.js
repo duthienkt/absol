@@ -40,6 +40,7 @@ import Fragment from './AppPattern/Fragment';
 import Rectangle from './Math/Rectangle';
 import Arc from './Math/Arc';
 import NumRange from './Math/NumRange';
+import * as clipboard from './HTML5/Clipboard';
 
 var absol = {
     Rectangle: Rectangle,
@@ -85,7 +86,9 @@ var absol = {
     jsx: {
         dom: jsxdom,
         attribute: jsxattribute
-    }
+    },
+
+    clipboard: clipboard
 };
 
 
