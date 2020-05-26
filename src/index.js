@@ -41,6 +41,7 @@ import Rectangle from './Math/Rectangle';
 import Arc from './Math/Arc';
 import NumRange from './Math/NumRange';
 import * as clipboard from './HTML5/Clipboard';
+import Heap from './DataStructure/Heap';
 
 var absol = {
     Rectangle: Rectangle,
@@ -88,7 +89,8 @@ var absol = {
         attribute: jsxattribute
     },
 
-    clipboard: clipboard
+    clipboard: clipboard,
+    dataStructure: { Heap: Heap }
 };
 
 
