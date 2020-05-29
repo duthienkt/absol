@@ -42,6 +42,7 @@ import Arc from './Math/Arc';
 import NumRange from './Math/NumRange';
 import * as clipboard from './HTML5/Clipboard';
 import Heap from './DataStructure/Heap';
+import * as datetime from './Time/datetime';
 
 var absol = {
     Rectangle: Rectangle,
@@ -90,7 +91,8 @@ var absol = {
     },
 
     clipboard: clipboard,
-    dataStructure: { Heap: Heap }
+    dataStructure: { Heap: Heap },
+    datetime: datetime
 };
 
 
