@@ -672,6 +672,24 @@ Dom.updateResizeSystem = function () {
     }
 };
 
+Dom.updateSizeUp = function(fromElt){
+    while (fromElt){
+        if (typeof fromElt.requestUpdateSize == 'function') {
+            fromElt.requestUpdateSize();
+            return true;
+        }
+        else if (typeof fromElt.updateSize == 'function') {
+            fromElt.updateSize();
+            return true;
+        }
+        else if (typeof fromElt.onresize == 'function') {
+            fromElt.onresize();
+            return true;
+        }
+        fromElt = fromElt.parentElement;
+    }
+};
+
 window.addEventListener('resize', Dom.updateResizeSystem);
 
 
