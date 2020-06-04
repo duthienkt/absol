@@ -1,4 +1,4 @@
-import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import { nonAccentVietnamese } from "../String/stringFormat";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
