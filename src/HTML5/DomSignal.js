@@ -39,4 +39,4 @@ DomSignal.prototype.ev_error = function () {
     this.execSignal();
 };
 
-export default new DomSignal();
+export default DomSignal;
