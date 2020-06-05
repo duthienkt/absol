@@ -23,7 +23,7 @@ DomSignal.prototype.execSignal = function () {
     }
     this.signals = {};
     for (var name in signals) {
-        this.fine.apply(this, signals[name]);
+        this.fire.apply(this, [name].concat(signals[name]));
     }
 };
 
