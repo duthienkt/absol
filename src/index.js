@@ -43,12 +43,13 @@ import NumRange from './Math/NumRange';
 import * as clipboard from './HTML5/Clipboard';
 import Heap from './DataStructure/Heap';
 import * as datetime from './Time/datetime';
-
+import CMDRunner from './AppPattern/CMDRunner';
 var absol = {
     Rectangle: Rectangle,
     Arc: Arc,
     NumRange: NumRange,
 
+    CMDRunner: CMDRunner,
     ContextManager: ContextManager,
     Application: Application,
     Fragment: Fragment,
