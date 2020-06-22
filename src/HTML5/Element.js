@@ -2,7 +2,12 @@ import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
 import { kebabCaseToCamelCase } from '../String/stringFormat';
 
-
+/***
+ *
+ * @constructor
+ * @augments HTMLElement
+ * @augments EventEmitter
+ */
 function Element() {
     EventEmitter.call(this);
     this._azar_extendAttributes = this._azar_extendAttributes || {};

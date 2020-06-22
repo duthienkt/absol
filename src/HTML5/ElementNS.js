@@ -1,11 +1,16 @@
 import Element from './Element';
+
+/***
+ * @extends Element
+ * @constructor
+ */
 function ElementNS() {
     Element.call(this);
 }
 
 Object.defineProperties(ElementNS.prototype, Object.getOwnPropertyDescriptors(Element.prototype));
 
-ElementNS.prototype.attr = function () {      
+ElementNS.prototype.attr = function () {
     if (arguments.length == 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {

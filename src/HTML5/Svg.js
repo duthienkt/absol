@@ -6,7 +6,11 @@ var sattachhookCreator = function () {
     return Svg.ShareInstance._('<image  class="absol-attachhook" style:"display: none"  xlink:href=""/>');
 };
 
-
+/***
+ * @extends Dom
+ * @param option
+ * @constructor
+ */
 function Svg(option) {
     Dom.call(this, option);
     this.defaultTag = 'g';
