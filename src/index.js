@@ -77,6 +77,9 @@ var absol = {
     Alarm: Alarm,
     coreDom: Dom.ShareInstance,
     coreSvg: Svg.ShareInstance,
+    require: function(tagName){
+        return this.coreDom.require(tagName)|| this.coreSvg.require(tagName);
+    },
     domCreator: Dom.ShareInstance.creator,
     svgCreator: Dom.ShareInstance.creator,
     _: Dom.ShareInstance._,
