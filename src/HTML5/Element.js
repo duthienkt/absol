@@ -96,9 +96,13 @@ Element.prototype.addStyle = function (arg0, arg1) {
 Element.prototype.removeStyle = function (arg0) {
     var key;
     if (typeof arg0 == 'string') {
-        key = kebabCaseToCamelCase(arg0);
-        this.style[key] = null;
-        delete this.style[key];
+        if (arg0.indexOf('-') >= 0) {
+            this.style.removeProperty(arg0);
+        }
+        else {
+            this.style[key] = null;
+            delete this.style[key];
+        }
     }
     else {
         if (typeof arg0 instanceof Array) {
