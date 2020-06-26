@@ -1,12 +1,12 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
-import { kebabCaseToCamelCase } from '../String/stringFormat';
+import {kebabCaseToCamelCase} from '../String/stringFormat';
 
 /***
- *
- * @constructor
+ * @class
  * @augments HTMLElement
  * @augments EventEmitter
+ * @constructor
  */
 function Element() {
     EventEmitter.call(this);
@@ -23,7 +23,7 @@ Element.prototype.init = function (props) {
  * @property {Function} set
  * @property {Function} get
  * @property {Function} remove
- * 
+ *
  * @param {String} key
  * @param {AttributeDefiner} def
  */
@@ -80,7 +80,12 @@ Element.prototype.attr = function () {
 
 Element.prototype.addStyle = function (arg0, arg1) {
     if (typeof arg0 == 'string')
-        this.style[kebabCaseToCamelCase(arg0)] = arg1;
+        if (arg0.indexOf('-') >= 0) {
+            this.style.setProperty(arg0, arg1);
+        }
+        else {
+            this.style[arg0] = arg1;
+        }
     else {
         for (var key in arg0)
             this.addStyle(key, arg0[key]);
@@ -107,7 +112,6 @@ Element.prototype.removeStyle = function (arg0) {
     }
     return this;
 };
-
 
 
 Element.prototype.addChild = function (child) {
@@ -140,7 +144,6 @@ Element.prototype.selfRemove = function () {
 };
 
 
-
 Element.prototype.selfReplace = function (newNode) {
     if (this.parentElement)
         this.parentElement.replaceChild(newNode, this);
@@ -155,8 +158,8 @@ Element.prototype.clearChild = function () {
 };
 
 /**
- * 
- * @param {string} className 
+ *
+ * @param {string} className
  * @returns {Boolean}
  */
 Element.prototype.containsClass = function (className) {
@@ -170,8 +173,8 @@ Element.prototype.containsClass = function (className) {
 };
 
 /**
- * 
- * @param {string} className 
+ *
+ * @param {string} className
  * @returns {Element}
  */
 Element.prototype.addClass = function (className) {
@@ -185,8 +188,8 @@ Element.prototype.addClass = function (className) {
 };
 
 /**
- * 
- * @param {string} className 
+ *
+ * @param {string} className
  * @returns {Element}
  */
 Element.prototype.removeClass = function (className) {
@@ -198,7 +201,6 @@ Element.prototype.removeClass = function (className) {
         this.classList.remove(className);
     return this;
 };
-
 
 
 Element.prototype.getComputedStyleValue = function (key) {
@@ -311,7 +313,6 @@ Element.prototype.getCSSRules = function () {
 };
 
 
-
 /***
  * WARNING: this function may be unsafe
  */
@@ -321,6 +322,7 @@ Element.prototype.afterAttached = function (frameTimeOut) {
     var current = this;
     return new Promise(function (resolve, reject) {
         var delayTime = 0;
+
         function trace() {
             if (frameTimeOut < 0) {
                 // reject(tracer);
@@ -337,16 +339,16 @@ Element.prototype.afterAttached = function (frameTimeOut) {
                     else {
                         if (current.parentNode) {
                             current = current.parentNode;
-                        } else {
+                        }
+                        else {
                             if (delayTime < 25)
                                 delayTime += 1;
                             else if (delayTime < 100) {
                                 delayTime += 5;
                             }
-                            else
-                                if (delayTime < 1000) {
-                                    delayTime += 10;
-                                }
+                            else if (delayTime < 1000) {
+                                delayTime += 10;
+                            }
 
                             setTimeout(trace, delayTime);
                             return;
@@ -355,10 +357,10 @@ Element.prototype.afterAttached = function (frameTimeOut) {
                 }
             }
         }
+
         setTimeout(trace, 0);
     });
 };
-
 
 
 /***
@@ -387,10 +389,10 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
                 }
             }
         }
+
         trace();
     });
 };
-
 
 
 !(function () {
@@ -438,7 +440,11 @@ Element.prototype.afterDisplayed = function (requestTimesOut) {
                         if (!event.mozFixWheelScale) {
                             event.mozDeltaY = oldEvent.deltaY;
                             event.mozFixWheelScale = true;
-                            Object.defineProperty(event, 'deltaY', { get: function () { return this.mozDeltaY * 100 / 3; } });
+                            Object.defineProperty(event, 'deltaY', {
+                                get: function () {
+                                    return this.mozDeltaY * 100 / 3;
+                                }
+                            });
                         }
                         oldEvent.absolEvent = event;
                     }
@@ -459,8 +465,6 @@ Element.eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubb
     "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
     "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
     "deltaMode", "deltaX", "deltaY", "deltaZ"];
-
-
 
 
 export default Element;
