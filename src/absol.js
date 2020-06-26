@@ -2,7 +2,7 @@ import absol from ".";
 
 
 //for old plugin
-absol.HTMLElement = absol.Element;
+absol['HTML'+'El'+'ement'.toLowerCase()] = absol.Element;
 absol.dom = absol.Dom;
 absol.event = absol.EventEmitter;
 absol.Event = absol.EventEmitter;
