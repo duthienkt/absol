@@ -100,8 +100,8 @@ Element.prototype.removeStyle = function (arg0) {
             this.style.removeProperty(arg0);
         }
         else {
-            this.style[key] = null;
-            delete this.style[key];
+            this.style[arg0] = null;
+            delete this.style[arg0];
         }
     }
     else {
