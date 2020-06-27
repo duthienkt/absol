@@ -15,6 +15,13 @@ Fragment.prototype.getContextManager = function () {
     return this.ctxMng;
 };
 
+Fragment.prototype.getView = function () {
+    if (this.$view) return this.$view;
+    this.$view = this.createView() || this.$view;
+    if (!this.$view) throw new Error("this.$view must be not null!");
+    if (this.onCreated) this.onCreated();
+    return this.$view;
+};
 
 /**
  * find context from parent
