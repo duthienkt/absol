@@ -5,7 +5,6 @@ function EventEmitter() {
 }
 
 
-
 EventEmitter.prototype.defineEvent = function (name) {
     if (name instanceof Array) {
         for (var i = 0; i < name.length; ++i)
@@ -59,12 +58,12 @@ EventEmitter.prototype.fire = function (eventName, data) {
             var event = new Event(eventName);
             data && Object.assign(event, data);
             this.dispatchEvent(event);
-        } else
+        }
+        else
             throw new Error("Not support event " + eventName);
     }
     return this;
 };
-
 
 
 EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, arg2) {
@@ -77,7 +76,8 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
     else {
         if (typeof arg1 == 'object') {
             return this.eventEmittorOnWithTime(isOnce, arg0, arg1.callback, arg1.cap);
-        } else {
+        }
+        else {
             var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var eventIndex = -1;
             for (var i = 0; i < eventArr.length; ++i) {
@@ -121,7 +121,6 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
 };
 
 
-
 EventEmitter.prototype.on = function (arg0, arg1, arg2) {
     this.eventEmittorOnWithTime(false, arg0, arg1, arg2);
     return this;
@@ -143,7 +142,8 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
     else {
         if (typeof arg1 == 'object') {
             return this.off(arg0, arg1.callback, arg1.cap);
-        } else {
+        }
+        else {
             var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var newEventArray = [];
             for (var i = 0; i < eventArr.length; ++i) {
@@ -172,47 +172,55 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
 
 };
 
+export var eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
+    "ctrlKey", "currentTarget", "defaultPrevented", "deltaMode", "deltaX", "deltaY", "deltaZ", "detail", "eventPhase",
+    "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
+    "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
+    "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
+    "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault'];
 
+export var touchProperties = ['clientX', 'clientY', 'force', 'indentifier', 'pageX', 'pageY', 'rotationAngle', 'screenX',
+    'screenY', 'target'];
 
-EventEmitter.isMouseRight = function (event) {
+export function isMouseRight(event) {
     var isRightMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
         isRightMB = event.which == 3;
-    else if ("button" in event)  // IE, Opera 
+    else if ("button" in event)  // IE, Opera
         isRightMB = event.button == 2;
     return isRightMB;
-};
+}
 
-EventEmitter.isMouseLeft = function (event) {
+export function isMouseLeft() {
     var isLeftMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
         isLeftMB = event.which == 1;
-    else if ("button" in event)  // IE, Opera 
+    else if ("button" in event)  // IE, Opera
         isLeftMB = event.button == 1;
     return isLeftMB;
-};
+}
 
-EventEmitter.hitElement = function (element, event) {
+export function hitElement(element, event) {
     var current = event.target;
     while (current) {
         if (current == element) return true;
         current = current.parentElement;
     }
     return false;
-};
+}
 
-EventEmitter.copyEvent = function (event, props) {
+export function copyEvent(event, props) {
     var result = {};
     var key, value;
     //copy native property
-    for (var i = 0;i< EventEmitter.eventProperties.length; ++i){
-        key =  EventEmitter.eventProperties[i];
+    for (var i = 0; i < eventProperties.length; ++i) {
+        key = eventProperties[i];
         value = event[key];
-        if (value !== undefined){
-            if (typeof value == "function"){
+        if (value !== undefined) {
+            if (typeof value == "function") {
                 result[key] = event[key].bind(event);
             }
-            else{
+            else {
                 result[key] = event[key];
             }
         }
@@ -221,15 +229,74 @@ EventEmitter.copyEvent = function (event, props) {
     if (props)
         Object.assign(result, props);
     return result;
-};
+}
+
+export function copyTouch(touch, props) {
+    var result = {};
+    var key, value;
+    //copy native property
+    for (var i = 0; i < touchProperties.length; ++i) {
+        key = touchProperties[i];
+        value = touch[key];
+        if (value !== undefined) {
+            if (typeof value == "function") {
+                result[key] = touch[key].bind(touch);
+            }
+            else {
+                result[key] = touch[key];
+            }
+        }
+    }
+    Object.assign(result, touch);
+    if (props)
+        Object.assign(result, props);
+    return result;
+}
+
+/***
+ *
+ * @param {TouchEvent} event
+ * @return {Touch | null}
+ */
+export function findChangedTouchByIdent(event, identifier) {
+    if (event.changedTouches) {
+        for (var i = 0; i < event.changedTouches.length; ++i) {
+            if (event.changedTouches[i].identifier === identifier) {
+                return event.changedTouches[i];
+            }
+        }
+    }
+    return null;
+}
 
 
-EventEmitter.eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
-    "ctrlKey", "currentTarget", "defaultPrevented", "deltaMode", "deltaX", "deltaY", "deltaZ", "detail", "eventPhase",
-    "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
-    "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
-    "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
-    "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault'];
+/***
+ *
+ * @param event
+ * @param identifier
+ * @return {Touch|null}
+ */
+export function findTouchByIdent(event, identifier) {
+    if (event.touches) {
+        for (var i = 0; i < event.touches.length; ++i) {
+            if (event.touches[i].identifier === identifier) {
+                return event.touches[i];
+            }
+        }
+    }
+    return null;
+}
+
+
+EventEmitter.isMouseRight = isMouseRight;
+
+EventEmitter.isMouseLeft = isMouseLeft;
+
+EventEmitter.hitElement = hitElement;
+
+EventEmitter.copyEvent = copyEvent;
+
+EventEmitter.eventProperties = eventProperties;
 
 
 export default EventEmitter;
