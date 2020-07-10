@@ -52,8 +52,6 @@ export var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 
 
-//more https://www.myonlinetraininghub.com/excel-date-and-time-formatting
-// export var formatTokenRegex = /([a-zA-Z]|[^\s\-$-/:-?{-~!"^_`\[\]])+/g;//more
 export var formatTokenRegex = /([,\.\-\/])|([a-zA-Z0-9]+)/g;//more
 
 /**
