@@ -239,6 +239,7 @@ Dom.prototype.install = function (arg0, arg1) {
             });
         } else if (typeof (arg0) == 'function') {
             var name = arg0.tag || getFunctionName(arg0) || arg0.name;
+            console.log(name);
             if (name) {
                 this.creator[name.toLowerCase()] = arg0;
             } else {
@@ -246,7 +247,7 @@ Dom.prototype.install = function (arg0, arg1) {
             }
         } else if (arg0 instanceof Array) {
             arg0.forEach(function (func) {
-                var name = arg0.tag || getFunctionName(func) || func.name;
+                var name = func.tag || getFunctionName(func) || func.name;
                 if (name) {
                     _this.creator[name.toLowerCase()] = func;
                 }
