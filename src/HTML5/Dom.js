@@ -239,7 +239,6 @@ Dom.prototype.install = function (arg0, arg1) {
             });
         } else if (typeof (arg0) == 'function') {
             var name = arg0.tag || getFunctionName(arg0) || arg0.name;
-            console.log(name);
             if (name) {
                 this.creator[name.toLowerCase()] = arg0;
             } else {
