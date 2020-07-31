@@ -55,8 +55,8 @@ function Dom(option) {
         });
 
 
-    this.$ = this.selectAttacth.bind(this);
-    this._ = this.create.bind(this);
+    this['$'] = this.$.bind(this);
+    this['_'] = this._.bind(this);
     this.buildDom = this._;
 }
 
@@ -223,6 +223,8 @@ Dom.prototype.create = function (option, isInherited) {
     return res;
 };
 
+Dom.prototype.$ = Dom.prototype.create;
+Dom.prototype._ = Dom.prototype.create;
 
 Dom.prototype.install = function (arg0, arg1) {
     var _this = this;
