@@ -223,7 +223,7 @@ Dom.prototype.create = function (option, isInherited) {
     return res;
 };
 
-Dom.prototype.$ = Dom.prototype.select;
+Dom.prototype.$ = Dom.prototype.selectAttacth;
 Dom.prototype._ = Dom.prototype.create;
 
 Dom.prototype.install = function (arg0, arg1) {
