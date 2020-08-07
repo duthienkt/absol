@@ -61,16 +61,6 @@ Svg.prototype.makeNewElement = function (tagName) {
     return document.createElementNS(this.svgNS, tagName);
 };
 
-/**
- * 
- * @param {Element} element 
- */
-Svg.prototype.attach = function (element) {
-    if (typeof element.attr == 'function') return;
-    var prototypes = Object.getOwnPropertyDescriptors(ElementNS.prototype);
-    Object.defineProperties(element, prototypes);
-    ElementNS.call(element);
-};
 
 Svg.ShareInstance = new Svg();
 

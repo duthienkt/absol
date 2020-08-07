@@ -2,6 +2,7 @@ import Element from './Element';
 import JSPath from './JSPath';
 import OOP from './OOP';
 import getFunctionName from '../String/getFunctionName';
+import ElementNS from "./ElementNS";
 
 
 var attachhookCreator = function () {
@@ -57,6 +58,7 @@ function Dom(option) {
 
     this['$'] = this.$.bind(this);
     this['_'] = this._.bind(this);
+    this['$$'] = this.$$.bind(this);
     this.buildDom = this._;
 }
 
@@ -110,9 +112,12 @@ Dom.prototype.select = function (query, root, onFound) {
  */
 Dom.prototype.attach = function (element) {
     if (typeof element.attr == 'function') return;
-    var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+    var namespaceUrl = element.namespaceURI;
+    var elementConstructor = namespaceUrl.substr(namespaceUrl.length - 4, 3) === 'svg' ? ElementNS : Element;
+    var prototypes = Object.getOwnPropertyDescriptors(elementConstructor.prototype);
+    Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.defineProperties(element, prototypes);
-    Element.call(element);
+    elementConstructor.call(element);
 };
 
 
@@ -138,14 +143,16 @@ Dom.prototype.create = function (option, isInherited) {
         option = {};
         /** fix reinit component */
         isInherited = true;
-    } else {
+    }
+    else {
         var optionType = typeof option;
         if (optionType == 'string') {
             option = option.trim();
             if (option[0] == '<') {
                 res = this.fromCode(option);
                 option = {};
-            } else {
+            }
+            else {
                 var queryObj = JSPath.parseQuery(option);
                 option = {};
                 option.tag = queryObj.tagName || this.defaultTag;
@@ -166,16 +173,19 @@ Dom.prototype.create = function (option, isInherited) {
     if (option.elt) {
 
         res = option.elt;
-    } else {
+    }
+    else {
         if (!res) {
             if (creator) {
                 if (creator.render) {
                     res = creator.render(option.data);
-                } else {
+                }
+                else {
                     res = creator(option.data);
                 }
 
-            } else {
+            }
+            else {
                 res = this.makeNewElement(option.tag);
                 Object.assign(res, option.data);
             }
@@ -196,7 +206,8 @@ Dom.prototype.create = function (option, isInherited) {
                 for (var eventHandlerKey in eventHandler) {
                     if (res.eventHandler[eventHandlerKey]) {
                         throw new Error("Same name of eventHandler[" + eventHandlerKey + "]");
-                    } else {
+                    }
+                    else {
                         res.eventHandler[eventHandlerKey] = eventHandler[eventHandlerKey];
                     }
                 }
@@ -226,6 +237,16 @@ Dom.prototype.create = function (option, isInherited) {
 Dom.prototype.$ = Dom.prototype.selectAttacth;
 Dom.prototype._ = Dom.prototype.create;
 
+Dom.prototype.$$ = function (query, root) {
+    var thisD = this;
+    var res = [];
+    this.selectAttacth(query, root, function (elt) {
+        thisD.attach(elt);
+        res.push(elt);
+    });
+    return res;
+};
+
 Dom.prototype.install = function (arg0, arg1) {
     var _this = this;
     if (arguments.length == 1) {
@@ -239,21 +260,25 @@ Dom.prototype.install = function (arg0, arg1) {
                     if (_this.creator[key] != func)
                         _this.creator[key] = func;
             });
-        } else if (typeof (arg0) == 'function') {
+        }
+        else if (typeof (arg0) == 'function') {
             var name = arg0.tag || getFunctionName(arg0) || arg0.name;
             if (name) {
                 this.creator[name.toLowerCase()] = arg0;
-            } else {
+            }
+            else {
                 console.error('No ident name of creator function', arg0);
             }
-        } else if (arg0 instanceof Array) {
+        }
+        else if (arg0 instanceof Array) {
             arg0.forEach(function (func) {
                 var name = func.tag || getFunctionName(func) || func.name;
                 if (name) {
                     _this.creator[name.toLowerCase()] = func;
                 }
             });
-        } else if (typeof arg0 == 'object') {
+        }
+        else if (typeof arg0 == 'object') {
             Object.keys(arg0).forEach(function (key) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = arg0[key];
@@ -261,10 +286,12 @@ Dom.prototype.install = function (arg0, arg1) {
                     if (_this.creator[key] != func)
                         _this.creator[key] = func;
             });
-        } else {
+        }
+        else {
             console.error('Unknow data', arg0);
         }
-    } else if (arguments.length == 2) {
+    }
+    else if (arguments.length == 2) {
         if (arg0 instanceof Array) {
             if (arg1.creator) arg1 = arg1.creator;
             arg0.forEach(function (key) {
@@ -273,7 +300,8 @@ Dom.prototype.install = function (arg0, arg1) {
                     if (_this.creator[key] != func)
                         _this.creator[key] = func;
             });
-        } else if (arg0 instanceof RegExp) {
+        }
+        else if (arg0 instanceof RegExp) {
             if (arg1.creator) arg1 = arg1.creator;
             Object.keys(arg1).forEach(function (key) {
                 if (key.match(arg0)) {
@@ -283,14 +311,17 @@ Dom.prototype.install = function (arg0, arg1) {
                             _this.creator[key] = func;
                 }
             });
-        } else if (typeof (arg0) == 'string' && arg0.length > 0) {
+        }
+        else if (typeof (arg0) == 'string' && arg0.length > 0) {
             if (typeof (arg1) == 'function') {
                 this.creator[arg0] = arg1;
-            } else {
+            }
+            else {
                 console.error('arg1 is not a function');
             }
         }
-    } else {
+    }
+    else {
         console.error('Invalid param');
     }
 
@@ -324,11 +355,14 @@ Dom.isDomNode = function (o) {
 Dom.activeFullScreen = function (element) {
     if (element.requestFullscreen) {
         element.requestFullscreen();
-    } else if (element.mozRequestFullScreen) {
+    }
+    else if (element.mozRequestFullScreen) {
         element.mozRequestFullScreen();
-    } else if (element.webkitRequestFullscreen) {
+    }
+    else if (element.webkitRequestFullscreen) {
         element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    } else if (element.msRequestFullscreen) {
+    }
+    else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
     }
 };
@@ -337,11 +371,14 @@ Dom.activeFullScreen = function (element) {
 Dom.deactiveFullScreen = function () {
     if (document.exitFullscreen) {
         document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
+    }
+    else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
+    }
+    else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
+    }
+    else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
 };
@@ -385,7 +422,7 @@ Dom.traceOutBoundingClientRect = function (current) {
         if (isHtml) break;
         current = current.parentElement;
     }
-    return {left: left, right: right, top: top, bottom: bottom, width: right - left, height: bottom - top};
+    return { left: left, right: right, top: top, bottom: bottom, width: right - left, height: bottom - top };
 };
 
 
@@ -414,13 +451,15 @@ Dom.fontFaceIsLoaded = function (fontFace, timeout) {
                 if (remainTime < 0) {
                     resolve(false);
                     element.selfRemove();
-                } else
+                }
+                else
                     requestAnimationFrame(function () {
                         var currentOffsetWidth = element.getBoundingClientRect().width;
                         if (currentOffsetWidth != lastOffsetWidth) {
                             resolve(true);
                             element.selfRemove();
-                        } else
+                        }
+                        else
                             check(remainTime - 10);
                     }, 10);
             }
@@ -440,7 +479,7 @@ Dom.getScreenSize = function () {
         document.documentElement.clientHeight ||
         document.body.clientHeight;
 
-    return {WIDTH: width, HEIGHT: height, width: width, height: height};
+    return { WIDTH: width, HEIGHT: height, width: width, height: height };
 };
 
 
@@ -456,7 +495,8 @@ Dom.waitImageLoaded = function (img, timeout) {
     return new Promise(function (rs) {
         if (img.addEventListener) {
             img.addEventListener('load', rs, false);
-        } else {
+        }
+        else {
             img.attachEvent('onload', rs, false);
         }
         setTimeout(rs, timeout || 5000);
@@ -471,7 +511,8 @@ Dom.waitIFrameLoaded = function (iframe) {
                 if (iframe.readyState == "complete" || iframe.readyState == "loaded")
                     rs();
             };
-        } else {
+        }
+        else {
             iframe.onload = rs;
         }
         setTimeout(rs, 5000)
@@ -504,7 +545,8 @@ Dom.imageToCanvas = function (element) {
             preRender.selfRemove();
             return canvas;
         });
-    } else {
+    }
+    else {
         throw new Error("Element must be image");
     }
 };
@@ -518,7 +560,8 @@ Dom.scrollWidthPromise;
 Dom.documentReady = new Promise(function (resolve) {
     if (document.body) {
         resolve();
-    } else {
+    }
+    else {
         window.addEventListener("load", resolve);
     }
 });
@@ -541,7 +584,7 @@ Dom.getScrollSize = function () {
                     }
                 })
                     .addTo(document.body);
-                var child = Dom.ShareInstance._({style: {width: '100%', height: '100%'}}).addTo(parent);
+                var child = Dom.ShareInstance._({ style: { width: '100%', height: '100%' } }).addTo(parent);
                 requestAnimationFrame(function () {
                     var parentBound = parent.getBoundingClientRect();
                     var childBound = child.getBoundingClientRect();
@@ -645,10 +688,12 @@ Dom.updateResizeSystem = function () {
         if (typeof child.requestUpdateSize == 'function') {
             child.requestUpdateSize();
             return true;
-        } else if (typeof child.updateSize == 'function') {
+        }
+        else if (typeof child.updateSize == 'function') {
             child.updateSize();
             return true;
-        } else if (typeof child.onresize == 'function') {
+        }
+        else if (typeof child.onresize == 'function') {
             child.onresize();
             return true;
         }
@@ -663,7 +708,8 @@ Dom.updateResizeSystem = function () {
             });
         });
 
-    } else {
+    }
+    else {
         Dom.ResizeSystemCacheElts.forEach(visitor);
     }
 };
@@ -673,10 +719,12 @@ Dom.updateSizeUp = function (fromElt) {
         if (typeof fromElt.requestUpdateSize == 'function') {
             fromElt.requestUpdateSize();
             return true;
-        } else if (typeof fromElt.updateSize == 'function') {
+        }
+        else if (typeof fromElt.updateSize == 'function') {
             fromElt.updateSize();
             return true;
-        } else if (typeof fromElt.onresize == 'function') {
+        }
+        else if (typeof fromElt.onresize == 'function') {
             fromElt.onresize();
             return true;
         }

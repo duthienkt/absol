@@ -84,6 +84,7 @@ var absol = {
     svgCreator: Dom.ShareInstance.creator,
     _: Dom.ShareInstance._,
     $: Dom.ShareInstance.$,
+    $$: Dom.ShareInstance.$$,
     _svg: Svg.ShareInstance._,
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
