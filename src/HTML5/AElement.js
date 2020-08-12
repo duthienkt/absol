@@ -4,8 +4,10 @@ import BrowserDetector from '../Detector/BrowserDetector';
 
 /***
  * @augments Node
+ * @augments Element
  * @augments HTMLElement
  * @augments EventEmitter
+ * @augments ElementCSSInlineStyle
  * @constructor
  */
 function AElement() {
