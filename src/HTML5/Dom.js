@@ -1,8 +1,8 @@
-import Element from './Element';
 import JSPath from './JSPath';
 import OOP from './OOP';
 import getFunctionName from '../String/getFunctionName';
-import ElementNS from "./ElementNS";
+import AElementNS from "./ElementNS";
+import AElement from './AElement';
 
 
 var attachhookCreator = function () {
@@ -23,9 +23,9 @@ var svgCreator = function () {
     var temp = document.createElement('div');
     temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
     var element = temp.childNodes[0];
-    var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+    var prototypes = Object.getOwnPropertyDescriptors(AElement.prototype);
     Object.defineProperties(element, prototypes);
-    Element.call(element);
+    AElement.call(element);
     return element;
 };
 
@@ -71,18 +71,19 @@ Dom.prototype.fromCode = function (code) {
     var tempDiv = document.createElement(temTag);
     tempDiv.innerHTML = code;
     var element = tempDiv.childNodes[0];
-    var prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+    var prototypes = Object.getOwnPropertyDescriptors(AElement.prototype);
     Object.defineProperties(element, prototypes);
-    Element.call(element);
+    AElement.call(element);
     return element;
 };
 
 
 /**
  * DFS
- * @param {string} query
- * @param {Element} root
+ * @param {string | AElement} query
+ * @param {AElement} root
  * @param {function} onFound - return true to stop find
+ * @returns {AElement | AElementNS}
  */
 Dom.prototype.selectAttacth = function (query, root, onFound) {
     var res;
@@ -97,7 +98,7 @@ Dom.prototype.selectAttacth = function (query, root, onFound) {
 /**
  * DFS
  * @param {string} query
- * @param {Element} root
+ * @param {AElement} root
  * @param {function} onFound - return true to stop find
  */
 Dom.prototype.select = function (query, root, onFound) {
@@ -108,12 +109,11 @@ Dom.prototype.select = function (query, root, onFound) {
 
 /**
  *
- * @param {Element} element
+ * @param {AElement | AElementNS } element
  */
 Dom.prototype.attach = function (element) {
     if (typeof element.attr == 'function') return;
-    var namespaceUrl = element.namespaceURI;
-    var elementConstructor = namespaceUrl.substr(namespaceUrl.length - 4, 3) === 'svg' ? ElementNS : Element;
+    var elementConstructor = element.getBBox? AElementNS : AElement;
     var prototypes = Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.defineProperties(element, prototypes);
@@ -133,7 +133,7 @@ Dom.prototype.makeNewTextNode = function (data) {
 /**
  *
  * @param {Object} option
- * @returns {Element}
+ * @returns {AElement}
  */
 Dom.prototype.create = function (option, isInherited) {
     var res;
@@ -195,14 +195,14 @@ Dom.prototype.create = function (option, isInherited) {
     this.attach(res);
     if (creator) {
         res._azar_extendTags = res._azar_extendTags || {};
-        res._azar_extendTags[option.tag] = true;
+        res._azar_extendTags[option.tag] = creator;
         creator.property && Object.defineProperties(res, creator.property);
         creator.prototype && OOP.extends(res, creator.prototype);
         creator.attribute && res.defineAttributes(creator.attribute);
         if (creator.render) {
             if (creator.eventHandler) {
                 res.eventHandler = res.eventHandler || {};
-                var eventHandler = OOP.bindFunctions(res, creator.eventHandler);
+                var eventHandler = OOP.bindFunctions(res, creator.eventHandler || creator.prototype.eventHandler);
                 for (var eventHandlerKey in eventHandler) {
                     if (res.eventHandler[eventHandlerKey]) {
                         throw new Error("Same name of eventHandler[" + eventHandlerKey + "]");
@@ -234,7 +234,16 @@ Dom.prototype.create = function (option, isInherited) {
     return res;
 };
 
+/***
+ *
+ * @type {function(string, AElement, Function): AElement}
+ */
 Dom.prototype.$ = Dom.prototype.selectAttacth;
+
+/***
+ *
+ * @type {function(Object, boolean): AElement}
+ */
 Dom.prototype._ = Dom.prototype.create;
 
 Dom.prototype.$$ = function (query, root) {
@@ -360,7 +369,7 @@ Dom.activeFullScreen = function (element) {
         element.mozRequestFullScreen();
     }
     else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        element.webkitRequestFullscreen(AElement.ALLOW_KEYBOARD_INPUT);
     }
     else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
@@ -404,8 +413,8 @@ Dom.traceOutBoundingClientRect = function (current) {
     var bottom = screenSize.height;
     while (current) {
 
-        var ox = Element.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
-        var oy = Element.prototype.getComputedStyleValue.call(current, 'overflow-y') != "visible";
+        var ox = AElement.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
+        var oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') != "visible";
         var isHtml = current.tagName.toLowerCase() == 'html';
         if (ox || oy || isHtml) {
             var bound = current.getBoundingClientRect();
@@ -547,7 +556,7 @@ Dom.imageToCanvas = function (element) {
         });
     }
     else {
-        throw new Error("Element must be image");
+        throw new Error("AElement must be image");
     }
 };
 
@@ -606,7 +615,7 @@ Dom.getScrollSize = function () {
 Dom.depthCloneWithStyle = function (originElt) {
     var newElt = originElt.cloneNode();//no deep
     if (!originElt.getAttribute && !originElt.getAttributeNS) return newElt;//is text node
-    var cssRules = Element.prototype.getCSSRules.call(originElt);
+    var cssRules = AElement.prototype.getCSSRules.call(originElt);
 
     var cssKey = cssRules.reduce(function (ac, rule) {
         for (var i = 0; i < rule.style.length; ++i) {
@@ -615,7 +624,7 @@ Dom.depthCloneWithStyle = function (originElt) {
         return ac;
     }, {});
     for (var key in cssKey) {
-        newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
+        newElt.style[key] = AElement.prototype.getComputedStyleValue.call(originElt, key);
     }
     var children = Array.prototype.map.call(originElt.childNodes, Dom.depthCloneWithStyle);
     for (var i = 0; i < children.length; ++i) {
@@ -627,7 +636,7 @@ Dom.depthCloneWithStyle = function (originElt) {
 Dom.copyStyleRule = function (sourceElt, destElt) {
     if (!sourceElt.getAttribute && !sourceElt.getAttributeNS) return destElt;//is text node
     if (!destElt.getAttribute && !destElt.getAttributeNS) return destElt;//is text node, nothing to copy
-    var cssRules = Element.prototype.getCSSRules.call(sourceElt);
+    var cssRules = AElement.prototype.getCSSRules.call(sourceElt);
 
     var cssKey = cssRules.reduce(function (ac, rule) {
         for (var i = 0; i < rule.style.length; ++i) {
@@ -636,7 +645,7 @@ Dom.copyStyleRule = function (sourceElt, destElt) {
         return ac;
     }, {});
     for (var key in cssKey) {
-        destElt.style[key] = Element.prototype.getComputedStyleValue.call(sourceElt, key);
+        destElt.style[key] = AElement.prototype.getComputedStyleValue.call(sourceElt, key);
     }
     return destElt;
 };
@@ -658,17 +667,17 @@ Dom.ResizeSystemCacheElts = undefined;
 
 Dom.removeResizeSystemTrash = function () {
     Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (element) {
-        return Element.prototype.isDescendantOf.call(element, document.body);
+        return AElement.prototype.isDescendantOf.call(element, document.body);
     });
 };
 
 Dom.addToResizeSystem = function (element) {
     for (var i = 0; i < Dom.ResizeSystemElts.length; ++i)
-        if (Element.prototype.isDescendantOf.call(element, Dom.ResizeSystemElts[i])) {
+        if (AElement.prototype.isDescendantOf.call(element, Dom.ResizeSystemElts[i])) {
             return false;
         }
     Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (e) {
-        return !Element.prototype.isDescendantOf.call(e, element);
+        return !AElement.prototype.isDescendantOf.call(e, element);
     });
     Dom.ResizeSystemElts.push(element);
     return true;
