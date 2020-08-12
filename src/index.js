@@ -2,7 +2,6 @@ import './Polyfill/polyfill';
 
 import EventEmitter from './HTML5/EventEmitter';
 import BrowserDetector from './Detector/BrowserDetector';
-import Element from './HTML5/Element';
 
 import JSPath from './HTML5/JSPath';
 import TemplateString from './JSMaker/TemplateString';
@@ -44,6 +43,9 @@ import * as clipboard from './HTML5/Clipboard';
 import Heap from './DataStructure/Heap';
 import * as datetime from './Time/datetime';
 import CMDRunner from './AppPattern/CMDRunner';
+import AElement from "./HTML5/Element";
+import AElementNS from "./HTML5/AElementNS";
+
 var absol = {
     Rectangle: Rectangle,
     Arc: Arc,
@@ -56,7 +58,10 @@ var absol = {
     VarScope: VarScope,
     Context: Context,
     Activity: Activity,
-    Element: Element,
+    Element: AElement,
+    ElementNS: AElementNS,
+    AElement: AElement,
+    AElementNS: AElementNS,
     JSPath: JSPath,
     TemplateString: TemplateString,
     TemplateXML: TemplateXML,
