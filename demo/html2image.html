@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet">
     <script src="../dist/absol.js?"></script>
-    <link rel="stylesheet" href="https://absol.cf.cf/hightlight/styles/default.css">
-    <script src="https://absol.cf.cf/hightlight/highlight.pack.js"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 </head>
 
 <body>
     <!-- <code class="xml viewable">
-        <script src="https://absol.cf.cf/hightlight/highlight.pack.js"></script>
+        <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     </code> -->
     <div class="demo">
         <div><label>Url </label><input type="text" value="https://google.com" /><input type="number" value="0"
@@ -29,9 +29,9 @@
         var mInput = $('input[type="text"]', mDemo);
         var mDelayInput = $('input[type="number"]', mDemo);
         var mButton = $('button', mDemo).on('click', function () {
-            mImage.src = "https://absol.cf.cf/exticons/other/ellipsis_loading.svg";
+            mImage.src = "https://absol.cf/exticons/other/ellipsis_loading.svg";
             mButton.disabled = true;
-            absol.XHR.postRepquest("https://absol.cf.cf:9095/html2image", JSON.stringify({
+            absol.XHR.postRepquest("https://absol.cf:9095/html2image", JSON.stringify({
                 apiKey: "auKB8o83G7EONRE8rmqgPGfv_jaG3XitkwiKg-Ihxbi0i9loWMjnbjVFBV_NGFLp95-UPGqan5iTeMmllazVCaIRgdVlSBIS3ruR8W6JAF814JNftAu1IqQYWdK0aZdACVowdKac5iGe7_to3n6pewDkQ4ibZ8xXQv7D-zZblrk",
                 url: mInput.value,
                 delayTime: mDelayInput.value
@@ -41,7 +41,7 @@
                     mImage.src = res.img;
                 }
                 else {
-                    mImage.src = "https://absol.cf.cf/exticons/other/error_2d3.svg";
+                    mImage.src = "https://absol.cf/exticons/other/error_2d3.svg";
                 }
             });
         });
