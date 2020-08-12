@@ -255,7 +255,7 @@ Dom.prototype.create = Dom.prototype._;
  *
  * @param query
  * @param root
- * @return {Array<AElement|AElementNS>}
+ * @returns {Array<AElement|AElementNS>}
  */
 Dom.prototype.$$ = function (query, root) {
     var thisD = this;
