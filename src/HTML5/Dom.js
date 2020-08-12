@@ -251,7 +251,12 @@ Dom.prototype._ = function (option, isInherited) {
 Dom.prototype.create = Dom.prototype._;
 
 
-
+/***
+ *
+ * @param query
+ * @param root
+ * @return {Array<AElement|AElementNS>}
+ */
 Dom.prototype.$$ = function (query, root) {
     var thisD = this;
     var res = [];
