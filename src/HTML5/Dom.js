@@ -3,7 +3,6 @@ import OOP from './OOP';
 import getFunctionName from '../String/getFunctionName';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
-import ResizeSystem from "./ResizeSystem";
 
 
 var attachhookCreator = function () {
@@ -30,11 +29,6 @@ var svgCreator = function () {
     return element;
 };
 
-/***
- *
- * @param {{creator: *}} option
- * @constructor
- */
 function Dom(option) {
     this.defaultTag = 'div';
 
@@ -62,17 +56,13 @@ function Dom(option) {
         });
 
 
-    this['$'] = this.$.bind(this);
-    this['_'] = this._.bind(this);
-    this['$$'] = this.$$.bind(this);
+    this['$ '.trim()] = this.$.bind(this);
+    this['_ '.trim()] = this._.bind(this);
+    this['$'+'$'] = this.$$.bind(this);
     this.buildDom = this._;
 }
 
-/***
- *
- * @param {String} code
- * @returns {AElement}
- */
+
 Dom.prototype.fromCode = function (code) {
     code = code.trim().replace(/>\s+</gm, '><');
     var temTag = 'div';
@@ -91,11 +81,15 @@ Dom.prototype.fromCode = function (code) {
 /**
  * DFS
  * @param {string | AElement} query
- * @param {AElement|AElementNS} root
- * @param {function(elt:AElement|AElementNS|Node):AElement|AElementNS} onFound - return true to stop find
+ * @param {AElement} root
+ * @param {function} onFound - return true to stop find
  * @returns {AElement | AElementNS}
  */
-Dom.prototype.selectAttacth = function (query, root, onFound) {
+
+
+
+
+Dom.prototype.$ = function (query, root, onFound) {
     var res;
     if (Dom.isDomNode(query)) res = query;
     else
@@ -104,13 +98,18 @@ Dom.prototype.selectAttacth = function (query, root, onFound) {
     return res;
 };
 
+/***
+ *
+ * @type {function(string, AElement, Function): AElement}
+ */
+Dom.prototype.selectAttacth = Dom.prototype.$;
+
 
 /**
  * DFS
- * @param {string | AElement} query
- * @param {AElement|AElementNS} root
- * @param {function(elt:AElement|AElementNS|Node):AElement|AElementNS} onFound - return true to stop find
- * @returns {AElement | AElementNS}
+ * @param {string} query
+ * @param {AElement} root
+ * @param {function} onFound - return true to stop find
  */
 Dom.prototype.select = function (query, root, onFound) {
     root = root || document.documentElement;
@@ -120,31 +119,22 @@ Dom.prototype.select = function (query, root, onFound) {
 
 /**
  *
- * @param {AElement | AElementNS|Node } element
+ * @param {AElement | AElementNS } element
  */
 Dom.prototype.attach = function (element) {
     if (typeof element.attr == 'function') return;
-    var elementConstructor = element.getBBox ? AElementNS : AElement;
+    var elementConstructor = element.getBBox? AElementNS : AElement;
     var prototypes = Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.defineProperties(element, prototypes);
     elementConstructor.call(element);
 };
 
-/***
- *
- * @param {String} tagName
- * @returns {*}
- */
+
 Dom.prototype.makeNewElement = function (tagName) {
     return document.createElement(tagName);
 };
 
-/***
- *
- * @param data
- * @returns {Text}
- */
 Dom.prototype.makeNewTextNode = function (data) {
     return document.createTextNode(data);
 };
@@ -155,7 +145,7 @@ Dom.prototype.makeNewTextNode = function (data) {
  * @param {Object} option
  * @returns {AElement}
  */
-Dom.prototype.create = function (option, isInherited) {
+Dom.prototype._ = function (option, isInherited) {
     var res;
     var creator;
     if (Dom.isDomNode(option)) {
@@ -256,22 +246,12 @@ Dom.prototype.create = function (option, isInherited) {
 
 /***
  *
- * @type {function(string, AElement|AElementNS|Node, Function): AElement|AElementNS}
- */
-Dom.prototype.$ = Dom.prototype.selectAttacth;
-
-/***
- *
  * @type {function(Object, boolean): AElement}
  */
-Dom.prototype._ = Dom.prototype.create;
+Dom.prototype.create = Dom.prototype._;
 
-/****
- *
- * @param {String} query
- * @param {AElement|AElementNS|Node} root
- * @returns {Array<AElement|AElementNS>}
- */
+
+
 Dom.prototype.$$ = function (query, root) {
     var thisD = this;
     var res = [];
@@ -282,15 +262,9 @@ Dom.prototype.$$ = function (query, root) {
     return res;
 };
 
-/***
- *
- * @param {function | string |Array<function>}arg0
- * @param {function} arg1
- * @returns {Dom}
- */
 Dom.prototype.install = function (arg0, arg1) {
     var _this = this;
-    if (arguments.length === 1) {
+    if (arguments.length == 1) {
         if (arg0.creator && arg0.create && arg0.select) {
             // is a dom core
             var creator = arg0.creator;
@@ -298,7 +272,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = creator[key];
                 if (typeof (func) == 'function')
-                    if (_this.creator[key] !== func)
+                    if (_this.creator[key] != func)
                         _this.creator[key] = func;
             });
         }
@@ -324,7 +298,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = arg0[key];
                 if (typeof (func) == 'function')
-                    if (_this.creator[key] !== func)
+                    if (_this.creator[key] != func)
                         _this.creator[key] = func;
             });
         }
@@ -332,13 +306,13 @@ Dom.prototype.install = function (arg0, arg1) {
             console.error('Unknow data', arg0);
         }
     }
-    else if (arguments.length === 2) {
+    else if (arguments.length == 2) {
         if (arg0 instanceof Array) {
             if (arg1.creator) arg1 = arg1.creator;
             arg0.forEach(function (key) {
                 var func = arg1[key];
                 if (typeof (func) == 'function')
-                    if (_this.creator[key] !== func)
+                    if (_this.creator[key] != func)
                         _this.creator[key] = func;
             });
         }
@@ -348,7 +322,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.match(arg0)) {
                     var func = arg1[key];
                     if (typeof (func) == 'function')
-                        if (_this.creator[key] !== func)
+                        if (_this.creator[key] != func)
                             _this.creator[key] = func;
                 }
             });
@@ -372,7 +346,6 @@ Dom.prototype.install = function (arg0, arg1) {
 /***
  *
  * @param {String | null} tagName
- * @returns {function}
  */
 Dom.prototype.require = function (tagName) {
     return this.creator[tagName] || null;
@@ -383,46 +356,18 @@ Dom.prototype.require = function (tagName) {
  * @param {*} o
  * @returns {Boolean}
  */
-export function isDomNode(o) {
+Dom.isDomNode = function (o) {
     return (
         typeof Node === "object" ? o instanceof Node :
             o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
     );
-}
+};
 
-Dom.isDomNode = isDomNode;
-
-/***
- *
- * @param o
- * @return {boolean}
- */
-export function isSVGNode(o) {
-    return (
-        typeof Node === "object" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
-    ) && typeof o.getBBox === 'function';
-}
-
-/***
- *
- * @param o
- * @return {boolean}
- */
-export function isHTMLNode(o) {
-    return (
-        typeof Node === "object" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
-    ) && typeof o.getBBox !== 'function';
-}
-
-Dom.isHTMLNode = isHTMLNode;
-Dom.isSVGNode = isHTMLNode;
 
 /**
  * @param {HTMLElement} element
  */
-export function activeFullScreen(element) {
+Dom.activeFullScreen = function (element) {
     if (element.requestFullscreen) {
         element.requestFullscreen();
     }
@@ -435,11 +380,10 @@ export function activeFullScreen(element) {
     else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
     }
-}
+};
 
-Dom.activeFullScreen = activeFullScreen;
 
-export function deactiveFullScreen() {
+Dom.deactiveFullScreen = function () {
     if (document.exitFullscreen) {
         document.exitFullscreen();
     }
@@ -452,30 +396,22 @@ export function deactiveFullScreen() {
     else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
-}
+};
 
-Dom.deactiveFullScreen = deactiveFullScreen;
-
-/***
- *
- * @return {boolean}
- */
-export function isFullScreen() {
+Dom.isFullScreen = function () {
     var fullScreenElement = document.fullscreenElement ||
         document.webkitFullscreenElement ||
         document.mozFullScreenElement ||
         document.msFullscreenElement;
     return !!fullScreenElement;
-}
-
-Dom.isFullScreen = isFullScreen;
+};
 
 
 /**
  * @param {HTMLElement} element
  * @returns {ClientRect}
  */
-export function traceOutBoundingClientRect(current) {
+Dom.traceOutBoundingClientRect = function (current) {
     var screenSize = Dom.getScreenSize();
     var left = 0;
     var right = screenSize.width;
@@ -502,11 +438,10 @@ export function traceOutBoundingClientRect(current) {
         current = current.parentElement;
     }
     return { left: left, right: right, top: top, bottom: bottom, width: right - left, height: bottom - top };
-}
+};
 
-Dom.traceOutBoundingClientRect = traceOutBoundingClientRect;
 
-export function fontFaceIsLoaded(fontFace, timeout) {
+Dom.fontFaceIsLoaded = function (fontFace, timeout) {
     timeout = timeout || 0;
 
     var element = this.ShareInstance._({
@@ -547,11 +482,10 @@ export function fontFaceIsLoaded(fontFace, timeout) {
             check(timeout);
         });
     });
-}
+};
 
-Dom.fontFaceIsLoaded = fontFaceIsLoaded;
 
-export function getScreenSize() {
+Dom.getScreenSize = function () {
     var width = window.innerWidth ||
         document.documentElement.clientWidth ||
         document.body.clientWidth;
@@ -561,12 +495,10 @@ export function getScreenSize() {
         document.body.clientHeight;
 
     return { WIDTH: width, HEIGHT: height, width: width, height: height };
-}
-
-Dom.getScreenSize = getScreenSize;
+};
 
 
-export function waitImageLoaded(img, timeout) {
+Dom.waitImageLoaded = function (img, timeout) {
     var isLoaded = true;
     if (!img.complete) {
         isLoaded = false;
@@ -585,17 +517,9 @@ export function waitImageLoaded(img, timeout) {
         setTimeout(rs, timeout || 5000);
     });
     // No other way of checking: assume it’s ok.
-}
+};
 
-Dom.waitImageLoaded = waitImageLoaded;
-
-
-/***
- *
- * @param {HTMLIFrameElement} iframe
- * @returns {Promise<unknown>}
- */
-export function waitIFrameLoaded(iframe) {
+Dom.waitIFrameLoaded = function (iframe) {
     return new Promise(function (rs, rj) {
         if (document.all) {
             iframe.onreadystatechange = function () {
@@ -608,11 +532,9 @@ export function waitIFrameLoaded(iframe) {
         }
         setTimeout(rs, 5000)
     });
-}
+};
 
-Dom.waitIFrameLoaded = waitIFrameLoaded;
-
-export function imageToCanvas(element) {
+Dom.imageToCanvas = function (element) {
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
@@ -642,9 +564,7 @@ export function imageToCanvas(element) {
     else {
         throw new Error("AElement must be image");
     }
-}
-
-Dom.imageToCanvas = imageToCanvas;
+};
 
 
 Dom.ShareInstance = new Dom();
@@ -697,12 +617,8 @@ Dom.getScrollSize = function () {
 
 };
 
-/***
- *
- * @param originElt
- * @returns {AElement}
- */
-export function depthCloneWithStyle(originElt) {
+
+Dom.depthCloneWithStyle = function (originElt) {
     var newElt = originElt.cloneNode();//no deep
     if (!originElt.getAttribute && !originElt.getAttributeNS) return newElt;//is text node
     var cssRules = AElement.prototype.getCSSRules.call(originElt);
@@ -716,23 +632,14 @@ export function depthCloneWithStyle(originElt) {
     for (var key in cssKey) {
         newElt.style[key] = AElement.prototype.getComputedStyleValue.call(originElt, key);
     }
-    var children = Array.prototype.map.call(originElt.childNodes, depthCloneWithStyle);
+    var children = Array.prototype.map.call(originElt.childNodes, Dom.depthCloneWithStyle);
     for (var i = 0; i < children.length; ++i) {
         newElt.appendChild(children[i]);
     }
     return newElt;
-}
+};
 
-Dom.depthCloneWithStyle = depthCloneWithStyle;
-
-
-/***
- *
- * @param {AElement| AElementNS} sourceElt
- * @param {AElement| AElementNS} destElt
- * @returns {AElement| AElementNS}
- */
-export function copyStyleRule(sourceElt, destElt) {
+Dom.copyStyleRule = function (sourceElt, destElt) {
     if (!sourceElt.getAttribute && !sourceElt.getAttributeNS) return destElt;//is text node
     if (!destElt.getAttribute && !destElt.getAttributeNS) return destElt;//is text node, nothing to copy
     var cssRules = AElement.prototype.getCSSRules.call(sourceElt);
@@ -747,9 +654,7 @@ export function copyStyleRule(sourceElt, destElt) {
         destElt.style[key] = AElement.prototype.getComputedStyleValue.call(sourceElt, key);
     }
     return destElt;
-}
-
-Dom.copyStyleRule = copyStyleRule;
+};
 
 
 Dom.$printStyle = Dom.ShareInstance._('style[id="absol-print-preparing"]').addTo(document.head);
@@ -760,21 +665,89 @@ Dom.$printStyle.innerHTML = [
 ].join('\n');
 
 
+Dom.lastResizeTime = 0;
+
+Dom.ResizeSystemElts = [];
+
+Dom.ResizeSystemCacheElts = undefined;
+
 Dom.removeResizeSystemTrash = function () {
-    ResizeSystem.removeTrash();
+    Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (element) {
+        return AElement.prototype.isDescendantOf.call(element, document.body);
+    });
 };
 
 Dom.addToResizeSystem = function (element) {
-    ResizeSystem.add(element);
+    for (var i = 0; i < Dom.ResizeSystemElts.length; ++i)
+        if (AElement.prototype.isDescendantOf.call(element, Dom.ResizeSystemElts[i])) {
+            return false;
+        }
+    Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (e) {
+        return !AElement.prototype.isDescendantOf.call(e, element);
+    });
+    Dom.ResizeSystemElts.push(element);
+    return true;
 };
 
 Dom.updateResizeSystem = function () {
-    ResizeSystem.update();
+    var now = new Date().getTime();
+    if (now - 100 > Dom.lastResizeTime) {
+        Dom.removeResizeSystemTrash();
+        Dom.ResizeSystemCacheElts = undefined;
+    }
+
+    Dom.lastResizeTime = now;
+
+    function visitor(child) {
+
+        if (typeof child.requestUpdateSize == 'function') {
+            child.requestUpdateSize();
+            return true;
+        }
+        else if (typeof child.updateSize == 'function') {
+            child.updateSize();
+            return true;
+        }
+        else if (typeof child.onresize == 'function') {
+            child.onresize();
+            return true;
+        }
+    }
+
+    if (Dom.ResizeSystemCacheElts === undefined) {
+        Dom.ResizeSystemCacheElts = [];
+        Dom.ResizeSystemElts.forEach(function (e) {
+            Dom.ShareInstance.$('', e, function (child) {
+                if (visitor(child))
+                    Dom.ResizeSystemCacheElts.push(child);
+            });
+        });
+
+    }
+    else {
+        Dom.ResizeSystemCacheElts.forEach(visitor);
+    }
 };
 
 Dom.updateSizeUp = function (fromElt) {
-    ResizeSystem.updateUp(fromElt);
+    while (fromElt) {
+        if (typeof fromElt.requestUpdateSize == 'function') {
+            fromElt.requestUpdateSize();
+            return true;
+        }
+        else if (typeof fromElt.updateSize == 'function') {
+            fromElt.updateSize();
+            return true;
+        }
+        else if (typeof fromElt.onresize == 'function') {
+            fromElt.onresize();
+            return true;
+        }
+        fromElt = fromElt.parentElement;
+    }
 };
+
+window.addEventListener('resize', Dom.updateResizeSystem);
 
 
 export default Dom;
