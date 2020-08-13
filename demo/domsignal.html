@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dom Signal</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    var vds = new absol.DomSignal();
+    var now = new Date().getTime();
+    vds.on('tick', function tick(count) {
+        var rt = new Date().getTime();
+        if (count < 100)
+            this.emit('tick', count + 1);
+        else if (count == 100){
+            setTimeout(tick.bind(this, count + 1), 0)
+        }
+        now = rt;
+    });
+    vds.emit('tick', 0);
+</script>
+</body>
+</html>
