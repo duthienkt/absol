@@ -9,8 +9,9 @@ function DomSignal(attachHookElt) {
     EventEmitter.call(this);
     this.signals = {};
     this.ev_error = this.ev_error.bind(this);
-    this.$attachhook = attachHookElt || null;
+    this.$attachhook = attachHookElt || Dom.ShareInstance._('attachhook');
     this.$attachhookParent = (attachHookElt && attachHookElt.parentElement) || null;
+    this.$attachhook.on('error', this.ev_error);
 }
 
 Object.defineProperties(DomSignal.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
@@ -29,14 +30,11 @@ DomSignal.prototype.execSignal = function () {
 };
 
 DomSignal.prototype.emit = function (name) {
-    this.signals[name] = Array.prototype.slice.call( arguments,1);
+    this.signals[name] = Array.prototype.slice.call(arguments, 1);
     if (!this.$attachhookParent) {
         this.$attachhookParent = document.body;
     }
-    if (!this.$attachhook) {
-        this.$attachhook = Dom.ShareInstance._('attachhook').on('error', this.ev_error);
-    }
-    if (!this.$attachhook.parentElement){
+    if (!this.$attachhook.parentElement) {
         this.$attachhookParent.appendChild(this.$attachhook);
     }
 };
