@@ -3,12 +3,14 @@ import EventEmitter from "./EventEmitter";
 
 /**
  * Emit event with dom delay
+ * @extends EventEmitter
  */
-function DomSignal() {
+function DomSignal(attachHookElt) {
     EventEmitter.call(this);
     this.signals = {};
     this.ev_error = this.ev_error.bind(this);
-    this.$attachhook = null;
+    this.$attachhook = attachHookElt || null;
+    this.$attachhookParent = (attachHookElt && attachHookElt.parentElement) || null;
 }
 
 Object.defineProperties(DomSignal.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
@@ -19,7 +21,6 @@ DomSignal.prototype.execSignal = function () {
     var signals = this.signals;
     if (this.$attachhook) {
         this.$attachhook.remove();
-        this.$attachhook = null;
     }
     this.signals = {};
     for (var name in signals) {
@@ -28,10 +29,15 @@ DomSignal.prototype.execSignal = function () {
 };
 
 DomSignal.prototype.emit = function (name) {
-    this.signals[name] = Array.prototype.slice(1, arguments);
+    this.signals[name] = Array.prototype.slice.call( arguments,1);
+    if (!this.$attachhookParent) {
+        this.$attachhookParent = document.body;
+    }
     if (!this.$attachhook) {
-        this.$attachhook = Dom.ShareInstance._('attachhook').on('error', this.ev_error)
-            .addTo(document.body);
+        this.$attachhook = Dom.ShareInstance._('attachhook').on('error', this.ev_error);
+    }
+    if (!this.$attachhook.parentElement){
+        this.$attachhookParent.appendChild(this.$attachhook);
     }
 };
 
