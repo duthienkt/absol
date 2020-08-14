@@ -3,7 +3,14 @@ import ElementNS from './ElementNS';
 import Element from './Element';
 
 var sattachhookCreator = function () {
-    return Svg.ShareInstance._('<image  class="absol-attachhook" style:"display: none"  xlink:href=""/>');
+    var res = Svg.ShareInstance._('<image  class="absol-attachhook" style:"display: none"  xlink:href=""/>');
+    res.defineEvent('attached');
+    res.on('error', function (event) {
+        if (this.isDescendantOf(document.body)) {
+            this.emit('attached', event, this);
+        }
+    });
+    return res;
 };
 
 /***
@@ -233,8 +240,6 @@ Dom.printElement = function (option) {
         }
 
 
-
-
         var newElt = option.computeStyle ? Dom.depthCloneWithStyle(option.elt) : option.elt.cloneNode(true);
 
         //remove canvas that will be empty when clone
@@ -285,7 +290,6 @@ Dom.printElement = function (option) {
         }
 
 
-
         var renderSpace = _({
             style: {
                 position: 'fixed',
@@ -316,9 +320,9 @@ Dom.printElement = function (option) {
         renderSpace.clearChild();
         option.title = option.title || ($('title', document.head) || { innerHTML: 'absol.js' }).innerHTML;
         var htmlCode = ['<ht' + 'ml>',
-        ' <h' + 'ead><title>' + option.title + '</title><meta charset="UTF-8">',
+            ' <h' + 'ead><title>' + option.title + '</title><meta charset="UTF-8">',
             '<style>',
-        option.overideStyle ? 'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }' : '',
+            option.overideStyle ? 'html, body{width:initial !important; height:initial !important; overflow: initial !important; overflow-x: initial !important;overflow-y: initial !important;  }' : '',
             '@media print {',//still not work
             '    body{',
             '      -webkit-print-color-adjust: exact;',
@@ -332,19 +336,22 @@ Dom.printElement = function (option) {
             '    page-break-before: avoid;',
             '    page-break-after: avoid;',
             '}',
-        option.extendCss || '',
+            option.extendCss || '',
             '</style>',
-        '</he' + 'ad>',
+            '</he' + 'ad>',
 
-        '<bod' + 'y>',
+            '<bod' + 'y>',
             eltCode,
-        '<scr' + 'ipt>' + (option.extendScript || '') + '</scri' + 'pt>',//browser parse  script tag fail
-        '<scr' + 'ipt>setTimeout(function(){ window.print();},1000);</scri' + 'pt>',//browser parse  script tag fail
-        '</bod' + 'y>',
-        '</ht' + 'ml>'].join('\n');
+            '<scr' + 'ipt>' + (option.extendScript || '') + '</scri' + 'pt>',//browser parse  script tag fail
+            '<scr' + 'ipt>setTimeout(function(){ window.print();},1000);</scri' + 'pt>',//browser parse  script tag fail
+            '</bod' + 'y>',
+            '</ht' + 'ml>'].join('\n');
         var blob = new Blob([htmlCode], { type: 'text/html; charset=UTF-8' });
         renderSpace.addTo(document.body);
-        var iframe = _('iframe').attr('src', URL.createObjectURL(blob)).addStyle({ width: '100%', height: '100%' }).addTo(renderSpace);
+        var iframe = _('iframe').attr('src', URL.createObjectURL(blob)).addStyle({
+            width: '100%',
+            height: '100%'
+        }).addTo(renderSpace);
         return new Promise(function (rs, rj) {
             function waitLoad() {
                 if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
@@ -361,11 +368,13 @@ Dom.printElement = function (option) {
                                 setTimeout(waitFocusBack, 300)
                             }
                         }
+
                         waitFocusBack();
                     }, 4000);
                 }
                 else setTimeout(waitLoad, 1000)
             }
+
             waitLoad();
         });
     }
@@ -373,7 +382,6 @@ Dom.printElement = function (option) {
         throw new Error('Invalid param!');
     }
 };
-
 
 
 export default Svg;
