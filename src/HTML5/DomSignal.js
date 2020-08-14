@@ -8,10 +8,10 @@ import EventEmitter from "./EventEmitter";
 function DomSignal(attachHookElt) {
     EventEmitter.call(this);
     this.signals = {};
-    this.ev_error = this.ev_error.bind(this);
+    this.ev_attached = this.ev_attached.bind(this);
     this.$attachhook = attachHookElt || Dom.ShareInstance._('attachhook');
     this.$attachhookParent = (attachHookElt && attachHookElt.parentElement) || null;
-    this.$attachhook.on('error', this.ev_error);
+    this.$attachhook.on('attached', this.ev_attached);
 }
 
 Object.defineProperties(DomSignal.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
@@ -39,7 +39,7 @@ DomSignal.prototype.emit = function (name) {
     }
 };
 
-DomSignal.prototype.ev_error = function () {
+DomSignal.prototype.ev_attached = function () {
     this.execSignal();
 };
 

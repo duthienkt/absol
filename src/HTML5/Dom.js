@@ -9,11 +9,19 @@ var attachhookCreator = function () {
     var res = Dom.ShareInstance._({
         tag: 'img',
         class: 'absol-attachhook',
+        extendEvent: ['attached'],
         style: {
             display: 'none'
         },
         attr: {
             src: ''
+        },
+        on: {
+            error: function (event) {
+                if (this.isDescendantOf(document.body)) {
+                    this.emit('attached', event, this);
+                }
+            }
         }
     });
     return res;
@@ -58,7 +66,7 @@ function Dom(option) {
 
     this['$ '.trim()] = this.$.bind(this);
     this['_ '.trim()] = this._.bind(this);
-    this['$'+'$'] = this.$$.bind(this);
+    this['$' + '$'] = this.$$.bind(this);
     this.buildDom = this._;
 }
 
@@ -85,8 +93,6 @@ Dom.prototype.fromCode = function (code) {
  * @param {function} onFound - return true to stop find
  * @returns {AElement | AElementNS}
  */
-
-
 
 
 Dom.prototype.$ = function (query, root, onFound) {
@@ -123,7 +129,7 @@ Dom.prototype.select = function (query, root, onFound) {
  */
 Dom.prototype.attach = function (element) {
     if (typeof element.attr == 'function') return;
-    var elementConstructor = element.getBBox? AElementNS : AElement;
+    var elementConstructor = element.getBBox ? AElementNS : AElement;
     var prototypes = Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.getOwnPropertyDescriptors(elementConstructor.prototype);
     Object.defineProperties(element, prototypes);
