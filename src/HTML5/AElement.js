@@ -336,11 +336,15 @@ AElement.prototype.afterAttached = function () {
         var prototypes = Object.getOwnPropertyDescriptors(AElement.prototype);
         Object.defineProperties(attachHookElt, prototypes);
         AElement.call(attachHookElt);
+        attachHookElt.defineEvent('attached');
         this.$attachhook = attachHookElt;
+        this.$attachhook.on('error', function (event){
+           if (this.isDescendantOf(document.body)) this.emit('attached', event, this);
+        })
         this.appendChild(attachHookElt);
     }
     return new Promise(function (rs) {
-        attachHookElt.once('error', rs);
+        attachHookElt.once('attached', rs);
     });
 };
 
