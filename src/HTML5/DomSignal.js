@@ -1,9 +1,12 @@
 import Dom from "./Dom";
 import EventEmitter from "./EventEmitter";
+import AElement from "./AElement";
 
-/**
- * Emit event with dom delay
+/***
+ *
  * @extends EventEmitter
+ * @param {AElement} attachHookElt
+ * @constructor
  */
 function DomSignal(attachHookElt) {
     EventEmitter.call(this);
