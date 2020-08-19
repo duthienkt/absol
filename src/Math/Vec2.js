@@ -38,7 +38,6 @@ Vec2.prototype.dist = function (v) {
 };
 
 
-
 Vec2.prototype.sub = function (v) {
     return new Vec2(this.x - v.x, this.y - v.y);
 };
@@ -62,6 +61,29 @@ Vec2.prototype.direction = function () {
     return Math.atan2(this.y, this.x);
 };
 
+/***
+ *
+ * @param {Number} dx
+ * @param {Number} dy
+ */
+Vec2.prototype.translate = function (dx, dy) {
+    return this.add(new Vec2(dx, dy));
+};
+
+
+/****
+ *
+ * @param {Number} angle - radian
+ * @returns {Vec2}
+ */
+Vec2.prototype.rotate = function (angle) {
+    var sinA = Math.sin(angle);
+    var cosA = Math.cos(angle);
+    var x = this.x * cosA - this.y * sinA;
+    var y = this.x * sinA + this.y * cosA;
+    return new Vec2(x, y);
+};
+
 
 Vec2.fromDirection = function (angle) {
     return new Vec2(Math.cos(angle), Math.sin(angle));
@@ -73,7 +95,8 @@ Vec2.make = function (x, y) {
     }
     else if (x instanceof Vec2) {
         return x.copy();
-    } else
+    }
+    else
         return new Vec2(x, y);
 };
 
