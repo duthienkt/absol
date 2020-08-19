@@ -1,3 +1,9 @@
+/***
+ *
+ * @param  {Number} x
+ * @param {Number} y
+ * @constructor
+ */
 function Vec2(x, y) {
     this.x = x;
     this.y = y;
@@ -82,6 +88,14 @@ Vec2.prototype.rotate = function (angle) {
     var x = this.x * cosA - this.y * sinA;
     var y = this.x * sinA + this.y * cosA;
     return new Vec2(x, y);
+};
+
+/***
+ *
+ * @returns {Vec2}
+ */
+Vec2.prototype.rotate90 = function () {
+    return new Vec2(-this.y, this.x);
 };
 
 
