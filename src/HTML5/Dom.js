@@ -4,6 +4,22 @@ import getFunctionName from '../String/getFunctionName';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
 
+/***
+ * @typedef AbsolConstructDescriptor
+ * @property {string | null} tag
+ * @property {CSSStyleDeclaration} style
+ * @property {Array | string} extendEvent
+ * @property {Array | string} class
+ * @property {*} attr
+ * @property {string|AElement | AElementNS | AbsolConstructDescriptor | string[] |AElement[] | AElementNS[] | AbsolConstructDescriptor[]} child
+ * @property {string} text to create a TextNode, not Element
+ */
+
+
+/****
+ *
+ * @returns {AElement}
+ */
 
 var attachhookCreator = function () {
     var res = Dom.ShareInstance._({
@@ -148,8 +164,8 @@ Dom.prototype.makeNewTextNode = function (data) {
 
 /**
  *
- * @param {Object} option
- * @returns {AElement}
+ * @param {AbsolConstructDescriptor} option
+ * @returns {AElementNS| AElement | Text}
  */
 Dom.prototype._ = function (option, isInherited) {
     var res;
@@ -187,7 +203,6 @@ Dom.prototype._ = function (option, isInherited) {
     option.tag = option.tag || this.defaultTag;
     creator = this.creator[option.tag];
     if (option.elt) {
-
         res = option.elt;
     }
     else {
