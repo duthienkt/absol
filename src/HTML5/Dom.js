@@ -164,7 +164,7 @@ Dom.prototype.makeNewTextNode = function (data) {
 
 /**
  *
- * @param {AbsolConstructDescriptor} option
+ * @param {AbsolConstructDescriptor | string } option
  * @returns {AElementNS| AElement | Text}
  */
 Dom.prototype._ = function (option, isInherited) {
