@@ -13,6 +13,7 @@ import AElement from './AElement';
  * @property {*} attr
  * @property {string|AElement | AElementNS | AbsolConstructDescriptor | string[] |AElement[] | AElementNS[] | AbsolConstructDescriptor[]} child
  * @property {string} text to create a TextNode, not Element
+ * @property {AElement} elt
  */
 
 
@@ -164,7 +165,7 @@ Dom.prototype.makeNewTextNode = function (data) {
 
 /**
  *
- * @param {AbsolConstructDescriptor | string } option
+ * @param {AbsolConstructDescriptor | string | {} } option
  * @returns {AElementNS| AElement | Text}
  */
 Dom.prototype._ = function (option, isInherited) {
