@@ -84,7 +84,12 @@ AElement.prototype.attr = function () {
     return this;
 };
 
-
+/***
+ *
+ * @param {string|string[]|CSSStyleDeclaration} arg0
+ * @param {string} arg1
+ * @returns {AElement}
+ */
 AElement.prototype.addStyle = function (arg0, arg1) {
     if (typeof arg0 == 'string')
         if (arg0.indexOf('-') >= 0) {
@@ -100,6 +105,11 @@ AElement.prototype.addStyle = function (arg0, arg1) {
     return this;
 };
 
+/***
+ *
+ * @param {string|string[]|CSSStyleDeclaration} arg0
+ * @returns {AElement}
+ */
 AElement.prototype.removeStyle = function (arg0) {
     var key;
     if (typeof arg0 == 'string') {
@@ -294,11 +304,15 @@ AElement.prototype.getBoundingRecursiveRect = function (depth) {
     return ac;
 };
 
-
+/***
+ *
+ * @param parent
+ * @returns {boolean}
+ */
 AElement.prototype.isDescendantOf = function (parent) {
     var child = this;
     while (child) {
-        if (child == parent) return true;
+        if (child === parent) return true;
         child = child.parentNode;
     }
     return false;
@@ -338,8 +352,8 @@ AElement.prototype.afterAttached = function () {
         AElement.call(attachHookElt);
         attachHookElt.defineEvent('attached');
         this.$attachhook = attachHookElt;
-        this.$attachhook.on('error', function (event){
-           if (this.isDescendantOf(document.body)) this.emit('attached', event, this);
+        this.$attachhook.on('error', function (event) {
+            if (this.isDescendantOf(document.body)) this.emit('attached', event, this);
         })
         this.appendChild(attachHookElt);
     }
