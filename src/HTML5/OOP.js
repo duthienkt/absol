@@ -4,7 +4,7 @@ var OOP = {};
  * @param {Object} object
  * @param {Sttring} key
  * @param {Function} method
-*/
+ */
 OOP.overideMethod = function (object, key, method) {
     if (object[key] === undefined) object[key] = method;
     else {
@@ -59,9 +59,6 @@ OOP.inherit = function (child, parent) {
 };
 
 
-
-
-
 OOP.drillProperty = function (topObject, botObject, keyTop, keyBot) {
     if (typeof (keyTop) == 'string') {
         keyBot = keyBot || keyTop;
@@ -97,8 +94,6 @@ OOP.bindFunctions = function (_this, handlers) {
 };
 
 
-
-
 OOP.inheritCreator = function (parent, child) {
     var i;
     if (child.property) {
@@ -124,6 +119,20 @@ OOP.inheritCreator = function (parent, child) {
             })(parent.prototype[i], child.prototype[i]);
         }
     }
+};
+
+/***
+ *
+ * @param {Function} constructor
+ */
+OOP.mixClass = function (constructor) {
+    var descriptors = {};
+    for (var i = 1; i < arguments.length; ++i) {
+        Object.assign(descriptors, Object.getOwnPropertyDescriptors(arguments[i].prototype));
+    }
+
+    Object.defineProperties(constructor.prototype, descriptors);
+    constructor.prototype.constructor = constructor;
 };
 
 export default OOP;
