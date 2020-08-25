@@ -3,6 +3,7 @@ import OOP from './OOP';
 import getFunctionName from '../String/getFunctionName';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
+import ResizeSystem from "./ResizeSystem";
 
 /***
  * @typedef AbsolConstructDescriptor
@@ -692,89 +693,15 @@ Dom.$printStyle.innerHTML = [
 ].join('\n');
 
 
-Dom.lastResizeTime = 0;
-
-Dom.ResizeSystemElts = [];
-
-Dom.ResizeSystemCacheElts = undefined;
-
-Dom.removeResizeSystemTrash = function () {
-    Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (element) {
-        return AElement.prototype.isDescendantOf.call(element, document.body);
-    });
-};
 
 Dom.addToResizeSystem = function (element) {
-    for (var i = 0; i < Dom.ResizeSystemElts.length; ++i)
-        if (AElement.prototype.isDescendantOf.call(element, Dom.ResizeSystemElts[i])) {
-            return false;
-        }
-    Dom.ResizeSystemElts = Dom.ResizeSystemElts.filter(function (e) {
-        return !AElement.prototype.isDescendantOf.call(e, element);
-    });
-    Dom.ResizeSystemElts.push(element);
-    return true;
+    ResizeSystem.add(element);
 };
 
-Dom.updateResizeSystem = function () {
-    var now = new Date().getTime();
-    if (now - 100 > Dom.lastResizeTime) {
-        Dom.removeResizeSystemTrash();
-        Dom.ResizeSystemCacheElts = undefined;
-    }
-
-    Dom.lastResizeTime = now;
-
-    function visitor(child) {
-
-        if (typeof child.requestUpdateSize == 'function') {
-            child.requestUpdateSize();
-            return true;
-        }
-        else if (typeof child.updateSize == 'function') {
-            child.updateSize();
-            return true;
-        }
-        else if (typeof child.onresize == 'function') {
-            child.onresize();
-            return true;
-        }
-    }
-
-    if (Dom.ResizeSystemCacheElts === undefined) {
-        Dom.ResizeSystemCacheElts = [];
-        Dom.ResizeSystemElts.forEach(function (e) {
-            Dom.ShareInstance.$('', e, function (child) {
-                if (visitor(child))
-                    Dom.ResizeSystemCacheElts.push(child);
-            });
-        });
-
-    }
-    else {
-        Dom.ResizeSystemCacheElts.forEach(visitor);
-    }
-};
 
 Dom.updateSizeUp = function (fromElt) {
-    while (fromElt) {
-        if (typeof fromElt.requestUpdateSize == 'function') {
-            fromElt.requestUpdateSize();
-            return true;
-        }
-        else if (typeof fromElt.updateSize == 'function') {
-            fromElt.updateSize();
-            return true;
-        }
-        else if (typeof fromElt.onresize == 'function') {
-            fromElt.onresize();
-            return true;
-        }
-        fromElt = fromElt.parentElement;
-    }
+    ResizeSystem.updateUp(fromElt);
 };
-
-window.addEventListener('resize', Dom.updateResizeSystem);
 
 
 export default Dom;
