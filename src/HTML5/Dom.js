@@ -754,6 +754,9 @@ Dom.addToResizeSystem = function (element) {
     ResizeSystem.add(element);
 };
 
+Dom.updateResizeSystem = function (){
+    ResizeSystem.update();
+}
 
 Dom.updateSizeUp = function (fromElt) {
     ResizeSystem.updateUp(fromElt);
