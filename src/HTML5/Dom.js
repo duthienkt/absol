@@ -379,23 +379,25 @@ Dom.prototype.require = function (tagName) {
     return this.creator[tagName] || null;
 };
 
+
 /**
  *
  * @param {*} o
  * @returns {Boolean}
  */
-Dom.isDomNode = function (o) {
+export function isDomNode(o) {
     return (
         typeof Node === "object" ? o instanceof Node :
             o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
     );
-};
+}
 
+Dom.isDomNode = isDomNode;
 
 /**
- * @param {HTMLElement} element
+ * @param {AElement|Node|HTMLElement} element
  */
-Dom.activeFullScreen = function (element) {
+export function activeFullScreen(element) {
     if (element.requestFullscreen) {
         element.requestFullscreen();
     }
@@ -408,10 +410,12 @@ Dom.activeFullScreen = function (element) {
     else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
     }
-};
+}
+
+Dom.activeFullScreen = activeFullScreen;
 
 
-Dom.deactiveFullScreen = function () {
+export function deactiveFullScreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();
     }
@@ -424,32 +428,34 @@ Dom.deactiveFullScreen = function () {
     else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
-};
+}
 
-Dom.isFullScreen = function () {
+Dom.deactiveFullScreen = deactiveFullScreen;
+
+export function isFullScreen() {
     var fullScreenElement = document.fullscreenElement ||
         document.webkitFullscreenElement ||
         document.mozFullScreenElement ||
         document.msFullscreenElement;
     return !!fullScreenElement;
-};
+}
 
+Dom.isFullScreen = isFullScreen;
 
 /**
- * @param {HTMLElement} element
+ * @param {AElement|Node|HTMLElement} current
  * @returns {ClientRect}
  */
-Dom.traceOutBoundingClientRect = function (current) {
+export function traceOutBoundingClientRect(current) {
     var screenSize = Dom.getScreenSize();
     var left = 0;
     var right = screenSize.width;
     var top = 0;
     var bottom = screenSize.height;
     while (current) {
-
-        var ox = AElement.prototype.getComputedStyleValue.call(current, 'overflow-x') != "visible";
-        var oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') != "visible";
-        var isHtml = current.tagName.toLowerCase() == 'html';
+        var ox = AElement.prototype.getComputedStyleValue.call(current, 'overflow-x') !== "visible";
+        var oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') !== "visible";
+        var isHtml = current.tagName.toLowerCase() === 'html';
         if (ox || oy || isHtml) {
             var bound = current.getBoundingClientRect();
             if (ox || isHtml) {
@@ -466,10 +472,17 @@ Dom.traceOutBoundingClientRect = function (current) {
         current = current.parentElement;
     }
     return { left: left, right: right, top: top, bottom: bottom, width: right - left, height: bottom - top };
-};
+}
 
+Dom.traceOutBoundingClientRect = traceOutBoundingClientRect;
 
-Dom.fontFaceIsLoaded = function (fontFace, timeout) {
+/***
+ *
+ * @param {string} fontFace
+ * @param {number} timeout
+ * @returns {Promise<boolean>}
+ */
+export function fontFaceIsLoaded(fontFace, timeout) {
     timeout = timeout || 0;
 
     var element = this.ShareInstance._({
@@ -510,10 +523,15 @@ Dom.fontFaceIsLoaded = function (fontFace, timeout) {
             check(timeout);
         });
     });
-};
+}
 
+Dom.fontFaceIsLoaded = fontFaceIsLoaded;
 
-Dom.getScreenSize = function () {
+/***
+ *
+ * @returns {{width: number, WIDTH: number, HEIGHT: number, height: number}}
+ */
+export function getScreenSize() {
     var width = window.innerWidth ||
         document.documentElement.clientWidth ||
         document.body.clientWidth;
@@ -523,10 +541,17 @@ Dom.getScreenSize = function () {
         document.body.clientHeight;
 
     return { WIDTH: width, HEIGHT: height, width: width, height: height };
-};
+}
 
+Dom.getScreenSize = getScreenSize;
 
-Dom.waitImageLoaded = function (img, timeout) {
+/***
+ *
+ * @param {Image} img
+ * @param {number} timeout
+ * @returns {Promise<void>}
+ */
+export function waitImageLoaded(img, timeout) {
     var isLoaded = true;
     if (!img.complete) {
         isLoaded = false;
@@ -545,13 +570,21 @@ Dom.waitImageLoaded = function (img, timeout) {
         setTimeout(rs, timeout || 5000);
     });
     // No other way of checking: assume it’s ok.
-};
+}
 
-Dom.waitIFrameLoaded = function (iframe) {
+Dom.waitImageLoaded = waitImageLoaded;
+
+
+/***
+ *
+ * @param {HTMLIFrameElement| Worker} iframe
+ * @returns {Promise}
+ */
+export function waitIFrameLoaded(iframe) {
     return new Promise(function (rs, rj) {
         if (document.all) {
             iframe.onreadystatechange = function () {
-                if (iframe.readyState == "complete" || iframe.readyState == "loaded")
+                if (iframe.readyState === "complete" || iframe.readyState === "loaded")
                     rs();
             };
         }
@@ -560,13 +593,20 @@ Dom.waitIFrameLoaded = function (iframe) {
         }
         setTimeout(rs, 5000)
     });
-};
+}
 
-Dom.imageToCanvas = function (element) {
+Dom.waitIFrameLoaded = waitIFrameLoaded;
+
+/***
+ *
+ * @param {Image} element
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+export function imageToCanvas(element) {
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
-    if (element.tagName.toLowerCase() == 'img') {
+    if (element.tagName.toLowerCase() === 'img') {
         var preRender = Dom.ShareInstance._('div');
         preRender.addStyle({
             position: 'fixed',
@@ -592,7 +632,9 @@ Dom.imageToCanvas = function (element) {
     else {
         throw new Error("AElement must be image");
     }
-};
+}
+
+Dom.imageToCanvas = imageToCanvas;
 
 
 Dom.ShareInstance = new Dom();
@@ -609,7 +651,7 @@ Dom.documentReady = new Promise(function (resolve) {
     }
 });
 
-Dom.getScrollSize = function () {
+export function getScrollSize() {
     if (!Dom.scrollWidthPromise)
         Dom.scrollWidthPromise = new Promise(function (resolve) {
             function prerender() {
@@ -642,11 +684,16 @@ Dom.getScrollSize = function () {
             Dom.documentReady.then(prerender);
         });
     return Dom.scrollWidthPromise;
+}
 
-};
+Dom.getScrollSize = getScrollSize;
 
-
-Dom.depthCloneWithStyle = function (originElt) {
+/***
+ *
+ * @param originElt
+ * @returns {AElement|HTMLElement|Node}
+ */
+export function depthCloneWithStyle(originElt) {
     var newElt = originElt.cloneNode();//no deep
     if (!originElt.getAttribute && !originElt.getAttributeNS) return newElt;//is text node
     var cssRules = AElement.prototype.getCSSRules.call(originElt);
@@ -665,9 +712,17 @@ Dom.depthCloneWithStyle = function (originElt) {
         newElt.appendChild(children[i]);
     }
     return newElt;
-};
+}
 
-Dom.copyStyleRule = function (sourceElt, destElt) {
+Dom.depthCloneWithStyle = depthCloneWithStyle;
+
+/***
+ *
+ * @param  {AElement|HTMLElement|Node}sourceElt
+ * @param  {AElement|HTMLElement|Node} destElt
+ * @returns  {AElement|HTMLElement|Node}
+ */
+export function copyStyleRule(sourceElt, destElt) {
     if (!sourceElt.getAttribute && !sourceElt.getAttributeNS) return destElt;//is text node
     if (!destElt.getAttribute && !destElt.getAttributeNS) return destElt;//is text node, nothing to copy
     var cssRules = AElement.prototype.getCSSRules.call(sourceElt);
@@ -682,7 +737,9 @@ Dom.copyStyleRule = function (sourceElt, destElt) {
         destElt.style[key] = AElement.prototype.getComputedStyleValue.call(sourceElt, key);
     }
     return destElt;
-};
+}
+
+Dom.copyStyleRule = copyStyleRule;
 
 
 Dom.$printStyle = Dom.ShareInstance._('style[id="absol-print-preparing"]').addTo(document.head);
@@ -691,7 +748,6 @@ Dom.$printStyle.innerHTML = [
     '    display: none !important;',
     '}'
 ].join('\n');
-
 
 
 Dom.addToResizeSystem = function (element) {
