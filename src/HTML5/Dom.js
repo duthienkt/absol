@@ -279,7 +279,7 @@ Dom.prototype._ = function (option, isInherited) {
     if (option.child) {
         option.child = option.child instanceof Array ? option.child : [option.child];
         for (var i = 0; i < option.child.length; ++i) {
-            res.addChild(this.create(option.child[i], false, true));
+            res.addChild(this._(option.child[i], false, true));
         }
     }
     return res;
