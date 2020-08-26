@@ -89,7 +89,8 @@ AElement.prototype.attr = function () {
  * @param {CSSStyleDeclaration|string|string[]} arg0
  * @param {string} arg1
  * @returns {AElement}
- *//**
+ */
+/**
  * add style
  * @param {CSSStyleDeclaration|string|string[]} arg0
  * @returns {AElement}
@@ -116,7 +117,7 @@ AElement.prototype.addStyle = function (arg0, arg1) {
  */
 AElement.prototype.removeStyle = function (arg0) {
     var key;
-    if (typeof arg0 == 'string') {
+    if (arg0.charAt) {
         if (arg0.indexOf('-') >= 0) {
             this.style.removeProperty(arg0);
         }
@@ -126,7 +127,7 @@ AElement.prototype.removeStyle = function (arg0) {
         }
     }
     else {
-        if (typeof arg0 instanceof Array) {
+        if (arg0.map && arg0.forEach) {
             for (var i = 0; i < arg0.length; ++i)
                 this.removeStyle(arg0[i]);
         }
@@ -138,9 +139,8 @@ AElement.prototype.removeStyle = function (arg0) {
     return this;
 };
 
-
 AElement.prototype.addChild = function (child) {
-    if (child instanceof Array) {
+    if (child.indexOf && child.map && child.forEach) {
         for (var i = 0; i < child.length; ++i)
             this.appendChild(child[i]);
     }
@@ -184,11 +184,11 @@ AElement.prototype.clearChild = function () {
 
 /**
  *
- * @param {string} className
+ * @param {string|Array} className
  * @returns {Boolean}
  */
 AElement.prototype.containsClass = function (className) {
-    if (className instanceof Array) {
+    if (className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
             if (!this.classList.containsClass(className[i])) return false;
         return true;
@@ -199,11 +199,11 @@ AElement.prototype.containsClass = function (className) {
 
 /**
  *
- * @param {string} className
+ * @param {string|Array} className
  * @returns {AElement}
  */
 AElement.prototype.addClass = function (className) {
-    if (className instanceof Array) {
+    if (className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
             this.classList.add(className[i]);
     }
@@ -214,11 +214,11 @@ AElement.prototype.addClass = function (className) {
 
 /**
  *
- * @param {string} className
+ * @param {string|Array} className
  * @returns {AElement}
  */
 AElement.prototype.removeClass = function (className) {
-    if (className instanceof Array) {
+    if (className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
             this.classList.remove(className[i]);
     }

@@ -141,16 +141,34 @@ Dom.prototype.select = function (query, root, onFound) {
     return matcher.findFirst(root, onFound);
 };
 
+
+export var FeatureClass = {
+    AElementNS: {
+        constructor: AElementNS,
+        prototypeKeys: Object.keys(AElementNS.prototype)
+    },
+    AElement: {
+        constructor: AElement,
+        prototypeKeys: Object.keys(AElement.prototype)
+    }
+};
 /**
  *
  * @param {AElement | AElementNS } element
  */
 Dom.prototype.attach = function (element) {
-    if (typeof element.attr == 'function') return;
-    var elementConstructor = element.getBBox ? AElementNS : AElement;
-    var prototypes = Object.getOwnPropertyDescriptors(elementConstructor.prototype);
-    Object.getOwnPropertyDescriptors(elementConstructor.prototype);
-    Object.defineProperties(element, prototypes);
+    if (element.attr) return;
+    var feature = element.getBBox ? FeatureClass.AElementNS : FeatureClass.AElement;
+    var elementConstructor = feature.constructor;
+    var proto = elementConstructor.prototype;
+    var prototypeKeys = feature.prototypeKeys;
+    var n = prototypeKeys.length;
+    var key;
+    for (var i = 0; i < n; ++i) {
+        key = prototypeKeys[i];
+        element[key] = proto[key];
+    }
+    Object.assign(element, elementConstructor.prototype)
     elementConstructor.call(element);
 };
 
@@ -179,8 +197,7 @@ Dom.prototype._ = function (option, isInherited) {
         isInherited = true;
     }
     else {
-        var optionType = typeof option;
-        if (optionType == 'string') {
+        if (option.charAt) {
             option = option.trim();
             if (option[0] == '<') {
                 res = this.fromCode(option);
@@ -198,7 +215,7 @@ Dom.prototype._ = function (option, isInherited) {
         }
     }
 
-    if (typeof (option.text) != 'undefined') {//is textNode
+    if (option.text || option.text === '') {//is textNode
         return this.makeNewTextNode(option.text);
     }
 
@@ -226,6 +243,7 @@ Dom.prototype._ = function (option, isInherited) {
     }
 
     this.attach(res);
+
     if (creator) {
         res._azar_extendTags = res._azar_extendTags || {};
         res._azar_extendTags[option.tag] = creator;
@@ -740,21 +758,21 @@ export function copyStyleRule(sourceElt, destElt) {
 }
 
 Dom.copyStyleRule = copyStyleRule;
-
-
-Dom.$printStyle = Dom.ShareInstance._('style[id="absol-print-preparing"]').addTo(document.head);
-Dom.$printStyle.innerHTML = [
-    '.absol-export-canvas-image{',
-    '    display: none !important;',
-    '}'
-].join('\n');
+//
+//
+// Dom.$printStyle = Dom.ShareInstance._('style[id="absol-print-preparing"]').addTo(document.head);
+// Dom.$printStyle.innerHTML = [
+//     '.absol-export-canvas-image{',
+//     '    display: none !important;',
+//     '}'
+// ].join('\n');
 
 
 Dom.addToResizeSystem = function (element) {
     ResizeSystem.add(element);
 };
 
-Dom.updateResizeSystem = function (){
+Dom.updateResizeSystem = function () {
     ResizeSystem.update();
 }
 
