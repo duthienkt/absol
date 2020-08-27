@@ -86,13 +86,13 @@ AElement.prototype.attr = function () {
 
 /***
  * add style
- * @param {CSSStyleDeclaration|string|string[]} arg0
+ * @param {CSSStyleDeclaration|string|{}} arg0
  * @param {string} arg1
  * @returns {AElement}
  */
 /**
  * add style
- * @param {CSSStyleDeclaration|string|string[]} arg0
+ * @param {CSSStyleDeclaration|string|{}} arg0
  * @returns {AElement}
  */
 AElement.prototype.addStyle = function (arg0, arg1) {
