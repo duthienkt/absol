@@ -1,8 +1,11 @@
 /**
- * 
- * @param {String} a 
- * @param {String} b 
+ *
+ * @param {String} a
+ * @param {String} b
  */
+import {harmonicMean} from "absol/src/Math/int";
+
+
 export function wordLike(a, b) {
     var m = a.length;
     var n = b.length;
@@ -25,13 +28,13 @@ export function wordLike(a, b) {
             else
                 Q[map(i + 1, j + 1)] = Math.max(Q[map(i + 1, j)], Q[map(i, j + 1)]);
 
-    return Q[map(m, n)] / Math.max(m, n);
+    return Q[map(m, n)] / harmonicMean(m, n);
 }
 
 /**
- * 
- * @param {Array<String>} sq1 
- * @param {Array<String>} sq2 
+ *
+ * @param {Array<String>} sq1
+ * @param {Array<String>} sq2
  */
 export function wordsMatch(sq1, sq2, matchWordPow) {
     matchWordPow = matchWordPow === undefined ? 1 : matchWordPow;
@@ -67,24 +70,28 @@ export function wordsMatch(sq1, sq2, matchWordPow) {
 export function phraseMatch(a, b, matchWordPow) {
     matchWordPow = matchWordPow || 1;
     var spliter = /[\s,-\.+?\_]+/;
-    var notEmp = function (e) { return e.length > 0; };
+    var notEmp = function (e) {
+        return e.length > 0;
+    };
     var sq1 = a.toLowerCase().split(spliter).filter(notEmp);
     var sq2 = b.toLowerCase().split(spliter).filter(notEmp);
     var wordsMatchScore = wordsMatch(sq1, sq2);
     var m = sq1.length;
     var n = sq2.length;
-    return wordsMatchScore / Math.max(Math.min(m, n), 1);
+    return wordsMatchScore / Math.max(harmonicMean(m, n), 1);
 };
 
 export function phraseLike(a, b, matchWordPow) {
     matchWordPow = matchWordPow || 1;
     var spliter = /[\s,-\.+?\_]+/;
-    var notEmp = function (e) { return e.length > 0; };
+    var notEmp = function (e) {
+        return e.length > 0;
+    };
     var sq1 = a.toLowerCase().split(spliter).filter(notEmp);
     var sq2 = b.toLowerCase().split(spliter).filter(notEmp);
     var m = sq1.length;
     var n = sq2.length;
     var wordsMatchScore = wordsMatch(sq1, sq2);
-    return wordsMatchScore / Math.max(Math.max(m, n), 1);
+    return wordsMatchScore / Math.max(harmonicMean(m, n), 1);
 }
 

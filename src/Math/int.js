@@ -1,7 +1,6 @@
-
 /**
- * 
- * @param {number} x 
+ *
+ * @param {number} x
  * @param {number} l
  * @param {number} h
  * @param {number} L
@@ -11,7 +10,6 @@
 export function map(x, l, h, L, H) {
     return (x - l) / (h - l) * (H - L) + L;
 }
-
 
 
 export function sumArr(arr) {
@@ -29,8 +27,6 @@ export function radianInRange(x, start, end) {
 }
 
 
-
-
 export function distance(x0, y0, x1, y1) {
     var dx = x0 - x1;
     var dy = y0 - y1;
@@ -38,12 +34,12 @@ export function distance(x0, y0, x1, y1) {
 }
 
 /**
- * 
- * @param {Number} numb 
- * @param {Number} floatFixed 
- * @param {"."|","} decimalSeparator 
- * @param {","|"."} thousandsSeparator 
- * @param {Number} decimalPadding 
+ *
+ * @param {Number} numb
+ * @param {Number} floatFixed
+ * @param {"."|","} decimalSeparator
+ * @param {","|"."} thousandsSeparator
+ * @param {Number} decimalPadding
  */
 export function numberToString(numb, floatFixed, decimalSeparator, thousandsSeparator, decimalPadding) {
     if (floatFixed === undefined || floatFixed === null || typeof floatFixed != "number" || isNaN(floatFixed) || floatFixed < -1) floatFixed = -1;
@@ -57,8 +53,12 @@ export function numberToString(numb, floatFixed, decimalSeparator, thousandsSepa
     var dec = matched[1] || '';
     var real = matched[3] || '';
     var floatPoint = parseInt(matched[5] || '0');
-    var decDigits = dec.split('').map(function (d) { return parseInt(d) });
-    var realDigits = real.split('').map(function (d) { return parseInt(d) });
+    var decDigits = dec.split('').map(function (d) {
+        return parseInt(d)
+    });
+    var realDigits = real.split('').map(function (d) {
+        return parseInt(d)
+    });
 
     while (floatPoint < 0) {
         if (decDigits.length > 0) {
@@ -128,4 +128,9 @@ export function numberToString(numb, floatFixed, decimalSeparator, thousandsSepa
     var realText = realDigits.length == 0 ? '' : decimalSeparator + realDigits.join('');
 
     return decText + realText;
+}
+
+
+export function harmonicMean(a, b) {
+    return 2 / (1 / a + 1 / b);
 }
