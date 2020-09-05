@@ -25,6 +25,11 @@ AElement.prototype.init = function (props) {
 
 AElement.prototype.eventHandler = {};
 
+/***
+ * run super-class method
+ */
+AElement.prototype.super = function (){/* nope */};
+
 /**
  * @typedef {Object} AttributeDefiner
  * @property {Function} set
