@@ -179,7 +179,7 @@ export var eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelB
     "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
     "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault'];
 
-export var touchProperties = ['clientX', 'clientY', 'force', 'indentifier', 'pageX', 'pageY', 'rotationAngle', 'screenX',
+export var touchProperties = ['clientX', 'clientY', 'force', 'identifier', 'pageX', 'pageY', 'rotationAngle', 'screenX',
     'screenY', 'target'];
 
 export function isMouseRight(event) {
@@ -227,7 +227,17 @@ export function copyEvent(event, props) {
     }
     Object.assign(result, event);
     if (props)
-        Object.assign(result, props);
+        Object.assign(result, props)
+    if (event.changedTouches){
+        result.changedTouches = Array.prototype.map.call(event.changedTouches, function (touch){
+            return copyTouch(touch);
+        });
+    }
+    if (event.touches){
+        result.touches = Array.prototype.map.call(event.touches, function (touch){
+            return copyTouch(touch);
+        });
+    }
     return result;
 }
 
