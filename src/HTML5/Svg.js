@@ -6,10 +6,17 @@ var sattachhookCreator = function () {
     var res = Svg.ShareInstance._('<image  class="absol-attachhook" style:"display: none"  xlink:href=""/>');
     res.defineEvent('attached');
     res.on('error', function (event) {
-        if (this.isDescendantOf(document.body)) {
+        if (!this._attached && this.isDescendantOf(document.body)) {
+            this._attached = true;
             this.emit('attached', event, this);
         }
     });
+    res._attached = false;
+    res.resetState = function (){
+        this._attached = false;
+        this.src = '';
+    };
+
     return res;
 };
 
