@@ -786,16 +786,5 @@ Dom.updateSizeUp = function (fromElt) {
 };
 
 
-Dom.documentReady.then(function (){
-    var att =        Dom.ShareInstance._('attachhook').on('attached',
-        function (){
-            console.log('attached');
-            this.remove();
-        });
-
-    setInterval(function (){
-        document.body.appendChild(att);
-   }, 1000)
-});
 
 export default Dom;
