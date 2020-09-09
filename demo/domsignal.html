@@ -8,13 +8,15 @@
 <body>
 <script>
     var vds = new absol.DomSignal();
+    var times = [];
     var now = new Date().getTime();
     vds.on('tick', function tick(count) {
         var rt = new Date().getTime();
+        times.push(rt);
         if (count < 100)
             this.emit('tick', count + 1);
         else if (count == 100){
-            setTimeout(tick.bind(this, count + 1), 0)
+            console.log(times);
         }
         now = rt;
     });
