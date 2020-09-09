@@ -43,6 +43,11 @@ var attachhookCreator = function () {
         }
     });
     res._attached = false;
+    Object.defineProperty(res, 'attached', {
+        get: function (){
+            return this._attached;
+        }
+    });
     res.resetState = function (){
         this._attached = false;
         this.src = '';
