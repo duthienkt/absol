@@ -25,6 +25,7 @@ DomSignal.prototype.execSignal = function () {
     var signals = this.signals;
     if (this.$attachhook) {
         this.$attachhook.remove();
+        this.$attachhook.resetState();
     }
     this.signals = {};
     for (var name in signals) {
