@@ -46,12 +46,17 @@ import CMDRunner from './AppPattern/CMDRunner';
 import AElement from "./HTML5/Element";
 import AElementNS from "./HTML5/AElementNS";
 import DomSignal from "./HTML5/DomSignal";
+import CookieStore from "./Cookie/CookieStore";
+import parseCookieString from "./Cookie/parseCookieString";
+
+
 
 var absol = {
     Rectangle: Rectangle,
     Arc: Arc,
     NumRange: NumRange,
-
+    CookieStore: CookieStore,
+    parseCookieString: parseCookieString,
     CMDRunner: CMDRunner,
     ContextManager: ContextManager,
     Application: Application,
