@@ -3,7 +3,7 @@ import BrowserDetector from '../Detector/BrowserDetector';
 
 
 /***
- * @augments Node
+ * @augments ChildNode
  * @augments Element
  * @augments HTMLElement
  * @augments EventEmitter
