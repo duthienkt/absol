@@ -53,7 +53,8 @@ XHR.getRequest = function (url, props, success, failure) {
         };
 
         request.onerror = function () {
-            rj(new Error("Network Error!"));
+            failure && failure(request.status, request.statusText);
+            rj(new Error(request.status + request.statusText));
         };
     });
 };
@@ -64,7 +65,7 @@ XHR.postRepquest = function (url, payload, props, headers, success, failure) {
         var method = "POST";
         var shouldBeAsync = true;
 
-        var request = new XMLHttpRequest();
+        var request = XHR.makeHttpObject();
 
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
@@ -80,9 +81,8 @@ XHR.postRepquest = function (url, payload, props, headers, success, failure) {
         };
 
         request.onerror = function () {
-            var error = new Error("Network Error!");
-            if (failure) failure(error);
-            rj(error);
+            failure && failure(request.status, request.statusText);
+            rj(new Error(request.status + request.statusText));
         };
 
         request.open(method, url, shouldBeAsync);
