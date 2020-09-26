@@ -3,7 +3,7 @@ import AElement from "./AElement";
 
 /***
  * @augments AElement
- * @augments SVGElement
+ * @augments SVGGraphicsElement
  * @constructor
  */
 function AElementNS() {
