@@ -1,52 +1,67 @@
 import AElement from "./AElement";
 import AElementNS from "./AElementNS";
 
+/**
+ *
+ * @constructor
+ */
 function ResizeSystem() {
     this.elts = [];
     this.cache = [];
+    this.cacheOf = null;
     this.lastResizeTime = 0;
     window.addEventListener('resize', this.update.bind(this));
+    this['goDown'+'AndCache'] = this.goDownAndCache.bind(this);
+    this['notify'+'ToElt'] = this.notifyToElt.bind(this);
 }
+
+/***
+ *
+ * @param {AElement | AElementNS} elt
+ */
+ResizeSystem.prototype.goDownAndCache = function (elt){
+    if (this.notifyToElt(elt))
+        this.cache.push(elt);
+    if (elt.childNodes) {
+        Array.prototype.forEach.call(elt.childNodes, this.goDownAndCache);
+    }
+};
+
+ResizeSystem.prototype.notifyToElt = function (elt){
+    if (typeof elt.requestUpdateSize == 'function') {
+        elt.requestUpdateSize();
+        return true;
+    }
+    else if (typeof elt.updateSize == 'function') {
+        elt.updateSize();
+        return true;
+    }
+    else if (typeof elt.onresize == 'function') {
+        elt.onresize();
+        return true;
+    }
+};
 
 
 ResizeSystem.prototype.update = function () {
-    var thisRS = this;
     var now = new Date().getTime();
     if (now - 100 > this.lastResizeTime) {
         this.removeTrash();
         this.cache = undefined;
     }
-
     this.lastResizeTime = now;
-
-    function visitor(child) {
-        if (typeof child.requestUpdateSize == 'function') {
-            child.requestUpdateSize();
-            return true;
-        }
-        else if (typeof child.updateSize == 'function') {
-            child.updateSize();
-            return true;
-        }
-        else if (typeof child.onresize == 'function') {
-            child.onresize();
-            return true;
-        }
+    if (this.cacheOf !== null){
+        this.cache = undefined;
+        this.cacheOf = null;
     }
+
 
     if (this.cache === undefined) {
         this.cache = [];
-        this.elts.forEach(function go(child) {
-            if (visitor(child))
-                thisRS.cache.push(child);
-            if (child.childNodes) {
-                Array.prototype.forEach.call(child.childNodes, go);
-            }
-        });
-
+        this.elts.forEach(this.goDownAndCache);
     }
     else {
-        this.cache.forEach(visitor);
+        this.cache.forEach(this.notifyToElt);
     }
 }
 
@@ -85,29 +100,22 @@ ResizeSystem.prototype.updateUp = function (fromElt) {
  * @returns {boolean}
  */
 ResizeSystem.prototype.updateDown = function (fromElt) {
-    var thisRS = this;
-    function visitor(child) {
-        if (typeof child.requestUpdateSize == 'function') {
-            child.requestUpdateSize();
-            return true;
-        }
-        else if (typeof child.updateSize == 'function') {
-            child.updateSize();
-            return true;
-        }
-        else if (typeof child.onresize == 'function') {
-            child.onresize();
-            return true;
-        }
+    var now = new Date().getTime();
+    if (now - 100 > this.lastResizeTime) {
+        this.cache = undefined;
     }
-    function go(child) {
-        if (visitor(child))
-            thisRS.cache.push(child);
-        if (child.childNodes) {
-            Array.prototype.forEach.call(child.childNodes, go);
-        }
+    this.lastResizeTime = now;
+    if (this.cacheOf !== fromElt){
+        this.cache = undefined;
+        this.cacheOf = fromElt;
     }
-    go(fromElt);
+    if (this.cache === undefined) {
+        this.cache = [];
+        this.goDownAndCache(fromElt);
+    }
+    else {
+        this.cache.forEach(this.cache.forEach(this.notifyToElt));
+    }
 };
 
 /***
