@@ -114,7 +114,7 @@ ResizeSystem.prototype.updateDown = function (fromElt) {
         this.goDownAndCache(fromElt);
     }
     else {
-        this.cache.forEach(this.cache.forEach(this.notifyToElt));
+        this.cache.forEach(this.notifyToElt);
     }
 };
 
