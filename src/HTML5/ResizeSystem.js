@@ -81,6 +81,37 @@ ResizeSystem.prototype.updateUp = function (fromElt) {
 
 /***
  *
+ * @param  {AElement| AElementNS | Node} fromElt
+ * @returns {boolean}
+ */
+ResizeSystem.prototype.updateDown = function (fromElt) {
+    var thisRS = this;
+    function visitor(child) {
+        if (typeof child.requestUpdateSize == 'function') {
+            child.requestUpdateSize();
+            return true;
+        }
+        else if (typeof child.updateSize == 'function') {
+            child.updateSize();
+            return true;
+        }
+        else if (typeof child.onresize == 'function') {
+            child.onresize();
+            return true;
+        }
+    }
+    function go(child) {
+        if (visitor(child))
+            thisRS.cache.push(child);
+        if (child.childNodes) {
+            Array.prototype.forEach.call(child.childNodes, go);
+        }
+    }
+    go(fromElt);
+};
+
+/***
+ *
  * @param {AElement| AElementNS | Node} elt
  * @return {boolean}
  */
