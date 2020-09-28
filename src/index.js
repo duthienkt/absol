@@ -48,11 +48,13 @@ import AElementNS from "./HTML5/AElementNS";
 import DomSignal from "./HTML5/DomSignal";
 import CookieStore from "./Cookie/CookieStore";
 import parseCookieString from "./Cookie/parseCookieString";
+import ResizeSystem from "./HTML5/ResizeSystem";
 
 
 
 var absol = {
     Rectangle: Rectangle,
+    ResizeSystem: ResizeSystem,
     Arc: Arc,
     NumRange: NumRange,
     CookieStore: CookieStore,
