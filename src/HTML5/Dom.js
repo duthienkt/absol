@@ -44,11 +44,11 @@ var attachhookCreator = function () {
     });
     res._attached = false;
     Object.defineProperty(res, 'attached', {
-        get: function (){
+        get: function () {
             return this._attached;
         }
     });
-    res.resetState = function (){
+    res.resetState = function () {
         this._attached = false;
         this.src = '';
     };
@@ -230,7 +230,7 @@ Dom.prototype._ = function (option, isInherited) {
     }
 
     option.tag = option.tag || this.defaultTag;
-    creator = this.creator[option.tag];
+    creator = option.tag.prototype ? option.tag : this.creator[option.tag];
     if (option.elt) {
         res = option.elt;
     }
@@ -789,7 +789,6 @@ Dom.updateResizeSystem = function () {
 Dom.updateSizeUp = function (fromElt) {
     ResizeSystem.updateUp(fromElt);
 };
-
 
 
 export default Dom;
