@@ -49,6 +49,9 @@ import DomSignal from "./HTML5/DomSignal";
 import CookieStore from "./Cookie/CookieStore";
 import parseCookieString from "./Cookie/parseCookieString";
 import ResizeSystem from "./HTML5/ResizeSystem";
+import Vec2 from "./Math/Vec2";
+import Mat3 from "./Math/Mat3";
+
 
 
 
@@ -111,7 +114,9 @@ var absol = {
 
     clipboard: clipboard,
     dataStructure: { Heap: Heap },
-    datetime: datetime
+    datetime: datetime,
+    Vec2: Vec2,
+    Mat3: Mat3
 };
 
 
