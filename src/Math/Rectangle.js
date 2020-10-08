@@ -85,6 +85,12 @@ Rectangle.prototype.centerPoint = function () {
     return new Vec2(this.x + this.width / 2, this.y + this.height / 2);
 };
 
+/***
+ *
+ * @param {Rectangle} r
+ * @param {boolean} margin
+ * @return {boolean}
+ */
 Rectangle.prototype.isCollapse = function (r, margin) {
     if (!margin) margin = 0;
     if (this.x >= r.x + r.width + margin) return false;
@@ -95,16 +101,26 @@ Rectangle.prototype.isCollapse = function (r, margin) {
     return true;
 };
 
+/***
+ *
+ * @param {Rectangle} r
+ * @return {number}
+ */
 Rectangle.prototype.collapsedSquare = function (r) {
     var collapseRect = this.collapsedRect(r);
     if (collapseRect) {
-        collapseRect.square();
+        return collapseRect.square();
     }
     else {
         return 0;
     }
 };
 
+/***
+ *
+ * @param {Rectangle} r
+ * @return {Rectangle}
+ */
 Rectangle.prototype.collapsedRect = function (r) {
     var maxX, minX, maxY, minY;
     if (this.x >= r.x + r.width) return null;
@@ -114,8 +130,8 @@ Rectangle.prototype.collapsedRect = function (r) {
     if (r.y >= this.y + this.height) return null;
     minX = this.x > r.x ? this.x : r.x;
     minY = this.y > r.y ? this.y : r.y;
-    maxX = this.x + this.width < r.x + r.width ? this.x + this.width : r.x + r.width;
-    maxY = this.y + this.height < r.y + r.height ? this.y + this.height : r.y + r.height;
+    maxX = Math.min(this.x + this.width, r.x + r.width);
+    maxY = Math.min(this.y + this.height, r.y + r.height);
     return new Rectangle(minX, minX, maxX - minX, maxY - minY);
 };
 
