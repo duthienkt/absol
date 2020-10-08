@@ -1,38 +1,59 @@
 import Vec2 from "./Vec2";
 
 /**
- * 
- * @param {Number} x 
- * @param {Number} y 
- * @param {Number} width 
- * @param {Number} height 
+ *
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
  */
 function Rectangle(x, y, width, height) {
     this.width = width;
     this.height = height;
     this.x = x;
     this.y = y;
-
-
 }
 
+/**
+ *
+ * @return {Vec2}
+ * @constructor
+ */
 Rectangle.prototype.A = function () {
     return new Vec2(this.x, this.y);
 };
 
+/***
+ *
+ * @return {Vec2}
+ * @constructor
+ */
 Rectangle.prototype.B = function () {
     return new Vec2(this.x + this.width, this.y);
 };
 
+/***
+ *
+ * @return {Vec2}
+ * @constructor
+ */
 Rectangle.prototype.C = function () {
     return new Vec2(this.x + this.width, this.y + this.height);
 };
 
+/***
+ *
+ * @return {Vec2}
+ * @constructor
+ */
 Rectangle.prototype.D = function () {
     return new Vec2(this.x, this.y + this.height);
 };
 
-
+/***
+ *
+ * @return {number}
+ */
 Rectangle.prototype.square = function () {
     return this.width * this.height;
 };
@@ -66,41 +87,35 @@ Rectangle.prototype.centerPoint = function () {
 
 Rectangle.prototype.isCollapse = function (r, margin) {
     if (!margin) margin = 0;
-    if (this.x > r.x + r.width + margin) return false;
-    if (this.y > r.y + r.height + margin) return false;
+    if (this.x >= r.x + r.width + margin) return false;
+    if (this.y >= r.y + r.height + margin) return false;
 
-    if (r.x > this.x + this.width + margin) return false;
-    if (r.y > this.y + this.height + margin) return false;
+    if (r.x >= this.x + this.width + margin) return false;
+    if (r.y >= this.y + this.height + margin) return false;
     return true;
 };
 
 Rectangle.prototype.collapsedSquare = function (r) {
-    var maxX, minX, maxY, minY;
-    if (this.x > r.x + r.width) return 0;
-    if (this.y > r.y + r.height) return 0;
-
-    if (r.x > this.x + this.width) return 0;
-    if (r.y > this.y + this.height) return 0;
-    minX = this.x > r.x ? this.x : r.x;
-    minY = this.y > r.y ? this.y : r.y;
-    maxX = this.x + this.width < r.x + r.width ? this.x + this.width : r.x + r.width;
-    maxY = this.y + this.height < r.y + r.height ? this.y + this.height : r.y + r.height;
-
-    return (maxX - minX) * (maxY - minY);
+    var collapseRect = this.collapsedRect(r);
+    if (collapseRect) {
+        collapseRect.square();
+    }
+    else {
+        return 0;
+    }
 };
 
 Rectangle.prototype.collapsedRect = function (r) {
     var maxX, minX, maxY, minY;
-    if (this.x > r.x + r.width) return null;
-    if (this.y > r.y + r.height) return null;
+    if (this.x >= r.x + r.width) return null;
+    if (this.y >= r.y + r.height) return null;
 
-    if (r.x > this.x + this.width) return null;
-    if (r.y > this.y + this.height) return null;
+    if (r.x >= this.x + this.width) return null;
+    if (r.y >= this.y + this.height) return null;
     minX = this.x > r.x ? this.x : r.x;
     minY = this.y > r.y ? this.y : r.y;
     maxX = this.x + this.width < r.x + r.width ? this.x + this.width : r.x + r.width;
     maxY = this.y + this.height < r.y + r.height ? this.y + this.height : r.y + r.height;
-
     return new Rectangle(minX, minX, maxX - minX, maxY - minY);
 };
 
