@@ -122,17 +122,17 @@ Rectangle.prototype.collapsedSquare = function (r) {
  * @return {Rectangle}
  */
 Rectangle.prototype.collapsedRect = function (r) {
-    var maxX, minX, maxY, minY;
-    if (this.x >= r.x + r.width) return null;
-    if (this.y >= r.y + r.height) return null;
-
-    if (r.x >= this.x + this.width) return null;
-    if (r.y >= this.y + this.height) return null;
-    minX = this.x > r.x ? this.x : r.x;
-    minY = this.y > r.y ? this.y : r.y;
+    var maxX, minX, maxY, minY, width, height;
+    minX = Math.max(this.x, r.x);
+    minY = Math.max(this.y, r.y);
     maxX = Math.min(this.x + this.width, r.x + r.width);
     maxY = Math.min(this.y + this.height, r.y + r.height);
-    return new Rectangle(minX, minX, maxX - minX, maxY - minY);
+    width = maxX - minX;
+    height = maxY - minY;
+    if (width >= 0 && height >= 0) {
+        return new Rectangle(minX, minY, width, height);
+    }
+    return null;
 };
 
 /**
@@ -169,6 +169,14 @@ Rectangle.prototype.merge = function (other) {
  */
 Rectangle.prototype.clone = function () {
     return new Rectangle(this.x, this.y, this.width, this.height);
+};
+
+/***
+ *
+ * @param {Rectangle} r
+ */
+Rectangle.prototype.equals = function (r) {
+    return this.x == r.x && this.y == r.y && this.height == r.height && this.width == r.width;
 };
 
 /**
