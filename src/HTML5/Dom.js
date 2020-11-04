@@ -14,8 +14,13 @@ import ResizeSystem from "./ResizeSystem";
  */
 
 /***
+ * @typedef {{abort:event:function((UiEvent|Event)):void,afterprint:event:function(Event):void,animationend:event:function(AnimationEvent):void,animationiteration:event:function(AnimationEvent):void,animationstart:event:function(AnimationEvent):void,beforeprint:event:function(Event):void,beforeunload:event:function((UiEvent|Event)):void,blur:event:function(FocusEvent):void,canplay:event:function(Event):void,canplaythrough:event:function(Event):void,change:event:function(Event):void,click:event:function(MouseEvent):void,contextmenu:event:function(MouseEvent):void,copy:event:function(ClipboardEvent):void,cut:event:function(ClipboardEvent):void,dblclick:event:function(MouseEvent):void,drag:event:function(DragEvent):void,dragend:event:function(DragEvent):void,dragenter:event:function(DragEvent):void,dragleave:event:function(DragEvent):void,dragover:event:function(DragEvent):void,dragstart:event:function(DragEvent):void,drop:event:function(DragEvent):void,durationchange:event:function(Event):void,ended:event:function(Event):void,error:event:function((ProgressEvent|UiEvent|Event)):void,focus:event:function(FocusEvent):void,focusin:event:function(FocusEvent):void,focusout:event:function(FocusEvent):void,fullscreenchange:event:function(Event):void,fullscreenerror:event:function(Event):void,hashchange:event:function(HashChangeEvent):void,input:event:function((InputEvent|Event)):void,invalid:event:function(Event):void,keydown:event:function(KeyboardEvent):void,keypress:event:function(KeyboardEvent):void,keyup:event:function(KeyboardEvent):void,load:event:function((UiEvent|Event)):void,loadeddata:event:function(Event):void,loadedmetadata:event:function(Event):void,loadstart:event:function(ProgressEvent):void,message:event:function(Event):void,mousedown:event:function(MouseEvent):void,mouseenter:event:function(MouseEvent):void,mouseleave:event:function(MouseEvent):void,mousemove:event:function(MouseEvent):void,mouseover:event:function(MouseEvent):void,mouseout:event:function(MouseEvent):void,mouseup:event:function(MouseEvent):void,mousewheel:event:function(WheelEvent):void,offline:event:function(Event):void,online:event:function(Event):void,open:event:function(Event):void,pagehide:event:function(PageTransitionEvent):void,pageshow:event:function(PageTransitionEvent):void,paste:event:function(ClipboardEvent):void,pause:event:function(Event):void,play:event:function(Event):void,playing:event:function(Event):void,popstate:event:function(PopStateEvent):void,progress:event:function(Event):void,ratechange:event:function(Event):void,resize:event:function((UiEvent|Event)):void,reset:event:function(Event):void,scroll:event:function((UiEvent|Event)):void,search:event:function(Event):void,seeked:event:function(Event):void,seeking:event:function(Event):void,select:event:function((UiEvent|Event)):void,show:event:function(Event):void,stalled:event:function(Event):void,storage:event:function(StorageEvent):void,submit:event:function(Event):void,suspend:event:function(Event):void,timeupdate:event:function(Event):void,toggle:event:function(Event):void,touchcancel:event:function(TouchEvent):void,touchend:event:function(TouchEvent):void,touchmove:event:function(TouchEvent):void,touchstart:event:function(TouchEvent):void,transitionend:event:function(TransitionEvent):void,unload:event:function((UiEvent|Event)):void,volumechange:event:function(Event):void,waiting:event:function(Event):void,wheel:event:function(WheelEvent):void}} AElementEventDescriptor
+ */
+
+
+/***
  * @typedef AbsolConstructDescriptor
- * @property {string | null} tag
+ * @property {string | function |null} tag
  * @property {CSSStyleDeclaration} style
  * @property {Array | string} extendEvent
  * @property {Array | string} class
@@ -23,7 +28,9 @@ import ResizeSystem from "./ResizeSystem";
  * @property {string|AElement | AElementNS | AbsolConstructDescriptor | string[] |AElement[] | AElementNS[] | AbsolConstructDescriptor[]} child
  * @property {string} text to create a TextNode, not Element
  * @property {AElement} elt
+ * @property {AElementEventDescriptor|{}} on
  */
+
 
 
 /****
