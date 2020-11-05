@@ -29,6 +29,8 @@ import ResizeSystem from "./ResizeSystem";
  * @property {string} text to create a TextNode, not Element
  * @property {AElement} elt
  * @property {AElementEventDescriptor|{}} on
+ * @property {Object} props
+ *
  */
 
 
@@ -245,6 +247,7 @@ Dom.prototype._ = function (option, isInherited) {
     }
 
     option.tag = option.tag || this.defaultTag;
+    if (option.tag.prototype) option.tag = option.tag.tag;
     creator = option.tag.prototype ? option.tag : this.creator[option.tag];
     if (option.elt) {
         res = option.elt;
