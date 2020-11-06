@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>XRequest</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+<p>
+    <span>Test download </span>
+    <button id="download_test">Download</button>
+</p>
+<p>
+    <span>Test Upload </span>
+    <input type="file" id="file_input">
+    <button id="upload_test">Upload</button>
+</p>
+
+
+<script class="viewable">
+    var $ = absol.$;
+    var _ = absol._;
+    var XRequest = absol.XRequest;
+    var downloadBtn = $('#download_test')
+        .on('click', function () {
+            downloadBtn.disabled = true;
+            var request = new XRequest({ url: "https://absol.cf/nwjs-sdk-v0.46.2-win-x64.zip" })
+                .on("progress", function (event) {
+                    downloadBtn.innerHTML = 'Download ' + Math.floor(event.loaded / event.total * 100) + '%';
+                })
+                .exec().then(function (res) {
+                    res.download();
+                });
+        });
+    var fileInput = $('#file_input');
+    var uploadButton = $('#upload_test')
+        .on('click', function () {
+            if (fileInput.files.length  ===1){
+                var request1 = new XRequest({ url: "https://absol.cf/share/uploader.php" })
+                    .method("POST")
+                    .on('uploadprogress', function (event){
+                        console.log(event);
+                    })
+                    .header({
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0'
+                    })
+                    .form({
+                        file_1: fileInput.files[0],
+                        uploadclick: true
+                    })
+                    .exec().then(function (res) {
+                        console.log(res)
+                    });
+            }
+        });
+</script>
+
+<script src="./autohightlighting.js?"></script>
+</body>
