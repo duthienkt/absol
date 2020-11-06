@@ -51,6 +51,7 @@ import parseCookieString from "./Cookie/parseCookieString";
 import ResizeSystem from "./HTML5/ResizeSystem";
 import Vec2 from "./Math/Vec2";
 import Mat3 from "./Math/Mat3";
+import XRequest from "./Network/XRequest";
 
 
 
@@ -106,6 +107,7 @@ var absol = {
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
     XHR: XHR,
+    XRequest: XRequest,
     string: Object.assign({}, stringFormat, stringGenerate),
     jsx: {
         dom: jsxdom,
