@@ -235,6 +235,12 @@ XRequest.prototype.form = function (data) {
     return this;
 };
 
+XRequest.prototype.binary = function (data){
+    this.header("Content-Type", " application/octet-stream");
+    this._body = data;
+    return this;
+};
+
 /***
  *
  * @returns {Promise<XResponse>}
@@ -265,6 +271,10 @@ XRequest.prototype.exec = function () {
         xhr.timeout = this._timeout;
         xhr.open(this._method, this._url, this._async);
         xhr.withCredentials = this._withCredentials;
+        var headers = this._headers
+        Object.keys(headers).forEach(function (key) {
+            xhr.setRequestHeader(key, headers[key]);
+        });
         xhr.send(this._body);
     }.bind(this));
 };
