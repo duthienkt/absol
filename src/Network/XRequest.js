@@ -17,6 +17,12 @@ export function makeXHRObject() {
     throw new Error("Could not create HTTP request object.");
 }
 
+/***
+ * @typedef XRequestAuth
+ * @property {string} [user]
+ * @property {string} [pass]
+ */
+
 
 /***
  * @typedef XRequestOption
@@ -29,8 +35,10 @@ export function makeXHRObject() {
  * @property {boolean} [withCredential]
  * @property {Object} [formData]
  * @property {Object} [jsonData]
+ * @property {XRequestAuth} [auth]
  *
  */
+
 
 /****
  *
@@ -92,13 +100,12 @@ function XRequest(option) {
         option.url && this.url(option.url);
         option.method && this.method(option.method);
         option.header && this.header(option.header);
-        // option.async
-        this.async(option.async);
+        option.async && this.async(option.async);
         option.responseType && this.responseType(option.responseType);
         option.formData && this.form(option.formData);
         option.jsonData && this.json(option.formData);
+        option.auth && this.auth(option.auth);
     }
-
 }
 
 /****
@@ -121,6 +128,17 @@ XRequest.prototype.method = function (method) {
     if (["GET", "POST"].indexOf(method) >= 0) {
         this._method = method;
     }
+    return this;
+};
+
+/***
+ *
+ * @param {XRequestAuth} authData
+ * @returns {XRequest}
+ */
+XRequest.prototype.auth = function (authData) {
+    if (authData.user && authData.pass)
+        this.header('WWW-Authenticate', 'Basic realm=' + btoa(authData.user + ':' + authData.pass));
     return this;
 };
 
