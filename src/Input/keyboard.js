@@ -70,7 +70,7 @@ export function keyboardEventToKeyBindingIdent(event) {
     else if (isFnKey(event.key)) {
         keys.push(event.key.toLowerCase())
     }
-    else if (!isMetaKey(event.key) && !isAltKey(event.key) && isCtrlKey(event.key) && isShiftKey(event.key))
+    else if (!isMetaKey(event.key) && !isAltKey(event.key) && !isCtrlKey(event.key) && !isShiftKey(event.key))
         keys.push(event.key.toLowerCase());
     return keys.join('-');
 }
