@@ -29,7 +29,8 @@ AElement.prototype.eventHandler = {};
 /***
  * run super-class method
  */
-AElement.prototype.super = function (){/* nope */};
+AElement.prototype.super = function () {/* nope */
+};
 
 /**
  * @typedef {Object} AttributeDefiner
@@ -209,7 +210,7 @@ AElement.prototype.containsClass = function (className) {
  * @returns {AElement}
  */
 AElement.prototype.addClass = function (className) {
-    if (className.forEach && className.map) {
+    if (className && className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
             this.classList.add(className[i]);
     }
@@ -224,7 +225,7 @@ AElement.prototype.addClass = function (className) {
  * @returns {AElement}
  */
 AElement.prototype.removeClass = function (className) {
-    if (className.forEach && className.map) {
+    if (className && className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
             this.classList.remove(className[i]);
     }
