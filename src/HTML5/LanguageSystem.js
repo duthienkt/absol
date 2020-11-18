@@ -98,6 +98,13 @@ LanguageSystem.prototype.getText = function (key, code) {
     return res || null;
 };
 
+/***
+ *
+ * @param {LanguageSystemExtension} ex
+ */
+LanguageSystem.prototype.addExtension = function (ex){
+    this._extensions.push(ex);
+};
 
 
 export var LangSys = new LanguageSystem();
