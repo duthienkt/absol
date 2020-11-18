@@ -98,11 +98,13 @@ LanguageSystem.prototype.getText = function (key, code) {
     return res || null;
 };
 
-export var LanguageSystemInstance = new LanguageSystem();
+
+
+export var LangSys = new LanguageSystem();
 
 export function textNodeLanguageChangeHandler() {
     if (this.__as_language_key) {
-        var newText = LanguageSystemInstance.getText(this.__as_language_key);
+        var newText = LangSys.getText(this.__as_language_key);
         if (newText && newText.trim) {
             this.data = newText;
         }
@@ -111,7 +113,7 @@ export function textNodeLanguageChangeHandler() {
 
 export function elementLanguageChangeHandler() {
     if (this.__as_language_key) {
-        var newText = LanguageSystemInstance.getText(this.__as_language_key);
+        var newText = LangSys.getText(this.__as_language_key);
         if (newText && newText.trim) {
             var textNode;
             for (var i = 0; i < this.childNodes.length; ++i) {
@@ -128,4 +130,4 @@ export function elementLanguageChangeHandler() {
     }
 }
 
-export default LanguageSystemInstance;
+export default LangSys ;
