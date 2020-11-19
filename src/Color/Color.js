@@ -5,7 +5,6 @@ function Color(rgba) {
 }
 
 
-
 Color.prototype.toHex6 = function () {
     return this.rgba.slice(0, 3).map(function (b) {
         b = b * 255 >> 0;
@@ -80,14 +79,15 @@ Color.prototype.toString = function (mode) {
 /***
  *
  */
-Color.prototype.nearestNamedColor = function (notStandard) {
+Color.prototype.nearestNamedColor = function (notStandard, hsbWeight) {
+    hsbWeight = hsbWeight ||[5, 3, 1]
     var hsba = this.toHSBA();
     var bestMatch = null;
     var dist = 1000;
     Object.keys(Color.namedColors).concat(notStandard ? Object.keys(Color.nonStandarNamedColors) : []).forEach(function (name) {
         var c = Color.parse(Color.namedColors[name] || Color.nonStandarNamedColors[name]);
         var cHSBA = c.toHSBA();
-        var cDist = Math.abs(hsba[0] - cHSBA[0]) + Math.abs(hsba[1] - cHSBA[1]) + Math.abs(hsba[2] - cHSBA[2]);
+        var cDist = Math.abs(hsba[0] - cHSBA[0]) * hsbWeight[0] + Math.abs(hsba[1] - cHSBA[1]) *  hsbWeight[1] + Math.abs(hsba[2] - cHSBA[2])*  hsbWeight[2];
         if (cDist < dist) {
             dist = cDist;
             bestMatch = name;
