@@ -77,6 +77,25 @@ Color.prototype.toString = function (mode) {
     return Color.templates[mode](this);
 };
 
+/***
+ *
+ */
+Color.prototype.nearestNamedColor = function (notStandard) {
+    var hsba = this.toHSBA();
+    var bestMatch = null;
+    var dist = 1000;
+    Object.keys(Color.namedColors).concat(notStandard ? Object.keys(Color.nonStandarNamedColors) : []).forEach(function (name) {
+        var c = Color.parse(Color.namedColors[name] || Color.nonStandarNamedColors[name]);
+        var cHSBA = c.toHSBA();
+        var cDist = Math.abs(hsba[0] - cHSBA[0]) + Math.abs(hsba[1] - cHSBA[1]) + Math.abs(hsba[2] - cHSBA[2]);
+        if (cDist < dist) {
+            dist = cDist;
+            bestMatch = name;
+        }
+    });
+    return bestMatch;
+};
+
 Color.templates = [
     ['rgba', 'rgba', 'rgba({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}}, {{x[3]}})'],
     ['rgb', 'rgba', 'rgb({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}})'],
@@ -97,8 +116,6 @@ Color.templates = [
     ].join('\n'));
     return ac;
 }, {});
-
-
 
 
 Color.regexes = {
@@ -382,7 +399,8 @@ Color.parse = function (text) {
                 .map(function (v) {
                     return parseInt(v + v, 16) / 255;
                 }));
-    } else if (this.regexes.rgba.test(text)) {
+    }
+    else if (this.regexes.rgba.test(text)) {
         return this.fromRGBA.apply(this,
             this.regexes.rgba.exec(text)
                 .slice(1)
@@ -944,9 +962,11 @@ Color.hsbaToHSLA = function (hsba) {
     if (li !== 0) {
         if (li === 1) {
             sat = 0;
-        } else if (li < 0.5) {
+        }
+        else if (li < 0.5) {
             sat = sat / (2 - sat);
-        } else {
+        }
+        else {
             sat = sat * val / (2 - li * 2);
         }
     }
@@ -964,7 +984,8 @@ Color.hsbaToRGBA = function (hsba) {
 
     if (sat === 0) {
         RGBA = [val, val, val, hsba[3]]; // Return early if grayscale.
-    } else {
+    }
+    else {
         var sector = Math.floor(hue);
         var tint1 = val * (1 - sat);
         var tint2 = val * (1 - sat * (hue - sector));
@@ -975,27 +996,32 @@ Color.hsbaToRGBA = function (hsba) {
             red = tint2;
             green = val;
             blue = tint1;
-        } else if (sector === 2) {
+        }
+        else if (sector === 2) {
             // Green to cyan.
             red = tint1;
             green = val;
             blue = tint3;
-        } else if (sector === 3) {
+        }
+        else if (sector === 3) {
             // Cyan to blue.
             red = tint1;
             green = tint2;
             blue = val;
-        } else if (sector === 4) {
+        }
+        else if (sector === 4) {
             // Blue to magenta.
             red = tint3;
             green = tint1;
             blue = val;
-        } else if (sector === 5) {
+        }
+        else if (sector === 5) {
             // Magenta to red.
             red = val;
             green = tint1;
             blue = tint2;
-        } else {
+        }
+        else {
             // Red to yellow (sector could be 0 or 6).
             red = val;
             green = tint3;
@@ -1007,7 +1033,6 @@ Color.hsbaToRGBA = function (hsba) {
 };
 
 
-
 Color.hslaToHSBA = function (hsla) {
     var hue = hsla[0];
     var sat = hsla[1];
@@ -1017,7 +1042,8 @@ Color.hslaToHSBA = function (hsla) {
     var val;
     if (li < 0.5) {
         val = (1 + sat) * li;
-    } else {
+    }
+    else {
         val = li + sat - li * sat;
     }
 
@@ -1037,12 +1063,14 @@ Color.hslaToRGBA = function (hsla) {
 
     if (sat === 0) {
         RGBA = [li, li, li, hsla[3]]; // Return early if grayscale.
-    } else {
+    }
+    else {
         // Calculate brightness.
         var val;
         if (li < 0.5) {
             val = (1 + sat) * li;
-        } else {
+        }
+        else {
             val = li + sat - li * sat;
         }
 
@@ -1054,19 +1082,23 @@ Color.hslaToRGBA = function (hsla) {
             if (hue < 0) {
                 // Hue must wrap to allow projection onto red and blue.
                 hue += 6;
-            } else if (hue >= 6) {
+            }
+            else if (hue >= 6) {
                 hue -= 6;
             }
             if (hue < 1) {
                 // Red to yellow (increasing green).
                 return zest + (val - zest) * hue;
-            } else if (hue < 3) {
+            }
+            else if (hue < 3) {
                 // Yellow to cyan (greatest green).
                 return val;
-            } else if (hue < 4) {
+            }
+            else if (hue < 4) {
                 // Cyan to blue (decreasing green).
                 return zest + (val - zest) * (4 - hue);
-            } else {
+            }
+            else {
                 // Blue to red (least green).
                 return zest;
             }
@@ -1098,22 +1130,26 @@ Color.rgbaToHSBA = function (rgba) {
         // Return early if grayscale.
         hue = 0;
         sat = 0;
-    } else {
+    }
+    else {
         sat = chroma / val;
         if (red === val) {
             // Magenta to yellow.
             hue = (green - blue) / chroma;
-        } else if (green === val) {
+        }
+        else if (green === val) {
             // Yellow to cyan.
             hue = 2 + (blue - red) / chroma;
-        } else if (blue === val) {
+        }
+        else if (blue === val) {
             // Cyan to magenta.
             hue = 4 + (red - green) / chroma;
         }
         if (hue < 0) {
             // Confine hue to the interval [0, 1).
             hue += 6;
-        } else if (hue >= 6) {
+        }
+        else if (hue >= 6) {
             hue -= 6;
         }
     }
@@ -1136,33 +1172,37 @@ Color.rgbaToHSLA = function (rgba) {
         // Return early if grayscale.
         hue = 0;
         sat = 0;
-    } else {
+    }
+    else {
         if (li < 1) {
             sat = chroma / li;
-        } else {
+        }
+        else {
             sat = chroma / (2 - li);
         }
         if (red === val) {
             // Magenta to yellow.
             hue = (green - blue) / chroma;
-        } else if (green === val) {
+        }
+        else if (green === val) {
             // Yellow to cyan.
             hue = 2 + (blue - red) / chroma;
-        } else if (blue === val) {
+        }
+        else if (blue === val) {
             // Cyan to magenta.
             hue = 4 + (red - green) / chroma;
         }
         if (hue < 0) {
             // Confine hue to the interval [0, 1).
             hue += 6;
-        } else if (hue >= 6) {
+        }
+        else if (hue >= 6) {
             hue -= 6;
         }
     }
 
     return [hue / 6, sat, li / 2, rgba[3]];
 };
-
 
 
 Color.hwbaToHSBA = function (hwba) {
