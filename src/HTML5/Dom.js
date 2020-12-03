@@ -4,6 +4,7 @@ import getFunctionName from '../String/getFunctionName';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
 import ResizeSystem from "./ResizeSystem";
+import {parseClassAttr, parseStyleAttr} from "../JSX/attribute";
 
 /***
  * @typedef {{"accept-charset":string, "http-equiv": string, accept : string, accesskey : string, action : string, align : string, allow : string, alt : string, async : string, autocapitalize : string, autocomplete : string, autofocus : string, autoplay : string, background : string, bgcolor : string, border : string, buffered : string, capture : string, challenge : string, charset : string, checked : string, cite : string, class : string, code : string, codebase : string, color : string, cols : string, colspan : string, content : string, contenteditable : string, contextmenu : string, controls : string, coords : string, crossorigin : string, csp : string, data : string, "data-*" : string, datetime : string, decoding : string, default : string, defer : string, dir : string, dirname : string, disabled : string, download : string, draggable : string, dropzone : string, enctype : string, enterkeyhint : string, for : string,     form : string, formaction : string, formenctype : string, formmethod : string, formnovalidate : string, formtarget : string, headers : string, height : string, hidden : string, high : string, href : string, hreflang : string, icon : string, id : string, importance : string, integrity : string, intrinsicsize : string, inputmode : string, ismap : string, itemprop : string, keytype : string, kind : string, label : string, lang : string, language : string, loading : string, list : string, loop : string, low : string, manifest : string, max : string, maxlength : string, minlength : string, media : string, method : string, min : string, multiple : string, muted : string, name : string, novalidate : string, open : string, optimum : string, pattern : string, ping : string, placeholder : string, poster : string, preload : string, radiogroup : string, readonly : string, referrerpolicy : string, rel : string, required : string, reversed : string, rows : string, rowspan : string, sandbox : string, scope : string, scoped : string, selected : string, shape : string, size : string, sizes : string, slot : string, span : string, spellcheck : string, src : string, srcdoc : string, srclang : string, srcset : string, start : string, step : string, style : string, summary : string, tabindex : string, target : string, title : string, translate : string, type : string, usemap : string, value : string, width : string, wrap : string, }} AElementAttributeDescriptor
@@ -32,7 +33,6 @@ import ResizeSystem from "./ResizeSystem";
  * @property {Object} props
  *
  */
-
 
 
 /****
@@ -377,7 +377,7 @@ Dom.prototype.install = function (arg0, arg1) {
             });
         }
         else {
-            console.error('Unknow data', arg0);
+            console.error('Unknown data', arg0);
         }
     }
     else if (arguments.length == 2) {
@@ -563,7 +563,7 @@ export function fontFaceIsLoaded(fontFace, timeout) {
                         }
                         else
                             check(remainTime - 10);
-                    }, 10);
+                    });
             }
 
             check(timeout);
@@ -593,7 +593,7 @@ Dom.getScreenSize = getScreenSize;
 
 /***
  *
- * @param {Image} img
+ * @param {HTMLImageElement} img
  * @param {number} timeout
  * @returns {Promise<void>}
  */
@@ -786,15 +786,78 @@ export function copyStyleRule(sourceElt, destElt) {
 }
 
 Dom.copyStyleRule = copyStyleRule;
-//
-//
-// Dom.$printStyle = Dom.ShareInstance._('style[id="absol-print-preparing"]').addTo(document.head);
-// Dom.$printStyle.innerHTML = [
-//     '.absol-export-canvas-image{',
-//     '    display: none !important;',
-//     '}'
-// ].join('\n');
 
+/***
+ * get absol construct descriptor for HTML element only
+ * @param {AElement | Text} elt
+ * @returns {AbsolConstructDescriptor}
+ */
+export function getConstructDescriptor(elt) {
+    var obj = {};
+    obj.tag = elt.tagName.toLowerCase();
+    var classAttr = elt.getAttribute('class');
+    var classList;
+    if (classAttr)
+        classList = parseClassAttr(classAttr);
+    if (classList && classList.length > 0)
+        obj.class = classList;
+    var styleAttr = elt.getAttribute('style');
+    var style;
+    if (styleAttr)
+        style = parseStyleAttr(styleAttr);
+
+
+    var attributes = elt.attributes;
+    var attNode;
+    var attrName;
+    var attrValue;
+    var attr = {};
+    var on = {};
+    var props = {};
+    var eventMatch, eventName;
+    var propMatch, propName;
+    for (var i = 0; i < attributes.length; ++i) {
+        attNode = attributes[i];
+        attrName = attNode.nodeName;
+        attrValue = attNode.nodeValue;
+        if (attrName == 'style' || attrName == 'class') continue;
+        eventMatch = attrName.match(/^on(.+)/)
+        if (eventMatch) {
+            eventName = eventMatch[1];
+            on[eventName] = new Function('event', 'sender', attrValue);
+            continue;
+        }
+        propMatch = attrName.match(/^prop-(.+)/);
+        if (propMatch) {
+            propName = propMatch[1];
+            props[propName] = attrValue;
+            continue;
+        }
+        attr[attrName] = attrValue;
+    }
+    var key;
+    for (key in style) {
+        //style is not empty
+        obj.style = style;
+        break;
+    }
+    for (key in attr) {
+        obj.attr = attr;
+        break;
+    }
+    for (key in on) {
+        obj.on = on;
+        break;
+    }
+    for (key in props) {
+        obj.props = props;
+        break;
+    }
+
+    return obj;
+}
+
+Dom.getConstructDescriptor = getConstructDescriptor;
 
 Dom.addToResizeSystem = function (element) {
     ResizeSystem.add(element);
@@ -807,7 +870,6 @@ Dom.updateResizeSystem = function () {
 Dom.updateSizeUp = function (fromElt) {
     ResizeSystem.updateUp(fromElt);
 };
-
 
 
 export default Dom;

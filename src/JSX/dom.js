@@ -1,5 +1,4 @@
-
-import * as babylon from 'babylon';
+import * as babelParser from '@babel/parser';
 import { parseStyleAttr, parseClassAttr } from './attribute';
 
 export function domVisitor(jsxCode) {
@@ -110,7 +109,7 @@ export function parseDom(jsxCode) {
         if (end == '/') return '';
         return '<' + tag + content + '/>';
     });
-    var ast = babylon.parse(
+    var ast = babelParser.parse(
         jsxCode,
         {
             plugins: [
