@@ -138,9 +138,6 @@ export function numberAutoFixed(x, eDelta) {
     return Math.round(x * e) / e;
 }
 
-
-console.log(numberAutoFixed(1.3 * 1.3))
-
 export function harmonicMean(a, b) {
     return 2 / (1 / a + 1 / b);
 }
