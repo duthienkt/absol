@@ -131,6 +131,16 @@ export function numberToString(numb, floatFixed, decimalSeparator, thousandsSepa
 }
 
 
+export function numberAutoFixed(x, eDelta) {
+    eDelta = eDelta || 10;
+    eDelta = Math.round(eDelta);
+    var e = parseFloat('1e+' + eDelta);
+    return Math.round(x * e) / e;
+}
+
+
+console.log(numberAutoFixed(1.3 * 1.3))
+
 export function harmonicMean(a, b) {
     return 2 / (1 / a + 1 / b);
 }

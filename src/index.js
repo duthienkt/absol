@@ -53,10 +53,11 @@ import Vec2 from "./Math/Vec2";
 import Mat3 from "./Math/Mat3";
 import LanguageSystem from "./HTML5/LanguageSystem";
 
-
+import * as int from './Math/int';
 
 
 var absol = {
+    int: int,
     Rectangle: Rectangle,
     ResizeSystem: ResizeSystem,
     Arc: Arc,
