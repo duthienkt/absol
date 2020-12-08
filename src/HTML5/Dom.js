@@ -119,7 +119,7 @@ function Dom(option) {
 Dom.prototype.fromCode = function (code) {
     code = code.trim().replace(/>\s+</gm, '><');
     var temTag = 'div';
-    if (code.startsWith('<td')) temTag = 'tr';
+    if (code.startsWith('<td') ||code.startsWith('<th')) temTag = 'tr';
     else if (code.startsWith('<tr')) temTag = 'tbody';
     else if (code.startsWith('<thead') ||code.startsWith('<tbody') ) temTag = 'table';
     var tempDiv = document.createElement(temTag);
