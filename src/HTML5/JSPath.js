@@ -3,9 +3,9 @@ function JSPath(props) {
 }
 
 
-/** 
- * 
- * @param {Element} element 
+/**
+ *
+ * @param {Element} element
  * @returns {Boolean}
  */
 JSPath.prototype.match = function (element, query) {
@@ -59,7 +59,7 @@ JSPath.prototype.findFirst = function (root, onFound) {
                     if (!trackElement.parentNode || !this.match(trackElement.parentNode, this.path[trackI - 1])) {
                         isTrackMatch = false;
                     }
-                    else{
+                    else {
                         trackElement = trackElement.parentNode;
                         trackI--;
                     }
@@ -111,7 +111,7 @@ JSPath.prototype.findAll = function (root, onFound) {
                     if (!trackElement.parentNode || !this.match(trackElement.parentNode, this.path[trackI - 1])) {
                         isTrackMatch = false;
                     }
-                    else{
+                    else {
                         trackElement = trackElement.parentNode;
                         trackI--;
                     }
@@ -142,23 +142,47 @@ JSPath.prototype.findAll = function (root, onFound) {
     return res;
 };
 
+var identRegex = /[a-zA-Z0-9\-_]+/;
+var stringRegex = /"(([^"\\]*|(\\.))*)"/;
+var classRegex = new RegExp('\\.' + identRegex.source);
+var idRegex = new RegExp('#' + identRegex.source);
+var booleanRegex = /true|false/;
+var valueRegex = new RegExp(stringRegex.source + '|' + booleanRegex.source);
+var attributeRegex = new RegExp('\\[\\s*(' + identRegex.source + ')\\s*(=\\s*(' + valueRegex.source + '))\\]');
+var queryRegex = new RegExp([
+    '(',
+    identRegex.source, '|',
+    attributeRegex.source, '|',
+    classRegex.source, '|',
+    idRegex.source,
+    ')+'
+].join(''));
 
 
-JSPath.__tagRegex = /((([^\s\>\(])|(\([^\)]*\)))+)|(\>)/g;
-JSPath.__tagNameRegex = /^[a-zA-Z0-9\-\_]+/i;
-JSPath.__classRegex = /\.[a-zA-Z0-9\-\_]+/g;
-JSPath.__idRegex = /\#[a-zA-Z0-9\-\_]+/i;
+JSPath.__tagRegex = new RegExp(queryRegex.source + '|\\>', 'g');
+JSPath.__tagNameRegex = new RegExp('^' + identRegex.source, 'i');
+JSPath.__classRegex = new RegExp(classRegex.source, 'g');
+JSPath.__idRegex = new RegExp(idRegex.source, 'i');
 
-JSPath.__attrRegex = /\[\s*([a-zA-Z-0-9\-]+)\s*\=\"\s*(((\\.)|([^\"]))+)\"\s*\]/g;
-JSPath.__attrParseRegex = /\[\s*([a-zA-Z-0-9\-]+)\s*\=\"\s*(((\\.)|([^\"]))+)\"\s*\]/i;
+JSPath.__attrRegex = new RegExp(attributeRegex.source, 'g');
 
 
 JSPath.parseQuery = function (s) {
     var tag = {};
+
+    s = s.replaceAll(JSPath.__attrRegex, function (full, name, assign, jsonTextValue) {
+        tag.attributes = tag.attributes || {};
+        if (assign) {
+            tag.attributes[name] = JSON.parse(jsonTextValue);
+        }
+        else
+            tag.attributes[name] = true;
+        return '';
+    });
+
     var classList = s.match(this.__classRegex);
     var idList = s.match(this.__idRegex);
     var tagList = s.match(this.__tagNameRegex);
-    var attributeList = s.match(this.__attrRegex);
     if (idList && idList.length > 0) {
         tag.id = idList[0].substring(1);
     }
@@ -166,27 +190,20 @@ JSPath.parseQuery = function (s) {
         tag.tagName = tagList[0].trim();
     }
     if (classList && classList.length > 0) {
-        tag.classList = classList.map(function (s) { return s.substring(1) });
-    }
-    var attrParseRegex = this.__attrParseRegex;
-    if (attributeList && attributeList.length > 0) {
-        tag.attributes = attributeList.reduce(function (ac, s) {
-            var tokens = s.match(attrParseRegex);
-            var key = tokens[1];
-            var value = tokens[2];
-            ac[key] = value;
-            return ac;
-        }, {});
+        tag.classList = classList.map(function (s) {
+            return s.substring(1)
+        });
     }
     return tag;
 };
+
 
 /**
  * @param {String} text
  * @returns {JSPath}
  */
 JSPath.compileJSPath = function (text) {
-    var tagTexts = text.match(this.__tagRegex)||[''];
+    var tagTexts = text.match(this.__tagRegex) || [''];
     var path = [];
     var childCombinate = false;
     for (var i = 0; i < tagTexts.length; ++i) {
