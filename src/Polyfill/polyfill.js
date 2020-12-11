@@ -347,7 +347,6 @@ if (!('btoa' in window)) {
         };
     }
 
-    console.log(String.prototype.replaceAll )
     if (!String.prototype.replaceAll) {
         String.prototype.replaceAll = function () {
             var find = arguments[0];
