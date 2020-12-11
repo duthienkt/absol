@@ -170,7 +170,7 @@ JSPath.__attrRegex = new RegExp(attributeRegex.source, 'g');
 JSPath.parseQuery = function (s) {
     var tag = {};
 
-    s = s.replaceAll(JSPath.__attrRegex, function (full, name, assign, jsonTextValue) {
+    s = s.replace(JSPath.__attrRegex, function (full, name, assign, jsonTextValue) {
         tag.attributes = tag.attributes || {};
         if (assign) {
             tag.attributes[name] = JSON.parse(jsonTextValue);
