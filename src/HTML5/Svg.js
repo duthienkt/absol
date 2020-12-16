@@ -1,4 +1,4 @@
-import Dom from './Dom';
+import Dom, {copyStyleRule, depthClone} from './Dom';
 import ElementNS from './ElementNS';
 import Element from './Element';
 
@@ -13,11 +13,11 @@ var sattachhookCreator = function () {
     });
     res._attached = false;
     Object.defineProperty(res, 'attached', {
-        get: function (){
+        get: function () {
             return this._attached;
         }
     });
-    res.resetState = function (){
+    res.resetState = function () {
         this._attached = false;
         this.src = '';
     };
@@ -147,13 +147,16 @@ Svg.svgToCanvas = function (element) {
     }
 };
 
-Svg.svgToRasterImageUrl = function (element) {
+export function svgToRasterImageUrl(element) {
     return Svg.svgToCanvas(element).then(function (canvas) {
         return canvas.toDataURL();
     });
 }
 
-Svg.svgToExportedString = function (element) {
+Svg.svgToRasterImageUrl = svgToRasterImageUrl;
+
+
+export function svgToExportedString(element) {
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
@@ -198,15 +201,18 @@ Svg.svgToExportedString = function (element) {
     }
 };
 
+Svg.svgToExportedString = svgToExportedString;
 
-Svg.svgToSvgUrl = function (element) {
-    var svg = Svg.svgToExportedString(element);
+
+function svgToSvgUrl(element) {
+    var svg = svgToExportedString(element);
     svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + svg;
     var blob = new Blob([svg], { type: 'image/svg+xml' });
     var url = URL.createObjectURL(blob);
     return url;
 }
 
+Svg.svgToSvgUrl = svgToSvgUrl;
 
 Dom.printElement = function (option) {
     var _ = Dom.ShareInstance._;
@@ -222,84 +228,45 @@ Dom.printElement = function (option) {
         option = { elt: option };
     }
     if (Dom.isDomNode(option.elt)) {
-        var canvases = [], imageExported = [];
-        var canvas, images, img, src, scripts, i;
-
-
-        if (option.elt.querySelectorAll) {
-            canvases = option.elt.querySelectorAll('canvas');
-        }
-        else {
-            $('canvas', option.elt, function (elt) {
-                canvases.push(elt);
-            });
-        }
-
-
-        for (i = 0; i < canvases.length; ++i) {
-            canvas = canvases[i];
-            src = canvas.toDataURL();
-            img = _({
-                tag: 'img',
-                class: 'absol-export-canvas-image',
-                attr: {
-                    src: src
+        function afterCloneCb(originElt, newElt) {
+            if (!newElt.tagName) return;
+            var tagName = newElt.tagName.toLowerCase();
+            if (newElt.getBBox && tagName!== 'svg') return;
+            var url, img;
+            var needCopyStyle = option.computeStyle;
+            if (!newElt.tagName) console.log(newElt.nodeType, newElt)
+            if (tagName === 'canvas' || tagName === 'svg') {
+                if (tagName === "canvas") {
+                    url = originElt.toDataURL();
                 }
-            });
-            imageExported.push(img);
-            Dom.copyStyleRule(canvas, img);
-            canvas.parentElement.insertBefore(img, canvas);
+                else {
+                    url = svgToSvgUrl(originElt);
+                }
+                img = _({
+                    tag: 'img',
+                    props: {
+                        src: url
+                    }
+                });
+                $(newElt).selfReplace(img);
+                newElt = img;
+                needCopyStyle = true;
+            }
+            else if (tagName === 'script') {
+                newElt.remove();
+            }
+            else if (tagName === 'img') {
+                newElt.setAttribute('src', originElt.src);
+            }
+
+            if (needCopyStyle) {
+                copyStyleRule(originElt, newElt);
+            }
+            return newElt;
         }
 
 
-        var newElt = option.computeStyle ? Dom.depthCloneWithStyle(option.elt) : option.elt.cloneNode(true);
-
-        //remove canvas that will be empty when clone
-        canvas = [];
-        if (newElt.querySelectorAll) {
-            canvases = newElt.querySelectorAll('canvas');
-        }
-        else {
-            $('canvas', newElt, function (elt) {
-                canvases.push(elt);
-            });
-        }
-        for (i = 0; i < canvases.length; ++i) {
-            canvases[i].remove();
-        }
-
-
-        scripts = [];
-        if (newElt.querySelectorAll) {
-            scripts = newElt.querySelectorAll('script');
-        }
-        else {
-            $('canvas', newElt, function (elt) {
-                scripts.push(elt);
-            });
-        }
-
-        for (i = 0; i < scripts.length; ++i) {
-            scripts[i].remove();
-        }
-
-
-        images = [];
-        //for performance
-        if (newElt.querySelectorAll) {
-            images = newElt.querySelectorAll('img');
-        }
-        else {
-            $('img', newElt, function (elt) {
-                images.push(elt);
-            });
-        }
-
-        for (i = 0; i < images.length; ++i) {
-            if (images[i].classList.contains('absol-export-canvas-image')) continue;
-            src = images[i].src;
-            images[i].setAttribute('src', src);
-        }
+        var newElt = depthClone(option.elt, afterCloneCb);
 
 
         var renderSpace = _({
