@@ -595,7 +595,7 @@ Dom.getScreenSize = getScreenSize;
 /***
  *
  * @param {HTMLImageElement} img
- * @param {number} timeout
+ * @param {number=} timeout
  * @returns {Promise<void>}
  */
 export function waitImageLoaded(img, timeout) {
@@ -735,32 +735,49 @@ export function getScrollSize() {
 
 Dom.getScrollSize = getScrollSize;
 
+
+/***
+ *
+ * @param {(AElement|AElementNS|Node)} originElt
+ * @param {function(originElt: (AElement|AElementNS|Node), originElt: (AElement|AElementNS|Node)):void } afterCloneCb
+ * @return {AElement|AElementNS|Node}
+ */
+export function depthClone(originElt, afterCloneCb) {
+    /***
+     *
+     * @type {AElement|AElementNS|Node}
+     */
+    var newElt = originElt.cloneNode();//no deep
+    if (originElt.childNodes) {
+        /***
+         *
+         * @type {(AElement|AElementNS)[]}
+         */
+        var children = Array.prototype.map.call(originElt.childNodes, function (child) {
+            return depthClone(originElt, afterCloneCb)
+        });
+        for (var i = 0; i < children.length; ++i) {
+            newElt.appendChild(children[i]);
+        }
+    }
+    afterCloneCb && afterCloneCb(originElt, newElt);
+}
+
+
 /***
  *
  * @param originElt
  * @returns {AElement|HTMLElement|Node}
  */
-export function depthCloneWithStyle(originElt) {
-    var newElt = originElt.cloneNode();//no deep
-    if (!originElt.getAttribute && !originElt.getAttributeNS) return newElt;//is text node
-    var cssRules = AElement.prototype.getCSSRules.call(originElt);
-
-    var cssKey = cssRules.reduce(function (ac, rule) {
-        for (var i = 0; i < rule.style.length; ++i) {
-            ac[rule.style[i]] = true;
-        }
-        return ac;
-    }, {});
-    for (var key in cssKey) {
-        newElt.style[key] = AElement.prototype.getComputedStyleValue.call(originElt, key);
-    }
-    var children = Array.prototype.map.call(originElt.childNodes, Dom.depthCloneWithStyle);
-    for (var i = 0; i < children.length; ++i) {
-        newElt.appendChild(children[i]);
-    }
-    return newElt;
+export function depthCloneWithStyle(originElt, afterCloneCb) {
+    return depthClone(originElt, function (originElt, newElt) {
+        if (!originElt.getAttribute && !originElt.getAttributeNS) return;
+        copyStyleRule(originElt, newElt);
+        afterCloneCb && afterCloneCb(originElt, newElt);
+    });
 }
 
+Dom.depthClone = depthClone;
 Dom.depthCloneWithStyle = depthCloneWithStyle;
 
 /***
