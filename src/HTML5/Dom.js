@@ -186,7 +186,7 @@ export var FeatureClass = {
  */
 Dom.prototype.attach = function (element) {
     if (element.attr) return;
-    var feature = element.getBBox ? FeatureClass.AElementNS : FeatureClass.AElement;
+    var feature = (element.getBBox && element.tagName !== 'svg') ? FeatureClass.AElementNS : FeatureClass.AElement;
     var elementConstructor = feature.constructor;
     var proto = elementConstructor.prototype;
     var prototypeKeys = feature.prototypeKeys;
@@ -754,13 +754,14 @@ export function depthClone(originElt, afterCloneCb) {
          * @type {(AElement|AElementNS)[]}
          */
         var children = Array.prototype.map.call(originElt.childNodes, function (child) {
-            return depthClone(originElt, afterCloneCb)
+            return depthClone(child, afterCloneCb)
         });
         for (var i = 0; i < children.length; ++i) {
             newElt.appendChild(children[i]);
         }
     }
-    afterCloneCb && afterCloneCb(originElt, newElt);
+
+    return (afterCloneCb && afterCloneCb(originElt, newElt)) || newElt;
 }
 
 
