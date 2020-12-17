@@ -1,4 +1,3 @@
-import * as babelParser from '@babel/parser';
 import { parseStyleAttr, parseClassAttr } from './attribute';
 
 export function domVisitor(jsxCode) {
@@ -109,16 +108,16 @@ export function parseDom(jsxCode) {
         if (end == '/') return '';
         return '<' + tag + content + '/>';
     });
-    var ast = babelParser.parse(
+    var ast = babel.parse(
         jsxCode,
         {
             plugins: [
-                "jsx"
+                babel.pluginSyntaxJsx
             ]
         });
     var xmlData = {};
     domVisitor(jsxCode).acept(ast, xmlData);
     if (xmlData.child.length > 1) return xmlData.child;
     return xmlData.child[0];
-};
+}
 

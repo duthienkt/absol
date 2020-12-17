@@ -4,7 +4,7 @@ var processFolder = process.cwd().replace(/\\/, '/');
 var relative = path.relative(processFolder, __dirname);
 
 
-function resolveEntry(entryInProject){
+function resolveEntry(entryInProject) {
     var entryInProcess = path.join(relative, entryInProject);
     if (!entryInProcess.startsWith('./')) entryInProcess = './' + entryInProcess;
     return entryInProcess;
@@ -19,10 +19,19 @@ var packages = {
     wordfinder: {
         entry: ["./src/wordfinder.js"],
         filename: "./dist/wordfinder.js"
-    }
+    },
+    dependencies: {
+        entry: ["./src/dependents.js"],
+        filename: "./dist/absol.dependents.js"
+    },
+    dev: {
+        entry: ["./src/dependents.js",
+            "./src/absol.js"],
+        filename: "./dist/absol.js"
+    },
 }
 
-const PACKAGE = 'default';
+const PACKAGE = 'dev';
 
 
 module.exports = {
@@ -37,6 +46,9 @@ module.exports = {
         modules: [
             path.join(__dirname, './node_modules')
         ]
+    },
+    node: {
+        fs: 'empty'
     },
     module: {
         rules: [
