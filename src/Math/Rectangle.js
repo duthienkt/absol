@@ -203,7 +203,7 @@ Rectangle.makeCenter = function (x, y, width, height) {
 };
 
 /**
- * @param {ClientRect} clientRect
+ * @param {ClientRect|DOMRect} clientRect
  * @returns {Rectangle}
  */
 Rectangle.fromClientRect = function (clientRect) {
