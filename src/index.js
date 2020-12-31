@@ -54,6 +54,8 @@ import Mat3 from "./Math/Mat3";
 import LanguageSystem from "./HTML5/LanguageSystem";
 
 import * as int from './Math/int';
+import ALogger from "./Code/ALogger";
+import FlagManager from "./Code/FlagManager";
 
 
 var absol = {
@@ -119,7 +121,9 @@ var absol = {
     datetime: datetime,
     Vec2: Vec2,
     Mat3: Mat3,
-    LanguageSystem: LanguageSystem
+    LanguageSystem: LanguageSystem,
+    ALogger: ALogger,
+    FlagManager: FlagManager
 };
 
 
