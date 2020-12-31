@@ -8,7 +8,8 @@
     },
     "scripts": {
         "dev": "webpack-dev-server --config webpack.config.js --public https://frame.absol.cf",
-        "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production"
+        "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production",
+        "dependents": "webpack --config webpack.config.js --progress --profile --colors --mode production"
     },
     "repository": {
         "type": "git",

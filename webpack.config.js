@@ -20,7 +20,7 @@ var packages = {
         entry: ["./src/wordfinder.js"],
         filename: "./dist/wordfinder.js"
     },
-    dependencies: {
+    dependents: {
         entry: ["./src/dependents.js"],
         filename: "./dist/absol.dependents.js"
     },
@@ -31,16 +31,17 @@ var packages = {
     },
 }
 
-const PACKAGE = 'dev';
+
+var  buildPackage = packages[process.env.npm_lifecycle_event]||packages.default;
 
 
 module.exports = {
     mode: process.env.MODE || "development",
     // mode: 'production',
-    entry: packages[PACKAGE].entry.map(resolveEntry),
+    entry: buildPackage.entry.map(resolveEntry),
     output: {
         path: path.join(__dirname, "."),
-        filename: packages[PACKAGE].filename
+        filename: buildPackage.filename
     },
     resolve: {
         modules: [
