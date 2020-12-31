@@ -10,11 +10,11 @@ function ALogger() {
     this._updateProto();
 }
 
-ALogger.prototype._updateProto = function (){
-        ['log', 'table', 'table', 'error', 'warn'].forEach(function (name) {
-            var cFunction = console[name] && console[name].bind(console);
-            this[name] = cFunction || noop;
-        }.bind(this));
+ALogger.prototype._updateProto = function () {
+    ['log', 'table', 'table', 'error', 'warn'].forEach(function (name) {
+        var cFunction = window['ABSOL_DEBUG'] ? (console[name] && console[name].bind(console)) : noop;
+        this[name] = cFunction || noop;
+    }.bind(this));
 };
 
 
