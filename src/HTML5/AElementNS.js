@@ -1,4 +1,3 @@
-
 import AElement from "./AElement";
 
 /***
@@ -59,10 +58,10 @@ AElementNS.prototype.afterAttached = function () {
     if (this.isDescendantOf(document.body)) return Promise.resolve();
     var attachHookElt = this.$attachhook || this.querySelector('.absol-attachhook');
     if (!attachHookElt) {
-        attachHookElt = document.createElementNS(null, 'img');
+        attachHookElt = document.createElementNS(null, 'image');
         attachHookElt.setAttributeNS(null, 'href', '');
-        var prototypes = Object.getOwnPropertyDescriptors(AElementNS.prototype);
-        Object.defineProperties(attachHookElt, prototypes);
+        attachHookElt.classList.add('absol-attachhook');
+        Object.assign(attachHookElt, AElementNS.prototype);
         AElementNS.call(attachHookElt);
         this.$attachhook = attachHookElt;
         this.appendChild(attachHookElt);

@@ -1,10 +1,12 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
+import AElementNS from "./AElementNS";
 
 
 /***
  * @augments Node
  * @augments ChildNode
+ * @augments ParentNode
  * @augments Element
  * @augments HTMLElement
  * @augments EventEmitter
@@ -358,8 +360,8 @@ AElement.prototype.afterAttached = function () {
     if (!attachHookElt) {
         attachHookElt = document.createElement('img');
         attachHookElt.src = '';
-        var prototypes = Object.getOwnPropertyDescriptors(AElement.prototype);
-        Object.defineProperties(attachHookElt, prototypes);
+        attachHookElt.classList.add('absol-attachhook');
+        Object.assign(attachHookElt, AElementNS.prototype);
         AElement.call(attachHookElt);
         attachHookElt.defineEvent('attached');
         this.$attachhook = attachHookElt;
