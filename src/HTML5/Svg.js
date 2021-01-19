@@ -3,7 +3,7 @@ import ElementNS from './ElementNS';
 import Element from './Element';
 
 var sattachhookCreator = function () {
-    var res = Svg.ShareInstance._('<image  class="absol-attachhook" style="display:none"  xlink:href=""/>');
+    var res = Svg.ShareInstance._('<image  class="absol-attachhook" style="display:none"  href=""/>');
     res.defineEvent('attached');
     res.on('error', function (event) {
         if (!this._attached && this.isDescendantOf(document.body)) {
