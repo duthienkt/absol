@@ -15,6 +15,8 @@ Context.prototype.getContext = function (key) {
 };
 
 /**
+ * @param {string} key
+ * @param {*} value
  * @returns {*}
  */
 Context.prototype.setContext = function (key, value) {
@@ -29,7 +31,7 @@ Context.prototype.getContextManager = function () {
 };
 
 /**
- * @param {Application} 
+ * @param {Context} parent
  */
 Context.prototype.attach = function (parent) {
     //stop before attach to new context
@@ -59,11 +61,11 @@ Context.prototype.pause = function () {
     }
 };
 Context.prototype.resume = function () {
-    if (!this.state.match(/STANDBY||PAUSE/)) {
+    if (!this.state.match(/STANDBY|PAUSE/)) {
         console.error(this, 'NOT READY!');
         return;
     }
-    if (this.state == "RUNNING") return;
+    if (this.state === "RUNNING") return;
     this.state = "RUNNING";
     this.onResume && this.onResume();
 };
@@ -99,6 +101,16 @@ Context.prototype.destroy = function () {
     this.onDestroy && this.onDestroy();
 };
 
+
+function noop(){}
+
+Context.prototype.onDestroy = noop;
+Context.prototype.onStop = noop;
+Context.prototype.onStart = noop;
+Context.prototype.onResume = noop;
+Context.prototype.onPause = noop;
+Context.prototype.onDetached = noop;
+Context.prototype.onAttached = noop;
 
 
 export default Context;
