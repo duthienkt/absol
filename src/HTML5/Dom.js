@@ -82,6 +82,11 @@ var svgCreator = function () {
     return element;
 };
 
+/***
+ *
+ * @param {*=} option
+ * @constructor
+ */
 function Dom(option) {
     this.defaultTag = 'div';
 
