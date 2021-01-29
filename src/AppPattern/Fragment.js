@@ -1,18 +1,24 @@
-import Context from "./Context";
 import ContextManager from "./ContextManager";
+import GrandContext from "./GrandContext";
+import OOP from "../HTML5/OOP";
 
-
-function Fragment(){
-    Context.call(this);
+/***
+ * @extends GrandContext
+ * @constructor
+ */
+function Fragment() {
+    GrandContext.call(this);
     this.ctxMng = new ContextManager();
 }
 
-Object.defineProperties(Fragment.prototype, Object.getOwnPropertyDescriptors(Context.prototype));
-Fragment.prototype.constructor = Fragment;
-
+OOP.mixClass(Fragment, GrandContext);
 
 Fragment.prototype.getContextManager = function () {
     return this.ctxMng;
+};
+
+Fragment.prototype.createView = function () {
+    throw new Error("Not implement!");
 };
 
 Fragment.prototype.getView = function () {
@@ -23,13 +29,7 @@ Fragment.prototype.getView = function () {
     return this.$view;
 };
 
-/**
- * find context from parent
- */
-Fragment.prototype.getContext = function () {
-    return Context.prototype.getContext.apply(this, arguments)
-        || (this.parent && this.parent.getContext.apply(this.parent, arguments));
+Fragment.prototype.onCreated = function () {
 };
-
 
 export default Fragment;
