@@ -1,4 +1,5 @@
 import AElement from "./AElement";
+import OOP from "./OOP";
 
 /***
  * @augments AElement
@@ -9,8 +10,7 @@ function AElementNS() {
     AElement.call(this);
 }
 
-Object.defineProperties(AElementNS.prototype, Object.getOwnPropertyDescriptors(AElement.prototype));
-AElementNS.prototype.constructor = AElementNS;
+OOP.mixClass(AElementNS, AElement);
 
 AElementNS.prototype.attr = function () {
     if (arguments.length == 1) {

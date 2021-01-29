@@ -1,6 +1,7 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
 import AElementNS from "./AElementNS";
+import OOP from "./OOP";
 
 
 /***
@@ -20,7 +21,8 @@ function AElement() {
     this.eventHandler = {};
 }
 
-Object.defineProperties(AElement.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
+OOP.mixClass(AElement, EventEmitter);
+
 AElement.prototype.init = function (props) {
     Object.assign(this, props || {});
 };
