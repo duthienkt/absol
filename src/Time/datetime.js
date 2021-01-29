@@ -1,5 +1,4 @@
 import { nonAccentVietnamese } from "../String/stringFormat";
-import ALogger from "../Code/ALogger";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
@@ -86,7 +85,7 @@ export function formatDateString(date, format) {
 }
 
 export function formartDateString(){
-    ALogger.warn("spelled incorrectly: formartDateString");
+    window.ALogger.warn("spelled incorrectly: formartDateString");
     return formatDateString.apply(null, arguments);
 }
 
