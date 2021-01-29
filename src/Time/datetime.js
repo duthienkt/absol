@@ -1,4 +1,5 @@
 import { nonAccentVietnamese } from "../String/stringFormat";
+import ALogger from "../Code/ALogger";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
@@ -60,7 +61,7 @@ export var formatTokenRegex = /([,\.\-\/])|([a-zA-Z0-9]+)/g;//more
  * @param {String} format 
  * @returns {String}
  */
-export function formartDateString(date, format) {
+export function formatDateString(date, format) {
     format = format || 'dd/mm/yyyy';
     var dt = date.getDate();
     var day = date.getDay();
@@ -82,7 +83,12 @@ export function formartDateString(date, format) {
                 return x;
         }
     });
-};
+}
+
+export function formartDateString(){
+    ALogger.warn("spelled incorrectly: formartDateString");
+    return formatDateString.apply(null, arguments);
+}
 
 /**
  *
