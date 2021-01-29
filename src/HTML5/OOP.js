@@ -2,10 +2,10 @@ var OOP = {};
 
 /**
  * @param {Object} object
- * @param {Sttring} key
+ * @param {String} key
  * @param {Function} method
  */
-OOP.overideMethod = function (object, key, method) {
+OOP.overrideMethod = function (object, key, method) {
     if (object[key] === undefined) object[key] = method;
     else {
         var _superMethod = object[key];
@@ -26,9 +26,9 @@ OOP.overideMethod = function (object, key, method) {
 OOP.extends = function (object, prototype) {
     // do not use setter, getter
     for (var key in prototype) {
-        if (key != 'constructor' && key != '__proto__') {
+        if (key !== 'constructor' && key !== '__proto__') {
             if ((typeof prototype[key] == 'function')) {
-                OOP.overideMethod(object, key, prototype[key]);
+                OOP.overrideMethod(object, key, prototype[key]);
             }
             else if (prototype[key] !== undefined && prototype[key] !== null) {
                 object[key] = prototype[key];//just copy
@@ -41,7 +41,7 @@ OOP.inherit = function (child, parent) {
     // do not use setter, getter
 
     Object.keys(parent).forEach(function (key) {
-        if (key != 'constructor' && (typeof parent[key] == 'function')) {
+        if (key !== 'constructor' && (typeof parent[key] == 'function')) {
             var superMethod = parent[key];
             var currentMethod = child[key];
             if (!currentMethod) child[key] = superMethod;
