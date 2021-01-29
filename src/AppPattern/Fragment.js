@@ -1,6 +1,7 @@
 import ContextManager from "./ContextManager";
 import GrandContext from "./GrandContext";
 import OOP from "../HTML5/OOP";
+import noop from "../Code/noop";
 
 /***
  * @extends GrandContext
@@ -29,7 +30,6 @@ Fragment.prototype.getView = function () {
     return this.$view;
 };
 
-Fragment.prototype.onCreated = function () {
-};
+Fragment.prototype.onCreated = noop;
 
 export default Fragment;

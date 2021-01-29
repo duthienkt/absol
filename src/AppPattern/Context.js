@@ -1,3 +1,4 @@
+import noop from "../Code/noop";
 function Context() {
     this.state = "CREATE";
     /**
@@ -100,9 +101,6 @@ Context.prototype.destroy = function () {
     this.state = "DIE";
     this.onDestroy && this.onDestroy();
 };
-
-
-function noop(){}
 
 Context.prototype.onDestroy = noop;
 Context.prototype.onStop = noop;
