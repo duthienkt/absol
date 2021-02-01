@@ -1,6 +1,5 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
-import AElementNS from "./AElementNS";
 import OOP from "./OOP";
 
 
@@ -356,26 +355,6 @@ AElement.prototype.getCSSRules = function () {
 /***
  * @returns {Promise}
  */
-AElement.prototype.afterAttached = function () {
-    if (this.isDescendantOf(document.body)) return Promise.resolve();
-    var attachHookElt = this.$attachhook || this.querySelector('.absol-attachhook');
-    if (!attachHookElt) {
-        attachHookElt = document.createElement('img');
-        attachHookElt.src = '';
-        attachHookElt.classList.add('absol-attachhook');
-        Object.assign(attachHookElt, AElementNS.prototype);
-        AElement.call(attachHookElt);
-        attachHookElt.defineEvent('attached');
-        this.$attachhook = attachHookElt;
-        this.$attachhook.on('error', function (event) {
-            if (this.isDescendantOf(document.body)) this.emit('attached', event, this);
-        })
-        this.appendChild(attachHookElt);
-    }
-    return new Promise(function (rs) {
-        attachHookElt.once('attached', rs);
-    });
-};
 
 
 /***
