@@ -46,22 +46,23 @@ Context.prototype.attach = function (parent) {
 
 Context.prototype.detach = function () {
     this.stop();
-    this.state = "DETACHED";
     this.onDetached && this.onDetached();
     this.parent = null;
 };
 
 Context.prototype.pause = function () {
-    if (this.state.match(/RUNNING/)) {
-        this.state = "PAUSE";
-        this.onPause && this.onPause();
+    if (this.state.match(/RUNNING|PAUSE/)) {
+        if (this.state === "RUNNING"){
+            this.state = "PAUSE";
+            this.onPause && this.onPause();
+        }
     }
     else {
         console.warn(this, "NOT RUNNING");
     }
 };
 Context.prototype.resume = function () {
-    if (!this.state.match(/STANDBY|PAUSE/)) {
+    if (!this.state.match(/STANDBY|PAUSE|RUNNING/)) {
         console.error(this, 'NOT READY!', this.state);
         return;
     }
