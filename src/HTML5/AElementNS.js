@@ -14,11 +14,21 @@ AElement.prototype.afterAttached = function () {
     if (this.isDescendantOf(document.body)) return Promise.resolve();
     var attachHookElt = this.$attachhook || this.querySelector('.absol-attachhook');
     if (!attachHookElt) {
-        attachHookElt = document.createElement('img');
-        attachHookElt.src = '';
+        var constructor;
+        if (this.tagName.toLowerCase() === 'svg' || this.getBBox) {
+            attachHookElt = document.createElementNS(null, 'img');
+            attachHookElt.href = '';
+            constructor = AElementNS;
+        }
+        else {
+            attachHookElt = document.createElement('img');
+            attachHookElt.src = '';
+            constructor = AElementNS;
+        }
+
         attachHookElt.classList.add('absol-attachhook');
-        Object.assign(attachHookElt, AElementNS.prototype);
-        AElement.call(attachHookElt);
+        Object.assign(attachHookElt, constructor.prototype);
+        constructor.call(attachHookElt);
         attachHookElt.defineEvent('attached');
         this.$attachhook = attachHookElt;
         this.$attachhook.on('error', function (event) {
