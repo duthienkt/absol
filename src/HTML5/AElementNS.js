@@ -32,7 +32,6 @@ AElement.prototype.afterAttached = function () {
         attachHookElt.defineEvent('attached');
         this.$attachhook = attachHookElt;
         this.$attachhook.on('error', function (event) {
-            console.log('error')
             if (this.isDescendantOf(document.body)) this.emit('attached', event, this);
         });
         this.appendChild(attachHookElt);
