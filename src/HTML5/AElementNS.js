@@ -16,8 +16,8 @@ AElement.prototype.afterAttached = function () {
     if (!attachHookElt) {
         var constructor;
         if (this.tagName.toLowerCase() === 'svg' || this.getBBox) {
-            attachHookElt = document.createElementNS(null, 'img');
-            attachHookElt.href = '';
+            attachHookElt = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            attachHookElt.setAttributeNS(null,  'href','');
             constructor = AElementNS;
         }
         else {
@@ -32,8 +32,9 @@ AElement.prototype.afterAttached = function () {
         attachHookElt.defineEvent('attached');
         this.$attachhook = attachHookElt;
         this.$attachhook.on('error', function (event) {
+            console.log('error')
             if (this.isDescendantOf(document.body)) this.emit('attached', event, this);
-        })
+        });
         this.appendChild(attachHookElt);
     }
     return new Promise(function (rs) {
@@ -83,24 +84,5 @@ AElementNS.prototype.attr = function () {
 };
 
 
-/***
- * @returns {Promise}
- */
-AElementNS.prototype.afterAttached = function () {
-    if (this.isDescendantOf(document.body)) return Promise.resolve();
-    var attachHookElt = this.$attachhook || this.querySelector('.absol-attachhook');
-    if (!attachHookElt) {
-        attachHookElt = document.createElementNS(null, 'image');
-        attachHookElt.setAttributeNS(null, 'href', '');
-        attachHookElt.classList.add('absol-attachhook');
-        Object.assign(attachHookElt, AElementNS.prototype);
-        AElementNS.call(attachHookElt);
-        this.$attachhook = attachHookElt;
-        this.appendChild(attachHookElt);
-    }
-    return new Promise(function (rs) {
-        attachHookElt.once('error', rs);
-    });
-};
 
 export default AElementNS;
