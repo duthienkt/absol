@@ -41,7 +41,6 @@ Context.prototype.attach = function (parent) {
      * @type {Application}
      */
     this.parent = parent;
-    this.state = "ATTACHED";
     this.onAttached && this.onAttached();
 };
 
@@ -63,7 +62,7 @@ Context.prototype.pause = function () {
 };
 Context.prototype.resume = function () {
     if (!this.state.match(/STANDBY|PAUSE/)) {
-        console.error(this, 'NOT READY!');
+        console.error(this, 'NOT READY!', this.state);
         return;
     }
     if (this.state === "RUNNING") return;
@@ -79,7 +78,7 @@ Context.prototype.start = function () {
 
     if (this.state.match(/RUNNING/)) return;
 
-    if (this.state.match(/STOP|CREATE|ATTACHED/)) {
+    if (this.state.match(/STOP|CREATE/)) {
         this.state = "STANDBY";
         this.onStart && this.onStart();
     }
@@ -89,7 +88,7 @@ Context.prototype.start = function () {
 };
 
 Context.prototype.stop = function () {
-    if (this.state.match(/STOP|DIE|CREATE|ATTACHED|DETACHED/)) return;
+    if (this.state.match(/STOP|DIE|CREATE/)) return;
     if (this.state.match(/RUNNING/)) this.pause();
     this.state = "STOP";
     this.onStop && this.onStop();
