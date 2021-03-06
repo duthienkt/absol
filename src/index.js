@@ -57,6 +57,7 @@ import * as int from './Math/int';
 import ALogger from "./Code/ALogger";
 import FlagManager from "./Code/FlagManager";
 import ObservableArray from "./AppPattern/ObservableArray";
+import ObservableStruct from "./AppPattern/ObservableStruct";
 
 
 var absol = {
@@ -125,7 +126,8 @@ var absol = {
     LanguageSystem: LanguageSystem,
     ALogger: ALogger,
     FlagManager: FlagManager,
-    ObservableArray: ObservableArray
+    ObservableArray: ObservableArray,
+    ObservableStruct: ObservableStruct
 };
 
 
