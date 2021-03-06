@@ -196,7 +196,7 @@ export function isMouseRight(event) {
     return isRightMB;
 }
 
-export function isMouseLeft() {
+export function isMouseLeft(event) {
     var isLeftMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
         isLeftMB = event.which == 1;
