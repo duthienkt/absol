@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Observable</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+
+<script class="viewable">
+    var ObservableArray = absol.ObservableArray;
+    var oA = new ObservableArray([1,2,new ObservableArray([4,5,6,7])]);
+    console.log(oA.valueOf(), JSON.stringify(oA));
+    oA[1] = 4;
+    oA.push(1,2,3,4,5,6);
+    oA.pop();
+    console.log(oA.valueOf(), [].concat(oA.valueOf()), Object.keys(oA), oA.length, JSON.stringify(oA));
+
+</script>
+
+<script src="./autohightlighting.js?"></script>
+</body>
