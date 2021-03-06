@@ -56,6 +56,7 @@ import LanguageSystem from "./HTML5/LanguageSystem";
 import * as int from './Math/int';
 import ALogger from "./Code/ALogger";
 import FlagManager from "./Code/FlagManager";
+import ObservableArray from "./AppPattern/ObservableArray";
 
 
 var absol = {
@@ -123,7 +124,8 @@ var absol = {
     Mat3: Mat3,
     LanguageSystem: LanguageSystem,
     ALogger: ALogger,
-    FlagManager: FlagManager
+    FlagManager: FlagManager,
+    ObservableArray: ObservableArray
 };
 
 
