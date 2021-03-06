@@ -1,7 +1,14 @@
 function EventEmitter() {
-    this._azar_extendEvents = this._azar_extendEvents || { supported: {}, prioritize: {}, nonprioritize: {} };
-    this.__azar_force = !(typeof Node === "object" ? this instanceof Node : this && typeof this === "object" && typeof this.nodeType === "number" && typeof this.nodeName === "string");
-
+    if (!this._azar_extendEvents) {
+        Object.defineProperty(this, '_azar_extendEvents', {
+            enumerable: false,
+            value: this._azar_extendEvents || { supported: {}, prioritize: {}, nonprioritize: {} }
+        });
+        Object.defineProperty(this, '__azar_force', {
+            value: !(typeof Node === "object" ? this instanceof Node : this && typeof this === "object" && typeof this.nodeType === "number" && typeof this.nodeName === "string"),
+            enumerable: false
+        });
+    }
 }
 
 
@@ -34,8 +41,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
             for (i = 0; i < listenerList.length; ++i) {
                 try {
                     listenerList[i].wrappedCallback.apply(this, others);
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                 }
             }
@@ -46,8 +52,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
             for (i = 0; i < listenerList.length; ++i) {
                 try {
                     listenerList[i].wrappedCallback.apply(this, others);
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                 }
             }
@@ -228,13 +233,13 @@ export function copyEvent(event, props) {
     Object.assign(result, event);
     if (props)
         Object.assign(result, props)
-    if (event.changedTouches){
-        result.changedTouches = Array.prototype.map.call(event.changedTouches, function (touch){
+    if (event.changedTouches) {
+        result.changedTouches = Array.prototype.map.call(event.changedTouches, function (touch) {
             return copyTouch(touch);
         });
     }
-    if (event.touches){
-        result.touches = Array.prototype.map.call(event.touches, function (touch){
+    if (event.touches) {
+        result.touches = Array.prototype.map.call(event.touches, function (touch) {
             return copyTouch(touch);
         });
     }
