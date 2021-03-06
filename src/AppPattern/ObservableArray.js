@@ -1,11 +1,10 @@
+import EventEmitter from "../HTML5/EventEmitter";
+
 /***
  * @augments EventEmitter
  * @extends Array
  * @constructor
  */
-import EventEmitter from "../HTML5/EventEmitter";
-import OOP from "../HTML5/OOP";
-
 function ObservableArray(array) {
     EventEmitter.call(this);
     Object.defineProperty(this, '_array', {
@@ -16,135 +15,176 @@ function ObservableArray(array) {
     this._makeArrIndex(0, array.length);
 }
 
-OOP.mixClass(ObservableArray, EventEmitter);
 
-ObservableArray.prototype.unshift = function () {
-    var newItems = Array.prototype.slice.call(arguments);
-    var cN = this._array.length;
-    this._makeArrIndex(cN, this._array.length + newItems.length);
-    this._array.unshift.apply(this._array, newItems);
-    this.emit("additem", { target: this, items: newItems, type: 'additem', offset: 0, action: 'unshift' }, this);
-};
+Object.defineProperty(ObservableArray.prototype, 'unshift',
+    {
+        enumerable: false,
+        value: function () {
+            var newItems = Array.prototype.slice.call(arguments);
+            var cN = this._array.length;
+            this._makeArrIndex(cN, this._array.length + newItems.length);
+            this._array.unshift.apply(this._array, newItems);
+            this.emit("additem", {
+                target: this,
+                items: newItems,
+                type: 'additem',
+                offset: 0,
+                action: 'unshift'
+            }, this);
+        }
+    });
 
-ObservableArray.prototype.shift = function () {
-    var res = undefined;
-    if (this._array.length > 0) {
-        res = this._array.shift();
-        this._removeIndex(this._array.length);
-        this.emit("removeitem", {
-            target: this, type: 'additem',
-            offset: 0,
-            action: 'shift',
-            items: [res],
-            item: res
-        }, this);
+Object.defineProperty(ObservableArray.prototype, 'shift',
+    {
+        enumerable: false,
+        value: function () {
+            var res = undefined;
+            if (this._array.length > 0) {
+                res = this._array.shift();
+                this._removeIndex(this._array.length);
+                this.emit("removeitem", {
+                    target: this, type: 'additem',
+                    offset: 0,
+                    action: 'shift',
+                    items: [res],
+                    item: res
+                }, this);
+            }
+            return res;
+        }
+    });
+
+
+Object.defineProperty(ObservableArray.prototype, 'push', {
+    enumerable: false,
+    value: function () {
+        var newItems = Array.prototype.slice.call(arguments);
+        var cN = this._array.length;
+        this._makeArrIndex(this._array.length, this._array.length + newItems.length);
+        this._array.push.apply(this._array, newItems);
+        this.emit("additem", { target: this, items: newItems, type: 'additem', offset: cN, action: 'push' }, this);
     }
-    return res;
-};
+});
 
-ObservableArray.prototype.push = function () {
-    var newItems = Array.prototype.slice.call(arguments);
-    var cN = this._array.length;
-    this._makeArrIndex(this._array.length, this._array.length + newItems.length);
-    this._array.push.apply(this._array, newItems);
-    this.emit("additem", { target: this, items: newItems, type: 'additem', offset: cN, action: 'push' }, this);
-};
-
-ObservableArray.prototype.pop = function () {
-    var res = undefined;
-    if (this._array.length > 0) {
-        res = this._array.pop();
-        this._removeIndex(this._array.length);
-        this.emit("removeitem", {
-            target: this,
-            type: 'additem',
-            offset: this._array.length,
-            action: 'shift',
-            items: [res],
-            item: res
-        }, this);
+Object.defineProperty(ObservableArray.prototype, 'pop', {
+    enumerable: false,
+    value: function () {
+        var res = undefined;
+        if (this._array.length > 0) {
+            res = this._array.pop();
+            this._removeIndex(this._array.length);
+            this.emit("removeitem", {
+                target: this,
+                type: 'additem',
+                offset: this._array.length,
+                action: 'shift',
+                items: [res],
+                item: res
+            }, this);
+        }
+        return res;
     }
-    return res;
-};
+});
 
-ObservableArray.prototype.replace = function (offset, items) {
-    for (var i = 0; i < items.length && offset < this._array.length; ++i, ++offset) {
-        this._array[offset] = items[i];
+Object.defineProperty(ObservableArray.prototype, 'replace', {
+    enumerable: false,
+    value: function (offset, items) {
+        for (var i = 0; i < items.length && offset < this._array.length; ++i, ++offset) {
+            this._array[offset] = items[i];
+        }
     }
-};
+});
 
 
-ObservableArray.prototype.toJSON = function () {
-    return this._array;
-};
-
-ObservableArray.prototype.valueOf = function () {
-    return this._array;
-};
-
-ObservableArray.prototype._makeArrIndex = function (cN, nN) {
-    var i;
-    if (nN > cN) {
-        for (i = cN; i < nN; ++i)
-            this._defineIndex(i);
+Object.defineProperty(ObservableArray.prototype, 'toJSON', {
+    enumerable: false,
+    value: function () {
+        return this._array;
     }
-    else {
-        for (i = cN - 1; i >= nN; --i)
-            this._removeIndex(i);
+});
+
+Object.defineProperty(ObservableArray.prototype, 'valueOf', {
+    enumerable: false,
+    value: function () {
+        return this._array;
     }
-}
+});
+
+Object.defineProperty(ObservableArray.prototype, '_makeArrIndex', {
+    enumerable: false,
+    value: function (cN, nN) {
+        var i;
+        if (nN > cN) {
+            for (i = cN; i < nN; ++i)
+                this._defineIndex(i);
+        }
+        else {
+            for (i = cN - 1; i >= nN; --i)
+                this._removeIndex(i);
+        }
+    }
+});
 
 /***
  *
  * @param {number} idx
  * @private
  */
-ObservableArray.prototype._defineIndex = function (idx) {
-    if (!(idx in this)) {
-        Object.defineProperty(this, idx, {
-            set: function (value) {
-                var oldValue = this._array[idx]
-                this._array[idx] = value;
-                this.emit('setitem', {
-                    type: 'setitem',
-                    target: this,
-                    oldValue: oldValue,
-                    vale: value,
-                    offset: idx
-                }, this);
-            },
-            get: function () {
-                return this._array[idx];
-            },
-            configurable: true,
-            enumerable: true
-        });
+Object.defineProperty(ObservableArray.prototype, '_defineIndex', {
+    enumerable: false,
+    value: function (idx) {
+        if (!(idx in this)) {
+            Object.defineProperty(this, idx, {
+                set: function (value) {
+                    var oldValue = this._array[idx]
+                    this._array[idx] = value;
+                    this.emit('setitem', {
+                        type: 'setitem',
+                        target: this,
+                        oldValue: oldValue,
+                        vale: value,
+                        offset: idx
+                    }, this);
+                },
+                get: function () {
+                    return this._array[idx];
+                },
+                configurable: true,
+                enumerable: true
+            });
+        }
     }
-};
+});
 
-ObservableArray.prototype._removeIndex = function (idx) {
-    delete this[idx];
-};
-
-
-ObservableArray.prototype.splice = function (index, howMany) {
-    var res = [];
-    index = index == null ? 0 : index < 0 ? this._array.length + index : index;
-    howMany = howMany == null ? this._array.length - index : howMany > 0 ? howMany : 0;
-    if (howMany > 0) {
-        this._makeArrIndex(this._array.length, this._array.length - howMany);
-        res = this._array.splice(index, howMany);
-        this.emit('removeitem', {
-            target: this, type: 'additem',
-            offset: 0,
-            action: 'shift',
-            items: [res],
-            item: res
-        }, this);
+Object.defineProperty(ObservableArray.prototype, '_removeIndex', {
+    enumerable: false,
+    value: function (idx) {
+        delete this[idx];
     }
+});
 
-    return res;
-}
+
+Object.defineProperty(ObservableArray.prototype, 'splice', {
+    enumerable: false,
+    value: function (index, howMany) {
+        var res = [];
+        index = index == null ? 0 : index < 0 ? this._array.length + index : index;
+        howMany = howMany == null ? this._array.length - index : howMany > 0 ? howMany : 0;
+        if (howMany > 0) {
+            this._makeArrIndex(this._array.length, this._array.length - howMany);
+            res = this._array.splice(index, howMany);
+            this.emit('removeitem', {
+                target: this, type: 'additem',
+                offset: 0,
+                action: 'shift',
+                items: [res],
+                item: res
+            }, this);
+        }
+
+        return res;
+    }
+});
 
 Object.defineProperty(ObservableArray.prototype, 'length', {
     set: function (value) {
@@ -176,6 +216,17 @@ Object.getOwnPropertyNames(Array.prototype).forEach(function (name) {
             enumerable: false,
             writable: false,
             value: Array.prototype[name]
+        });
+    }
+});
+
+Object.getOwnPropertyNames(EventEmitter.prototype).forEach(function (name) {
+    if (!(name in ObservableArray.prototype)) {
+        Object.defineProperty(ObservableArray.prototype, name, {
+            configurable: false,
+            enumerable: false,
+            writable: false,
+            value: EventEmitter.prototype[name]
         });
     }
 });
