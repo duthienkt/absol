@@ -12,12 +12,25 @@
 
 <script class="viewable">
     var ObservableArray = absol.ObservableArray;
-    var oA = new ObservableArray([1,2,new ObservableArray([4,5,6,7])]);
+    var ObservableStruct = absol.ObservableStruct;
+    var oA = new ObservableArray([1, 2, new ObservableArray([4, 5, 6, 7])]);
+    function showEvent(event){
+        console.log(event);
+    }
+    oA.on({
+        setitem: showEvent,
+        removeitem: showEvent,
+        additem: showEvent
+    });
     console.log(oA.valueOf(), JSON.stringify(oA));
     oA[1] = 4;
-    oA.push(1,2,3,4,5,6);
+    oA.push(1, 2, 3, 4, 5, 6);
     oA.pop();
     console.log(oA.valueOf(), [].concat(oA.valueOf()), Object.keys(oA), oA.length, JSON.stringify(oA));
+
+    var o = new ObservableStruct({ name: 'absol', date: new Date() });
+    o.on('setproperty', showEvent);
+    o.name = 'absolv2';
 
 </script>
 
