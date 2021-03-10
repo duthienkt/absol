@@ -168,20 +168,43 @@ Object.defineProperty(ObservableArray.prototype, 'splice', {
     enumerable: false,
     value: function (index, howMany) {
         var res = [];
+        var newItems = Array.prototype.slice.call(arguments, 2);
         index = index == null ? 0 : index < 0 ? this._array.length + index : index;
         howMany = howMany == null ? this._array.length - index : howMany > 0 ? howMany : 0;
         if (howMany > 0) {
             this._makeArrIndex(this._array.length, this._array.length - howMany);
             res = this._array.splice(index, howMany);
-            this.emit('removeitem', {
-                target: this, type: 'additem',
-                offset: 0,
-                action: 'splice',
-                items: [res],
-                item: res
-            }, this);
+            if (newItems.length > 0) {
+                if (res.length > 0) {
+                    this.emit('replaceitem', {
+                        type: 'replaceitem',
+                        offset: index,
+                        oldItems: res,
+                        newItems: newItems,
+                        target: this,
+                        action: 'splice'
+                    }, this);
+                }
+                else {
+                    this.emit('additem', {
+                        type: 'additem',
+                        offset: index,
+                        items: newItems,
+                        target: this
+                    }, this);
+                }
+            }
+            else {
+                if (res.length > 0) {
+                    this.emit('removeitem', {
+                        target: this, type: 'additem',
+                        offset: 0,
+                        action: 'splice',
+                        items: res,
+                    }, this);
+                }
+            }
         }
-
         return res;
     }
 });
