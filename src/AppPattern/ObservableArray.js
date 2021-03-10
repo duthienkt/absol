@@ -176,7 +176,7 @@ Object.defineProperty(ObservableArray.prototype, 'splice', {
             this.emit('removeitem', {
                 target: this, type: 'additem',
                 offset: 0,
-                action: 'shift',
+                action: 'splice',
                 items: [res],
                 item: res
             }, this);
