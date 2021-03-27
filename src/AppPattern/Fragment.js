@@ -9,14 +9,10 @@ import noop from "../Code/noop";
  */
 function Fragment() {
     GrandContext.call(this);
-    this.ctxMng = new ContextManager();
 }
 
 OOP.mixClass(Fragment, GrandContext);
 
-Fragment.prototype.getContextManager = function () {
-    return this.ctxMng;
-};
 
 Fragment.prototype.createView = function () {
     throw new Error("Not implement!");

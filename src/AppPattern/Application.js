@@ -9,16 +9,10 @@ function Application() {
     this.activityStack = [];
     /** @type {Activity} */
     this.currentActivity = null;
-    this.contextManager = new ContextManager();
 }
 
 Object.defineProperties(Application.prototype, Object.getOwnPropertyDescriptors(Context.prototype));
 Application.prototype.constructor = Application;
-
-Application.prototype.getContextManager = function () {
-
-    return this.contextManager;
-};
 
 /**
  * @param {Activity} activity

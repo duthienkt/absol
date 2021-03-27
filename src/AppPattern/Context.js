@@ -5,6 +5,11 @@ function Context() {
      * @type {Context}
      */
     this.parent = null;
+    /***
+     *
+     * @type {null|ContextManager}
+     */
+    this.ctxMng = null;
 }
 
 
@@ -12,7 +17,16 @@ function Context() {
  * @returns {*}
  */
 Context.prototype.getContext = function (key) {
-    return this.getContextManager().get(key);
+    var ctx = this;
+    var res;
+    while (ctx && !res){
+        if (ctx.ctxMng) {
+            res = ctx.ctxMng.get(key);
+        }
+        ctx = ctx.parent;
+    }
+    console.log(key, res)
+    return res;
 };
 
 /**
@@ -28,7 +42,15 @@ Context.prototype.setContext = function (key, value) {
  * @returns {ContextManager}
  */
 Context.prototype.getContextManager = function () {
-    return this.parent.getContextManager();
+    var ctx = this;
+    var res;
+    while (ctx && !res){
+        if (ctx.ctxMng) {
+            res = ctx.ctxMng;
+        }
+        ctx = ctx.parent;
+    }
+    return res;
 };
 
 /**

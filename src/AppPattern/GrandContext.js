@@ -13,18 +13,4 @@ function GrandContext(){
 
 OOP.mixClass(GrandContext, Context);
 
-
-GrandContext.prototype.getContextManager = function () {
-    return this.ctxMng;
-};
-
-/**
- * find context from parent
- * @return {*}
- */
-GrandContext.prototype.getContext = function () {
-    return Context.prototype.getContext.apply(this, arguments)
-        || (this.parent && this.parent.getContext.apply(this.parent, arguments));
-};
-
 export default GrandContext;
