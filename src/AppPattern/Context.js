@@ -25,7 +25,6 @@ Context.prototype.getContext = function (key) {
         }
         ctx = ctx.parent;
     }
-    console.log(key, res)
     return res;
 };
 
