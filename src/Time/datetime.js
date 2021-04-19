@@ -1,12 +1,12 @@
-import { nonAccentVietnamese } from "../String/stringFormat";
+import {nonAccentVietnamese} from "../String/stringFormat";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
 export var MILLIS_PER_MINUTE = 60000;
 
 /**
- * 
- * @param {Date} date 
+ *
+ * @param {Date} date
  * @returns {String}
  */
 export function ddmmyyyy(date) {
@@ -14,17 +14,228 @@ export function ddmmyyyy(date) {
     var dd = date.getDate();
 
     return [(dd > 9 ? '' : '0') + dd,
-    (mm > 9 ? '' : '0') + mm,
-    date.getFullYear()
+        (mm > 9 ? '' : '0') + mm,
+        date.getFullYear()
     ].join('/');
 };
 
-
+export var language2LocalDateFormat = {
+    "af-ZA": "yyyy/MM/dd",
+    "am-ET": "d/M/yyyy",
+    "ar-AE": "dd/MM/yyyy",
+    "ar-BH": "dd/MM/yyyy",
+    "ar-DZ": "dd-MM-yyyy",
+    "ar-EG": "dd/MM/yyyy",
+    "ar-IQ": "dd/MM/yyyy",
+    "ar-JO": "dd/MM/yyyy",
+    "ar-KW": "dd/MM/yyyy",
+    "ar-LB": "dd/MM/yyyy",
+    "ar-LY": "dd/MM/yyyy",
+    "ar-MA": "dd-MM-yyyy",
+    "ar-OM": "dd/MM/yyyy",
+    "ar-QA": "dd/MM/yyyy",
+    "ar-SA": "dd/MM/yy",
+    "ar-SY": "dd/MM/yyyy",
+    "ar-TN": "dd-MM-yyyy",
+    "ar-YE": "dd/MM/yyyy",
+    "arn-CL": "dd-MM-yyyy",
+    "as-IN": "dd-MM-yyyy",
+    "az-Cyrl-AZ": "dd.MM.yyyy",
+    "az-Latn-AZ": "dd.MM.yyyy",
+    "ba-RU": "dd.MM.yy",
+    "be-BY": "dd.MM.yyyy",
+    "bg-BG": "dd.M.yyyy",
+    "bn-BD": "dd-MM-yy",
+    "bn-IN": "dd-MM-yy",
+    "bo-CN": "yyyy/M/d",
+    "br-FR": "dd/MM/yyyy",
+    "bs-Cyrl-BA": "d.M.yyyy",
+    "bs-Latn-BA": "d.M.yyyy",
+    "ca-ES": "dd/MM/yyyy",
+    "co-FR": "dd/MM/yyyy",
+    "cs-CZ": "d.M.yyyy",
+    "cy-GB": "dd/MM/yyyy",
+    "da-DK": "dd-MM-yyyy",
+    "de-AT": "dd.MM.yyyy",
+    "de-CH": "dd.MM.yyyy",
+    "de-DE": "dd.MM.yyyy",
+    "de-LI": "dd.MM.yyyy",
+    "de-LU": "dd.MM.yyyy",
+    "dsb-DE": "d. M. yyyy",
+    "dv-MV": "dd/MM/yy",
+    "el-GR": "d/M/yyyy",
+    "en-029": "MM/dd/yyyy",
+    "en-AU": "d/MM/yyyy",
+    "en-BZ": "dd/MM/yyyy",
+    "en-CA": "dd/MM/yyyy",
+    "en-GB": "dd/MM/yyyy",
+    "en-IE": "dd/MM/yyyy",
+    "en-IN": "dd-MM-yyyy",
+    "en-JM": "dd/MM/yyyy",
+    "en-MY": "d/M/yyyy",
+    "en-NZ": "d/MM/yyyy",
+    "en-PH": "M/d/yyyy",
+    "en-SG": "d/M/yyyy",
+    "en-TT": "dd/MM/yyyy",
+    "en-US": "M/d/yyyy",
+    "en-ZA": "yyyy/MM/dd",
+    "en-ZW": "M/d/yyyy",
+    "es-AR": "dd/MM/yyyy",
+    "es-BO": "dd/MM/yyyy",
+    "es-CL": "dd-MM-yyyy",
+    "es-CO": "dd/MM/yyyy",
+    "es-CR": "dd/MM/yyyy",
+    "es-DO": "dd/MM/yyyy",
+    "es-EC": "dd/MM/yyyy",
+    "es-ES": "dd/MM/yyyy",
+    "es-GT": "dd/MM/yyyy",
+    "es-HN": "dd/MM/yyyy",
+    "es-MX": "dd/MM/yyyy",
+    "es-NI": "dd/MM/yyyy",
+    "es-PA": "MM/dd/yyyy",
+    "es-PE": "dd/MM/yyyy",
+    "es-PR": "dd/MM/yyyy",
+    "es-PY": "dd/MM/yyyy",
+    "es-SV": "dd/MM/yyyy",
+    "es-US": "M/d/yyyy",
+    "es-UY": "dd/MM/yyyy",
+    "es-VE": "dd/MM/yyyy",
+    "et-EE": "d.MM.yyyy",
+    "eu-ES": "yyyy/MM/dd",
+    "fa-IR": "MM/dd/yyyy",
+    "fi-FI": "d.M.yyyy",
+    "fil-PH": "M/d/yyyy",
+    "fo-FO": "dd-MM-yyyy",
+    "fr-BE": "d/MM/yyyy",
+    "fr-CA": "yyyy-MM-dd",
+    "fr-CH": "dd.MM.yyyy",
+    "fr-FR": "dd/MM/yyyy",
+    "fr-LU": "dd/MM/yyyy",
+    "fr-MC": "dd/MM/yyyy",
+    "fy-NL": "d-M-yyyy",
+    "ga-IE": "dd/MM/yyyy",
+    "gd-GB": "dd/MM/yyyy",
+    "gl-ES": "dd/MM/yy",
+    "gsw-FR": "dd/MM/yyyy",
+    "gu-IN": "dd-MM-yy",
+    "ha-Latn-NG": "d/M/yyyy",
+    "he-IL": "dd/MM/yyyy",
+    "hi-IN": "dd-MM-yyyy",
+    "hr-BA": "d.M.yyyy.",
+    "hr-HR": "d.M.yyyy",
+    "hsb-DE": "d. M. yyyy",
+    "hu-HU": "yyyy. MM. dd.",
+    "hy-AM": "dd.MM.yyyy",
+    "id-ID": "dd/MM/yyyy",
+    "ig-NG": "d/M/yyyy",
+    "ii-CN": "yyyy/M/d",
+    "is-IS": "d.M.yyyy",
+    "it-CH": "dd.MM.yyyy",
+    "it-IT": "dd/MM/yyyy",
+    "iu-Cans-CA": "d/M/yyyy",
+    "iu-Latn-CA": "d/MM/yyyy",
+    "ja-JP": "yyyy/MM/dd",
+    "ka-GE": "dd.MM.yyyy",
+    "kk-KZ": "dd.MM.yyyy",
+    "kl-GL": "dd-MM-yyyy",
+    "km-KH": "yyyy-MM-dd",
+    "kn-IN": "dd-MM-yy",
+    "ko-KR": "yyyy-MM-dd",
+    "kok-IN": "dd-MM-yyyy",
+    "ky-KG": "dd.MM.yy",
+    "lb-LU": "dd/MM/yyyy",
+    "lo-LA": "dd/MM/yyyy",
+    "lt-LT": "yyyy.MM.dd",
+    "lv-LV": "yyyy.MM.dd.",
+    "mi-NZ": "dd/MM/yyyy",
+    "mk-MK": "dd.MM.yyyy",
+    "ml-IN": "dd-MM-yy",
+    "mn-MN": "yy.MM.dd",
+    "mn-Mong-CN": "yyyy/M/d",
+    "moh-CA": "M/d/yyyy",
+    "mr-IN": "dd-MM-yyyy",
+    "ms-BN": "dd/MM/yyyy",
+    "ms-MY": "dd/MM/yyyy",
+    "mt-MT": "dd/MM/yyyy",
+    "nb-NO": "dd.MM.yyyy",
+    "ne-NP": "M/d/yyyy",
+    "nl-BE": "d/MM/yyyy",
+    "nl-NL": "d-M-yyyy",
+    "nn-NO": "dd.MM.yyyy",
+    "nso-ZA": "yyyy/MM/dd",
+    "oc-FR": "dd/MM/yyyy",
+    "or-IN": "dd-MM-yy",
+    "pa-IN": "dd-MM-yy",
+    "pl-PL": "yyyy-MM-dd",
+    "prs-AF": "dd/MM/yy",
+    "ps-AF": "dd/MM/yy",
+    "pt-BR": "d/M/yyyy",
+    "pt-PT": "dd-MM-yyyy",
+    "qut-GT": "dd/MM/yyyy",
+    "quz-BO": "dd/MM/yyyy",
+    "quz-EC": "dd/MM/yyyy",
+    "quz-PE": "dd/MM/yyyy",
+    "rm-CH": "dd/MM/yyyy",
+    "ro-RO": "dd.MM.yyyy",
+    "ru-RU": "dd.MM.yyyy",
+    "rw-RW": "M/d/yyyy",
+    "sa-IN": "dd-MM-yyyy",
+    "sah-RU": "MM.dd.yyyy",
+    "se-FI": "d.M.yyyy",
+    "se-NO": "dd.MM.yyyy",
+    "se-SE": "yyyy-MM-dd",
+    "si-LK": "yyyy-MM-dd",
+    "sk-SK": "d. M. yyyy",
+    "sl-SI": "d.M.yyyy",
+    "sma-NO": "dd.MM.yyyy",
+    "sma-SE": "yyyy-MM-dd",
+    "smj-NO": "dd.MM.yyyy",
+    "smj-SE": "yyyy-MM-dd",
+    "smn-FI": "d.M.yyyy",
+    "sms-FI": "d.M.yyyy",
+    "sq-AL": "yyyy-MM-dd",
+    "sr-Cyrl-BA": "d.M.yyyy",
+    "sr-Cyrl-CS": "d.M.yyyy",
+    "sr-Cyrl-ME": "d.M.yyyy",
+    "sr-Cyrl-RS": "d.M.yyyy",
+    "sr-Latn-BA": "d.M.yyyy",
+    "sr-Latn-CS": "d.M.yyyy",
+    "sr-Latn-ME": "d.M.yyyy",
+    "sr-Latn-RS": "d.M.yyyy",
+    "sv-FI": "d.M.yyyy",
+    "sv-SE": "yyyy-MM-dd",
+    "sw-KE": "M/d/yyyy",
+    "syr-SY": "dd/MM/yyyy",
+    "ta-IN": "dd-MM-yyyy",
+    "te-IN": "dd-MM-yy",
+    "tg-Cyrl-TJ": "dd.MM.yy",
+    "th-TH": "d/M/yyyy",
+    "tk-TM": "dd.MM.yy",
+    "tn-ZA": "yyyy/MM/dd",
+    "tr-TR": "dd.MM.yyyy",
+    "tt-RU": "dd.MM.yyyy",
+    "tzm-Latn-DZ": "dd-MM-yyyy",
+    "ug-CN": "yyyy-M-d",
+    "uk-UA": "dd.MM.yyyy",
+    "ur-PK": "dd/MM/yyyy",
+    "uz-Cyrl-UZ": "dd.MM.yyyy",
+    "uz-Latn-UZ": "dd/MM yyyy",
+    "vi-VN": "dd/MM/yyyy",
+    "wo-SN": "dd/MM/yyyy",
+    "xh-ZA": "yyyy/MM/dd",
+    "yo-NG": "d/M/yyyy",
+    "zh-CN": "yyyy/M/d",
+    "zh-HK": "d/M/yyyy",
+    "zh-MO": "d/M/yyyy",
+    "zh-SG": "d/M/yyyy",
+    "zh-TW": "yyyy/M/d",
+    "zu-ZA": "yyyy/MM/dd",
+};
 
 /**
- * 
+ *
  * @param {Date} date
- * @returns {String} 
+ * @returns {String}
  */
 export function yyymmdd(date) {
     var mm = date.getMonth() + 1; // getMonth() is zero-based
@@ -38,9 +249,6 @@ export function yyymmdd(date) {
 };
 
 
-
-
-
 export var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 export var shortDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export var monthNames = ["January", "February", "March", "April", "May", "June",
@@ -51,13 +259,12 @@ export var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 
-
 export var formatTokenRegex = /([,\.\-\/])|([a-zA-Z0-9]+)/g;//more
 
 /**
- * 
- * @param {Date} date 
- * @param {String} format 
+ *
+ * @param {Date} date
+ * @param {String} format
  * @returns {String}
  */
 export function formatDateString(date, format) {
@@ -68,23 +275,58 @@ export function formatDateString(date, format) {
     var year = date.getFullYear()
     return format.replace(formatTokenRegex, function (x) {
         switch (x) {
-            case "dddd": return dayNames[day];
-            case "ddd": return shortDayNames[day];
-            case "dd": return dt < 10 ? '0' + dt : '' + dt;
-            case "d": return '' + dt;
-            case "mmmm": return monthNames[month];
-            case "mmm": return shortMonthNames[month];
-            case "mm": return (month + 1) < 10 ? '0' + (month + 1) : '' + (month + 1);
-            case "m": return '' + (month + 1);
-            case 'yy': return (year + '').match(/..$/)[0];
-            case 'yyyy': return year + '';
+            case "dddd":
+                return dayNames[day];
+            case "ddd":
+                return shortDayNames[day];
+            case "dd":
+                return dt < 10 ? '0' + dt : '' + dt;
+            case "d":
+                return '' + dt;
+            case "mmmm":
+                return monthNames[month];
+            case "mmm":
+                return shortMonthNames[month];
+            case "mm":
+                return (month + 1) < 10 ? '0' + (month + 1) : '' + (month + 1);
+            case "m":
+                return '' + (month + 1);
+            case 'yy':
+                return (year + '').match(/..$/)[0];
+            case 'yyyy':
+                return year + '';
             default:
                 return x;
         }
     });
 }
 
-export function formartDateString(){
+
+
+export var LOCAL_DATE_FORMAT = (function () {
+    var tested = {};
+    var res = 'dd/mm/yyyy';
+    var fm;
+    var d1 = new Date(2020, 2, 2);
+    var d2 = new Date(2020, 11, 20);
+    var s1 = d1.toLocaleDateString();
+    var s2 = d2.toLocaleDateString();
+
+    for (var lang in language2LocalDateFormat) {
+        fm = language2LocalDateFormat[lang];
+        if (tested[fm]) continue;
+        tested[fm] = true;
+        if (formatDateString(d1, fm) === s1 &&formatDateString(d2, fm) === s2  ){
+            res = fm;
+            break;
+        }
+    }
+    return res;
+})();
+
+
+
+export function formartDateString() {
     window.ALogger.warn("spelled incorrectly: formartDateString");
     return formatDateString.apply(null, arguments);
 }
@@ -110,14 +352,30 @@ export function parseDateString(text, format) {
         textToken = textTokens[i];
         formatToken = formatTokens[i];
         switch (formatToken) {
-            case "dd": day = parseInt(textToken); break;
-            case "d": day = parseInt(textToken); break;
-            case "mmmm": month = monthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase()); break;
-            case "mmm": month = shortMonthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase()); break;
-            case "mm": month = parseInt(textToken) - 1; break;
-            case "m": month = parseInt(textToken) - 1; break;
-            case 'yy': year = Math.floor((new Date().getFullYear()) / 100) * 100 + parseInt(textToken); break;
-            case 'yyyy': year = parseInt(textToken); break;
+            case "dd":
+                day = parseInt(textToken);
+                break;
+            case "d":
+                day = parseInt(textToken);
+                break;
+            case "mmmm":
+                month = monthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase());
+                break;
+            case "mmm":
+                month = shortMonthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase());
+                break;
+            case "mm":
+                month = parseInt(textToken) - 1;
+                break;
+            case "m":
+                month = parseInt(textToken) - 1;
+                break;
+            case 'yy':
+                year = Math.floor((new Date().getFullYear()) / 100) * 100 + parseInt(textToken);
+                break;
+            case 'yyyy':
+                year = parseInt(textToken);
+                break;
             default:
                 if (textToken != formatToken)
                     throw new Error('Unexpected token ' + textToken);
@@ -147,7 +405,7 @@ export function parseDateString(text, format) {
 
 /**
  * @param {Date} date
- * @return {Date}  
+ * @return {Date}
  */
 export function prevDate(date) {
     return new Date(date.getTime() - 86400000);
@@ -155,17 +413,16 @@ export function prevDate(date) {
 
 /**
  * @param {Date} date
- * @return {Date}  
+ * @return {Date}
  */
 export function nextDate(date) {
     return new Date(date.getTime() + 86400000);
 };
 
 
-
 /**
  * @param {Date} date
- * @return {Date} date at 00:00 
+ * @return {Date} date at 00:00
  */
 export function beginOfHour(date) {
     var res = new Date(date.getTime());
@@ -179,7 +436,7 @@ export function beginOfHour(date) {
 /**
  * @param {Date} date
  * @param {Boolean} gmt default:false
- * @return {Date} date at 00:00 
+ * @return {Date} date at 00:00
  */
 export function beginOfDay(date, gmt) {
     var res = new Date(date.getTime());
@@ -196,7 +453,7 @@ export function beginOfDay(date, gmt) {
 /**
  * @param {Date} date
  * @param {Boolean} gmt default:false
- * @return {Date} date at 00:00 
+ * @return {Date} date at 00:00
  */
 export function beginOfWeek(date, gmt, begin) {
     begin = begin || 0;
@@ -210,7 +467,7 @@ export function beginOfWeek(date, gmt, begin) {
 /**
  * @param {Date} date
  * @param {Boolean} gmt default:false
- * @return {Date} date at 00:00 AM 
+ * @return {Date} date at 00:00 AM
  */
 export function beginOfMonth(date, gmt) {
     gmt = !!gmt;
@@ -228,7 +485,7 @@ export function beginOfMonth(date, gmt) {
 /**
  * @param {Date} date
  * @param {Boolean} gmt default:false
- * @return {Date} date at 00:00 AM 
+ * @return {Date} date at 00:00 AM
  */
 export function beginOfYear(date, gmt) {
     gmt = !!gmt;
@@ -248,7 +505,7 @@ export function beginOfYear(date, gmt) {
  * @param {Date} date0
  * @param {Date} date1
  * @param {Boolean} gmt default:false
- * @return {number} 
+ * @return {number}
  */
 export function compareDate(date0, date1, gmt) {
     var date0 = beginOfDay(date0, !!gmt);
@@ -257,12 +514,11 @@ export function compareDate(date0, date1, gmt) {
 };
 
 
-
 /**
  * @param {Date} date0
  * @param {Date} date1
  * @param {Boolean} gmt default:false
- * @return {number} 
+ * @return {number}
  */
 
 export function compareMonth(date0, date1, gmt) {
@@ -284,11 +540,10 @@ export function compareYear(date0, date1, gmt) {
 };
 
 
-
 /**
- * 
+ *
  * @param {Date} date
- * @returns {Date} 
+ * @returns {Date}
  */
 export function nextMonth(date) {
     var m = date.getMonth();
@@ -302,9 +557,9 @@ export function nextMonth(date) {
 }
 
 /**
- * 
+ *
  * @param {Date} date
- * @returns {Date} 
+ * @returns {Date}
  */
 export function prevMonth(date) {
     var m = date.getMonth();
@@ -318,7 +573,7 @@ export function prevMonth(date) {
 }
 
 /**
- * 
+ *
  * @param {Number} year
  * @param {Number} month
  * @returns {Number}
