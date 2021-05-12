@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>DateTime</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var formatList = Object.keys(absol.datetime.language2LocalDateFormat).reduce(function (ac, key) {
+            var fm = absol.datetime.language2LocalDateFormat[key];
+            if (!ac.dict[fm]) {
+                ac.result.push(fm);
+                ac.dict[fm] = true;
+            }
+            return ac;
+        }, { result: [], dict: {} }).result;
+        formatList.push('mm/yyyy', 'yyyy');
+        _(`<div>Now <strong>${new Date().toString()}</strong></div>`).addTo(document.body);
+        formatList.forEach(function (fm) {
+            var text = absol.datetime.formatDateString(new Date(), fm);
+            _(`<div>${fm} : <strong>${text}</strong> ${absol.datetime.parseDateString(text, fm)}</div>`)
+                .addTo(document.body);
+        });
+    })()
+</script>
+</body>
+</html>
