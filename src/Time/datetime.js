@@ -340,9 +340,9 @@ export function parseDateString(text, format) {
     format = nonAccentVietnamese(format).toLowerCase();
     var textTokens = text.match(formatTokenRegex) || [];
     var formatTokens = format.match(formatTokenRegex) || [];
-    var year = NaN;
-    var month = NaN;
-    var day = NaN;
+    var year = new Date().getFullYear();
+    var month = 0;
+    var day = 1;
     var n = Math.min(textTokens.length, formatTokens.length);
     var textToken;
     var formatToken;
