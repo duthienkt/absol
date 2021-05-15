@@ -232,6 +232,14 @@ export var language2LocalDateFormat = {
     "zu-ZA": "yyyy/mm/dd",
 };
 
+export var dateFormat2LocationList = Object.keys(language2LocalDateFormat).reduce(function (ac, cr) {
+    ac[language2LocalDateFormat[cr]] = ac[language2LocalDateFormat[cr]] || [];
+    ac[language2LocalDateFormat[cr]].push(cr);
+    return ac;
+}, {});
+
+export var dateFormatList = Object.keys(dateFormat2LocationList);
+
 /**
  *
  * @param {Date} date
