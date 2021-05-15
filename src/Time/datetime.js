@@ -267,12 +267,12 @@ export var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 
-export var formatTokenRegex = /([,\.\-\/])|([a-zA-Z0-9]+)/g;//more
+export var formatTokenRegex = /([,.\-\/])|([a-zA-Z0-9]+)/g;//more
 
 /**
  *
  * @param {Date} date
- * @param {String} format
+ * @param {String=} format
  * @returns {String}
  */
 export function formatDateString(date, format) {
@@ -341,7 +341,7 @@ export function formartDateString() {
  *
  * @param {String} text
  * @param {String} format
- * @returns {String}
+ * @returns {Date}
  */
 export function parseDateString(text, format) {
     text = nonAccentVietnamese(text).toLowerCase();
@@ -383,13 +383,13 @@ export function parseDateString(text, format) {
                 year = parseInt(textToken);
                 break;
             default:
-                if (textToken != formatToken)
+                if (textToken !== formatToken)
                     throw new Error('Unexpected token ' + textToken);
         }
     }
 
     if (isNaN(year)) throw new Error('Invalid year');
-    if (isNaN(month) && month != -1) {
+    if (isNaN(month) && month !== -1) {
         throw new Error('Invalid month');
     }
     else {
@@ -405,7 +405,7 @@ export function parseDateString(text, format) {
     else {
         throw new Error('Invalid day');
     }
-    return new Date(year, month, day, 0, 0, 0, 0);
+    return new Date(year, month, day);
 }
 
 
@@ -414,16 +414,16 @@ export function parseDateString(text, format) {
  * @return {Date}
  */
 export function prevDate(date) {
-    return new Date(date.getTime() - 86400000);
-};
+    return new Date(date.getTime() - MILLIS_PER_DAY);
+}
 
 /**
  * @param {Date} date
  * @return {Date}
  */
 export function nextDate(date) {
-    return new Date(date.getTime() + 86400000);
-};
+    return new Date(date.getTime() + MILLIS_PER_DAY);
+}
 
 
 /**
@@ -436,12 +436,12 @@ export function beginOfHour(date) {
     res.setSeconds(0);
     res.setMinutes(0);
     return res;
-};
+}
 
 
 /**
  * @param {Date} date
- * @param {Boolean} gmt default:false
+ * @param {Boolean=} gmt default:false
  * @return {Date} date at 00:00
  */
 export function beginOfDay(date, gmt) {
@@ -458,13 +458,14 @@ export function beginOfDay(date, gmt) {
 
 /**
  * @param {Date} date
- * @param {Boolean} gmt default:false
+ * @param {Boolean=} gmt default:false
+ * @param {number=} begin default:0
  * @return {Date} date at 00:00
  */
 export function beginOfWeek(date, gmt, begin) {
     begin = begin || 0;
     var res = beginOfDay(date, gmt);
-    while ((gmt ? res.getUTCDay() : res.getDay()) != begin) {
+    while ((gmt ? res.getUTCDay() : res.getDay()) !== begin) {
         res = prevDate(res);
     }
     return res;
@@ -472,7 +473,7 @@ export function beginOfWeek(date, gmt, begin) {
 
 /**
  * @param {Date} date
- * @param {Boolean} gmt default:false
+ * @param {Boolean=} gmt default:false
  * @return {Date} date at 00:00 AM
  */
 export function beginOfMonth(date, gmt) {
@@ -490,7 +491,7 @@ export function beginOfMonth(date, gmt) {
 
 /**
  * @param {Date} date
- * @param {Boolean} gmt default:false
+ * @param {Boolean=} gmt default:false
  * @return {Date} date at 00:00 AM
  */
 export function beginOfYear(date, gmt) {
@@ -510,7 +511,7 @@ export function beginOfYear(date, gmt) {
 /**
  * @param {Date} date0
  * @param {Date} date1
- * @param {Boolean} gmt default:false
+ * @param {Boolean=} gmt default:false
  * @return {number}
  */
 export function compareDate(date0, date1, gmt) {
@@ -523,7 +524,7 @@ export function compareDate(date0, date1, gmt) {
 /**
  * @param {Date} date0
  * @param {Date} date1
- * @param {Boolean} gmt default:false
+ * @param {Boolean=} gmt default:false
  * @return {number}
  */
 
@@ -536,14 +537,22 @@ export function compareMonth(date0, date1, gmt) {
     var y1 = gmt ? date1.getUTCFullYear() : date1.getFullYear();
 
     return (y0 - y1) * 12 + (m0 - m1);
-};
+}
 
+
+/***
+ *
+ * @param {Date} date0
+ * @param {Date} date1
+ * @param {boolean=}gmt
+ * @returns {number}
+ */
 export function compareYear(date0, date1, gmt) {
     gmt = !!gmt;
     var y0 = gmt ? date0.getUTCFullYear() : date0.getFullYear();
     var y1 = gmt ? date1.getUTCFullYear() : date1.getFullYear();
     return y0 - y1;
-};
+}
 
 
 /**
