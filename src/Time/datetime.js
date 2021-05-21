@@ -1,4 +1,5 @@
 import {nonAccentVietnamese} from "../String/stringFormat";
+import {integerZeroPadding} from "../Math/int";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
@@ -518,7 +519,7 @@ export function compareDate(date0, date1, gmt) {
     var date0 = beginOfDay(date0, !!gmt);
     var date1 = beginOfDay(date1, !!gmt);
     return (date0.getTime() - date1.getTime()) / (86400000);
-};
+}
 
 
 /**
@@ -598,3 +599,173 @@ export function daysInMonth(year, month) {
     var end = nextMonth(start);
     return compareDate(end, start);
 }
+
+
+export var DATE_TIME_TOKEN_RGX = /([^\s.\/:\-,]+)|([.\/:\-,]+)/i;
+
+
+/****
+ *
+ * @param text
+ * @param format support d, M, Y, Q
+ * @returns {Date}
+ */
+export function parseDateTime(text, format) {
+    var tokenMap = {};
+    var txtRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
+    var fmRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
+    var tkMatched, fmMatched;
+    tkMatched = txtRgx.exec(text);
+    fmMatched = fmRgx.exec(format);
+    var tkText, fmText;
+    while (tkMatched && fmMatched) {
+        tkText = tkMatched[0];
+        fmText = fmMatched[0];
+        switch (fmText) {
+            case 'd':
+            case 'dd':
+                tokenMap.day = parseInt(tkText, 10);
+                break;
+            case 'M':
+            case 'MM':
+                tokenMap.month = parseInt(tkText, 10) - 1;
+                break;
+            case 'y':
+            case 'yyyy':
+                tokenMap.year = parseInt(tkText, 10);
+                break;
+            case 'h':
+            case 'hh':
+            case 'H':
+            case 'HH':
+                tokenMap.hour = parseInt(tkText, 10);
+                break;
+            case 'm':
+            case 'mm':
+                tokenMap.minute = parseInt(tkText, 10);
+                break;
+            case 'a':
+                if (tkText === 'AM' || tkText === 'PM')
+                    tokenMap.period = tkText;
+                else throw new Error('Invalid period(a):' + tkText)
+                break;
+            case 'Q':
+            case 'QQ':
+                tokenMap.month = (parseInt(tkText, 10) - 1) * 3;
+                break;
+            default:
+                if (tkText !== fmText) {
+                    throw  new Error('Unexpected token ' + JSON.stringify(tkText) +
+                        ' at ' + tkMatched.index + ', expected ' + fmText);
+                }
+        }
+
+        tkMatched = txtRgx.exec(text);
+        fmMatched = fmRgx.exec(format);
+    }
+
+    if (tokenMap.period) {
+        if (tokenMap.period === 'AM' && tokenMap.hour === 12) tokenMap.hour = 0;
+        else if (tokenMap.period === "PM" && tokenMap.hour < 12) tokenMap.hour += 12;
+    }
+
+    var paramNames = ['year', 'month', 'day', 'hour', 'minute', 'second'];
+    var paramShortNames = ['y', 'M', 'd', 'h', 'm', 's'];
+    var paramDefaultValues = [new Date().getFullYear(), 0, 1, 0, 0, 0];
+    var resParam = paramDefaultValues.slice();
+    var paramList = paramNames.reduce(function (ac, cr, i) {
+        var sN = paramShortNames[i];
+        if (cr in tokenMap) {
+            ac += sN;
+        }
+        return ac;
+    }, '');
+
+
+    var paramName;
+    for (var i = 0; i < paramNames.length; ++i) {
+        paramName = paramNames[i];
+        resParam[i] = tokenMap[paramName] === undefined ? paramDefaultValues[i] : tokenMap[paramName];
+    }
+
+    switch (paramList) {
+        case 'hm':
+            resParam.splice(1, 2, new Date().getMonth(), new Date().getDate());
+            break;
+    }
+
+    return new Date(resParam[0], resParam[1], resParam[2], resParam[3], resParam[4], resParam[5]);
+}
+
+export function formatDateTime(date, format) {
+    var fmRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
+    return format.replace(fmRgx, function (s) {
+        var res = s;
+        switch (s) {
+            case 'd':
+            case 'dd':
+                res = integerZeroPadding(date.getDate(), s.length);
+                break;
+            case 'M':
+            case 'MM':
+                res = integerZeroPadding(date.getMonth() + 1, s.length);
+                break;
+            case 'y':
+            case 'yyyy':
+                res = integerZeroPadding(date.getFullYear(), s.length);
+                break;
+            case 'yy':
+                res = integerZeroPadding(date.getFullYear() % 100, s.length);
+                break;
+            case 'a':
+                res = date.getHours() < 12 ? "AM" : "PN";
+                break;
+            case "H":
+            case 'HH':
+                res = integerZeroPadding(date.getHours(), s.length);
+                break;
+            case 'h':
+            case 'hh':
+                res = integerZeroPadding(1 + (date.getHours() - 1) % 12, s.length);
+                break;
+            case 'm':
+            case 'mm':
+                res = integerZeroPadding(date.getMinutes(), s.length);
+                break;
+            case 'Q':
+            case 'QQ':
+                res = integerZeroPadding(Math.floor(date.getMonth() / 3) + 1, s.length)
+                break;
+        }
+        return res;
+    });
+}
+
+
+function test() {
+    var y = new Date().getFullYear();
+    var M = new Date().getMonth();
+    var d = new Date().getDate();
+
+    [['22/12/2021', 'dd/MM/yyyy', new Date(2021, 11, 22)],
+        ['12:55 AM', 'hh:mm a', new Date(y, M, d, 0, 55)],
+        ['12:55 PM', 'hh:mm a', new Date(y, M, d, 12, 55)],
+        ['22-12', 'dd-MM', new Date(y, 11, 22, 0, 0)],
+        ['2020-11', 'yyyy-MM', new Date(2020, 10, 1, 0, 0)],
+        ['11-2020', 'MM-yyyy', new Date(2020, 10, 1, 0, 0)],
+        ['quarter 04, 2020', 'quarter QQ, yyyy', new Date(2020, 9, 1, 0, 0)],
+
+    ].forEach(function (pr) {
+        var d = parseDateTime(pr[0], pr[1]);
+        if ((d && d.getTime()) === pr[2].getTime()) {
+            console.info("Pass ", pr);
+        }
+        else {
+            console.error("Text fail with ", pr.slice(0, 2), ', expect ', pr[2], ', return ' + d);
+        }
+    });
+    console.log(formatDateTime(new Date(), "Mùa QQ, năm y, H giờ m phút"));
+
+}
+
+// setTimeout(test, 100);

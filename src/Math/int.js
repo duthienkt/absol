@@ -138,6 +138,18 @@ export function numberAutoFixed(x, eDelta) {
     return Math.round(x * e) / e;
 }
 
+/***
+ *
+ * @param {number} number
+ * @param {number} length
+ * @returns {string}
+ */
+export function integerZeroPadding(number, length) {
+    var res = number + '';
+    while (res.length < length) res = '0' + res;
+    return res;
+}
+
 export function harmonicMean(a, b) {
     return 2 / (1 / a + 1 / b);
 }
