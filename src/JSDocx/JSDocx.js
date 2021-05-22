@@ -2,11 +2,12 @@ import DocxTpl from './DocxTpl';
 import content_types_xml from './assets/content_types.xml';
 import rels_xml from './assets/rels.xml';
 import document_xml_rels from './assets/document.xml.rels';
-import JSZip from 'jszip';
+
 
 import Dom from '../HTML5/Dom';
 import Svg from '../HTML5/Svg';
 
+var JSZip = window.JSZip;
 
 
 function JSDocx(props) {
@@ -60,11 +61,11 @@ JSDocx._prepareImageParts = function (htmlSource) {
             htmlSource: htmlSource,
             imageContentParts: imageContentParts
         };
-    } else {
+    }
+    else {
         throw new Error("Not a valid source provided!");
     }
 };
-
 
 
 JSDocx._getMHTdocument = function (htmlSource) {
