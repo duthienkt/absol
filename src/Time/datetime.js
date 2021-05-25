@@ -270,6 +270,8 @@ export var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 export var formatTokenRegex = /([,.\-\/])|([a-zA-Z0-9]+)/g;//more
 
+export var DATE_TIME_TOKEN_RGX = /([^\s.\/:\-,]+)|([.\/:\-,]+)/i;
+
 /**
  *
  * @param {Date} date
@@ -312,24 +314,64 @@ export function formatDateString(date, format) {
 
 
 export var LOCAL_DATE_FORMAT = (function () {
-    var tested = {};
-    var res = 'dd/mm/yyyy';
-    var fm;
-    var d1 = new Date(2020, 2, 2);
-    var d2 = new Date(2020, 11, 20);
-    var s1 = d1.toLocaleDateString();
-    var s2 = d2.toLocaleDateString();
-
-    for (var lang in language2LocalDateFormat) {
-        fm = language2LocalDateFormat[lang];
-        if (tested[fm]) continue;
-        tested[fm] = true;
-        if (formatDateString(d1, fm) === s1 && formatDateString(d2, fm) === s2) {
-            res = fm;
-            break;
+    var d = new Date(2021, 4, 4);
+    var s = d.toLocaleDateString();
+    var fm = s.replace(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g'), function (token) {
+        switch (token) {
+            case '2021':
+                return 'yyyy';
+            case '5':
+                return 'M';
+            case '05':
+                return 'MM';
+            case '4':
+                return 'd';
+            case '04':
+                return 'dd';
+            default:
+                return token;
         }
-    }
-    return res;
+    });
+
+    return fm;
+})();
+
+export var LOCAL_DATE_TIME_FORMAT = (function () {
+    var d = new Date(2021, 4, 4, 6, 7, 3);
+    var s = d.toLocaleString();
+    var fm = s.replace(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g'), function (token) {
+        switch (token) {
+            case '2021':
+                return 'yyyy';
+            case '5':
+                return 'M';
+            case '05':
+                return 'MM';
+            case '4':
+                return 'd';
+            case '04':
+                return 'dd';
+            case '06':
+                if (new Date(2021, 4, 4, 18, 7, 3).toLocaleString().indexOf(18) >= 0)
+                    return 'HH';
+                return 'hh';
+            case '6':
+                return 'h';
+            case '07':
+                return 'mm';
+            case '7':
+                return 'm';
+            case '03':
+                return 'ss';
+            case '3':
+                return 's';
+            case 'AM':
+                return 'a'
+            default:
+                return token;
+        }
+    });
+    return fm;
 })();
 
 
@@ -599,9 +641,6 @@ export function daysInMonth(year, month) {
     var end = nextMonth(start);
     return compareDate(end, start);
 }
-
-
-export var DATE_TIME_TOKEN_RGX = /([^\s.\/:\-,]+)|([.\/:\-,]+)/i;
 
 
 /****
