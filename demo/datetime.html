@@ -10,6 +10,8 @@
     (function () {
         var _ = absol._;
         var $ = absol.$;
+        _(`<div>LOCAL_DATE_FORMAT = ${absol.datetime.LOCAL_DATE_FORMAT}</div>`).addTo(document.body);
+        _(`<div>LOCAL_DATE_TIME_FORMAT = ${absol.datetime.LOCAL_DATE_TIME_FORMAT}</div>`).addTo(document.body);
         var formatList = Object.keys(absol.datetime.language2LocalDateFormat).reduce(function (ac, key) {
             var fm = absol.datetime.language2LocalDateFormat[key];
             if (!ac.dict[fm]) {
