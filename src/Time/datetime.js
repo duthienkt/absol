@@ -710,6 +710,12 @@ export function formatDateTime(date, format) {
             case 'MM':
                 res = integerZeroPadding(date.getMonth() + 1, s.length);
                 break;
+            case 'MMM':
+                res = shortMonthNames[date.getMonth()];
+                break;
+            case 'MMMM':
+                res = monthNames[date.getMonth()];
+                break;
             case 'y':
             case 'yyyy':
                 res = integerZeroPadding(date.getFullYear(), s.length);
@@ -718,7 +724,7 @@ export function formatDateTime(date, format) {
                 res = integerZeroPadding(date.getFullYear() % 100, s.length);
                 break;
             case 'a':
-                res = date.getHours() < 12 ? "AM" : "PN";
+                res = date.getHours() < 12 ? "AM" : "PM";
                 break;
             case "H":
             case 'HH':
