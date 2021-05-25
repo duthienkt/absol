@@ -14,7 +14,6 @@ import XML from './XML/XML';
 
 import Color from './Color/Color';
 import IFrameBridge from './Network/IFrameBridge';
-import JSZip from 'jszip';
 import JSDocx from './JSDocx/JSDocx';
 import Broadcast from './Network/Broadcast';
 
@@ -90,7 +89,7 @@ var absol = {
     XML: XML,
     Color: Color,
     EventEmitter: EventEmitter,
-    JSZip: JSZip,
+    JSZip: window.JSZip,
     IFrameBridge: IFrameBridge,
     JSDocx: JSDocx,
     Broadcast: Broadcast,
