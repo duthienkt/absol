@@ -6,7 +6,7 @@
 import Ref from './Ref';
 
 /***
- * @typedef {{get?:function, set?: function, descriptor?: Object, getDescriptor?: function}} AttributeHandler
+ * @typedef {{get?:function, set?: function, descriptor?: Object, getDescriptor?: function, export?: function}} AttributeHandler
  */
 
 
