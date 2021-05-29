@@ -73,3 +73,41 @@ export function copyText(text) {
     }
     return navigator.clipboard.writeText(text);
 }
+
+
+function fallbackReadTextFromClipboard() {
+    return new Promise(function (resolve, reject) {
+        var textArea = document.createElement("textarea");
+
+        // Avoid scrolling to bottom
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+
+        try {
+            var successful = document.execCommand('paste');
+            if (successful) {
+                resolve(textArea.value);
+            }
+            else {
+                reject();
+            }
+        } catch (err) {
+            reject(err);
+        }
+
+        document.body.removeChild(textArea);
+    });
+}
+
+export function pasteText() {
+    if (navigator.clipboard) {
+        return navigator.clipboard.readText();
+    }
+    else {
+        return fallbackReadTextFromClipboard();
+    }
+}
