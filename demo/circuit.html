@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Circuit</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var CCBlock = absol.circuit.CCBlock;
+        var CCLine = absol.circuit.CCLine;
+        var OOP = absol.OOP;
+        var _ = absol._;
+        var $ = absol.$;
+
+        function NumberDisplay() {
+            CCBlock.apply(this, arguments);
+            this._createView();
+        }
+
+        OOP.mixClass(NumberDisplay, CCBlock);
+        NumberDisplay.prototype.pinHandlers = {};
+        NumberDisplay.prototype.pinHandlers.value = {
+            receives: function (value) {
+                this.$view.innerHTML = value;
+            }
+        }
+
+        NumberDisplay.prototype._createView = function () {
+            this.$view = _({
+                tag: 'span',
+                child: { text: '0' }
+            });
+        };
+
+
+        function Ticker() {
+            CCBlock.apply(this, arguments);
+            setInterval(function (){
+                this.pinFireAll();
+            }.bind(this), 50)
+        }
+
+        OOP.mixClass(Ticker, CCBlock);
+
+        Ticker.prototype.pinHandlers = {};
+        Ticker.prototype.pinHandlers.value = {
+            get: function (){
+                return new Date().getTime();
+            }
+        };
+
+        var mTicker = new Ticker();
+        var mNumberDisplay = new NumberDisplay();
+        var mLine = new CCLine(mTicker, 'value', mNumberDisplay, 'value');
+        mNumberDisplay.$view.addTo(document.body);
+        window.mLine = mLine;
+
+    })()
+</script>
+</body>
+</html>
