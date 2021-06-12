@@ -57,6 +57,8 @@ import ALogger from "./Code/ALogger";
 import FlagManager from "./Code/FlagManager";
 import ObservableArray from "./AppPattern/ObservableArray";
 import ObservableStruct from "./AppPattern/ObservableStruct";
+import CCBlock from "./AppPattern/circuit/CCBlock";
+import CCLine from "./AppPattern/circuit/CCLine";
 
 
 var absol = {
@@ -126,7 +128,11 @@ var absol = {
     ALogger: ALogger,
     FlagManager: FlagManager,
     ObservableArray: ObservableArray,
-    ObservableStruct: ObservableStruct
+    ObservableStruct: ObservableStruct,
+    circuit:{
+        CCBlock: CCBlock,
+        CCLine: CCLine
+    }
 };
 
 
