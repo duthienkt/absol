@@ -59,7 +59,7 @@ import ObservableArray from "./AppPattern/ObservableArray";
 import ObservableStruct from "./AppPattern/ObservableStruct";
 import CCBlock from "./AppPattern/circuit/CCBlock";
 import CCLine from "./AppPattern/circuit/CCLine";
-
+import * as FileSaver from './Network/FileSaver';
 
 var absol = {
     int: int,
@@ -129,10 +129,11 @@ var absol = {
     FlagManager: FlagManager,
     ObservableArray: ObservableArray,
     ObservableStruct: ObservableStruct,
-    circuit:{
+    circuit: {
         CCBlock: CCBlock,
         CCLine: CCLine
-    }
+    },
+    FileSaver
 };
 
 
