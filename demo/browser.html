@@ -1,0 +1,41 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST</title>
+    <script src="../dist/absol.dependents.js"></script>
+    <script src="../dist/absol.js"></script>
+</head>
+<body>
+<script>
+    var _ = absol._;
+    var browserInfo = Object.assign({}, absol.BrowserDetector);
+    delete browserInfo.rulesheet;
+    // delete browserInfo.rulesheet;
+    _({
+        tag: 'pre',
+        child: {
+            text: JSON.stringify(browserInfo, null, 4)
+        }
+    }).addTo(document.body);
+    _({
+        tag: 'pre',
+        child: {
+            text: '\'download\' in HTMLAnchorElement.prototype =>' + ('download' in HTMLAnchorElement.prototype)
+        }
+    }).addTo(document.body);
+    _({
+        tag: 'button',
+        attr: {
+            href: '#',
+        },
+        on: {
+            click: function () {
+                    absol.FileSaver.saveAs('./autohightlighting.js', 'abc.txt')
+            }
+        },
+        child: { text: 'Download it' },
+    }).addTo(document.body);
+
+</script>
+</body>
+</html>
