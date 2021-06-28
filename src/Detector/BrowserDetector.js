@@ -2,8 +2,8 @@ import BrowserRules from './BrowserRules';
 
 
 /**
- * 
- * @param {BrowserRules} rulesheet 
+ *
+ * @param {BrowserRules} rulesheet
  */
 function BrowserDetector(rulesheet) {
     this.au = global.navigator ? (navigator.userAgent || '') : '';
@@ -14,8 +14,13 @@ function BrowserDetector(rulesheet) {
     this.browser = this.detectByRules(this.rulesheet.browser);
     this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     this.isCococ = navigator.userAgent.toLowerCase().indexOf('coc_coc_browser') >= 1;
-    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('win') < 0 && navigator.userAgent.toLowerCase().indexOf('android') < 0;
+    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1
+        && navigator.userAgent.toLowerCase().indexOf('win') < 0
+        && navigator.userAgent.toLowerCase().indexOf('android') < 0;
+    // this.isSafari = /constructor/i.test(window.HTMLElement) || window.safari;
     this.isMobile = navigator.userAgent.indexOf('KFFOWI') > -1 || navigator.userAgent.toLowerCase().indexOf('mobile') > -1;
+    this.isMacOSWebView = /Macintosh/.test(this.au) && /AppWebkit/.test(this.au) && !/Safari/.test(this.au);
+    this.isChromeIOS = /CriOS\/[\d]+/.test(this.au);
     this.hasTouch = 'ontouchstart' in window ||
         window.DocumentTouch && document instanceof window.DocumentTouch ||
         navigator.maxTouchPoints > 0 ||
@@ -31,23 +36,23 @@ function BrowserDetector(rulesheet) {
             });
             window.addEventListener('test', null, opts);
             window.removeEventListener('test', null, opts);
-        } catch (e) { }
+        } catch (e) {
+        }
         return supportsPassiveOption;
     })();
 }
 
 
-
 BrowserDetector.prototype.detectByRules = function (rules) {
     var result = {};
     for (var i = 0; i < rules.length; ++i) {
-        var os = rules[i];
-        var type = os[0];
-        var rgx = os[1];
+        var rule = rules[i];
+        var type = rule[0];
+        var rgx = rule[1];
         if (typeof (rgx) == 'function') {
             rgx = rgx(this.au.toLowerCase());
         }
-        if (Object.prototype.toString.call(rgx).indexOf('RegExp')) {
+        if (Object.prototype.toString.call(rgx).indexOf('RegExp') >= 0) {
             var matched = this.au.toLowerCase().match(rgx);
             if (matched) {
                 result.type = type;
@@ -66,8 +71,6 @@ BrowserDetector.prototype.detectByRules = function (rules) {
     return result;
 
 };
-
-
 
 
 export default new BrowserDetector(BrowserRules);
