@@ -1,7 +1,3 @@
-/***
- *
- * @constructor
- */
 import {randomIdent} from "../../String/stringGenerate";
 
 /***
@@ -11,7 +7,7 @@ import {randomIdent} from "../../String/stringGenerate";
  */
 function CCBlock(opt) {
     opt = opt || {};
-    this.id = opt.id || randomIdent();
+    this.id = opt.id || randomIdent(16);
     Object.defineProperty(this, '__cc_listener__', {
         enumerable: false,
         configurable: true,

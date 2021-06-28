@@ -15,7 +15,7 @@ function CCLine(u, uPinName, v, vPinName, twoWay, opt) {
     opt = opt || {};
     twoWay = !!twoWay;
     Object.defineProperty(this, 'id', {
-        enumerable: true, writable: false, value: opt.id && randomIdent(32)
+        enumerable: true, writable: false, value: opt.id || randomIdent(32)
     });
     Object.defineProperty(this, 'u', {
         enumerable: true, writable: false, value: u
