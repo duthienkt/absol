@@ -110,15 +110,14 @@ function msSaveAs(blob, name, opts) {
 }
 
 function popupSaveAs(blob, name, opts, popup) {
+    if (typeof blob === 'string') {
+        download(blob, name, opts);
+        return;
+    }
     popup = popup || open('', '_blank');
     if (popup) {
         popup.document.title = name || 'download';
         popup.document.body.innerText = "downloading..."
-    }
-
-    if (typeof blob === 'string') {
-        download(blob, name, opts);
-        return;
     }
     name = name || blob.name || 'download';
     blob.name = name;
@@ -126,8 +125,9 @@ function popupSaveAs(blob, name, opts, popup) {
     var isSafari = BrowserDetector.isSafari;
     var isChromeIOS = BrowserDetector.isChromeIOS;
     var isMacOSWebView = BrowserDetector.isMacOSWebView;
+    var isSafariUnder13 = (BrowserDetector.browser.type === 'safari' && parseFloat(BrowserDetector.browser.version) < 13);
     if ((!isChromeIOS || (force && isSafari) || isMacOSWebView)
-        && typeof FileReader !== 'undefined') {
+        && typeof FileReader !== 'undefined' & !isSafariUnder13) {
         var reader = new FileReader();
         reader.onloadend = function () {
             var url = reader.result;
@@ -141,7 +141,7 @@ function popupSaveAs(blob, name, opts, popup) {
     else {
         var URL = window.URL || window.webkitURL;
         var url = URL.createObjectURL(blob);
-        if (popup) popup.location = url;
+        if (popup) popup.location.href = url;
         else location.href = url;
         popup = null;
         setTimeout(function () {
@@ -168,11 +168,13 @@ export function saveAs(blob, name, opts, popup) {
         msSaveAs(blob, name, opts);
     }
     else {
-        popupSaveAs(blob, name, opts, popup);
+        setTimeout(function () {
+            popupSaveAs(blob, name, opts, popup);
+        }, 100)
     }
 }
 
-export function saveTextAs(text, name, opts){
-    var blob = new Blob([text], {type:'text/plain'});
+export function saveTextAs(text, name, opts) {
+    var blob = new Blob([text], { type: 'text/plain' });
     saveAs(blob, name, opts);
 }
