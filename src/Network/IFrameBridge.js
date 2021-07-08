@@ -225,11 +225,23 @@ IFrameBridge.prototype.importScript = function (code) {
 };
 
 
+IFrameBridge.prototype.createMethod = function (name, fx) {
+    this[name] = function () {
+        return this.invoke.apply(this, [name].concat(Array.prototype.slice.call(arguments)));
+    };
+    return this.invoke.apply(this, ['_receiveMethod', name, fx.toString()]);
+};
+
+
 IFrameBridge.prototype._receiveScriptURLs = function () {
     if (self.importScripts) {
         self.importScripts.apply(self, arguments);
     }
 };
 
+
+IFrameBridge.prototype._receiveMethod = function (name, code) {
+    this[name] = (new Function('return ' + code))();
+};
 
 export default IFrameBridge;

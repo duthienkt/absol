@@ -340,5 +340,10 @@ IFrameBridge.prototype._receiveScriptURLs = function () {
     }
 };
 
+
+IFrameBridge.prototype._receiveMethod = function (name, code) {
+    this[name] = (new Function('return ' + code))();
+};
+
 Object.defineProperties(self, Object.getOwnPropertyDescriptors(IFrameBridge.prototype));
 IFrameBridge.call(self, self);
