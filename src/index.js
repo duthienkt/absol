@@ -60,6 +60,7 @@ import ObservableStruct from "./AppPattern/ObservableStruct";
 import CCBlock from "./AppPattern/circuit/CCBlock";
 import CCLine from "./AppPattern/circuit/CCLine";
 import * as FileSaver from './Network/FileSaver';
+import Thread from "./Network/Thread";
 
 var absol = {
     int: int,
@@ -133,7 +134,8 @@ var absol = {
         CCBlock: CCBlock,
         CCLine: CCLine
     },
-    FileSaver
+    FileSaver,
+    Thread: Thread
 };
 
 
