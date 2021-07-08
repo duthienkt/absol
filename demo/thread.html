@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>Thread</title>
     <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 </head>
 <body>
-<script>
+<script class="viewable">
     var myThread = new absol.Thread({
         libs: ['https://cdnjs.cloudflare.com/ajax/libs/js-polyfills/0.1.43/polyfill.min.js'],//có thể thêm thư viện ngoài
         props: {
@@ -27,9 +29,9 @@
                 //giả sử bên này chạy có lỗi
                 throw  new Error("Đây là lỗi bên worker")
             },
-            spliceArr: function (){
+            spliceArr: function () {
                 //truy suất vào myArray, có thể gọi this.myArray, self.myArray, vì myArray trong global scope của worker
-               return  myArray.splice.apply(myArray, arguments);
+                return myArray.splice.apply(myArray, arguments);
             }
         },
         extendCode: 'function echo(x, y, z){console.log(x, y, z)}//phần log này chạy bên worker\n' +
@@ -75,16 +77,25 @@
     //import một đoạn code, tương tự như importScriptURLs
     myThread.importScript('console.log(self)');
 
-    myThread.spliceArr(2, 2).then(function (result){
+    myThread.spliceArr(2, 2).then(function (result) {
         console.log("lấy 2 phần tử từ vị trí số 2 được", result);
         //lấy một prop bên worker, không phải function
-        myThread.invoke('myArray').then(function (result1){
+        myThread.invoke('myArray').then(function (result1) {
             console.log('còn lại', result1);
         })
     });
 
+    //tạo thêm hàm mới
+    myThread.createMethod('multiply', function (a, b) {
+        return a + b;
+    });
+
+    myThread.multiply(12, 11).then(function (result) {
+        console.log('12 * 11 = ', result);
+    });
+
 </script>
 
-
+<script src="./autohightlighting.js?"></script>
 </body>
 </html>
