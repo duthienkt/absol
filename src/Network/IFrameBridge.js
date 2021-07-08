@@ -1,9 +1,9 @@
 import EventEmitter from "../HTML5/EventEmitter";
-import { randomIdent } from "../String/stringGenerate";
+import {randomIdent} from "../String/stringGenerate";
 
 /**
- * 
- * @param {Worker} host 
+ *
+ * @param {Worker} host
  */
 function IFrameBridge(host, origin) {
     EventEmitter.call(this);
@@ -11,6 +11,7 @@ function IFrameBridge(host, origin) {
     this.origin = origin;
     if (host) this.attach(host);
     this.__azarResolveCallbacks = {};
+    this.__azarRejectCallbacks = {};
 }
 
 IFrameBridge.prototype.attach = function (host) {
@@ -39,16 +40,16 @@ IFrameBridge.fromIFrame = function (iframe) {
     var src = iframe.src;
     var rootOrigin = location.origin;
     var iframeOrigin = src.match(/^(http|https):\/\/[^/]+/);
-    if (iframeOrigin){
+    if (iframeOrigin) {
         iframeOrigin = iframeOrigin[0];
     }
-    else{
+    else {
         iframeOrigin = rootOrigin;
     }
-    
-    if (host) return new IFrameBridge(host,  iframeOrigin);
+
+    if (host) return new IFrameBridge(host, iframeOrigin);
     else {
-        var result = new IFrameBridge(undefined, iframeOrigin  );
+        var result = new IFrameBridge(undefined, iframeOrigin);
         var attachedHost = function () {
             var host = iframe.contentWindow || iframe.contentDocument;
             result.attach(host);
@@ -68,15 +69,15 @@ IFrameBridge.getInstance = function () {
     if (!IFrameBridge.shareInstance) {
         var origin = location.origin;
         var rootOrigin = IFrameBridge.getParentUrl().match(/^(http|https):\/\/[^/]+/);
-        if (rootOrigin){
+        if (rootOrigin) {
             rootOrigin = rootOrigin[0];
         }
-        else{
+        else {
             rootOrigin = origin;
         }
 
         // IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin == origin? undefined: "*" || rootOrigin );
-        IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin );
+        IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin);
     }
     return IFrameBridge.shareInstance;
 };
@@ -90,10 +91,10 @@ IFrameBridge.isInIFrame = function () {
 };
 
 
-IFrameBridge.getParentUrl = function(){
+IFrameBridge.getParentUrl = function () {
     var parentUrl = (window.location != window.parent.location)
-                ? document.referrer
-                : document.location.href;
+        ? document.referrer
+        : document.location.href;
     return parentUrl;
 };
 
@@ -105,21 +106,36 @@ IFrameBridge.prototype.__azarMessageListener = function (event) {
 IFrameBridge.prototype.__azarHandleData = function (data) {
     if (data.type) {
         if (data.type == "INVOKE") {
-            var result = this.__azarRelfInvoke(data.name, data.params);
-            if (result && typeof result.then == 'function') {
-                result.then(function (result) {
+            try {
+                var result = this.__azarSelfInvoke(data.name, data.params);
+                if (result && typeof result.then == 'function') {
+                    result.then(function (result) {
+                        this.__azarResolve(data.taskId, result);
+                    }.bind(this))
+                        .catch(function (err) {
+                            this.__azarResolve(data.taskId, null, err);
+                        }.bind(this));
+                }
+                else {
                     this.__azarResolve(data.taskId, result);
-                }.bind(this));
+                }
+            } catch (err) {
+                this.__azarResolve(data.taskId, null, err);
             }
-            else {
-                this.__azarResolve(data.taskId, result);
-            }
-        } else if (data.type == "INVOKE_RESULT") {
+        }
+        else if (data.type == "INVOKE_RESULT") {
             if (this.__azarResolveCallbacks[data.taskId]) {
-                this.__azarResolveCallbacks[data.taskId](data.result);
+                if (data.error) {
+                    this.__azarRejectCallbacks[data.taskId](data.error);
+                }
+                else {
+                    this.__azarResolveCallbacks[data.taskId](data.result);
+                }
                 delete this.__azarResolveCallbacks[data.taskId];
+                delete this.__azarRejectCallbacks[data.taskId];
             }
-        } else if (data.type == "EMIT") {
+        }
+        else if (data.type == "EMIT") {
             this.fire.apply(this, data.params);
         }
         else this.fire('message', data, this);
@@ -127,11 +143,12 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
 };
 
 
-IFrameBridge.prototype.__azarResolve = function (taskId, result) {
+IFrameBridge.prototype.__azarResolve = function (taskId, result, error) {
     var data = {
         type: "INVOKE_RESULT",
         taskId: taskId,
-        result: result
+        result: result,
+        error: error
     };
 
     if (this.origin) {
@@ -143,7 +160,7 @@ IFrameBridge.prototype.__azarResolve = function (taskId, result) {
 };
 
 
-IFrameBridge.prototype.__azarRelfInvoke = function (name, params) {
+IFrameBridge.prototype.__azarSelfInvoke = function (name, params) {
     if (typeof this[name] == 'function') {
         return this[name].apply(this, params);
     }
@@ -190,10 +207,29 @@ IFrameBridge.prototype.invoke = function (name) {
         else {
             this.host.postMessage(data);
         }
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             this.__azarResolveCallbacks[indent] = resolve;
+            this.__azarRejectCallbacks[indent] = reject;
         }.bind(this));
     }.bind(this));
 };
+
+IFrameBridge.prototype.importScriptURLs = function () {
+    return this.invoke.apply(this, ['_receiveScriptURLs'].concat(Array.prototype.slice.call(arguments)));
+};
+
+IFrameBridge.prototype.importScript = function (code) {
+    var blob = new Blob([code], { type: 'application/javascript' });
+    var url = URL.createObjectURL(blob);
+    return this.importScriptURLs(url);
+};
+
+
+IFrameBridge.prototype._receiveScriptURLs = function () {
+    if (self.importScripts) {
+        self.importScripts.apply(self, arguments);
+    }
+};
+
 
 export default IFrameBridge;
