@@ -18,11 +18,17 @@ Thread.prototype._makeCodeUrl = function (opt) {
         this._makeLibCode(opt.libs),
         RemoteThreadCode,
         this._makeMethodCode(opt.methods),
+        this._makePropCode(opt.props),
         opt.extendCode || '',
     ].join('\n\n');
     var blob = new Blob([code], { type: 'application/javascript' });
     var url = URL.createObjectURL(blob);
     return url;
+};
+
+Thread.prototype._makePropCode = function (props) {
+    if (!props) return '';
+    return 'Object.assign(self, ' + JSON.stringify(props) + ');';
 };
 
 Thread.prototype._makeLibCode = function (libs) {
