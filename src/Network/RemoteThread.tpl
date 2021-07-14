@@ -228,6 +228,7 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
                         this.__azarResolve(data.taskId, result);
                     }.bind(this))
                         .catch(function (err) {
+                            console.error(err);
                             this.__azarResolve(data.taskId, null, { message: err.message, stack: err.stack });
                         }.bind(this));
                 }
@@ -235,6 +236,7 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
                     this.__azarResolve(data.taskId, result);
                 }
             } catch (err) {
+                console.error(err);
                 this.__azarResolve(data.taskId, null, { message: err.message, stack: err.stack });
             }
 
