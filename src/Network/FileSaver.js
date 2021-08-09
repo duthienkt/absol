@@ -5,6 +5,22 @@
 
 import BrowserDetector from "../Detector/BrowserDetector";
 
+export function fileExist(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', url, true);
+    return new Promise(function (resolve) {
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                resolve(xhr.status === 200);
+            }
+        };
+
+        xhr.onerror = function (err) {};
+
+        xhr.send();
+    });
+}
+
 /***
  *
  * @param url
