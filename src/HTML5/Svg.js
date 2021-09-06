@@ -235,7 +235,7 @@ Dom.printElement = function (option) {
             var url, img;
             var needCopyStyle = option.computeStyle;
             if (!newElt.tagName) console.log(newElt.nodeType, newElt)
-            if (tagName === 'canvas' || tagName === 'svg') {
+            if (tagName === 'canvas' || (tagName === 'svg' && option.convertSVG)) {
                 if (tagName === "canvas") {
                     url = originElt.toDataURL();
                 }
@@ -284,7 +284,10 @@ Dom.printElement = function (option) {
         });
 
         $('link', document.head, function (elt) {
-            renderSpace.addChild(elt.cloneNode(false));
+            var temp = elt.cloneNode(false);
+            //copy absolute url
+            temp.setAttribute('href', elt.href);
+            renderSpace.addChild(temp);
         });
 
         if (!option.computeStyle) {
