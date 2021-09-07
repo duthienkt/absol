@@ -1,6 +1,7 @@
 import Dom, {copyStyleRule, depthClone} from './Dom';
-import ElementNS from './ElementNS';
-import Element from './Element';
+import AElementNS from "./ElementNS";
+import AElement from './AElement';
+import Color from "../Color/Color";
 
 var sattachhookCreator = function () {
     var res = Svg.ShareInstance._('<image  class="absol-attachhook" style="display:none"  href=""/>');
@@ -63,8 +64,7 @@ Svg.prototype.fromCode = function (code) {
         prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
         Object.defineProperties(element, prototypes);
         Element.call(element);
-    }
-    else {
+    } else {
         var svgfragment = '<svg  version="1.1" xmlns="http://www.w3.org/2000/svg">' + code + '</svg>';
         receptacle.innerHTML = '' + svgfragment;
         element = receptacle.childNodes[0].childNodes[0];
@@ -125,7 +125,7 @@ Svg.svgToCanvas = function (element) {
         var svgCode = renderSpace.innerHTML;
         renderSpace.clearChild();
 
-        var mBlob = new Blob([svgCode], { type: "image/svg+xml;charset=utf-8" });
+        var mBlob = new Blob([svgCode], {type: "image/svg+xml;charset=utf-8"});
         var src = (URL || webkitURL).createObjectURL(mBlob);
 
         var image = Dom.ShareInstance._('img');
@@ -141,8 +141,7 @@ Svg.svgToCanvas = function (element) {
             renderSpace.selfRemove();
             return canvas;
         });
-    }
-    else {
+    } else {
         throw new Error('Element must be svg');
     }
 };
@@ -195,8 +194,7 @@ export function svgToExportedString(element) {
         var svgCode = renderSpace.innerHTML;
         renderSpace.selfRemove();
         return svgCode;
-    }
-    else {
+    } else {
         throw new Error('Element must be svg');
     }
 };
@@ -207,39 +205,44 @@ Svg.svgToExportedString = svgToExportedString;
 function svgToSvgUrl(element) {
     var svg = svgToExportedString(element);
     svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + svg;
-    var blob = new Blob([svg], { type: 'image/svg+xml' });
+    var blob = new Blob([svg], {type: 'image/svg+xml'});
     var url = URL.createObjectURL(blob);
     return url;
 }
 
 Svg.svgToSvgUrl = svgToSvgUrl;
 
+
+/***
+ *
+ * @param {AElement|String | {computeStyle?: boolean, elt: AElement, keepBackgroundColor?:boolean,convertSVG?:boolean}} option
+ * @return {Promise<unknown>}
+ */
 Dom.printElement = function (option) {
     var _ = Dom.ShareInstance._;
     var $ = Dom.ShareInstance.$;
     option = option || {};
     if (typeof option == 'string') {
-        option = { elt: Dom.ShareInstance.$(option) };
-    }
-    else if (typeof option.elt == 'string') {
+        option = {elt: Dom.ShareInstance.$(option)};
+    } else if (typeof option.elt == 'string') {
         option.elt = $(option.elt);
+    } else if (Dom.isDomNode(option)) {
+        option = {elt: option};
     }
-    else if (Dom.isDomNode(option)) {
-        option = { elt: option };
-    }
+    option = Object.assign({keepBackgroundColor: true, convertSVG: false, computeStyle: false}, option);
     if (Dom.isDomNode(option.elt)) {
         function afterCloneCb(originElt, newElt) {
             if (!newElt.tagName) return;
             var tagName = newElt.tagName.toLowerCase();
-            if (newElt.getBBox && tagName!== 'svg') return;
+            if (newElt.getBBox && tagName !== 'svg') return;
             var url, img;
             var needCopyStyle = option.computeStyle;
+            var needKeepBackgroundColor = option.keepBackgroundColor;
             if (!newElt.tagName) console.log(newElt.nodeType, newElt)
             if (tagName === 'canvas' || (tagName === 'svg' && option.convertSVG)) {
                 if (tagName === "canvas") {
                     url = originElt.toDataURL();
-                }
-                else {
+                } else {
                     url = svgToSvgUrl(originElt);
                 }
                 img = _({
@@ -251,17 +254,29 @@ Dom.printElement = function (option) {
                 $(newElt).selfReplace(img);
                 newElt = img;
                 needCopyStyle = true;
-            }
-            else if (tagName === 'script') {
+            } else if (tagName === 'script') {
                 newElt.remove();
-            }
-            else if (tagName === 'img') {
+            } else if (tagName === 'img') {
                 newElt.setAttribute('src', originElt.src);
             }
 
             if (needCopyStyle) {
                 copyStyleRule(originElt, newElt);
             }
+            if (needKeepBackgroundColor) {
+                try {
+                    var bgColor = AElement.prototype.getComputedStyleValue.call(originElt, 'background-color');
+                    if (bgColor) {
+                        bgColor = Color.parse(bgColor);
+                        if (bgColor.rgba[3] > 0) {
+                            newElt.style.setProperty('background-color', bgColor.toString('hex8'), 'important');
+                        }
+                    }
+                } catch (e) {
+
+                }
+            }
+
             return newElt;
         }
 
@@ -300,7 +315,7 @@ Dom.printElement = function (option) {
         renderSpace.addChild(newElt);
         var eltCode = renderSpace.innerHTML;
         renderSpace.clearChild();
-        option.title = option.title || ($('title', document.head) || { innerHTML: 'absol.js' }).innerHTML;
+        option.title = option.title || ($('title', document.head) || {innerHTML: 'absol.js'}).innerHTML;
         var htmlCode = ['<ht' + 'ml>',
             ' <h' + 'ead><title>' + option.title + '</title><meta charset="UTF-8">',
             '<style>',
@@ -328,7 +343,7 @@ Dom.printElement = function (option) {
             '<scr' + 'ipt>setTimeout(function(){ window.print();},1000);</scri' + 'pt>',//browser parse  script tag fail
             '</bod' + 'y>',
             '</ht' + 'ml>'].join('\n');
-        var blob = new Blob([htmlCode], { type: 'text/html; charset=UTF-8' });
+        var blob = new Blob([htmlCode], {type: 'text/html; charset=UTF-8'});
         renderSpace.addTo(document.body);
         var iframe = _('iframe').attr('src', URL.createObjectURL(blob)).addStyle({
             width: '100%',
@@ -345,22 +360,19 @@ Dom.printElement = function (option) {
                                 renderSpace.remove();
                                 if (typeof option.onFinish == 'function') option.onFinish();
                                 rs();
-                            }
-                            else {
+                            } else {
                                 setTimeout(waitFocusBack, 300)
                             }
                         }
 
                         waitFocusBack();
                     }, 4000);
-                }
-                else setTimeout(waitLoad, 1000)
+                } else setTimeout(waitLoad, 1000)
             }
 
             waitLoad();
         });
-    }
-    else {
+    } else {
         throw new Error('Invalid param!');
     }
 };
