@@ -63,7 +63,7 @@ Svg.prototype.fromCode = function (code) {
         element = receptacle.childNodes[0];
         prototypes = Object.getOwnPropertyDescriptors(AElement.prototype);
         Object.defineProperties(element, prototypes);
-        Element.call(element);
+        AElement.call(element);
     } else {
         var svgfragment = '<svg  version="1.1" xmlns="http://www.w3.org/2000/svg">' + code + '</svg>';
         receptacle.innerHTML = '' + svgfragment;
@@ -92,7 +92,7 @@ Svg.svgToCanvas = function (element) {
         var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
-            var cssRules = Element.prototype.getCSSRules.call(originElt);
+            var cssRules = AElement.prototype.getCSSRules.call(originElt);
             var cssKey = cssRules.reduce(function (ac, rule) {
                 for (var i = 0; i < rule.style.length; ++i) {
                     ac[rule.style[i]] = true;
@@ -100,7 +100,7 @@ Svg.svgToCanvas = function (element) {
                 return ac;
             }, {});
             for (var key in cssKey) {
-                newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
+                newElt.style[key] = AElement.prototype.getComputedStyleValue.call(originElt, key);
             }
             var children = Array.prototype.map.call(originElt.childNodes, depthClone);
             for (var i = 0; i < children.length; ++i) {
@@ -163,7 +163,7 @@ export function svgToExportedString(element) {
         var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
-            var cssRules = Element.prototype.getCSSRules.call(originElt);
+            var cssRules = AElement.prototype.getCSSRules.call(originElt);
             var cssKey = cssRules.reduce(function (ac, rule) {
                 for (var i = 0; i < rule.style.length; ++i) {
                     ac[rule.style[i]] = true;
@@ -171,7 +171,7 @@ export function svgToExportedString(element) {
                 return ac;
             }, {});
             for (var key in cssKey) {
-                newElt.style[key] = Element.prototype.getComputedStyleValue.call(originElt, key);
+                newElt.style[key] = AElement.prototype.getComputedStyleValue.call(originElt, key);
             }
             var children = Array.prototype.map.call(originElt.childNodes, depthClone);
             for (var i = 0; i < children.length; ++i) {
