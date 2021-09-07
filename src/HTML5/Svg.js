@@ -61,16 +61,16 @@ Svg.prototype.fromCode = function (code) {
     if (code.startsWith('<svg')) {
         receptacle.innerHTML = code;
         element = receptacle.childNodes[0];
-        prototypes = Object.getOwnPropertyDescriptors(Element.prototype);
+        prototypes = Object.getOwnPropertyDescriptors(AElement.prototype);
         Object.defineProperties(element, prototypes);
         Element.call(element);
     } else {
         var svgfragment = '<svg  version="1.1" xmlns="http://www.w3.org/2000/svg">' + code + '</svg>';
         receptacle.innerHTML = '' + svgfragment;
         element = receptacle.childNodes[0].childNodes[0];
-        prototypes = Object.getOwnPropertyDescriptors(ElementNS.prototype);
+        prototypes = Object.getOwnPropertyDescriptors(AElementNS.prototype);
         Object.defineProperties(element, prototypes);
-        ElementNS.call(element);
+        AElementNS.call(element);
     }
     return element;
 };
