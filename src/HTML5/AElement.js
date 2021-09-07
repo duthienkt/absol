@@ -56,7 +56,7 @@ AElement.prototype.defineAttributes = function (defs) {
 };
 
 AElement.prototype.attr = function () {
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {
                 return this._azar_extendAttributes[arguments[0]].get.call(this);
@@ -103,14 +103,18 @@ AElement.prototype.attr = function () {
 /**
  * add style
  * @param {CSSStyleDeclaration|string|{}} arg0
+ * @param {string|[]=} arg1
  * @returns {AElement}
  */
 AElement.prototype.addStyle = function (arg0, arg1) {
     if (typeof arg0 == 'string')
         if (arg0.indexOf('-') >= 0) {
-            this.style.setProperty(arg0, arg1);
-        }
-        else {
+            if (arg1 && arg1.forEach) {
+                this.style.setProperty.apply(this.style, [arg0].concat(arg1));
+            } else {
+                this.style.setProperty(arg0, arg1);
+            }
+        } else {
             this.style[arg0] = arg1;
         }
     else {
