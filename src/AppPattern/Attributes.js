@@ -6,7 +6,7 @@
 import Ref from './Ref';
 
 /***
- * @typedef {{get?:function, set?: function, descriptor?: Object, getDescriptor?: function, export?: function}} AttributeHandler
+ * @typedef {{get?:function, set?: function, descriptor?: Object|function, export?: function}} AttributeHandler
  */
 
 
@@ -150,9 +150,9 @@ Object.defineProperty(Attributes.prototype, 'getPropertyDescriptor', {
     writable: false,
     value: function (name) {
         var handler = this._definedProperties[name];
-        if (handler && handler.getDescriptor) return handler.getDescriptor.call(this.$$node);
+        if (handler && (typeof handler.descriptor === "function")) return handler.descriptor.call(this.$$node);
         var value = this[name];
-        return (handler && handler.descriptor) || { type: typeof value }
+        return (handler && handler.descriptor) || { type: typeof value };
     }
 });
 
