@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 var processFolder = process.cwd().replace(/\\/, '/');
 var relative = path.relative(processFolder, __dirname);
@@ -74,8 +75,15 @@ module.exports = {
         minimize: false
     },
     devServer: {
-        compress: true,
-        disableHostCheck: true
+        compress: false,
+        disableHostCheck: true,
+        host: '0.0.0.0',
+        http2: true,
+        https: {
+            key: fs.readFileSync('/etc/letsencrypt/live/absol.ddns.net/privkey.pem'),
+            cert: fs.readFileSync('/etc/letsencrypt/live/absol.ddns.net/cert.pem'),
+            cacert: fs.readFileSync('/etc/letsencrypt/live/absol.ddns.net/fullchain.pem'),
+        }
     },
     performance: {
         hints: false

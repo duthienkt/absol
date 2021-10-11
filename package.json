@@ -7,7 +7,7 @@
         "test": "test"
     },
     "scripts": {
-        "dev": "webpack-dev-server --config webpack.config.js --public https://frame.absol.cf",
+        "dev": "webpack-dev-server --config webpack.config.js --public https://absol.ddns.net:8080",
         "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production",
         "dependents": "webpack --config webpack.config.js --progress --profile --colors --mode production"
     },
