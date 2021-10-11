@@ -61,6 +61,7 @@ import CCBlock from "./AppPattern/circuit/CCBlock";
 import CCLine from "./AppPattern/circuit/CCLine";
 import * as FileSaver from './Network/FileSaver';
 import Thread from "./Network/Thread";
+import {generateJSVariable} from "./JSMaker/generator";
 
 var absol = {
     int: int,
@@ -135,7 +136,8 @@ var absol = {
         CCLine: CCLine
     },
     FileSaver,
-    Thread: Thread
+    Thread: Thread,
+    generateJSVariable: generateJSVariable
 };
 
 
