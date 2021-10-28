@@ -62,6 +62,7 @@ import CCLine from "./AppPattern/circuit/CCLine";
 import * as FileSaver from './Network/FileSaver';
 import Thread from "./Network/Thread";
 import {generateJSVariable} from "./JSMaker/generator";
+import {normalizeIdent} from "./String/stringFormat";
 
 var absol = {
     int: int,
@@ -137,8 +138,10 @@ var absol = {
     },
     FileSaver,
     Thread: Thread,
-    generateJSVariable: generateJSVariable
+    generateJSVariable: generateJSVariable,
+    normalizeIdent: normalizeIdent
 };
+
 
 
 export default absol;

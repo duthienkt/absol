@@ -1,7 +1,7 @@
 /**
- * 
- * @param {String} s 
- * @param {Number} maxLength 
+ *
+ * @param {String} s
+ * @param {Number} maxLength
  */
 export function wrapToLines(s, maxLength) {
     var res = [];
@@ -38,9 +38,9 @@ export function wrapToLines(s, maxLength) {
 }
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function nonAccentVietnamese(s) {
     return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
@@ -65,18 +65,18 @@ export function nonAccentVietnamese(s) {
 
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function pascalCaseToCamelCase(s) {
     return s.substr(0, 1).toLowerCase() + s.substr(1);
 }
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function kebabCaseToCamelCase(s) {
     return s.replace(/-+([^-])/g, function (full, c) {
@@ -85,9 +85,9 @@ export function kebabCaseToCamelCase(s) {
 }
 
 /**
- * 
- * @param {String} s 
- * @returns {String} 
+ *
+ * @param {String} s
+ * @returns {String}
  */
 export function underScoreToCamelCase(s) {
     return s.replace(/(_+)?([^_]+)/g, function (full, underscore, word) {
@@ -99,24 +99,24 @@ export function underScoreToCamelCase(s) {
         }
         else {
             return word.toLowerCase();
-        };
+        }
     });
 }
 
 
 /**
- * 
- * @param {String} s 
- * @returns {String} 
+ *
+ * @param {String} s
+ * @returns {String}
  */
 export function camelCaseToPascalCase(s) {
     return s.substr(0, 1).toUpperCase() + s.substr(1);
 }
 
 /**
- * 
- * @param {String} s 
- * @returns {String} 
+ *
+ * @param {String} s
+ * @returns {String}
  */
 export function underScoreToPascalCase(s) {
     return s.replace(/(_+|^)?([^_]+)/g, function (full, underscore, word) {
@@ -126,9 +126,9 @@ export function underScoreToPascalCase(s) {
 
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function kebabCaseToPascalCase(s) {
     return s.replace(/(-+|^)([^-])/g, function (full, u, c) {
@@ -138,9 +138,9 @@ export function kebabCaseToPascalCase(s) {
 
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function pascalCaseToKebabCase(s) {
     return s.replace(/[A-Z][^A-Z]*/g, function (full, index) {
@@ -151,9 +151,9 @@ export function pascalCaseToKebabCase(s) {
 }
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function camelCaseToKebabCase(s) {
     return s.replace(/(^|[A-Z])[^A-Z]*/g, function (full, index) {
@@ -164,9 +164,9 @@ export function camelCaseToKebabCase(s) {
 }
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function underScoreToKebabCase(s) {
     return s.replace(/(^|_+)([^_]+)/g, function (full, score, word, index) {
@@ -179,9 +179,9 @@ export function underScoreToKebabCase(s) {
 
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function pascalCaseToUnderScore(s) {
     return s.replace(/[A-Z][^A-Z]*/g, function (full, index) {
@@ -192,9 +192,9 @@ export function pascalCaseToUnderScore(s) {
 }
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function pascalCaseToUpperUnderScore(s) {
     return s.replace(/[A-Z][^A-Z]*/g, function (full, index) {
@@ -206,9 +206,9 @@ export function pascalCaseToUpperUnderScore(s) {
 
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function camelCaseToUnderScore(s) {
     return s.replace(/(^|[A-Z])[^A-Z]*/g, function (full, index) {
@@ -218,9 +218,9 @@ export function camelCaseToUnderScore(s) {
     });
 }
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function camelCaseToUpperUnderScore(s) {
     return s.replace(/(^|[A-Z])[^A-Z]*/g, function (full, index) {
@@ -231,9 +231,9 @@ export function camelCaseToUpperUnderScore(s) {
 }
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function kebabCaseToUnderScore(s) {
     return s.replace(/(-+|^)([^-]+)/g, function (full, u, word, index) {
@@ -245,9 +245,9 @@ export function kebabCaseToUnderScore(s) {
 
 
 /**
- * 
+ *
  * @param {String} s
- * @returns {String} 
+ * @returns {String}
  */
 export function kebabCaseToUpperUnderScore(s) {
     return s.replace(/(-+|^)([^-]+)/g, function (full, u, word, index) {
@@ -257,6 +257,17 @@ export function kebabCaseToUpperUnderScore(s) {
 }
 
 
+/***
+ *
+ * @param {String} text
+ */
+export function normalizeIdent(text) {
+    var res = nonAccentVietnamese(text).replace(/[^a-zA-Z0-9_$]/g, '_');
+    if (res.match(/^[0-9]/)) {
+        res = '$' + res;
+    }
+    return res;
+}
 
 String.nonAccentVietnamese = nonAccentVietnamese;
 
