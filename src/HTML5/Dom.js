@@ -256,7 +256,7 @@ Dom.prototype._ = function (option, isInherited) {
     creator = option.tag.prototype ? option.tag : this.creator[option.tag];
     if (option.tag.prototype) option.tag = option.tag.tag;
     if (option.elt) {
-        res = option.elt;
+        res = this._(option.elt);
     }
     else {
         if (!res) {
