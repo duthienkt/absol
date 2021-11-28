@@ -63,6 +63,7 @@ import * as FileSaver from './Network/FileSaver';
 import Thread from "./Network/Thread";
 import {generateJSVariable} from "./JSMaker/generator";
 import {normalizeIdent} from "./String/stringFormat";
+import ShareConfiguration from "./AppPattern/ShareConfiguration";
 
 var absol = {
     int: int,
@@ -139,7 +140,8 @@ var absol = {
     FileSaver,
     Thread: Thread,
     generateJSVariable: generateJSVariable,
-    normalizeIdent: normalizeIdent
+    normalizeIdent: normalizeIdent,
+    shareConfiguration: ShareConfiguration.instance
 };
 
 
