@@ -33,16 +33,14 @@ CCBlock.prototype.pinOn = function (pinName, listener) {
     var cbList;
     if (this.__cc_listener__[pinName]) {
         cbList = this.__cc_listener__[pinName];
-    }
-    else {
+    } else {
         cbList = [];
         this.__cc_listener__[pinName] = cbList;
 
     }
     if (cbList.indexOf(listener) < 0) {
         cbList.push(listener);
-    }
-    else {
+    } else {
         console.warn("Duplicate pin listener!");
     }
     return this;
@@ -62,7 +60,7 @@ CCBlock.prototype.pinFire = function (pinName) {
     if (!this.__cc_listener__[pinName]) return this;
     var cbList = this.__cc_listener__[pinName].slice();
     var args = Array.prototype.slice.call(arguments, 1);
-    if (args.length === 0 && this.pinHandlers[pinName] && this.pinHandlers[pinName].get)
+    if (args.length === 0 && this.pinHandlers[pinName] && this.pinHandlers[pinName].get && cbList.length > 0)
         args.push(this.pinGetValue(pinName));
     for (var i = 0; i < cbList.length; ++i) {
         try {
