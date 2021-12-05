@@ -434,8 +434,7 @@ export function parseDateString(text, format) {
     if (isNaN(year)) throw new Error('Invalid year');
     if (isNaN(month) && month !== -1) {
         throw new Error('Invalid month');
-    }
-    else {
+    } else {
         month = Math.max(0, Math.min(11, month));
     }
     if (!isNaN(day)) {
@@ -444,8 +443,7 @@ export function parseDateString(text, format) {
             day = Math.min(daysInMonth(2000, month), day);
             if (!isNaN(year)) day = Math.min(daysInMonth(year, month), day);
         }
-    }
-    else {
+    } else {
         throw new Error('Invalid day');
     }
     return new Date(year, month, day);
@@ -468,6 +466,24 @@ export function nextDate(date) {
     return new Date(date.getTime() + MILLIS_PER_DAY);
 }
 
+
+/****
+ *
+ * @param {Date} date
+ * @param {boolean=}gmt
+ * @param {number=}startDayOfWeek
+ * @returns {number}
+ */
+export function weekIndexOf(date, gmt, startDayOfWeek) {
+    var by = beginOfYear(date, !!gmt);
+    var byw = beginOfWeek(by, !!gmt, startDayOfWeek);
+    var bw = beginOfWeek(date, !!gmt, startDayOfWeek);
+    if (compareYear(by, bw) > 0){
+        return  weekIndexOf(bw, gmt, startDayOfWeek);
+    }
+    var i = compareYear(byw, by) < 0 ? -1 : 0;
+    return Math.floor(compareDate(date, byw, !!gmt) / 7) + i;
+}
 
 /**
  * @param {Date} date
@@ -608,8 +624,7 @@ export function nextMonth(date) {
     var y = date.getFullYear();
     if (m == 11) {
         return new Date(y + 1, 0, 1, 0, 0, 0, 0);
-    }
-    else {
+    } else {
         return new Date(y, m + 1, 1, 0, 0, 0, 0);
     }
 }
@@ -624,8 +639,7 @@ export function prevMonth(date) {
     var y = date.getFullYear();
     if (m == 0) {
         return new Date(y - 1, 11, 1, 0, 0, 0, 0);
-    }
-    else {
+    } else {
         return new Date(y, m - 1, 1, 0, 0, 0, 0);
     }
 }
@@ -804,8 +818,7 @@ function test() {
         var d = parseDateTime(pr[0], pr[1]);
         if ((d && d.getTime()) === pr[2].getTime()) {
             console.info("Pass ", pr);
-        }
-        else {
+        } else {
             console.error("Text fail with ", pr.slice(0, 2), ', expect ', pr[2], ', return ' + d);
         }
     });
