@@ -478,11 +478,27 @@ export function weekIndexOf(date, gmt, startDayOfWeek) {
     var by = beginOfYear(date, !!gmt);
     var byw = beginOfWeek(by, !!gmt, startDayOfWeek);
     var bw = beginOfWeek(date, !!gmt, startDayOfWeek);
-    if (compareYear(by, bw) > 0){
-        return  weekIndexOf(bw, gmt, startDayOfWeek);
+    if (compareYear(by, bw) > 0) {
+        return weekIndexOf(bw, gmt, startDayOfWeek);
     }
     var i = compareYear(byw, by) < 0 ? -1 : 0;
     return Math.floor(compareDate(date, byw, !!gmt) / 7) + i;
+}
+
+/***
+ *
+ * @param {number} year
+ * @param {number} weekIdx
+ * @param {boolean=} gmt
+ * @param {number=} startDayOfWeek
+ * @returns {Date}
+ */
+export function weekInYear(year, weekIdx, gmt, startDayOfWeek) {
+    var bg = new Date(year, 0, 1);
+    if (gmt) bg.setUTCHours(0);
+    var byw = beginOfWeek(bg, !!gmt, startDayOfWeek || 0);
+    var d = compareYear(bg, byw) > 0 ? MILLIS_PER_DAY * 7 : 0;
+    return new Date(byw.getTime() + d + weekIdx * 7 * MILLIS_PER_DAY);
 }
 
 /**
@@ -564,7 +580,7 @@ export function beginOfYear(date, gmt) {
     else
         res.setFullYear(y, 0, 1);
     return beginOfDay(res, gmt);
-};
+}
 
 
 /**
@@ -661,9 +677,13 @@ export function daysInMonth(year, month) {
  *
  * @param text
  * @param format support d, M, Y, Q
+ * @param {*=} opt
  * @returns {Date}
  */
-export function parseDateTime(text, format) {
+export function parseDateTime(text, format, opt) {
+    opt = Object.assign({
+        startDayOfWeek: 0
+    }, opt);
     var tokenMap = {};
     var txtRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
     var fmRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
@@ -678,6 +698,10 @@ export function parseDateTime(text, format) {
             case 'd':
             case 'dd':
                 tokenMap.day = parseInt(tkText, 10);
+                break;
+            case 'w':
+            case 'ww':
+                tokenMap.week = parseInt(tkText, 10) - 1;
                 break;
             case 'M':
             case 'MM':
@@ -741,6 +765,13 @@ export function parseDateTime(text, format) {
         resParam[i] = tokenMap[paramName] === undefined ? paramDefaultValues[i] : tokenMap[paramName];
     }
 
+    var weekDate;
+    if ('week' in tokenMap && !isNaN(tokenMap.week)) {
+        weekDate = weekInYear(resParam[0], tokenMap.week, false, opt.startDayOfWeek);
+        resParam[1] = weekDate.getMonth();
+        resParam[2] = weekDate.getDate();
+    }
+
     switch (paramList) {
         case 'hm':
             resParam.splice(1, 2, new Date().getMonth(), new Date().getDate());
@@ -750,7 +781,18 @@ export function parseDateTime(text, format) {
     return new Date(resParam[0], resParam[1], resParam[2], resParam[3], resParam[4], resParam[5]);
 }
 
-export function formatDateTime(date, format) {
+/***
+ *
+ * @param {Date} date
+ * @param {string} format
+ * @param {*=} opt
+ * @return {string}
+ */
+export function formatDateTime(date, format, opt) {
+    opt = Object.assign({
+        startDayOfWeek: 0
+    }, opt);
+
     var fmRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
     return format.replace(fmRgx, function (s) {
         var res = s;
@@ -758,6 +800,10 @@ export function formatDateTime(date, format) {
             case 'd':
             case 'dd':
                 res = integerZeroPadding(date.getDate(), s.length);
+                break;
+            case 'w':
+            case 'ww':
+                res = integerZeroPadding(weekIndexOf(date, false, opt.startDayOfWeek || 0) + 1, s.length);
                 break;
             case 'M':
             case 'MM':
