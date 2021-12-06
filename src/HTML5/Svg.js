@@ -238,7 +238,6 @@ Dom.printElement = function (option) {
             var url, img;
             var needCopyStyle = option.computeStyle;
             var needKeepBackgroundColor = option.keepBackgroundColor;
-            if (!newElt.tagName) console.log(newElt.nodeType, newElt)
             if (tagName === 'canvas' || (tagName === 'svg' && option.convertSVG)) {
                 if (tagName === "canvas") {
                     url = originElt.toDataURL();
