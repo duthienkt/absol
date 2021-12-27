@@ -1,4 +1,5 @@
 import {randomIdent} from "../../String/stringGenerate";
+import safeThrow from "../../Code/safeThrow";
 
 /***
  *
@@ -66,7 +67,7 @@ CCBlock.prototype.pinFire = function (pinName) {
         try {
             cbList[i].apply(this, args);
         } catch (e) {
-            console.error(e);
+            safeThrow(e);
         }
     }
 };

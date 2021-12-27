@@ -1,5 +1,6 @@
 import EventEmitter from "../HTML5/EventEmitter";
 import {randomIdent} from "../String/stringGenerate";
+import safeThrow from "../Code/safeThrow";
 
 /**
  *
@@ -113,7 +114,7 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
                         this.__azarResolve(data.taskId, result);
                     }.bind(this))
                         .catch(function (err) {
-                            console.error(err);
+                           safeThrow(err);
                             this.__azarResolve(data.taskId, null, err);
                         }.bind(this));
                 }
@@ -121,7 +122,7 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
                     this.__azarResolve(data.taskId, result);
                 }
             } catch (err) {
-                console.error(err);
+                safeThrow(err);
                 this.__azarResolve(data.taskId, null, err);
             }
         }

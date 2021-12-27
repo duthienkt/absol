@@ -1,4 +1,5 @@
 import ResizeSystem from "./ResizeSystem";
+import safeThrow from "../Code/safeThrow";
 
 
 /***
@@ -31,7 +32,7 @@ LanguageSystem.prototype.notifyLanguageChange = function () {
                 elt.onlanguagechange();
                 sizeChange = true;
             } catch (err) {
-                console.error(err)
+                safeThrow(err);
             }
             if (elt.childNodes && elt.childNodes.length > 0) {
                 Array.prototype.forEach.call(elt.childNodes, visit);

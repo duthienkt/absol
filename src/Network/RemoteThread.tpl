@@ -1,3 +1,9 @@
+function safeThrow(error) {
+    setTimeout(function () {
+        throw  error;
+    }, 0);
+}
+
 function EventEmitter() {
     if (!this._azar_extendEvents) {
         Object.defineProperty(this, '_azar_extendEvents', {
@@ -42,7 +48,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
                 try {
                     listenerList[i].wrappedCallback.apply(this, others);
                 } catch (e) {
-                    console.error(e);
+                   safeThrow(e);
                 }
             }
         }
@@ -53,7 +59,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
                 try {
                     listenerList[i].wrappedCallback.apply(this, others);
                 } catch (e) {
-                    console.error(e);
+                    safeThrow(e);
                 }
             }
         }

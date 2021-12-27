@@ -1,3 +1,5 @@
+import safeThrow from "../Code/safeThrow";
+
 function ShareConfiguration() {
     Object.defineProperty(this, 'data', {
         value: {},
@@ -34,7 +36,7 @@ ShareConfiguration.prototype.emit = function (key) {
             try {
                 f.apply(self, args);
             } catch (err) {
-                console.error(err);
+               safeThrow(err);
             }
         });
     }
