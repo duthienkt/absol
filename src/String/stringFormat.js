@@ -177,7 +177,6 @@ export function underScoreToKebabCase(s) {
 }
 
 
-
 /**
  *
  * @param {String} s
@@ -217,6 +216,7 @@ export function camelCaseToUnderScore(s) {
         return '_' + full.toLowerCase()
     });
 }
+
 /**
  *
  * @param {String} s
@@ -261,9 +261,36 @@ export function kebabCaseToUpperUnderScore(s) {
  *
  * @param {String} text
  */
-export function normalizeIdent(text) {
-    var res = nonAccentVietnamese(text).replace(/[^a-zA-Z0-9_$]/g, '_');
-    if (res.match(/^[0-9]/)) {
+export function normalizeIdent(text, opt) {
+    var spaces = '_';
+    if (opt && ('spaces' in opt)) {
+        spaces = opt.spaces || '';
+    }
+
+    var symbols = '_';
+    if (opt && ('symbols' in opt)) {
+        symbols = opt.symbols || '';
+    }
+
+    var startsWithDigit = false;
+    if (opt && ('startsWithDigit' in opt)) {
+        startsWithDigit = opt.startsWithDigit || false;
+    }
+
+
+    var res = nonAccentVietnamese(text);
+    if (typeof spaces === "string") {
+        res = res.replace(/\s+/g, spaces);
+    }
+    if (typeof symbols === 'string') {
+        if (spaces === '_')
+            res = res.replace(/[^a-zA-Z0-9_$]+/g, symbols);
+        else if (spaces === '-') {
+            res = res.replace(/[^a-zA-Z0-9_$\-]+/g, symbols);
+        }
+    }
+
+    if (!startsWithDigit && res.match(/^[0-9]/)) {
         res = '$' + res;
     }
     return res;
