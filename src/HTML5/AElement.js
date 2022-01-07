@@ -111,10 +111,12 @@ AElement.prototype.addStyle = function (arg0, arg1) {
         if (arg0.indexOf('-') >= 0) {
             if (arg1 && arg1.forEach) {
                 this.style.setProperty.apply(this.style, [arg0].concat(arg1));
-            } else {
+            }
+            else {
                 this.style.setProperty(arg0, arg1);
             }
-        } else {
+        }
+        else {
             this.style[arg0] = arg1;
         }
     else {
@@ -283,8 +285,10 @@ AElement.prototype.addChildBefore = function (newItem, bf) {
 
 AElement.prototype.addChildAfter = function (newItem, at) {
     var bf = this.findChildAfter(at);
-    if (bf) return this.addChildBefore(newItem, bf);
-    return this.addChild(newItem);
+    if (bf)
+        return this.addChildBefore(newItem, bf);
+    this.insertBefore(newItem, this.firstChild);
+    return this;
 };
 
 /**
