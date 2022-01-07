@@ -130,9 +130,8 @@ OOP.mixClass = function (constructor) {
     for (var i = 1; i < arguments.length; ++i) {
         Object.assign(descriptors, Object.getOwnPropertyDescriptors(arguments[i].prototype));
     }
-
+    delete  descriptors.constructor;
     Object.defineProperties(constructor.prototype, descriptors);
-    constructor.prototype.constructor = constructor;
 };
 
 export default OOP;
