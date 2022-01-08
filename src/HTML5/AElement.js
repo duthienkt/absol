@@ -284,10 +284,19 @@ AElement.prototype.addChildBefore = function (newItem, bf) {
 };
 
 AElement.prototype.addChildAfter = function (newItem, at) {
-    var bf = this.findChildAfter(at);
-    if (bf)
-        return this.addChildBefore(newItem, bf);
-    this.insertBefore(newItem, this.firstChild);
+    var atIdx;
+    if (at) {
+        atIdx = Array.prototype.indexOf.call(this, at);
+        if (atIdx >= 0) {
+            this.insertBefore(newItem, this.childNodes[atIdx + 1]);
+        }
+        else {
+            throw new Error("Failed to execute 'addChildAfter' on 'Node': The node before which the new node is to be inserted is not a child of this node.");
+        }
+    }
+    else {
+        this.insertBefore(newItem, this.firstChild);
+    }
     return this;
 };
 
