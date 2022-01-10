@@ -3,7 +3,7 @@
  * @param {(string|number|boolean|null)[]} arr
  * @returns {(string|number|boolean|null)[]}
  */
-export function uniqueArray(arr) {
+export function arrayUnique(arr) {
     var dict = {};
     return arr.reduce(function (ac, cr) {
         var key = (typeof cr) + '//' + cr;
