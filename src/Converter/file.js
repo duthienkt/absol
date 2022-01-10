@@ -1,3 +1,5 @@
+import ext2MineType from "./ext2MineType";
+
 export function blobToFile(theBlob, fileName) {
     return new File([theBlob], fileName);
 }
@@ -27,7 +29,9 @@ export function blobToArrayBuffer(blob) {
 }
 
 export function stringToBlob(text, type) {
+    type = type || 'text/plain';
+    var mineTye = type.split('/').length === 2 ? type : (ext2MineType[type] || 'text/plain');
     return new Blob([text], {
-        type: type || 'text/plain'
+        type: mineTye
     });
 }
