@@ -13,3 +13,14 @@ export function arrayUnique(arr) {
         return ac;
     }, []);
 }
+
+/***
+ *
+ * @param {[]}arr
+ * @return {[]}
+ */
+export function arrayRemoveNone(arr) {
+    return arr.filter(function (c) {
+        return c !== null && c !== undefined;
+    });
+}
