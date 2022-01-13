@@ -286,7 +286,7 @@ AElement.prototype.addChildBefore = function (newItem, bf) {
 AElement.prototype.addChildAfter = function (newItem, at) {
     var atIdx;
     if (at) {
-        atIdx = Array.prototype.indexOf.call(this, at);
+        atIdx = Array.prototype.indexOf.call(this.childNodes, at);
         if (atIdx >= 0) {
             this.insertBefore(newItem, this.childNodes[atIdx + 1]);
         }
