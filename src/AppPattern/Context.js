@@ -92,7 +92,10 @@ Context.prototype.resume = function () {
     this.onResume && this.onResume();
 };
 
-Context.prototype.start = function () {
+/***
+ * @param {boolean=} standBy start but waiting for resume()
+ */
+Context.prototype.start = function (standBy) {
     if (this.state.match(/DIE/)) {
         console.error(this, 'DIED!');
         return;
@@ -104,7 +107,7 @@ Context.prototype.start = function () {
         this.state = "STANDBY";
         this.onStart && this.onStart();
     }
-    if (this.state.match(/STANDBY|PAUSE/)) {
+    if (!standBy && this.state.match(/STANDBY|PAUSE/)) {
         this.resume();
     }
 };
