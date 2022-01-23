@@ -57,7 +57,7 @@ TemplateString.parse = function (text) {
         return new TemplateString({ parts: parts });
     }
     else {
-        return undefined;
+        return new TemplateString({ parts: [] });
     }
 };
 
