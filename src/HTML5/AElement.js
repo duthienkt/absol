@@ -213,6 +213,17 @@ AElement.prototype.containsClass = function (className) {
         return this.classList.contains(className);
 };
 
+
+/**
+ *
+ * @param {string|Array} className
+ * @returns {Boolean}
+ */
+AElement.prototype.hasClass = function (className) {
+    return this.classList.contains(className);
+};
+
+
 /**
  *
  * @param {string|Array} className
