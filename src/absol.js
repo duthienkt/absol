@@ -1,4 +1,5 @@
 import absol from ".";
+import AElement from "./HTML5/AElement";
 
 
 //for old plugin
@@ -38,3 +39,18 @@ Object.keys(mapKeys).forEach(function (key) {
         }
     });
 });
+
+/**
+ * @deprecated
+ * @param {string|Array} className
+ * @returns {Boolean}
+ */
+AElement.prototype.containsClass = function (className) {
+    if (className.forEach && className.map) {
+        for (var i = 0; i < className.length; ++i)
+            if (!this.classList.containsClass(className[i])) return false;
+        return true;
+    }
+    else
+        return this.classList.contains(className);
+};
