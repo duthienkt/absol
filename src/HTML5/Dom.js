@@ -510,7 +510,16 @@ export function traceOutBoundingClientRect(current) {
         var oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') !== "visible";
         var isHtml = current.tagName.toLowerCase() === 'html';
         if (ox || oy || isHtml) {
-            var bound = current.getBoundingClientRect();
+            var bound;
+            if (isHtml) {
+                bound = Object.assign({ left: 0, top: 0 }, getScreenSize());
+                bound.bottom = bound.height;
+                bound.right = bound.width;
+
+            }
+            else {
+                bound = current.getBoundingClientRect();
+            }
             if (ox || isHtml) {
                 left = Math.max(left, bound.left);
                 right = Math.min(right, bound.right);
