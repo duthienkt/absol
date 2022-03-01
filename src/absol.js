@@ -1,5 +1,6 @@
 import absol from ".";
 import AElement from "./HTML5/AElement";
+import AElementNS from "./HTML5/AElementNS";
 
 
 //for old plugin
@@ -54,3 +55,11 @@ AElement.prototype.containsClass = function (className) {
     else
         return this.classList.contains(className);
 };
+
+
+/**
+ * @deprecated
+ * @param {string|Array} className
+ * @returns {Boolean}
+ */
+AElementNS.prototype.containsClass = AElement.prototype.containsClass;
