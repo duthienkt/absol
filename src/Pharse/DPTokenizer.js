@@ -48,8 +48,8 @@ DPTokenizer.prototype.tokenize = function (source) {
         res.push({
             type: type,
             content: matched[0],
-            startIndex: matched.index,
-            endIndex: matched.index + matched[0].length
+            start: matched.index,
+            end: matched.index + matched[0].length
         });
         matched = regex.exec(source);
     }
