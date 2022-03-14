@@ -27,7 +27,7 @@ function indexingItem(item) {
 /****
  *
  * @param {DPParser} parser
- * @param {string} source
+ * @param {string || []} source
  * @param {string} target
  * @constructor
  */
@@ -38,9 +38,18 @@ function DPParseInstance(parser, source, target) {
     this.rules = parser.rules;
     this.tokenTypes = parser.tokenizer.types;
     this.error = null;
-    this.tokens = parser.tokenizer.tokenize(source).filter(function (tk) {
-        return tk.type !== 'skip';
-    });
+    if (typeof source === "string"){
+        this.tokens = parser.tokenizer.tokenize(source).filter(function (tk) {
+            return tk.type !== 'skip';
+        });
+    }
+    else if (source instanceof Array){
+        this.tokens = source
+    }
+    else {
+        throw new Error("Invalid source, source must be string or array of token");
+    }
+
     this.tokenIdx = 0;
     this.priQueue = new Heap(this._cmpFunction);
     this.maxSize = 0;

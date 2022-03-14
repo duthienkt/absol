@@ -45,9 +45,14 @@ DPParser.prototype.computeTarget = function () {
 
 };
 
-
-DPParser.prototype.parse = function (text, target) {
-    return new DPParseInstance(this, text, target);
+/***
+ *
+ * @param {string|[]}source
+ * @param target
+ * @returns {DPParseInstance}
+ */
+DPParser.prototype.parse = function (source, target) {
+    return new DPParseInstance(this, source, target);
 };
 
 export default DPParser;
