@@ -187,7 +187,7 @@ DPParseInstance.prototype._trackBack = function () {
         }
 
         var ac = childItem.reduce(function (ac, item) {
-            if (typeof item[TRACK][1].content === "string") {
+            if (typeof item[TRACK][1].type === "string") {
                 ac.child.push(item[TRACK][1]);
                 ac.start += 1;
             }
