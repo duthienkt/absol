@@ -4,7 +4,10 @@ function Color(rgba) {
     this.rgba = rgba.slice();
 }
 
-
+/***
+ *
+ * @returns {string}
+ */
 Color.prototype.toHex6 = function () {
     return this.rgba.slice(0, 3).map(function (b) {
         b = b * 255 >> 0;
@@ -12,6 +15,10 @@ Color.prototype.toHex6 = function () {
     }).join('');
 };
 
+/***
+ *
+ * @returns {string}
+ */
 Color.prototype.toHex8 = function () {
     return this.rgba.map(function (b) {
         b = b * 255 >> 0;
@@ -19,6 +26,10 @@ Color.prototype.toHex8 = function () {
     }).join('');
 };
 
+/***
+ *
+ * @returns {string}
+ */
 Color.prototype.toHex3 = function () {
     return this.rgba.slice(0, 3).map(function (b) {
         b = b * 255 / 17 >> 0;
@@ -26,6 +37,10 @@ Color.prototype.toHex3 = function () {
     }).join('');
 };
 
+/***
+ *
+ * @returns {string}
+ */
 Color.prototype.toHex4 = function () {
     return this.rgba.map(function (b) {
         b = b * 255 / 17 >> 0;
@@ -33,22 +48,37 @@ Color.prototype.toHex4 = function () {
     }).join('');
 };
 
-
+/***
+ *
+ * @returns {number[]}
+ */
 Color.prototype.toHSLA = function () {
     return Color.rgbaToHSLA(this.rgba);
 };
 
 
+/***
+ *
+ * @returns {number[]}
+ */
 Color.prototype.toHSBA = function () {
     return Color.rgbaToHSBA(this.rgba);
 };
 
+
+/***
+ *
+ * @returns {number[]}
+ */
 Color.prototype.toHWBA = function () {
     return Color.rgbaToHWBA(this.rgba);
 };
 
-
-Color.prototype.getHightContrastColor = function () {
+/***
+ *
+ * @returns {Color}
+ */
+Color.prototype.getHighContrastColor = function () {
     var hsba = this.toHSBA();
     var h, s, b;
     h = hsba[0] > 0.5 ? hsba[0] - 0.5 : hsba[0] + 0.5;
@@ -58,6 +88,13 @@ Color.prototype.getHightContrastColor = function () {
 };
 
 
+Color.prototype.getHightContrastColor = Color.prototype.getHighContrastColor;
+
+
+/***
+ *
+ * @returns {Color}
+ */
 Color.prototype.getContrastYIQ = function () {
     var r = this.rgba[0] * 255;
     var g = this.rgba[1] * 255;
@@ -66,10 +103,34 @@ Color.prototype.getContrastYIQ = function () {
     return (yiq >= 128) ? new Color([0, 0, 0, 1]) : new Color([1, 1, 1, 1]);
 };
 
+/**
+ *
+ * @returns {Color}
+ */
 Color.prototype.clone = function () {
     return new Color(this.rgba.slice());
 };
 
+/**
+ *
+ *  ['rgba', 'rgba', 'rgba({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}}, {{x[3]}})'],
+ *     ['rgb', 'rgba', 'rgb({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}})'],
+ *     ['hsl', 'toHSLA()', 'hsl({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
+ *     ['hsla', 'toHSLA()', 'hsla({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
+ *     ['hsb', 'toHSBA()', 'hsb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
+ *     ['hsba', 'toHSBA()', 'hsba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
+ *     ['hex3', 'toHex3()', '#{{x}}'],
+ *     ['hex4', 'toHex4()', '#{{x}}'],
+ *     ['hex6', 'toHex6()', '#{{x}}'],
+ *     ['hex6', 'toHex8()', '#{{x}}'],
+ *     ['hwb', 'toHWBA()', 'hwb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
+ *     ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})']
+ */
+/****
+ *
+ * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex6"|"hwb"|"hwba"} mode
+ * @returns {string}
+ */
 Color.prototype.toString = function (mode) {
     mode = mode || 'rgba';
     mode = mode.toLocaleLowerCase();
@@ -78,6 +139,9 @@ Color.prototype.toString = function (mode) {
 
 /***
  *
+ * @param notStandard
+ * @param {number[]} hsbWeight
+ * @returns {Color}
  */
 Color.prototype.nearestNamedColor = function (notStandard, hsbWeight) {
     hsbWeight = hsbWeight ||[5, 3, 1]
@@ -290,7 +354,12 @@ Color.regexes.hwba = new RegExp(
     'i'
 );
 
-
+/***
+ *
+ * @param {number} code
+ * @param {32|24|16|8} bits
+ * @returns {Color}
+ */
 Color.fromInt = function (code, bits) {
     var r, g, b, a;
     if (bits == 32) {
@@ -321,40 +390,99 @@ Color.fromInt = function (code, bits) {
     return new Color([r, g, b, a]);
 };
 
-
+/**
+ *
+ * @param {number} r
+ * @param {number} g
+ * @param {number} b
+ * @returns {Color}
+ */
 Color.fromRGB = function (r, g, b) {
     return new Color([r, g, b, 1]);
 };
 
+/**
+ *
+ * @param {number} r
+ * @param {number} g
+ * @param {number} b
+ * @param {number} a
+ * @returns {Color}
+ */
 Color.fromRGBA = function (r, g, b, a) {
     return new Color([r, g, b, a]);
 };
 
+/***
+ *
+ * @param {number} h
+ * @param {number} s
+ * @param {number} l
+ * @returns {Color}
+ */
 Color.fromHSL = function (h, s, l) {
     var rgba = this.hslaToRGBA([h, s, l, 1]);
     return new Color(rgba);
 };
 
+/***
+ *
+ * @param {number} h
+ * @param {number} s
+ * @param {number} l
+ * @param {number} a
+ * @returns {Color}
+ */
 Color.fromHSLA = function (h, s, l, a) {
     var rgba = this.hslaToRGBA([h, s, l, a]);
     return new Color(rgba);
 };
 
+/***
+ *
+ * @param {number} h
+ * @param {number} s
+ * @param {number} b
+ * @returns {Color}
+ */
 Color.fromHSB = function (h, s, b) {
     var rgba = this.hsbaToRGBA([h, s, b, 1]);
     return new Color(rgba);
 };
 
+/***
+ *
+ * @param {number} h
+ * @param {number} s
+ * @param {number} b
+ * @param {number} a
+ * @returns {Color}
+ */
 Color.fromHSBA = function (h, s, b, a) {
     var rgba = this.hsbaToRGBA([h, s, b, a]);
     return new Color(rgba);
 };
 
+/***
+ *
+ * @param {number} h
+ * @param {number} s
+ * @param {number} b
+ * @returns {Color}
+ */
 Color.fromHWB = function (h, s, b) {
     var rgba = this.hwbaToRGBA([h, s, b, 1]);
     return new Color(rgba);
 };
 
+/***
+ *
+ * @param {number} h
+ * @param {number} s
+ * @param {number} b
+ * @param {number} a
+ * @returns {Color}
+ */
 Color.fromHWBA = function (h, s, b, a) {
     var rgba = this.hwbaToRGBA([h, s, b, a]);
     return new Color(rgba);
