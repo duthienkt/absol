@@ -1,5 +1,9 @@
 import noop from "../Code/noop";
 function Context() {
+    /****
+     *
+     * @type {"CREATE"|"PAUSE"|"RUNNING"|"STANDBY"|"DIE"|"STOP"}
+     */
     this.state = "CREATE";
     /**
      * @type {Context}
