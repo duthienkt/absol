@@ -90,6 +90,28 @@ Color.prototype.getHighContrastColor = function () {
 
 Color.prototype.getHightContrastColor = Color.prototype.getHighContrastColor;
 
+Color.prototype.getLuminance = function () {
+    var a = this.rgba.slice(0, 3).map(function (v) {
+        return v <= 0.03928
+            ? v / 12.92
+            : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+};
+
+/***
+ *
+ * @param {Color} other
+ * @returns {number}
+ */
+Color.prototype.getContrastWith = function (other) {
+    var lum1 = this.getLuminance();
+    var lum2 = other.getLuminance();
+    var brightest = Math.max(lum1, lum2);
+    var darkest = Math.min(lum1, lum2);
+    return (brightest + 0.05)
+        / (darkest + 0.05);
+};
 
 /***
  *
@@ -144,14 +166,14 @@ Color.prototype.toString = function (mode) {
  * @returns {Color}
  */
 Color.prototype.nearestNamedColor = function (notStandard, hsbWeight) {
-    hsbWeight = hsbWeight ||[5, 3, 1]
+    hsbWeight = hsbWeight || [5, 3, 1]
     var hsba = this.toHSBA();
     var bestMatch = null;
     var dist = 1000;
     Object.keys(Color.namedColors).concat(notStandard ? Object.keys(Color.nonStandarNamedColors) : []).forEach(function (name) {
         var c = Color.parse(Color.namedColors[name] || Color.nonStandarNamedColors[name]);
         var cHSBA = c.toHSBA();
-        var cDist = Math.abs(hsba[0] - cHSBA[0]) * hsbWeight[0] + Math.abs(hsba[1] - cHSBA[1]) *  hsbWeight[1] + Math.abs(hsba[2] - cHSBA[2])*  hsbWeight[2];
+        var cDist = Math.abs(hsba[0] - cHSBA[0]) * hsbWeight[0] + Math.abs(hsba[1] - cHSBA[1]) * hsbWeight[1] + Math.abs(hsba[2] - cHSBA[2]) * hsbWeight[2];
         if (cDist < dist) {
             dist = cDist;
             bestMatch = name;
