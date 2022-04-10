@@ -1,20 +1,18 @@
 import EventEmitter from "../HTML5/EventEmitter";
 import { randomIdent } from "../String/stringGenerate";
+import OOP from "../HTML5/OOP";
 
 // it can be replace BroadcastChanel
 function Broadcast(channel, id) {
     EventEmitter.call(this);
     this.channel = channel;
-    this.id = id;
+    this.id = id || randomIdent(32);
     this._ev_message = this._ev_message.bind(this);
     this._ev_storage = this._ev_storage.bind(this);
     this._init();
 }
 
-Object.defineProperties(Broadcast.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
-
-Broadcast.prototype.constructor = Broadcast;
-
+OOP.mixClass(Broadcast, EventEmitter);
 
 Broadcast.prototype._init = function () {
     if ('BroadcastChannel' in window) {
@@ -59,7 +57,7 @@ Broadcast.prototype.handleMessData = function (data) {
 };
 
 /**
- * @param {Array<*>}
+ * @param {...Array<*>}
  */
 Broadcast.prototype.emit = function () {
     var params = Array.prototype.slice.call(arguments);
