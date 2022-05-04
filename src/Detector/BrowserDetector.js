@@ -69,7 +69,18 @@ BrowserDetector.prototype.detectByRules = function (rules) {
         }
     }
     return result;
+};
 
+BrowserDetector.prototype.calcBenchmark = function () {
+    var now = new Date().getTime();
+    var i = 0;
+    while (now === new Date().getTime()) {
+    }
+    now++;
+    while (now === new Date().getTime()) {
+        ++i
+    }
+    return i;
 };
 
 
