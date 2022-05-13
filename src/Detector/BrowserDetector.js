@@ -71,7 +71,7 @@ BrowserDetector.prototype.detectByRules = function (rules) {
     return result;
 };
 
-BrowserDetector.prototype.calcBenchmark = function () {
+export function calcBenchmark() {
     var now = new Date().getTime();
     var i = 0;
     while (now === new Date().getTime()) {
@@ -81,7 +81,10 @@ BrowserDetector.prototype.calcBenchmark = function () {
         ++i
     }
     return i;
-};
+}
+
+
+BrowserDetector.prototype.calcBenchmark = calcBenchmark;
 
 
 export default new BrowserDetector(BrowserRules);
