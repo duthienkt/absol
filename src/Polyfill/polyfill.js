@@ -1,5 +1,10 @@
 import atob from 'atob';
 import btoa from 'btoa';
+import intl from 'intl';
+
+if (!('Intl' in window)){
+    window.Intl = intl;
+}
 
 if (!('atob' in window)) {
     window.atob = atob;
