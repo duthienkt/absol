@@ -24,3 +24,35 @@ export function arrayRemoveNone(arr) {
         return c !== null && c !== undefined;
     });
 }
+
+export function arrayIntersection(a1, a2) {
+    var dict1 = a1.reduce((ac, cr) => {
+        ac[(typeof cr) + cr] = true;
+        return ac;
+    }, {});
+    var dict2 = a2.reduce((ac, cr) => {
+        ac[(typeof cr) + cr] = true;
+        return ac;
+    }, {});
+    var dictAdded = {};
+    var res = [];
+    var i, k, x;
+    for (i = 0; i < a1.length; ++i) {
+        x = a1[i];
+        k = (typeof x) + x;
+        if (dict1[k] && dict2[k] && !dictAdded[k]) {
+            res.push(x);
+            dictAdded[k] = true;
+        }
+    }
+
+    for (i = 0; i < a2.length; ++i) {
+        x = a2[i];
+        k = (typeof x) + x;
+        if (dict1[k] && dict2[k] && !dictAdded[k]) {
+            res.push(x);
+            dictAdded[k] = true;
+        }
+    }
+    return res;
+}

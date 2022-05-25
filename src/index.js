@@ -65,9 +65,12 @@ import {generateJSVariable} from "./JSMaker/generator";
 import {normalizeIdent} from "./String/stringFormat";
 import ShareConfiguration from "./AppPattern/ShareConfiguration";
 import safeThrow from "./Code/safeThrow";
+import * as array from './DataStructure/Array';
+
 
 var absol = {
     int: int,
+    array: array,
     safeThrow: safeThrow,
     Rectangle: Rectangle,
     ResizeSystem: ResizeSystem,
