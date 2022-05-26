@@ -66,7 +66,7 @@ import {normalizeIdent} from "./String/stringFormat";
 import ShareConfiguration from "./AppPattern/ShareConfiguration";
 import safeThrow from "./Code/safeThrow";
 import * as array from './DataStructure/Array';
-import remoteNodeRequireAsync from "./Network/remoteNodeRequireAsync";
+import remoteRequireNodeAsync from "./Network/remoteRequireNodeAsync";
 
 
 var absol = {
@@ -147,7 +147,7 @@ var absol = {
     Thread: Thread,
     generateJSVariable: generateJSVariable,
     normalizeIdent: normalizeIdent,
-    remoteNodeRequireAsync: remoteNodeRequireAsync,
+    remoteNodeRequireAsync: remoteRequireNodeAsync,
     shareConfiguration: ShareConfiguration.instance
 };
 

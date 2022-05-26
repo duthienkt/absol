@@ -133,7 +133,7 @@ function requireCode(filename, entry, fileList) {
     });
 }
 
-export default function remoteNodeRequireAsync(filename, entry) {
+export default function remoteRequireNodeAsync(filename, entry) {
     if (!entry) entry = absoluteEntry;
     if (!getExtension(filename)) filename += '.js';
     var fullPath = concatUrl(entry, filename);
