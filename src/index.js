@@ -67,7 +67,7 @@ import ShareConfiguration from "./AppPattern/ShareConfiguration";
 import safeThrow from "./Code/safeThrow";
 import * as array from './DataStructure/Array';
 import remoteRequireNodeAsync from "./Network/remoteRequireNodeAsync";
-
+import Polygon from "./Math/Polygon";
 
 var absol = {
     int: int,
@@ -76,6 +76,7 @@ var absol = {
     Rectangle: Rectangle,
     ResizeSystem: ResizeSystem,
     Arc: Arc,
+    Polygon: Polygon,
     NumRange: NumRange,
     CookieStore: CookieStore,
     parseCookieString: parseCookieString,

@@ -119,6 +119,15 @@ Vec2.prototype.dot = function (v1) {
 
 /***
  *
+ * @param {Vec2} v1
+ * @returns {number}
+ */
+Vec2.prototype.cross = function (v1) {
+    return this.x * v1.y - this.y * v1.x;
+};
+
+/***
+ *
  * @returns {number}
  */
 Vec2.prototype.direction = function () {

@@ -88,17 +88,13 @@ Rectangle.prototype.centerPoint = function () {
 /***
  *
  * @param {Rectangle} r
- * @param {boolean} margin
+ * @param {number} margin
  * @return {boolean}
  */
 Rectangle.prototype.isCollapse = function (r, margin) {
     if (!margin) margin = 0;
-    if (this.x >= r.x + r.width + margin) return false;
-    if (this.y >= r.y + r.height + margin) return false;
-
-    if (r.x >= this.x + this.width + margin) return false;
-    if (r.y >= this.y + this.height + margin) return false;
-    return true;
+    return !(this.x >= r.x + r.width + margin || this.y >= r.y + r.height + margin
+        || r.x >= this.x + this.width + margin || r.y >= this.y + this.height + margin);
 };
 
 /***
@@ -176,7 +172,7 @@ Rectangle.prototype.clone = function () {
  * @param {Rectangle} r
  */
 Rectangle.prototype.equals = function (r) {
-    return this.x == r.x && this.y == r.y && this.height == r.height && this.width == r.width;
+    return this.x === r.x && this.y === r.y && this.height === r.height && this.width === r.width;
 };
 
 /**
@@ -208,6 +204,25 @@ Rectangle.makeCenter = function (x, y, width, height) {
  */
 Rectangle.fromClientRect = function (clientRect) {
     return new Rectangle(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
+};
+
+
+/***
+ *
+ * @param {Vec2[]} points
+ * @returns  {Rectangle}
+ */
+Rectangle.boundingPoints = function (points) {
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    var point;
+    for (var i = 0; i < points.length; ++i) {
+        point = points[i];
+        minX = Math.min(minX, point.x);
+        maxX = Math.max(maxX, point.x);
+        minY = Math.min(minY, point.y);
+        maxY = Math.max(maxY, point.y);
+    }
+    return new Rectangle(minX, minY, maxX - minX, maxY - minY);
 };
 
 export default Rectangle;
