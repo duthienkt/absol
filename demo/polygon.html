@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Polygon</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+</head>
+
+<body>
+<div id="wrapper">
+
+
+</div>
+<script>
+
+    (function () {
+        var Vec2 = absol.Vec2;
+        var _ = absol._svg;
+        var Rectangle = absol.Rectangle;
+        var Polygon = absol.Polygon;
+        var canvas = _({
+            tag: 'svg',
+            attr: {
+                viewBox: '0 0 1000 640',
+                width: '1000px',
+                height: '640px'
+            },
+            style: {
+                backgroundColor: 'rgb(250, 250, 250)'
+            }
+        }).addTo(document.body);
+
+        var polygon = new Polygon(Array(5).fill(0).map((u, i) => new Vec2(500 + Math.random() * Math.cos(Math.PI / 5 * 2 * i) * 300,
+            320 + Math.random() * Math.sin(Math.PI / 5 * 2 * i) * 300)));
+        var polygonElt = _({
+            tag: 'path',
+            attr: {
+                d: polygon.getPathString()
+            },
+            style: {
+                fill: 'rgba(174,212,164,0.3)',
+                stroke: 'black',
+
+            }
+
+        }).addTo(canvas);
+
+        var cursor = _({
+            tag: 'circle',
+            attr: {
+                cx: 0, cy: 0, r: 3
+            },
+            style: {
+                fill: 'red'
+            }
+        }).addTo(canvas);
+
+
+        document.addEventListener("mousemove", function (event) {
+            var m = new Vec2(event.clientX, event.clientY);
+            var cB = Rectangle.fromClientRect(canvas.getBoundingClientRect());
+            m = m.sub(cB.A());
+            cursor.attr({
+                cx: m.x, cy: m.y
+            });
+            if (polygon.pointLocalIn(m) === 1) {
+                polygonElt.addStyle('fill', 'rgba(255,51,120,0.3)')
+            }
+            else {
+                polygonElt.addStyle('fill', 'rgba(174,212,164,0.3)')
+            }
+        })
+    })();
+
+</script>
+
+</body>
+</html>
