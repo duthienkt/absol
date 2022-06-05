@@ -150,7 +150,7 @@ Color.prototype.clone = function () {
  */
 /****
  *
- * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex6"|"hwb"|"hwba"} mode
+ * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex6"|hex8|"hwb"|"hwba"} mode
  * @returns {string}
  */
 Color.prototype.toString = function (mode) {
