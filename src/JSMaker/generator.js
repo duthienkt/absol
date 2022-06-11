@@ -3,7 +3,11 @@ export function generateJSVariable(obj, indent) {
     var childIndent = indent + '    ';
     if (obj === null) {
         return 'null';
-    } else if (obj instanceof Array) {
+    }
+    else if (obj instanceof Date) {
+        return 'Date(' + obj.getTime() + ')';
+    }
+    else if (obj instanceof Array) {
         if (obj.length === 0)
             return '[]';
         return '[\n'
@@ -11,7 +15,8 @@ export function generateJSVariable(obj, indent) {
                 return childIndent + generateJSVariable(it, childIndent);
             }).join(',\n')
             + '\n' + indent + ']';
-    } else if (typeof obj === 'object') {
+    }
+    else if (typeof obj === 'object') {
         var keys = Object.keys(obj);
         if (keys.length === 0) return '{}';
         return '{\n'
@@ -21,9 +26,11 @@ export function generateJSVariable(obj, indent) {
                 return childIndent + key + ': ' + generateJSVariable(value, childIndent)
             }).join(',\n')
             + '\n' + indent + '}';
-    } else if (obj === undefined) {
+    }
+    else if (obj === undefined) {
         return 'undefined';
-    } else {
+    }
+    else {
         return JSON.stringify(obj);
     }
 }
