@@ -40,6 +40,7 @@ function BrowserDetector(rulesheet) {
         }
         return supportsPassiveOption;
     })();
+    this.supportGridLayout = typeof document.createElement('div').style.grid === 'string';
 }
 
 
