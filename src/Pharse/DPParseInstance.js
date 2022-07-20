@@ -39,12 +39,12 @@ function DPParseInstance(parser, source, target) {
     this.tokenTypes = parser.tokenizer.types;
     this.error = null;
     this.source = source;
-    if (typeof source === "string"){
+    if (typeof source === "string") {
         this.tokens = parser.tokenizer.tokenize(source).filter(function (tk) {
             return tk.type !== 'skip';
         });
     }
-    else if (source instanceof Array){
+    else if (source instanceof Array) {
         this.tokens = source
     }
     else {
@@ -302,7 +302,7 @@ DPParseInstance.prototype._findError = function () {
         }).join(', ');
     }
     else if (this.error.type === 'unexpected') {
-        this.error.message = 'Unexpected token ' + (this.tokens[this.error.tokenIdx].content||JSON.stringify(this.tokens[this.error.tokenIdx]));
+        this.error.message = 'Unexpected token ' + (this.tokens[this.error.tokenIdx].content || JSON.stringify(this.tokens[this.error.tokenIdx]));
     }
 };
 
@@ -312,6 +312,10 @@ DPParseInstance.prototype._calcAST = function () {
 
 export function parsedNodeToAST(parsedNode) {
     return parsedNode.rule.toAST(parsedNode)
+}
+
+export function parsedNodeToASTChain(parsedNode) {
+    return parsedNode.rule.toASTChain(parsedNode);
 }
 
 export default DPParseInstance;
