@@ -107,13 +107,13 @@ export function randomSentence(limitLenght) {
     return res;
 }
 
-export function randomParagraph(limitLenght) {
-    if (!limitLenght) limitLenght = 1000;
-    var length = Math.ceil(Math.random() * limitLenght / 200);
+export function randomParagraph(limitLength) {
+    if (!limitLength) limitLength = 1000;
+    var length = Math.ceil(Math.random() * limitLength / 200);
     return new Array(length).fill(null)
         .map(randomSentence)
         .reduce(function (ac, cr) {
-            if (ac.length + cr.length < limitLenght) {
+            if (ac.length + cr.length < limitLength) {
                 ac.parts.push(cr);
             }
             return ac;
