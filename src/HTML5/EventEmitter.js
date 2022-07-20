@@ -98,8 +98,8 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
                 //wrappedCallback will be call
                 if (isOnce) {
                     event.wrappedCallback = function () {
-                        event.callback.apply(this, arguments);
                         this.off(event.eventName, event.wrappedCallback, event.cap);
+                        event.callback.apply(this, arguments);
                     };
                 }
                 else {
