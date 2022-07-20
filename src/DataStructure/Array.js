@@ -56,3 +56,26 @@ export function arrayIntersection(a1, a2) {
     }
     return res;
 }
+
+/***
+ *
+ * @param {[]}a1
+ * @param {[]}a2
+ * @param {boolean=} order
+ * @returns {boolean}
+ */
+export function arrayCompare(a1, a2, order) {
+    if (a1 === a2) return true;
+    if (!a1 || !a2) return false;
+    if (a1.length !== a2.length) return false;
+    if (!a1.sort || !a2.sort) return false;
+    if (!order) {
+        a1.sort();
+        a2.sort();
+    }
+    var n = a1.length;
+    for (var i = 0; i < n; ++i) {
+        if (a1[i] !== a2[i]) return false;
+    }
+    return true;
+}
