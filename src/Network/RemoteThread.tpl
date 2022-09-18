@@ -184,40 +184,81 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
 };
 
 
+var TYPE_WORKER = 'WORKER';
+
 /**
  *
- * @param {Worker} host
+ * @param {Worker|HTMLIFrameElement|WorkerGlobalScope|Window=} host
  */
-function IFrameBridge(host, origin) {
+function IFrameBridge(host) {
     EventEmitter.call(this);
-    this.detach();
-    this.origin = origin;
-    if (host) this.attach(host);
+    /***
+     *
+     * @type {Worker|HTMLIFrameElement|WorkerGlobalScope|Window|WorkerGlobalScope|Window}
+     */
+    this.host = host || self;
+    this.sender = null;
+    this.receiver = null;
+    this.origin = null;
+    this.type = 'NOT_DETECT';
+    this.id = "UNSET";
+
+    this.sync = this._detectHost().then(() => this._attach());
+
     this.__azarResolveCallbacks = {};
+    this.__azarRejectCallbacks = {};
 }
 
-IFrameBridge.prototype.attach = function (host) {
-    this.host = host;
-    if (this.host.addEventListener) {
-        this.host.addEventListener("message", this.__azarMessageListener.bind(this), false);
-    }
-    else if (this.host.attachEvent) {
-        this.host.attachEvent("onmessage", this.__azarMessageListener.bind(this));
-    }
-    else {
-        this.host.onmessage = this.__azarMessageListener.bind(this);
-    }
-    this.__IFrameBridge_resolve();
+IFrameBridge.prototype._detectHost = function () {
+          this.type = TYPE_WORKER;
+          this.sender = this.host;
+          this.receiver = this.host;
+          return Promise.resolve();
 };
 
-IFrameBridge.prototype.detach = function () {
-    this.sync = new Promise(function (resolve) {
-        this.__IFrameBridge_resolve = resolve;
-    }.bind(this));
+
+IFrameBridge.prototype._attach = function () {
+    if (this.receiver.addEventListener) {
+        this.receiver.addEventListener("message", this.__azarMessageListener.bind(this), false);
+    }
+    else if (this.receiver.attachEvent) {
+        this.receiver.attachEvent("onmessage", this.__azarMessageListener.bind(this));
+    }
+    else {
+        this.receiver.onmessage = this.__azarMessageListener.bind(this);
+    }
 };
+
+
+IFrameBridge.getInstance = function () {
+    if (!IFrameBridge.shareInstance) {
+        var origin = location.origin;
+        var rootOrigin = IFrameBridge.getParentUrl().match(/^(http|https):\/\/[^/]+/);
+        if (rootOrigin) {
+            rootOrigin = rootOrigin[0];
+        }
+        else {
+            rootOrigin = origin;
+        }
+
+        // IFrameBridge.shareInstance = new IFrameBridge(self, rootOrigin == origin? undefined: "*" || rootOrigin );
+        var host = self;
+        IFrameBridge.shareInstance = new IFrameBridge(host, rootOrigin);
+    }
+    return IFrameBridge.shareInstance;
+};
+
 
 Object.defineProperties(IFrameBridge.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
 IFrameBridge.prototype.constructor = IFrameBridge;
+
+
+IFrameBridge.getParentUrl = function () {
+    var parentUrl = (window.location != window.parent.location)
+        ? document.referrer
+        : document.location.href;
+    return parentUrl;
+};
 
 IFrameBridge.prototype.__azarMessageListener = function (event) {
     this.__azarHandleData(event.data);
@@ -225,6 +266,7 @@ IFrameBridge.prototype.__azarMessageListener = function (event) {
 
 
 IFrameBridge.prototype.__azarHandleData = function (data) {
+    if (data.bridgeId !== this.id) return;
     if (data.type) {
         if (data.type == "INVOKE") {
             try {
@@ -234,19 +276,17 @@ IFrameBridge.prototype.__azarHandleData = function (data) {
                         this.__azarResolve(data.taskId, result);
                     }.bind(this))
                         .catch(function (err) {
-                            console.error(err);
-                            this.__azarResolve(data.taskId, null, { message: err.message, stack: err.stack });
+                            safeThrow(err);
+                            this.__azarResolve(data.taskId, null, err);
                         }.bind(this));
                 }
                 else {
                     this.__azarResolve(data.taskId, result);
                 }
             } catch (err) {
-                console.error(err);
-                this.__azarResolve(data.taskId, null, { message: err.message, stack: err.stack });
+                safeThrow(err);
+                this.__azarResolve(data.taskId, null, err);
             }
-
-
         }
         else if (data.type == "INVOKE_RESULT") {
             if (this.__azarResolveCallbacks[data.taskId]) {
@@ -273,14 +313,15 @@ IFrameBridge.prototype.__azarResolve = function (taskId, result, error) {
         type: "INVOKE_RESULT",
         taskId: taskId,
         result: result,
-        error: error
+        error: error,
+        bridgeId: this.id
     };
 
     if (this.origin) {
-        this.host.postMessage(data, this.origin);
+        this.sender.postMessage(data, this.origin);
     }
     else {
-        this.host.postMessage(data);
+        this.sender.postMessage(data);
     }
 };
 
@@ -301,13 +342,14 @@ IFrameBridge.prototype.emit = function () {
     this.sync.then(function () {
         var data = {
             type: "EMIT",
-            params: params
+            params: params,
+            bridgeId: this.id
         };
         if (this.origin) {
-            this.host.postMessage(data, this.origin);
+            this.sender.postMessage(data, this.origin);
         }
         else {
-            this.host.postMessage(data);
+            this.sender.postMessage(data);
         }
     }.bind(this));
     return this;
@@ -324,7 +366,8 @@ IFrameBridge.prototype.invoke = function (name) {
             type: 'INVOKE',
             params: params,
             taskId: indent,
-            name: name
+            name: name,
+            bridgeId: this.id
         };
         if (this.origin) {
             this.host.postMessage(data, this.origin);
@@ -332,8 +375,9 @@ IFrameBridge.prototype.invoke = function (name) {
         else {
             this.host.postMessage(data);
         }
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             this.__azarResolveCallbacks[indent] = resolve;
+            this.__azarRejectCallbacks[indent] = reject;
         }.bind(this));
     }.bind(this));
 };
@@ -341,6 +385,21 @@ IFrameBridge.prototype.invoke = function (name) {
 IFrameBridge.prototype.importScriptURLs = function () {
     return this.invoke.apply(this, ['_receiveScriptURLs'].concat(Array.prototype.slice.call(arguments)));
 };
+
+IFrameBridge.prototype.importScript = function (code) {
+    var blob = new Blob([code], { type: 'application/javascript' });
+    var url = URL.createObjectURL(blob);
+    return this.importScriptURLs(url);
+};
+
+
+IFrameBridge.prototype.createMethod = function (name, fx) {
+    this[name] = function () {
+        return this.invoke.apply(this, [name].concat(Array.prototype.slice.call(arguments)));
+    };
+    return this.invoke.apply(this, ['_receiveMethod', name, fx.toString()]);
+};
+
 
 IFrameBridge.prototype._receiveScriptURLs = function () {
     if (self.importScripts) {
@@ -353,5 +412,9 @@ IFrameBridge.prototype._receiveMethod = function (name, code) {
     this[name] = (new Function('return ' + code))();
 };
 
-Object.defineProperties(self, Object.getOwnPropertyDescriptors(IFrameBridge.prototype));
+
+var IFrameBridge_prototype_descriptors = Object.getOwnPropertyDescriptors(IFrameBridge.prototype);
+delete IFrameBridge_prototype_descriptors.constructor;
+
+Object.defineProperties(self, IFrameBridge_prototype_descriptors);
 IFrameBridge.call(self, self);
