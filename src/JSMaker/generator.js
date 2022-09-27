@@ -5,7 +5,7 @@ export function generateJSVariable(obj, indent) {
         return 'null';
     }
     else if (obj instanceof Date) {
-        return 'Date(' + obj.getTime() + ')';
+        return 'new Date(' + obj.getTime() + ')';
     }
     else if (obj instanceof Array) {
         if (obj.length === 0)
@@ -45,9 +45,9 @@ export function copyJSVariable(o, replacers) {
     var replacer;
     if (replacers && replacers.length > 0) {
         replacer = replacers.find((rp) => {
-           return  rp.test.apply(rp, [o].concat(Array.prototype.slice.call(arguments, 2)));
+            return rp.test.apply(rp, [o].concat(Array.prototype.slice.call(arguments, 2)));
         });
-        if (replacer){
+        if (replacer) {
             return replacer.replace.apply(replacer, [o].concat(Array.prototype.slice.call(arguments, 2)));
         }
     }
@@ -56,25 +56,27 @@ export function copyJSVariable(o, replacers) {
     var type = typeof o;
     if (type === "boolean") return o;
     if (o instanceof Date || (typeof o.getTime === "function")) return new Date(o.getTime());
-    if (type === "number") return type;
+    if (type === "number") return o;
     if (type === "string") return o + '';
     if (typeof o.map === "function") {
         return o.map((it, i) => copyJSVariable(it, replacers, i, o));
     }
     if (type === "object") {
         return Object.keys(o).reduce((ac, cr) => {
-            ac[cr] = copyJSVariable(o[cr],replacers, cr,o );
+            ac[cr] = copyJSVariable(o[cr], replacers, cr, o);
             return ac;
         }, {});
     }
     return o;
 }
 
-export function replaceDateStringJSVariable(o){
+export function replaceDateStringJSVariable(o) {
     return copyJSVariable(o, [{
-        test: (x)=>{
-            return (typeof x === "string") && !isNaN(new Date(x).getTime());
+        test: (x) => {
+            return (typeof x === "string")
+                && x.match(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+([a-zA-Z]{3})\s+[\d\s:]+GMT[\d+]+\s*\([^)]+\)$/)
+                && !isNaN(new Date(x).getTime());
         },
-        replace: x=> new Date(x)
+        replace: x => new Date(x)
     }]);
 }
