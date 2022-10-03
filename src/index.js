@@ -68,6 +68,7 @@ import safeThrow from "./Code/safeThrow";
 import * as array from './DataStructure/Array';
 import remoteRequireNodeAsync from "./Network/remoteRequireNodeAsync";
 import Polygon from "./Math/Polygon";
+import DynamicCSS from "./HTML5/DynamicCSS";
 
 var absol = {
     int: int,
@@ -151,8 +152,10 @@ var absol = {
     normalizeIdent: normalizeIdent,
     replaceDateStringJSVariable: replaceDateStringJSVariable,
     remoteNodeRequireAsync: remoteRequireNodeAsync,
-    shareConfiguration: ShareConfiguration.instance
+    shareConfiguration: ShareConfiguration.instance,
+    DynamicCSS: DynamicCSS
 };
+
 
 
 export default absol;
