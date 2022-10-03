@@ -6,10 +6,11 @@
     <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
 </head>
 <body>
+<div class="text-color">Text color </div>
+
 <h2 class="preview">H2: 1</h2>
 <h2 class="preview">H2: 2</h2>
-<h2 class="preview">H2: 3</h2>
-<h2 class="preview">H2: 4</h2>
+
 <h1>H1: 1.12rem</h1>
 <style>
     .preview::after {
@@ -21,6 +22,7 @@
     }
 </style>
 <script>
+    var hue  = 0;
     var styleConfig = new absol.DynamicCSS()
         .setRules({//gán mới rule
             'h2.preview': {
@@ -29,7 +31,13 @@
             'h2.preview::after': {
                 content: '" font 30px"'
             },
-            ':root': { 'font-size': 30 + 'px' }
+            ':root': { 'font-size': 30 + 'px' },
+            '.text-color':{
+                color:`hsl(${hue}deg, 0.5, 0.5)`
+            },
+            '.text-color::after':{
+                content:`"hsl(${hue}deg, 0.5, 0.5)"`
+            }
         })
         .commit();
     var h2FontSize = 30;
@@ -39,9 +47,15 @@
             .setProperty('h2.preview::after', 'content', '" font ' + h2FontSize + 'px"')
             .modifyRule(':root', { 'font-size': h2FontSize + 'px' })
             .commit();
-        console.log(h2FontSize)
     }, 500);
 
+    setInterval(function () {
+        hue = (hue +5)%360;
+        styleConfig.setProperty('.text-color', 'color', `hsl(${hue}, 50%, 50%)`)
+            .setProperty('.text-color::after', 'content', `"hsl(${hue}, 50%, 50%)"`)
+            .commit();
+
+    }, 100);
 </script>
 </body>
 </html>
