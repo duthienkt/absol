@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DynamicCSS</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+</head>
+<body>
+<h2 class="preview">H2: 1</h2>
+<h2 class="preview">H2: 2</h2>
+<h2 class="preview">H2: 3</h2>
+<h2 class="preview">H2: 4</h2>
+<h1>H1: 1.12rem</h1>
+<style>
+    .preview::after {
+        content: "rrer";
+    }
+
+    h1 {
+        font-size: 1.12rem;
+    }
+</style>
+<script>
+    var styleConfig = new absol.DynamicCSS()
+        .setRules({//gán mới rule
+            'h2.preview': {
+                'font-size': '30px'
+            },
+            'h2.preview::after': {
+                content: '" font 30px"'
+            },
+            ':root': { 'font-size': 30 + 'px' }
+        })
+        .commit();
+    var h2FontSize = 30;
+    setInterval(function () {
+        h2FontSize = ((h2FontSize - 30) % 70 + 1) + 30;
+        styleConfig.setProperty('h2.preview', 'font-size', h2FontSize + 'px')
+            .setProperty('h2.preview::after', 'content', '" font ' + h2FontSize + 'px"')
+            .modifyRule(':root', { 'font-size': h2FontSize + 'px' })
+            .commit();
+        console.log(h2FontSize)
+    }, 500);
+
+</script>
+</body>
+</html>
