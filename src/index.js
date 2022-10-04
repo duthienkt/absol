@@ -6,7 +6,7 @@ import BrowserDetector from './Detector/BrowserDetector';
 import JSPath from './HTML5/JSPath';
 import TemplateString from './JSMaker/TemplateString';
 import TemplateXML from './JSMaker/TemplateXML';
-import Dom from './HTML5/Dom';
+import Dom, { getSystemFontSize } from './HTML5/Dom';
 import Svg from './HTML5/Svg';
 import OOP from './HTML5/OOP';
 
@@ -153,8 +153,10 @@ var absol = {
     replaceDateStringJSVariable: replaceDateStringJSVariable,
     remoteNodeRequireAsync: remoteRequireNodeAsync,
     shareConfiguration: ShareConfiguration.instance,
-    DynamicCSS: DynamicCSS
+    DynamicCSS: DynamicCSS,
+    getSystemFontSize: getSystemFontSize
 };
+
 
 
 

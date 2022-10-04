@@ -4,7 +4,7 @@ import getFunctionName from '../String/getFunctionName';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
 import ResizeSystem from "./ResizeSystem";
-import {parseClassAttr, parseStyleAttr} from "../JSX/attribute";
+import { parseClassAttr, parseStyleAttr } from "../JSX/attribute";
 
 /***
  * @typedef {{"accept-charset":string, "http-equiv": string, accept : string, accesskey : string, action : string, align : string, allow : string, alt : string, async : string, autocapitalize : string, autocomplete : string, autofocus : string, autoplay : string, background : string, bgcolor : string, border : string, buffered : string, capture : string, challenge : string, charset : string, checked : string, cite : string, class : string, code : string, codebase : string, color : string, cols : string, colspan : string, content : string, contenteditable : string, contextmenu : string, controls : string, coords : string, crossorigin : string, csp : string, data : string, "data-*" : string, datetime : string, decoding : string, default : string, defer : string, dir : string, dirname : string, disabled : string, download : string, draggable : string, dropzone : string, enctype : string, enterkeyhint : string, for : string,     form : string, formaction : string, formenctype : string, formmethod : string, formnovalidate : string, formtarget : string, headers : string, height : string, hidden : string, high : string, href : string, hreflang : string, icon : string, id : string, importance : string, integrity : string, intrinsicsize : string, inputmode : string, ismap : string, itemprop : string, keytype : string, kind : string, label : string, lang : string, language : string, loading : string, list : string, loop : string, low : string, manifest : string, max : string, maxlength : string, minlength : string, media : string, method : string, min : string, multiple : string, muted : string, name : string, novalidate : string, open : string, optimum : string, pattern : string, ping : string, placeholder : string, poster : string, preload : string, radiogroup : string, readonly : string, referrerpolicy : string, rel : string, required : string, reversed : string, rows : string, rowspan : string, sandbox : string, scope : string, scoped : string, selected : string, shape : string, size : string, sizes : string, slot : string, span : string, spellcheck : string, src : string, srcdoc : string, srclang : string, srcset : string, start : string, step : string, style : string, summary : string, tabindex : string, target : string, title : string, translate : string, type : string, usemap : string, value : string, width : string, wrap : string, }} AElementAttributeDescriptor
@@ -820,6 +820,29 @@ export function copyStyleRule(sourceElt, destElt) {
 }
 
 Dom.copyStyleRule = copyStyleRule;
+
+/**
+ *
+ */
+export function getSystemFontSize() {
+    if (window.mobileHost && window.mobileHost.systemFont) {
+        return window.mobileHost.systemFont.pointSize;
+    }
+    var span = Dom.ShareInstance._({
+        tag: 'span',
+        style: {
+            font: '-apple-system-body',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            visibility: 'hidden',
+            opacity: 0, zIndex: -100
+        }
+    }).addTo(document.body);
+    var result = span.getFontSize();
+    span.remove();
+    return result;
+}
 
 /***
  * get absol construct descriptor for HTML element only
