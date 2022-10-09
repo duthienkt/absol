@@ -828,20 +828,39 @@ export function getSystemFontSize() {
     if (window.mobileHost && window.mobileHost.systemFont) {
         return window.mobileHost.systemFont.pointSize;
     }
-    var span = Dom.ShareInstance._({
+    var _ = Dom.ShareInstance._;
+    var initSpan = Dom.ShareInstance._({
+        tag: 'span',
+        style: {
+            font: 'inherit',
+        }
+    });
+
+    var appleSpan = Dom.ShareInstance._({
         tag: 'span',
         style: {
             font: '-apple-system-body',
+        }
+    }).addTo(document.body);
+
+    var renderer = _({
+        style: {
+            font: 'initial',
             position: 'fixed',
             top: 0,
             left: 0,
             visibility: 'hidden',
             opacity: 0, zIndex: -100
-        }
+        },
+        child: [initSpan && appleSpan]
     }).addTo(document.body);
-    var result = span.getFontSize();
-    span.remove();
-    return result;
+
+
+    var appleSize = appleSpan.getFontSize();
+    var initSize = initSpan.getFontSize();
+    var defaultSize = appleSize !== initSize ? appleSize : initSize;
+    renderer.remove();
+    return Math.round(defaultSize * 14 / 16);
 }
 
 /***
