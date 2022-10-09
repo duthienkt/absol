@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+
     <meta charset="UTF-8">
     <title>DynamicCSS</title>
     <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
 </head>
 <body>
-<div class="text-color">Text color </div>
+<div class="text-color">Text color</div>
 
 <h2 class="preview">H2: 1</h2>
 <h2 class="preview">H2: 2</h2>
@@ -22,7 +24,8 @@
     }
 </style>
 <script>
-    var hue  = 0;
+/*
+    var hue = 0;
     var styleConfig = new absol.DynamicCSS()
         .setRules({//gán mới rule
             'h2.preview': {
@@ -32,11 +35,11 @@
                 content: '" font 30px"'
             },
             ':root': { 'font-size': 30 + 'px' },
-            '.text-color':{
-                color:`hsl(${hue}deg, 0.5, 0.5)`
+            '.text-color': {
+                color: `hsl(${hue}deg, 0.5, 0.5)`
             },
-            '.text-color::after':{
-                content:`"hsl(${hue}deg, 0.5, 0.5)"`
+            '.text-color::after': {
+                content: `"hsl(${hue}deg, 0.5, 0.5)"`
             }
         })
         .commit();
@@ -50,12 +53,24 @@
     }, 500);
 
     setInterval(function () {
-        hue = (hue +5)%360;
+        hue = (hue + 5) % 360;
         styleConfig.setProperty('.text-color', 'color', `hsl(${hue}, 50%, 50%)`)
             .setProperty('.text-color::after', 'content', `"hsl(${hue}, 50%, 50%)"`)
             .commit();
 
     }, 100);
+    console.log(absol.getSystemFontSize)*/
+    var t = absol._({
+        tag: 'h5',
+        style: {
+            font: 'status-bar',
+            'text-size-adjust':'auto'
+        },
+        child: {
+            text: 'Font hệ thống: ' + absol.getSystemFontSize() + 'px'
+        }
+    }).addTo(document.body);
+    t.firstChild.data =   'Font hệ thống: ' + t.getFontSize() + 'px'
 </script>
 </body>
 </html>
