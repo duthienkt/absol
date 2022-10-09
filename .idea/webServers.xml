@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="5466b5d1-b513-4194-b91f-5efef8a25643" name="absol.cf" url="https://absol.cf">
+        <fileTransfer rootFolder="/var/www/html" accessType="SFTP" host="absol.cf" port="22" sshConfigId="5c0709cc-c16e-46f4-ae98-b9aaa125e132" sshConfig="root@absol.cf:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
