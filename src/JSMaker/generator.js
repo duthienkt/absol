@@ -61,7 +61,7 @@ export function copyJSVariable(o, replacers) {
     if (typeof o.map === "function") {
         return o.map((it, i) => copyJSVariable(it, replacers, i, o));
     }
-    if (type === "object") {
+    if (type === "object" && o.constructor === Object) {
         return Object.keys(o).reduce((ac, cr) => {
             ac[cr] = copyJSVariable(o[cr], replacers, cr, o);
             return ac;
