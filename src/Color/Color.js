@@ -76,6 +76,15 @@ Color.prototype.toHWBA = function () {
 
 /***
  *
+ * @returns {number[]}
+ */
+Color.prototype.toCMYK = function () {
+    return Color.rgbToCMYK(this.rgba);
+};
+
+
+/***
+ *
  * @returns {Color}
  */
 Color.prototype.getHighContrastColor = function () {
@@ -147,6 +156,7 @@ Color.prototype.clone = function () {
  *     ['hex6', 'toHex8()', '#{{x}}'],
  *     ['hwb', 'toHWBA()', 'hwb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
  *     ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})']
+ *     ['cmyk', 'toCMYK()', 'hwba({{x[0] * 100%}}, {{x[1] * 100}}%, {{x[2] * 100}}%)']
  */
 /****
  *
@@ -194,7 +204,8 @@ Color.templates = [
     ['hex6', 'toHex6()', '#{{x}}'],
     ['hex8', 'toHex8()', '#{{x}}'],
     ['hwb', 'toHWBA()', 'hwb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
-    ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})']
+    ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
+    ['cmyk', 'toCMYK()', 'cmyk({{x[0] * 100}}%, {{x[1] * 100}}%, {{x[2] * 100}}%)']
 ].reduce(function (ac, cr) {
     ac[cr[0]] = new Function('color', [
         'var x = color.' + cr[1] + ';',
@@ -376,6 +387,21 @@ Color.regexes.hwba = new RegExp(
     'i'
 );
 
+Color.regexes.cmyk = new RegExp(
+    [
+        '^cmyk\\(',
+        Color.regexes.percent.source,
+        ',',
+        Color.regexes.percent.source,
+        ',',
+        Color.regexes.percent.source,
+        ',',
+        Color.regexes.percent.source,
+        '\\)$'
+    ].join(Color.regexes.whiteSpace.source),
+    'i'
+);
+
 /***
  *
  * @param {number} code
@@ -510,6 +536,10 @@ Color.fromHWBA = function (h, s, b, a) {
     return new Color(rgba);
 };
 
+Color.fromCMYK = function (c, m, y, k) {
+    var rgba = this.cmykToRGB([c, m, y, k]).concat([0]);
+    return new Color(rgba);
+};
 
 /**
  * @param {String} text
@@ -555,7 +585,7 @@ Color.parse = function (text) {
             this.regexes.rgba.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return i < 3 ? parseFloat(v, 10) / 255 : parseFloat(v, 10);
+                    return i < 3 ? parseFloat(v) / 255 : parseFloat(v);
                 }));
     }
     else if (this.regexes.rgb.test(text)) {
@@ -563,7 +593,7 @@ Color.parse = function (text) {
             this.regexes.rgb.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / 255;
+                    return parseFloat(v) / 255;
                 }));
     }
     else if (this.regexes.rgbPercent.test(text)) {
@@ -571,7 +601,7 @@ Color.parse = function (text) {
             this.regexes.rgbPercent.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / 100;
+                    return parseFloat(v) / 100;
                 }));
     }
     else if (this.regexes.rgbaPercent.test(text)) {
@@ -579,7 +609,7 @@ Color.parse = function (text) {
             this.regexes.rgbaPercent.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i < 3 ? 100 : 1);
+                    return parseFloat(v) / (i < 3 ? 100 : 1);
                 }));
     }
     else if (this.regexes.hsl.test(text)) {
@@ -587,7 +617,7 @@ Color.parse = function (text) {
             this.regexes.hsl.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i == 0 ? 360 : 100);
+                    return parseFloat(v) / (i == 0 ? 360 : 100);
                 }));
     }
     else if (this.regexes.hsla.test(text)) {
@@ -595,7 +625,7 @@ Color.parse = function (text) {
             this.regexes.hsla.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i == 0 ? 360 : i < 3 ? 100 : 1);
+                    return parseFloat(v) / (i == 0 ? 360 : i < 3 ? 100 : 1);
                 }));
     }
     else if (this.regexes.hsb.test(text)) {
@@ -603,7 +633,7 @@ Color.parse = function (text) {
             this.regexes.hsb.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i == 0 ? 360 : 100);
+                    return parseFloat(v) / (i == 0 ? 360 : 100);
                 }));
     }
     else if (this.regexes.hsba.test(text)) {
@@ -611,7 +641,7 @@ Color.parse = function (text) {
             this.regexes.hsba.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i == 0 ? 360 : i < 3 ? 100 : 1);
+                    return parseFloat(v) / (i == 0 ? 360 : i < 3 ? 100 : 1);
                 }));
     }
     else if (this.regexes.hwb.test(text)) {
@@ -619,7 +649,7 @@ Color.parse = function (text) {
             this.regexes.hwb.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i == 0 ? 360 : 100);
+                    return parseFloat(v) / (i == 0 ? 360 : 100);
                 }));
     }
     else if (this.regexes.hwba.test(text)) {
@@ -627,7 +657,15 @@ Color.parse = function (text) {
             this.regexes.hwba.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v, 10) / (i == 0 ? 360 : i < 3 ? 100 : 1);
+                    return parseFloat(v) / (i == 0 ? 360 : i < 3 ? 100 : 1);
+                }));
+    }
+    else if (this.regexes.cmyk.test(text)) {
+        return this.fromCMYK.apply(this,
+            this.regexes.cmyk.exec(text)
+                .slice(1)
+                .map(function (v, i) {
+                    return parseFloat(v) /100;
                 }));
     }
     else {
@@ -1099,6 +1137,11 @@ Color.rgbToText = function (rgba) {
     return 'rgb(' + (rgba[0] * 255 >> 0) + ', ' + (rgba[1] * 255 >> 0) + ', ' + (rgba[2] * 255 >> 0) + ')';
 };
 
+Color.cmykToText = function (cmyk) {
+    return 'cmyk(' + cmyk.map(function (x) {
+        return x * 100 + '%'
+    }).join(', ') + ')';
+};
 
 Color.hsbaToHSLA = function (hsba) {
     var hue = hsba[0];
@@ -1363,6 +1406,7 @@ Color.hsbaToHWBA = function (hsla) {
     return [hsla[0], (1 - hsla[1]) * hsla[2], 1 - hsla[2], hsla[3]];
 };
 
+
 Color.rgbaToHWBA = function (rgba) {
     return this.hsbaToHWBA(this.rgbaToHSBA(rgba));
 };
@@ -1370,5 +1414,45 @@ Color.rgbaToHWBA = function (rgba) {
 Color.hwbaToRGBA = function (hwba) {
     return this.hsbaToRGBA(this.hwbaToHSBA(hwba));
 };
+
+
+Color.cmykToRGB = function (cmyk) {
+    var c = cmyk[0];
+    var m = cmyk[1];
+    var y = cmyk[2];
+    var k = cmyk[3];
+    c = c * (1 - k) + k;
+    m = m * (1 - k) + k;
+    y = y * (1 - k) + k;
+
+    var r = 1 - c;
+    var g = 1 - m;
+    var b = 1 - y;
+    return [r, g, b];
+};
+
+
+Color.rgbToCMYK = function (rgb) {
+    var r = rgb[0];
+    var g = rgb[1];
+    var b = rgb[2];
+
+
+    var c = 1 - r;
+    var m = 1 - g;
+    var y = 1 - b;
+    var k = Math.min(c, Math.min(m, y));
+
+    c = (c - k) / (1 - k);
+    m = (m - k) / (1 - k);
+    y = (y - k) / (1 - k);
+    c = isNaN(c) ? 0 : c;
+    m = isNaN(m) ? 0 : m;
+    y = isNaN(y) ? 0 : y;
+    k = isNaN(k) ? 0 : k;
+
+    return [c, m, y, k];
+};
+
 
 export default Color;
