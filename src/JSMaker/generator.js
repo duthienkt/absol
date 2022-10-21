@@ -80,3 +80,53 @@ export function replaceDateStringJSVariable(o) {
         replace: x => new Date(x)
     }]);
 }
+
+/***
+ *
+ * @param a
+ * @param b
+ * @return {boolean}
+ */
+export function isJSVariableEqual(a, b) {
+    if (a === b) return true;//1
+    var tA = typeof a;
+    var tB = typeof b;
+    if (tA !== tB) return false; //2
+    if (!a !== !b) return false;
+    if (tA === 'string') return false;//because 1 & 2
+    if (tA === "number"){
+        if (isNaN(a) === isNaN(b)) return true;//because 2
+        return false;//because 1
+    }
+
+    var aIsDate = a instanceof Date;
+    var bIsDate = b instanceof Date;
+    if (aIsDate !== bIsDate) return false;
+    if (aIsDate) return isJSVariableEqual(a.getTime(), b.getTime());
+
+    var aIsArray = a instanceof Array;
+    var bIsArray = a instanceof Array;
+    if (aIsArray !== bIsArray) return false;
+    var i;
+    if (aIsArray) {
+        if (a.length !== b.length) return false;
+        for (i = 0; i < a.length; ++i) {
+            if (!isJSVariableEqual(a[i], b[i])) return false;
+        }
+        return true;
+    }
+
+    //object
+    if (a.equals) return a.equals(b);
+    var aKeys = Object.keys(a);
+    var bKeys = Object.keys(b);
+    aKeys.sort();
+    bKeys.sort();
+    if (!isJSVariableEqual(aKeys, bKeys)) return  false;
+    for (i = 0; i < aKeys.length; ++i) {
+        if (!isJSVariableEqual(a[aKeys[i]], b[aKeys[i]]))
+            return false;
+    }
+    return true;
+}
+

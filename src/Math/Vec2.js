@@ -165,6 +165,14 @@ Vec2.prototype.rotate90 = function () {
     return new Vec2(-this.y, this.x);
 };
 
+/***
+ *
+ * @param {Vec2} b
+ */
+Vec2.prototype.equals = function (b){
+    return b && this.x === b.x && this.y === b.y;
+};
+
 
 /***
  *
