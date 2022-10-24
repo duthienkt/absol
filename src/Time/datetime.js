@@ -1,6 +1,5 @@
 import { nonAccentVietnamese } from "../String/stringFormat";
 import { integerZeroPadding } from "../Math/int";
-import { rules } from "webpack-cli/bin/.eslintrc";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
