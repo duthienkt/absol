@@ -1,5 +1,6 @@
-import {nonAccentVietnamese} from "../String/stringFormat";
-import {integerZeroPadding} from "../Math/int";
+import { nonAccentVietnamese } from "../String/stringFormat";
+import { integerZeroPadding } from "../Math/int";
+import { rules } from "webpack-cli/bin/.eslintrc";
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
@@ -434,7 +435,8 @@ export function parseDateString(text, format) {
     if (isNaN(year)) throw new Error('Invalid year');
     if (isNaN(month) && month !== -1) {
         throw new Error('Invalid month');
-    } else {
+    }
+    else {
         month = Math.max(0, Math.min(11, month));
     }
     if (!isNaN(day)) {
@@ -443,7 +445,8 @@ export function parseDateString(text, format) {
             day = Math.min(daysInMonth(2000, month), day);
             if (!isNaN(year)) day = Math.min(daysInMonth(year, month), day);
         }
-    } else {
+    }
+    else {
         throw new Error('Invalid day');
     }
     return new Date(year, month, day);
@@ -640,7 +643,8 @@ export function nextMonth(date) {
     var y = date.getFullYear();
     if (m == 11) {
         return new Date(y + 1, 0, 1, 0, 0, 0, 0);
-    } else {
+    }
+    else {
         return new Date(y, m + 1, 1, 0, 0, 0, 0);
     }
 }
@@ -655,7 +659,8 @@ export function prevMonth(date) {
     var y = date.getFullYear();
     if (m == 0) {
         return new Date(y - 1, 11, 1, 0, 0, 0, 0);
-    } else {
+    }
+    else {
         return new Date(y, m - 1, 1, 0, 0, 0, 0);
     }
 }
@@ -864,7 +869,8 @@ function test() {
         var d = parseDateTime(pr[0], pr[1]);
         if ((d && d.getTime()) === pr[2].getTime()) {
             console.info("Pass ", pr);
-        } else {
+        }
+        else {
             console.error("Text fail with ", pr.slice(0, 2), ', expect ', pr[2], ', return ' + d);
         }
     });
@@ -873,3 +879,32 @@ function test() {
 }
 
 // setTimeout(test, 100);
+
+
+var number = [/[+-]?\d+$/, matched => new Date(parseInt(matched[0]))];
+var reISO = [/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/, matched => new Date(matched[0])];
+var reMsAjax = [/^\/Date\((d|-|.*)\)[\/|\\]$/, matched => new Date(parseInt(matched[1]))];
+var reString = [/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+([a-zA-Z]{3})\s+[\d\s:]+GMT[\d+]+\s*\([^)]+\)$/, matched => new Date(matched[0])];
+
+function implicitDate(o) {
+    var res = null;
+    if (o instanceof Date) {
+        res = new Date(o.getTime());
+    }
+    else if (typeof o === "number") {
+        res = new Date(o);
+    }
+    else if (typeof o === 'string') {
+        [reString, reISO, reMsAjax, number].some(rule => {
+            var matched = o.match(rule[0]);
+            if (matched) {
+                res = rule[1](matched);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    if (res && isNaN(res.getTime())) res = null;
+    return res;
+}
