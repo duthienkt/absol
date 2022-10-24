@@ -885,7 +885,7 @@ var reISO = [/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|
 var reMsAjax = [/^\/Date\((d|-|.*)\)[\/|\\]$/, matched => new Date(parseInt(matched[1]))];
 var reString = [/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+([a-zA-Z]{3})\s+[\d\s:]+GMT[\d+]+\s*\([^)]+\)$/, matched => new Date(matched[0])];
 
-function implicitDate(o) {
+export function implicitDate(o) {
     var res = null;
     if (o instanceof Date) {
         res = new Date(o.getTime());
