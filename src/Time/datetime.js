@@ -505,7 +505,29 @@ export function weekInYear(year, weekIdx, gmt, startDayOfWeek) {
 
 /**
  * @param {Date} date
- * @return {Date} date at 00:00
+ * @return {Date} date at xx:xx:xx:00
+ */
+export function beginOfSecond(date) {
+    var res = new Date(date.getTime());
+    res.setMilliseconds(0);
+    return res;
+}
+
+
+/**
+ * @param {Date} date
+ * @return {Date} date at xx:xx:00
+ */
+export function beginOfMinute(date) {
+    var res = new Date(date.getTime());
+    res.setMilliseconds(0);
+    res.setSeconds(0);
+    return res;
+}
+
+/**
+ * @param {Date} date
+ * @return {Date} date at xx:00
  */
 export function beginOfHour(date) {
     var res = new Date(date.getTime());
@@ -530,7 +552,7 @@ export function beginOfDay(date, gmt) {
         res.setUTCHours(0);
     else res.setHours(0);
     return res;
-};
+}
 
 
 /**
