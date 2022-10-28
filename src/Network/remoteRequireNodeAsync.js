@@ -9,7 +9,7 @@ export default function remoteRequireNodeAsync(filename, entry) {
     }
 
     function getExtension(fileName) {
-        return fileName.split('.')[1] || null;
+        return fileName.split('.').slice(1).pop()|| null;
     }
 
     function require(currentLoc, fn) {
