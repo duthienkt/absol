@@ -95,7 +95,7 @@ export function isJSVariableEqual(a, b) {
     if (!a !== !b) return false;
     if (tA === 'string') return false;//because 1 & 2
     if (tA === "number"){
-        if (isNaN(a) === isNaN(b)) return true;//because 2
+        if (isNaN(a) && isNaN(b)) return true;//because 2
         return false;//because 1
     }
 
