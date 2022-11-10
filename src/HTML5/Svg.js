@@ -1,30 +1,8 @@
-import Dom, {copyStyleRule, depthClone} from './Dom';
+import Dom, {  copyStyleRule, depthClone } from './Dom';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
 import Color from "../Color/Color";
-
-var sattachhookCreator = function () {
-    var res = Svg.ShareInstance._('<image  class="absol-attachhook" style="display:none"  href=""/>');
-    res.defineEvent('attached');
-    res.on('error', function (event) {
-        if (!this._attached && this.isDescendantOf(document.body)) {
-            this._attached = true;
-            this.emit('attached', event, this);
-        }
-    });
-    res._attached = false;
-    Object.defineProperty(res, 'attached', {
-        get: function () {
-            return this._attached;
-        }
-    });
-    res.resetState = function () {
-        this._attached = false;
-        this.src = '';
-    };
-
-    return res;
-};
+import AttachHook from "./AttachHook";
 
 /***
  * @extends Dom
@@ -33,7 +11,6 @@ var sattachhookCreator = function () {
  */
 function Svg(option) {
     Dom.call(this, option);
-    this.defaultTag = 'g';
     this.svgNS = "http://www.w3.org/2000/svg";
     Object.defineProperties(this.creator,
         {
@@ -42,7 +19,7 @@ function Svg(option) {
                     //do nothing
                 },
                 get: function () {
-                    return sattachhookCreator;
+                    return AttachHook;
                 }
             }
         });
@@ -52,6 +29,8 @@ function Svg(option) {
 
 
 Object.defineProperties(Svg.prototype, Object.getOwnPropertyDescriptors(Dom.prototype));
+
+Svg.defaultTag = 'g';
 
 Svg.prototype.fromCode = function (code) {
     code = code.trim();

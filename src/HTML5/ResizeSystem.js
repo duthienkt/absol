@@ -14,8 +14,10 @@ function ResizeSystem() {
     window.addEventListener('resize', this.update.bind(this));
     this['goDown' + 'AndCache'] = this.goDownAndCache.bind(this);
     this['notify' + 'ToElt'] = this.notifyToElt.bind(this);
-    this.domSignal = new DomSignal();
-    this.domSignal.on('request_update_signal', this.update.bind(this));
+    setTimeout(() => {
+        this.domSignal = new DomSignal();
+        this.domSignal.on('request_update_signal', this.update.bind(this));
+    }, 1000);
 }
 
 /***
@@ -69,6 +71,7 @@ ResizeSystem.prototype.update = function () {
 };
 
 ResizeSystem.prototype.requestUpdateSignal = function () {
+    if (!this.domSignal) return;
     this.domSignal.emit('request_update_signal');
 };
 

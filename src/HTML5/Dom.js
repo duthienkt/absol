@@ -5,6 +5,7 @@ import AElementNS from "./ElementNS";
 import AElement from './AElement';
 import ResizeSystem from "./ResizeSystem";
 import { parseClassAttr, parseStyleAttr } from "../JSX/attribute";
+import AttachHook from "./AttachHook";
 
 /***
  * @typedef {{"accept-charset":string, "http-equiv": string, accept : string, accesskey : string, action : string, align : string, allow : string, alt : string, async : string, autocapitalize : string, autocomplete : string, autofocus : string, autoplay : string, background : string, bgcolor : string, border : string, buffered : string, capture : string, challenge : string, charset : string, checked : string, cite : string, class : string, code : string, codebase : string, color : string, cols : string, colspan : string, content : string, contenteditable : string, contextmenu : string, controls : string, coords : string, crossorigin : string, csp : string, data : string, "data-*" : string, datetime : string, decoding : string, default : string, defer : string, dir : string, dirname : string, disabled : string, download : string, draggable : string, dropzone : string, enctype : string, enterkeyhint : string, for : string,     form : string, formaction : string, formenctype : string, formmethod : string, formnovalidate : string, formtarget : string, headers : string, height : string, hidden : string, high : string, href : string, hreflang : string, icon : string, id : string, importance : string, integrity : string, intrinsicsize : string, inputmode : string, ismap : string, itemprop : string, keytype : string, kind : string, label : string, lang : string, language : string, loading : string, list : string, loop : string, low : string, manifest : string, max : string, maxlength : string, minlength : string, media : string, method : string, min : string, multiple : string, muted : string, name : string, novalidate : string, open : string, optimum : string, pattern : string, ping : string, placeholder : string, poster : string, preload : string, radiogroup : string, readonly : string, referrerpolicy : string, rel : string, required : string, reversed : string, rows : string, rowspan : string, sandbox : string, scope : string, scoped : string, selected : string, shape : string, size : string, sizes : string, slot : string, span : string, spellcheck : string, src : string, srcdoc : string, srclang : string, srcset : string, start : string, step : string, style : string, summary : string, tabindex : string, target : string, title : string, translate : string, type : string, usemap : string, value : string, width : string, wrap : string, }} AElementAttributeDescriptor
@@ -35,43 +36,6 @@ import { parseClassAttr, parseStyleAttr } from "../JSX/attribute";
  */
 
 
-/****
- *
- * @returns {AElement}
- */
-var attachhookCreator = function () {
-    var res = Dom.ShareInstance._({
-        tag: 'img',
-        class: 'absol-attachhook',
-        extendEvent: ['attached'],
-        style: {
-            display: 'none'
-        },
-        attr: {
-            src: ''
-        },
-        on: {
-            error: function (event) {
-                if (!this._attached && this.isDescendantOf(document.body)) {
-                    this._attached = true;
-                    this.emit('attached', event, this);
-                }
-            }
-        }
-    });
-    res._attached = false;
-    Object.defineProperty(res, 'attached', {
-        get: function () {
-            return this._attached;
-        }
-    });
-    res.resetState = function () {
-        this._attached = false;
-        this.src = '';
-    };
-    return res;
-};
-
 var svgCreator = function () {
     var temp = document.createElement('div');
     temp.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>';
@@ -88,8 +52,6 @@ var svgCreator = function () {
  * @constructor
  */
 function Dom(option) {
-    this.defaultTag = 'div';
-
     option = option || {};
     this.creator = option.creator || {};
 
@@ -108,7 +70,7 @@ function Dom(option) {
                     //do nothing
                 },
                 get: function () {
-                    return attachhookCreator;
+                    return AttachHook;
                 }
             }
         });
@@ -120,6 +82,7 @@ function Dom(option) {
     this.buildDom = this._;
 }
 
+Dom.prototype.defaultTag = 'div';
 
 Dom.prototype.fromCode = function (code) {
     code = code.trim().replace(/>\s+</gm, '><');
@@ -233,7 +196,7 @@ Dom.prototype._ = function (option, isInherited) {
     else {
         if (option.charAt) {
             option = option.trim();
-            if (option[0] == '<') {
+            if (option[0] === '<') {
                 res = this.fromCode(option);
                 option = {};
             }
@@ -263,10 +226,10 @@ Dom.prototype._ = function (option, isInherited) {
         if (!res) {
             if (creator) {
                 if (creator.render) {
-                    res = creator.render(option.data);
+                    res = creator.render(option.data, this);
                 }
                 else {
-                    res = creator(option.data);
+                    res = creator(option.data, this);
                 }
 
             }
@@ -345,7 +308,7 @@ Dom.prototype.$$ = function (query, root) {
 
 Dom.prototype.install = function (arg0, arg1) {
     var _this = this;
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
         if (arg0.creator && arg0.create && arg0.select) {
             // is a dom core
             var creator = arg0.creator;
@@ -353,7 +316,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = creator[key];
                 if (typeof (func) == 'function')
-                    if (_this.creator[key] != func)
+                    if (_this.creator[key] !== func)
                         _this.creator[key] = func;
             });
         }
@@ -379,7 +342,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.startsWith('_') || key.startsWith('$')) return;
                 var func = arg0[key];
                 if (typeof (func) == 'function')
-                    if (_this.creator[key] != func)
+                    if (_this.creator[key] !== func)
                         _this.creator[key] = func;
             });
         }
@@ -387,13 +350,13 @@ Dom.prototype.install = function (arg0, arg1) {
             console.error('Unknown data', arg0);
         }
     }
-    else if (arguments.length == 2) {
+    else if (arguments.length === 2) {
         if (arg0 instanceof Array) {
             if (arg1.creator) arg1 = arg1.creator;
             arg0.forEach(function (key) {
                 var func = arg1[key];
                 if (typeof (func) == 'function')
-                    if (_this.creator[key] != func)
+                    if (_this.creator[key] !== func)
                         _this.creator[key] = func;
             });
         }
@@ -403,7 +366,7 @@ Dom.prototype.install = function (arg0, arg1) {
                 if (key.match(arg0)) {
                     var func = arg1[key];
                     if (typeof (func) == 'function')
-                        if (_this.creator[key] != func)
+                        if (_this.creator[key] !== func)
                             _this.creator[key] = func;
                 }
             });
@@ -468,7 +431,7 @@ export function activeFullScreen(element) {
 Dom.activeFullScreen = activeFullScreen;
 
 
-export function deactiveFullScreen() {
+export function inactiveFullScreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();
     }
@@ -483,7 +446,12 @@ export function deactiveFullScreen() {
     }
 }
 
+Dom.inactiveFullScreen = inactiveFullScreen;
+
+//adapt
+export var deactiveFullScreen = inactiveFullScreen;
 Dom.deactiveFullScreen = deactiveFullScreen;
+
 
 export function isFullScreen() {
     var fullScreenElement = document.fullscreenElement ||
@@ -783,6 +751,7 @@ export function depthClone(originElt, afterCloneCb) {
 /***
  *
  * @param originElt
+ * @param afterCloneCb
  * @returns {AElement|HTMLElement|Node}
  */
 export function depthCloneWithStyle(originElt, afterCloneCb) {

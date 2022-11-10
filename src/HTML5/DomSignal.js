@@ -1,6 +1,7 @@
-import Dom from "./Dom";
 import EventEmitter from "./EventEmitter";
 import AElement from "./AElement";
+import OOP from "./OOP";
+import AttachHook from "./AttachHook";
 
 /***
  *
@@ -12,14 +13,24 @@ function DomSignal(attachHookElt) {
     EventEmitter.call(this);
     this.signals = {};
     this.ev_attached = this.ev_attached.bind(this);
-    this.$attachhook = attachHookElt || Dom.ShareInstance._('attachhook');
+    this.$attachhook = attachHookElt || this.createBuildInAttachHook();
     this.$attachhookParent = (attachHookElt && attachHookElt.parentElement) || null;
     this.$attachhook.on('attached', this.ev_attached);
 }
 
-Object.defineProperties(DomSignal.prototype, Object.getOwnPropertyDescriptors(EventEmitter.prototype));
-DomSignal.prototype.constructor = DomSignal;
+OOP.mixClass(DomSignal, EventEmitter);
 
+DomSignal.prototype.createBuildInAttachHook = function (){
+    var elt = document.createElement('img');
+    Object.defineProperties(elt, Object.getOwnPropertyDescriptors(AElement.prototype));
+    Object.defineProperties(elt, Object.getOwnPropertyDescriptors(AttachHook.prototype));
+    Object.defineProperties(elt, AttachHook.property);
+    AElement.call(elt);
+    elt.setAttribute('src', '');
+    elt.defineEvent('attached');
+    AttachHook.call(elt);
+    return elt;
+}
 
 DomSignal.prototype.execSignal = function () {
     var signals = this.signals;
