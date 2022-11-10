@@ -1,5 +1,6 @@
 import AElement from "./AElement";
 import AElementNS from "./AElementNS";
+import DomSignal from "./DomSignal";
 
 /**
  *
@@ -11,15 +12,17 @@ function ResizeSystem() {
     this.cacheOf = null;
     this.lastResizeTime = 0;
     window.addEventListener('resize', this.update.bind(this));
-    this['goDown'+'AndCache'] = this.goDownAndCache.bind(this);
-    this['notify'+'ToElt'] = this.notifyToElt.bind(this);
+    this['goDown' + 'AndCache'] = this.goDownAndCache.bind(this);
+    this['notify' + 'ToElt'] = this.notifyToElt.bind(this);
+    this.domSignal = new DomSignal();
+    this.domSignal.on('request_update_signal', this.update.bind(this));
 }
 
 /***
  *
  * @param {AElement | AElementNS} elt
  */
-ResizeSystem.prototype.goDownAndCache = function (elt){
+ResizeSystem.prototype.goDownAndCache = function (elt) {
     if (this.notifyToElt(elt))
         this.cache.push(elt);
     if (elt.childNodes) {
@@ -27,7 +30,7 @@ ResizeSystem.prototype.goDownAndCache = function (elt){
     }
 };
 
-ResizeSystem.prototype.notifyToElt = function (elt){
+ResizeSystem.prototype.notifyToElt = function (elt) {
     if (typeof elt.requestUpdateSize == 'function') {
         elt.requestUpdateSize();
         return true;
@@ -50,7 +53,7 @@ ResizeSystem.prototype.update = function () {
         this.cache = undefined;
     }
     this.lastResizeTime = now;
-    if (this.cacheOf !== null){
+    if (this.cacheOf !== null) {
         this.cache = undefined;
         this.cacheOf = null;
     }
@@ -63,7 +66,11 @@ ResizeSystem.prototype.update = function () {
     else {
         this.cache.forEach(this.notifyToElt);
     }
-}
+};
+
+ResizeSystem.prototype.requestUpdateSignal = function () {
+    this.domSignal.emit('request_update_signal');
+};
 
 ResizeSystem.prototype.removeTrash = function () {
     this.elts = this.elts.filter(function (element) {
@@ -105,7 +112,7 @@ ResizeSystem.prototype.updateDown = function (fromElt) {
         this.cache = undefined;
     }
     this.lastResizeTime = now;
-    if (this.cacheOf !== fromElt){
+    if (this.cacheOf !== fromElt) {
         this.cache = undefined;
         this.cacheOf = fromElt;
     }

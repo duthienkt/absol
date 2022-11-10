@@ -5,7 +5,7 @@ import AElement from "./AElement";
 /***
  *
  * @extends EventEmitter
- * @param {AElement} attachHookElt
+ * @param {AElement=} attachHookElt
  * @constructor
  */
 function DomSignal(attachHookElt) {
