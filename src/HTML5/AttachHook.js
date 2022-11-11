@@ -1,4 +1,3 @@
-
 /***
  * @extends AElement
  * @constructor
@@ -14,26 +13,37 @@ export function AttachHook() {
 
 AttachHook.render = function (data, domInstance) {
     var attributes = {};
+    var tag;
     if (domInstance.defaultTag === 'div') {
         attributes.src = '';
+        tag = 'img';
     }
     else {
+        tag = 'image';
         attributes.href = '';
     }
+
     return domInstance._({
-        tag: 'img',
+        tag: tag,
         class: 'absol-attachhook',
         extendEvent: ['attached'],
         style: {
             display: 'none'
         },
-        attr: attributes
+        attr: attributes,
+        props:{domInstance: domInstance}
     });
 };
 
 AttachHook.prototype.resetState = function () {
     this._attached = false;
-    this.src = '';
+    if (this.tagName.toLowerCase() === 'img' ){
+        this.src = '';
+
+    }
+    else {
+        this.href = '';
+    }
 };
 
 AttachHook.property = {
