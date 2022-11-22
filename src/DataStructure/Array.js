@@ -57,6 +57,27 @@ export function arrayIntersection(a1, a2) {
     return res;
 }
 
+export function arrayIsSubset(childArr, parentArr) {
+    if (!(childArr instanceof  Array) || !(parentArr instanceof Array)) return  false;
+    var dict2 = parentArr.reduce((ac, cr) => {
+        ac[(typeof cr) + cr] = true;
+        return ac;
+    }, {});
+    var res = true;
+    var n = childArr.length;
+    var k;
+    for (var i = 0; i < n; ++i) {
+        k = (typeof childArr[i]) + childArr[i];
+        if (!dict2[k]) {
+            res = false;
+            break;
+        }
+    }
+
+    return res;
+}
+
+
 /***
  *
  * @param {[]}a1
