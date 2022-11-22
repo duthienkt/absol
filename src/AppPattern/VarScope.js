@@ -3,9 +3,15 @@ function VarScope(parent) {
     this.data = {};
 }
 
+VarScope.prototype.revoke = function (name) {
+    delete this.data[name];
+    return this;
+};
+
 VarScope.prototype.declare = function (name, initValue) {
     if (name in this.data) throw new Error(name + ' is already delared in this scope!');
     this.data[name] = initValue;
+    return this;
 };
 
 VarScope.prototype.get = function (name) {
