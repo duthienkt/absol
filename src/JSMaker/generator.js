@@ -16,6 +16,9 @@ export function generateJSVariable(obj, indent) {
             }).join(',\n')
             + '\n' + indent + ']';
     }
+    else if (obj instanceof Error) {
+        return generateJSVariable({message: obj.message, stack: obj.stack});
+    }
     else if (typeof obj === 'object') {
         var keys = Object.keys(obj);
         if (keys.length === 0) return '{}';
