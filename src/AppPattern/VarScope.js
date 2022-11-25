@@ -8,8 +8,19 @@ VarScope.prototype.revoke = function (name) {
     return this;
 };
 
-VarScope.prototype.declare = function (name, initValue) {
-    if (name in this.data) throw new Error(name + ' is already delared in this scope!');
+VarScope.prototype.isDeclared = function (name) {
+    return (name in this.data);
+};
+
+/***
+ *
+ * @param name
+ * @param initValue
+ * @param {boolean=} force
+ * @return {VarScope}
+ */
+VarScope.prototype.declare = function (name, initValue, force) {
+    if ((name in this.data) && !force) throw new Error(name + ' is already delared in this scope!');
     this.data[name] = initValue;
     return this;
 };
