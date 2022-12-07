@@ -43,6 +43,15 @@ var elementRegexes = [
 
 var rules = [];
 
+rules.push({
+    target: 'null',
+    elements: ['_null'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'NullLiteral',
+        }
+    }
+});
 
 rules.push({
     target: 'ident',
@@ -136,6 +145,14 @@ rules.push({
 rules.push({
     target: 'exp',
     elements: ['new_expression'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+rules.push({
+    target: 'exp',
+    elements: ['null'],
     toAST: function (parsedNode) {
         return parsedNodeToAST(parsedNode.children[0]);
     }
