@@ -1,20 +1,10 @@
 import VarScope from "../AppPattern/VarScope";
-import {
-    ADD,
-    DIV, EQUAL,
-    LESS_AND_EQUAL,
-    LESS_THAN, MOD,
-    MORE_AND_EQUAL,
-    MORE_THAN,
-    MUL,
-    NEGATIVE, NOT,
-    POSITIVE,
-    SUB
-} from "./SCBinaryOperators";
+import "./SCOperators";
+import SCOperatorExecutor from "./SCOperatorExecutor";
 
 function SCProgramInstance(ast, env) {
     env = env || {};
-    if (env instanceof VarScope){
+    if (env instanceof VarScope) {
         this.global = env;
     }
     else {
@@ -420,7 +410,9 @@ SCProgramInstance.prototype.visitors = {
     //
     //Vả
     // },
-
+    NullLiteral: function (node) {
+        return null;
+    },
     NumericLiteral: function (node) {
         return (node.value);
     },
@@ -430,13 +422,32 @@ SCProgramInstance.prototype.visitors = {
     BinaryExpression: function (node) {
         var leftValue = this.accept(node.left, 'const');
         var rightValue = this.accept(node.right, 'const');
-        var fun = this.binaryOperator2Function[node.operator.content];
-        return fun(leftValue, rightValue);
+        var sync = [];
+        if (leftValue && leftValue.then) {
+            sync.push(leftValue);
+            leftValue.then(result => leftValue = result);
+        }
+        if (rightValue && rightValue.then) {
+            sync.push(rightValue);
+            rightValue.then(result => rightValue = result);
+        }
+        if (sync.length === 0) {
+            return SCOperatorExecutor.executeBinaryOperator(node.operator.content, leftValue, rightValue);
+        }
+        else {
+            return Promise.all(sync).then(u => {
+                return SCOperatorExecutor.executeBinaryOperator(node.operator.content, leftValue, rightValue);
+            });
+        }
     },
     UnaryExpression: function (node) {
-        var fun = this.unaryOperator2Function[node.operator.content];
         var arg = this.accept(node.argument, 'const');
-        return fun(arg);
+        if (arg && arg.then) {
+            return arg.then(value => SCOperatorExecutor.executeUnaryOperator(node.operator.content, value));
+        }
+        else {
+            return SCOperatorExecutor.executeUnaryOperator(node.operator.content, arg);
+        }
     },
     Identifier: function (node, type) {
         var ref;
@@ -477,20 +488,20 @@ SCProgramInstance.prototype.visitors = {
             return this.accept(exp, 'const');
         });
         var sync = [];
-        argumentValues.forEach((arg, i)=>{
-           if (arg && arg.then){
-               sync.push(arg.then(result=>{
-                   argumentValues[i] = result;
-               }));
-           }
+        argumentValues.forEach((arg, i) => {
+            if (arg && arg.then) {
+                sync.push(arg.then(result => {
+                    argumentValues[i] = result;
+                }));
+            }
         });
-        if (sync.length > 0){
-            return  Promise.all(sync).then(()=>{
+        if (sync.length > 0) {
+            return Promise.all(sync).then(() => {
                 return calleeFunction.apply(object, argumentValues);
             });
         }
         else
-        return calleeFunction.apply(object, argumentValues);
+            return calleeFunction.apply(object, argumentValues);
     },
     NewExpression: function (node) {
         var calleeFunction;
@@ -507,9 +518,9 @@ SCProgramInstance.prototype.visitors = {
             return this.accept(exp, 'const');
         });
 
-        var code = `return new clazz(${argumentValues.map((u, i)=>`args[${i}]`).join(', ')});`;
-        var f = new Function('clazz', 'args',code);
-        return  f(calleeFunction, argumentValues);
+        var code = `return new clazz(${argumentValues.map((u, i) => `args[${i}]`).join(', ')});`;
+        var f = new Function('clazz', 'args', code);
+        return f(calleeFunction, argumentValues);
     },
     MemberExpression: function (node, type) {
         var object = this.accept(node.object, 'const');
@@ -673,26 +684,6 @@ SCProgramInstance.prototype.visitors = {
             this.functionReturn(res);
         }
     }
-};
-
-
-SCProgramInstance.prototype.binaryOperator2Function = {
-    '+': ADD,
-    '%': MOD,
-    '-': SUB,
-    '*': MUL,
-    '/': DIV,
-    '<': LESS_THAN,
-    '>': MORE_THAN,
-    '<=': LESS_AND_EQUAL,
-    '==': EQUAL,
-    '>=': MORE_AND_EQUAL,
-};
-
-SCProgramInstance.prototype.unaryOperator2Function = {
-    '+': POSITIVE,
-    '-': NEGATIVE,
-    '!': NOT
 };
 
 

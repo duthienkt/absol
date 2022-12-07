@@ -1,4 +1,4 @@
-import { ADD, DIV, MUL, NEGATIVE, POSITIVE, SUB } from "./SCBinaryOperators";
+import { ADD, DIV, MUL, NEGATIVE, POSITIVE, SUB } from "./SCOperators";
 import SCParser from "./SCParser";
 
 
