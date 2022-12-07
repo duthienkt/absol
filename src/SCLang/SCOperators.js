@@ -25,6 +25,7 @@ export function ADD(a, b) {
             return formatDateTime(a, 'dd/MM/yyyy') + b;
         }
     }
+    if (a.add && a.constructor === b.constructor) return a.add(b);
 
     console.error("Can not add: ", a, b);
     return NaN;
@@ -46,9 +47,13 @@ export function SUB(a, b) {
             return new Date(a.getTime() - MILLIS_PER_DAY * b);
         }
     }
+    if (a.sub && a.constructor === b.constructor) return a.sub(b);
+
     console.error("Can not sub: ", a, b);
     return NaN;
 }
+
+SCOperatorExecutor.addBinaryOperator('-', SUB);
 
 
 export function MUL(a, b) {
@@ -66,6 +71,8 @@ export function MUL(a, b) {
     return NaN;
 }
 
+SCOperatorExecutor.addBinaryOperator('*', MUL);
+
 
 export function DIV(a, b) {
     var type_a = typeof a;
@@ -79,22 +86,34 @@ export function DIV(a, b) {
     return NaN;
 }
 
+SCOperatorExecutor.addBinaryOperator('/', DIV);
+
+
 export function MOD(x, m) {
     return x % m;
 }
+
+SCOperatorExecutor.addBinaryOperator('%', MOD);
 
 
 export function NEGATIVE(x) {
     return -x;
 }
 
+SCOperatorExecutor.addUnaryOperator('-', NEGATIVE);
+
+
 export function POSITIVE(x) {
     return x;
 }
 
+SCOperatorExecutor.addUnaryOperator('+', POSITIVE);
+
 export function NOT(x) {
     return !x;
 }
+
+SCOperatorExecutor.addUnaryOperator('!', NOT);
 
 
 export function LESS_THAN(a, b) {
@@ -103,11 +122,17 @@ export function LESS_THAN(a, b) {
     return (a < b);
 }
 
+SCOperatorExecutor.addBinaryOperator('<', LESS_THAN);
+
+
 export function MORE_THAN(a, b) {
     if (a instanceof Date) a = a.getTime();
     if (b instanceof Date) b = b.getTime();
     return (a > b);
 }
+
+SCOperatorExecutor.addBinaryOperator('>', MORE_THAN);
+
 
 export function EQUAL(a, b) {
     if (a instanceof Date) a = a.getTime();
@@ -115,14 +140,23 @@ export function EQUAL(a, b) {
     return (a === b);
 }
 
+SCOperatorExecutor.addBinaryOperator('==', EQUAL);
+
+
 export function LESS_AND_EQUAL(a, b) {
     if (a instanceof Date) a = a.getTime();
     if (b instanceof Date) b = b.getTime();
     return (a <= b);
 }
 
+SCOperatorExecutor.addBinaryOperator('<=', LESS_AND_EQUAL);
+
+
 export function MORE_AND_EQUAL(a, b) {
     if (a instanceof Date) a = a.getTime();
     if (b instanceof Date) b = b.getTime();
     return (a >= b);
 }
+
+SCOperatorExecutor.addBinaryOperator('>=', MORE_AND_EQUAL);
+
