@@ -1,4 +1,4 @@
-import VarScope from "absol/src/AppPattern/VarScope";
+import VarScope from "../AppPattern/VarScope";
 import {
     ADD,
     DIV, EQUAL,

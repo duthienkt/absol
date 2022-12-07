@@ -1,4 +1,5 @@
-import { parsedNodeToAST, parsedNodeToASTChain } from "absol/src/Pharse/DPParseInstance";
+import { parsedNodeToAST, parsedNodeToASTChain } from "../Pharse/DPParseInstance";
+
 
 
 /*********************************

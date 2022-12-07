@@ -1,6 +1,5 @@
 import { ADD, DIV, MUL, NEGATIVE, POSITIVE, SUB } from "./SCBinaryOperators";
 import SCParser from "./SCParser";
-import * as ExcelFx from 'absol-sheet/js/fx/ExcelFx';
 
 
 /***
@@ -11,7 +10,7 @@ import * as ExcelFx from 'absol-sheet/js/fx/ExcelFx';
  */
 function SCExpressionCaller(ast, env) {
     this.ast = ast;
-    this.env = Object.assign({}, env, ExcelFx);
+    this.env = Object.assign({}, env);
     if (env instanceof Array) {
         env.reduce(function (ac, subEnv) {
             Object.assign(ac, subEnv);
@@ -100,5 +99,6 @@ export function evalSCExpression(code, env) {
         throw parsed.error;
     }
 }
+
 
 export default SCExpressionCaller;

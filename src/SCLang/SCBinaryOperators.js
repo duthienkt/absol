@@ -1,4 +1,5 @@
-import { MILLIS_PER_DAY } from "absol/src/Time/datetime";
+import { MILLIS_PER_DAY } from "../Time/datetime";
+
 
 export function ADD(a, b) {
     var type_a = typeof a;
@@ -116,4 +117,3 @@ export function MORE_AND_EQUAL(a, b){
     if (b instanceof Date) b = b.getTime();
     return (a >= b);
 }
-
