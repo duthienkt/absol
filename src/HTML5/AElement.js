@@ -98,13 +98,13 @@ AElement.prototype.attr = function () {
  * add style
  * @param {CSSStyleDeclaration|string|{}} arg0
  * @param {string} arg1
- * @returns {AElement}
+ * @returns {this}
  */
 /**
  * add style
  * @param {CSSStyleDeclaration|string|{}} arg0
  * @param {string|[]=} arg1
- * @returns {AElement}
+ * @returns {this}
  */
 AElement.prototype.addStyle = function (arg0, arg1) {
     if (typeof arg0 == 'string')
@@ -129,7 +129,7 @@ AElement.prototype.addStyle = function (arg0, arg1) {
 /***
  *
  * @param {string|string[]|CSSStyleDeclaration} arg0
- * @returns {AElement}
+ * @returns {this}
  */
 AElement.prototype.removeStyle = function (arg0) {
     var key;
@@ -214,7 +214,7 @@ AElement.prototype.hasClass = function (className) {
 /**
  *
  * @param {string|Array} className
- * @returns {AElement}
+ * @returns {this}
  */
 AElement.prototype.addClass = function (className) {
     if (className && className.forEach && className.map) {
@@ -229,7 +229,7 @@ AElement.prototype.addClass = function (className) {
 /**
  *
  * @param {string|Array} className
- * @returns {AElement}
+ * @returns {this}
  */
 AElement.prototype.removeClass = function (className) {
     if (className && className.forEach && className.map) {
