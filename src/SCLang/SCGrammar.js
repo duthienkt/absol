@@ -327,7 +327,7 @@ rules.push({
     target: 'exp',
     elements: ['bracket_group'],
     toAST: function (parsedNode) {
-        return parsedNodeToAST(parsedNode.children[1]);
+        return parsedNodeToAST(parsedNode.children[0]);
     }
 });
 
