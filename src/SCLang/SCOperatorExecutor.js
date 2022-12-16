@@ -10,7 +10,7 @@ function SCOperatorExecutor() {
  */
 SCOperatorExecutor.prototype.addBinaryOperator = function (operator, fxy) {
     if (!this.oFXYs[operator]) this.oFXYs[operator] = [];
-    this.oFXYs[operator].push(fxy);
+    this.oFXYs[operator].unshift(fxy);
 };
 
 
@@ -21,7 +21,7 @@ SCOperatorExecutor.prototype.addBinaryOperator = function (operator, fxy) {
  */
 SCOperatorExecutor.prototype.addUnaryOperator = function (operator, fx) {
     if (!this.oFXs[operator]) this.oFXs[operator] = [];
-    this.oFXs[operator].push(fx);
+    this.oFXs[operator].unshift(fx);
 };
 
 SCOperatorExecutor.prototype.executeBinaryOperator = function (operator, x, y) {
