@@ -100,3 +100,20 @@ export function arrayCompare(a1, a2, order) {
     }
     return true;
 }
+
+/***
+ *
+ * @param {Array} arr
+ */
+export function arrayShuffle(arr) {
+    var temp;
+    var j;
+    for (var i = 0; i < arr.length; ++i) {
+        j = Math.floor(Math.random() * arr.length);
+        if (i !== j) {
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+}
