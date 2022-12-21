@@ -160,3 +160,12 @@ export function MORE_AND_EQUAL(a, b) {
 
 SCOperatorExecutor.addBinaryOperator('>=', MORE_AND_EQUAL);
 
+
+export function NOT_EQUAL(a, b) {
+    if (a instanceof Date) a = a.getTime();
+    if (b instanceof Date) b = b.getTime();
+    return (a != b);
+}
+
+SCOperatorExecutor.addBinaryOperator('!=', NOT_EQUAL);
+
