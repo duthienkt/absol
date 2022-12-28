@@ -2,13 +2,17 @@ import VarScope from "../AppPattern/VarScope";
 import "./SCOperators";
 import SCOperatorExecutor from "./SCOperatorExecutor";
 
+
+export var SCStaticLibScope = new VarScope();
+export var SCDynamicLibScope = new VarScope(SCStaticLibScope);
+
 function SCProgramInstance(ast, env) {
     env = env || {};
     if (env instanceof VarScope) {
         this.global = env;
     }
     else {
-        this.global = new VarScope();
+        this.global = new VarScope(SCDynamicLibScope);
         Object.keys(env).forEach(key => {
             this.global.declare(key, env[key]);
         });
@@ -563,7 +567,7 @@ SCProgramInstance.prototype.visitors = {
     ObjectProperty: function (node) {
         var res = {};
         var key = this.accept(node.key);
-        var value = this.accept(node.value);
+        var value = this.accept(node.value, 'const');
         if (value && (typeof value.then === 'function')) {
             return value.then(value => {
                 res[key] = value;
@@ -642,7 +646,7 @@ SCProgramInstance.prototype.visitors = {
                 return res.then(res => {
                     if (self.stack[self.stack.length - 1].scope === scope) {
                         self.stack.pop();
-                        self.topScope = self.stack[self.stack.length - 1];
+                        self.topScope = self.stack[self.stack.length - 1].scope;
                         return result;
                     }
                     else {
