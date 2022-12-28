@@ -70,7 +70,7 @@ import remoteRequireNodeAsync from "./Network/remoteRequireNodeAsync";
 import Polygon from "./Math/Polygon";
 import DynamicCSS from "./HTML5/DynamicCSS";
 import SCParser from "./SCLang/SCParser";
-import SCProgramInstance from "./SCLang/SCProgramInstance";
+import SCProgramInstance, { SCDynamicLibScope, SCStaticLibScope } from "./SCLang/SCProgramInstance";
 import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
 
 var absol = {
@@ -162,6 +162,8 @@ var absol = {
         'SCParser': SCParser,
         'SCProgramInstance': SCProgramInstance,
         'SCOperatorExecutor': SCOperatorExecutor,
+        'SCStaticLibScope':SCStaticLibScope,
+        'SCDynamicLibScope': SCDynamicLibScope
     }
 };
 
