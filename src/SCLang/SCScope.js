@@ -15,16 +15,19 @@ function SCScope(parent) {
     this.data = {};
 }
 
-SCScope.prototype.setValue = function (name, value) {
+SCScope.prototype.set = function (name, value) {
     var ref = this.findRef(name);
     if (!ref) throw new Error('"' + name + '" was not declared!');
-    if (ref.set)
+    if (ref.set) {
         ref.set(value);
-    else throw new Error('"' + name + '" defined with const cannot be modified!');
+    }
+    else {
+        throw new Error('"' + name + '" defined with const cannot be modified!');
+    }
 };
 
 
-SCScope.prototype.getValue = function (name, value) {
+SCScope.prototype.get = function (name, value) {
     var ref = this.findRef(name);
     if (!ref) throw new Error('"' + name + '" was not declared!');
     return ref.get();
@@ -32,13 +35,13 @@ SCScope.prototype.getValue = function (name, value) {
 
 SCScope.prototype.declareConst = function (name, value, force) {
     if ((name in this.data) && !force) throw new Error("Cannot redefine an already declared variable");
-    this.data[name] = new Ref(value);
+    this.data[name] = new Const(value);
 };
 
 
 SCScope.prototype.declareVar = function (name, value, force) {
     if ((name in this.data) && !force) throw new Error("Cannot redefine an already declared variable");
-    this.data[name] = new Const(value);
+    this.data[name] = new Ref(value);
 };
 
 SCScope.prototype.revoke = function (name) {

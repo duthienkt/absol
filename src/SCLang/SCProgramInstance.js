@@ -1,20 +1,21 @@
-import VarScope from "../AppPattern/VarScope";
 import "./SCOperators";
 import SCOperatorExecutor from "./SCOperatorExecutor";
+import SCScope from "./SCScope";
 
 
-export var SCStaticLibScope = new VarScope();
-export var SCDynamicLibScope = new VarScope(SCStaticLibScope);
+export var SCStaticLibScope = new SCScope();
+export var SCDynamicLibScope = new SCScope(SCStaticLibScope);
+
 
 function SCProgramInstance(ast, env) {
     env = env || {};
-    if (env instanceof VarScope) {
+    if (env instanceof SCScope) {
         this.global = env;
     }
     else {
-        this.global = new VarScope(SCDynamicLibScope);
+        this.global = new SCScope(SCDynamicLibScope);
         Object.keys(env).forEach(key => {
-            this.global.declare(key, env[key]);
+            this.global.declareConst(key, env[key]);
         });
     }
     this.topScope = this.global;
@@ -23,8 +24,6 @@ function SCProgramInstance(ast, env) {
     }];
 
     this.ast = ast;
-    this.counter = 0;
-
 }
 
 SCProgramInstance.prototype.exec = function () {
@@ -32,7 +31,6 @@ SCProgramInstance.prototype.exec = function () {
 };
 
 SCProgramInstance.prototype.accept = function (node) {
-    this.counter++;
     var visitor = this.visitors[node.type];
     if (visitor) {
         try {
@@ -47,16 +45,7 @@ SCProgramInstance.prototype.accept = function (node) {
 };
 
 SCProgramInstance.prototype.getRefOf = function (name) {
-    var scope = this.topScope.findScope(name);
-    if (!scope) return null;
-    return {
-        set: function (value) {
-            scope.set(name, value);
-        },
-        get: function () {
-            return scope.get(name);
-        }
-    }
+    return  this.topScope.findRef(name);
 };
 
 SCProgramInstance.prototype.isFunctionReturned = function () {
@@ -174,11 +163,11 @@ SCProgramInstance.prototype.visitors = {
         }
         if (initValue && initValue.then) {
             return initValue.then((result) => {
-                this.topScope.declare(node.id.name, result);
+                this.topScope.declareVar(node.id.name, result);
             })
         }
         else {
-            this.topScope.declare(node.id.name, initValue);
+            this.topScope.declareVar(node.id.name, initValue);
         }
     },
 
@@ -624,7 +613,7 @@ SCProgramInstance.prototype.visitors = {
         var functionName = node.id.name;
 
         var func = function () {
-            var scope = new VarScope(self.topScope);
+            var scope = new SCScope(self.topScope);
             var result = undefined;
             var resolved = false;
             var functionReturn = (res) => {
@@ -637,10 +626,10 @@ SCProgramInstance.prototype.visitors = {
             self.stack.push({ scope: scope, functionReturn: functionReturn, isFunctionReturned: isFunctionReturned });
             self.topScope = scope;
             for (var i = 0; i < node.params.length; ++i) {
-                scope.declare(node.params[i].id.name, arguments[i]);
+                scope.declareVar(node.params[i].id.name, arguments[i]);
             }
 
-            scope.declare('arguments', arguments);
+            scope.declareVar('arguments', arguments);
             var res = self.accept(node.body);
             if (res && (typeof res.then === "function")) {
                 return res.then(res => {
@@ -666,7 +655,7 @@ SCProgramInstance.prototype.visitors = {
             }
 
         };
-        this.topScope.declare(functionName, func);
+        this.topScope.declareVar(functionName, func);
         return func;
     },
     BreakStatement: function (node) {

@@ -72,6 +72,8 @@ import DynamicCSS from "./HTML5/DynamicCSS";
 import SCParser from "./SCLang/SCParser";
 import SCProgramInstance, { SCDynamicLibScope, SCStaticLibScope } from "./SCLang/SCProgramInstance";
 import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
+import Const from "./AppPattern/Const";
+import SCScope from "./SCLang/SCScope";
 
 var absol = {
     int: int,
@@ -127,6 +129,7 @@ var absol = {
     _svg: Svg.ShareInstance._,
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
+    Const: Const,
     XHR: XHR,
     string: Object.assign({}, stringFormat, stringGenerate),
     jsx: {
@@ -163,7 +166,8 @@ var absol = {
         'SCProgramInstance': SCProgramInstance,
         'SCOperatorExecutor': SCOperatorExecutor,
         'SCStaticLibScope':SCStaticLibScope,
-        'SCDynamicLibScope': SCDynamicLibScope
+        'SCDynamicLibScope': SCDynamicLibScope,
+        'SCScope': SCScope
     }
 };
 
