@@ -1,6 +1,7 @@
 import "./SCOperators";
 import SCOperatorExecutor from "./SCOperatorExecutor";
 import SCScope from "./SCScope";
+import { randomIdent } from "../String/stringGenerate";
 
 
 export var SCStaticLibScope = new SCScope();
@@ -45,7 +46,7 @@ SCProgramInstance.prototype.accept = function (node) {
 };
 
 SCProgramInstance.prototype.getRefOf = function (name) {
-    return  this.topScope.findRef(name);
+    return this.topScope.findRef(name);
 };
 
 SCProgramInstance.prototype.isFunctionReturned = function () {
@@ -612,7 +613,7 @@ SCProgramInstance.prototype.visitors = {
         //todo: overloading
         var functionName = node.id.name;
 
-        var func = function () {
+        function f() {
             var scope = new SCScope(self.topScope);
             var result = undefined;
             var resolved = false;
@@ -654,7 +655,10 @@ SCProgramInstance.prototype.visitors = {
                 }
             }
 
-        };
+        }
+
+        var code = `return function ${functionName}(${node.params.map(pr => pr.id.name|| randomIdent(5)).join(',')}) { return f.apply(this, arguments); }`;
+        var func = (new Function('f', code))(f);
         this.topScope.declareVar(functionName, func);
         return func;
     },
