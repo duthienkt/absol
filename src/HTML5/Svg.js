@@ -246,6 +246,16 @@ Dom.printElement = function (option) {
             else if (tagName === 'img') {
                 newElt.setAttribute('src', originElt.src);
             }
+            else if (tagName === 'input') {
+                if (originElt.getAttribute('type') === 'radio' || originElt.getAttribute('type') === 'checkbox') {
+                    if (originElt.checked) {
+                        newElt.setAttribute('checked', true);
+                    }
+                }
+                else if (originElt.getAttribute('type') === 'text' || !originElt.getAttribute('type')) {
+                    newElt.setAttribute('value', originElt.value);
+                }
+            }
 
             if (needCopyStyle) {
                 copyStyleRule(originElt, newElt);
@@ -362,10 +372,12 @@ Dom.printElement = function (option) {
             waitLoad();
         });
     }
+
     else {
         throw new Error('Invalid param!');
     }
-};
+}
+;
 
 
 export default Svg;
