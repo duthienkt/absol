@@ -74,6 +74,7 @@ import SCProgramInstance, { SCDynamicLibScope, SCStaticLibScope } from "./SCLang
 import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
 import Const from "./AppPattern/Const";
 import SCScope from "./SCLang/SCScope";
+import SCCodeGenerator from "./SCLang/SCCodeGenerator";
 
 var absol = {
     int: int,
@@ -167,9 +168,11 @@ var absol = {
         'SCOperatorExecutor': SCOperatorExecutor,
         'SCStaticLibScope':SCStaticLibScope,
         'SCDynamicLibScope': SCDynamicLibScope,
-        'SCScope': SCScope
+        'SCScope': SCScope,
+        'SCCodeGenerator': SCCodeGenerator
     }
 };
+
 
 
 
