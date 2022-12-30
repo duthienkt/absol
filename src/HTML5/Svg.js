@@ -252,7 +252,7 @@ Dom.printElement = function (option) {
                         newElt.setAttribute('checked', true);
                     }
                 }
-                else if (originElt.getAttribute('type') === 'text' || !originElt.getAttribute('type')) {
+                else if (originElt.getAttribute('type') === 'text' || !originElt.getAttribute('type') ||originElt.getAttribute('type') === 'number' ) {
                     newElt.setAttribute('value', originElt.value);
                 }
             }
