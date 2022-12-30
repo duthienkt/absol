@@ -36,8 +36,6 @@ var elementRegexes = [
     ['dsymbol', /\+\+|--|==|!=|<=|>=/],
     ['tsymbol', /\.\.\./],
     ['symbol', /[^\s_a-zA-Z0-9]/],
-
-
 ];
 
 
@@ -341,9 +339,9 @@ rules.push({
 });
 
 ['+', '-', '!'].forEach(function (op) {
-    ['number', 'bracket_group', 'ident', 'function_call', 'mem_exp'].forEach(function (arg) {
+    ['number', 'bracket_group', 'ident', 'function_call', 'mem_exp', 'unary_exp'].forEach(function (arg) {
         rules.push({
-            target: 'exp',
+            target: 'unary_exp',
             elements: ['_' + op, arg],
             toAST: function (parsedNode) {
                 return {
@@ -357,6 +355,14 @@ rules.push({
             }
         });
     });
+});
+
+rules.push({
+    target: 'exp',
+    elements: ['unary_exp'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
 });
 
 
@@ -1038,5 +1044,6 @@ rules.push({
 
 export default {
     elementRegexes: elementRegexes,
-    rules: rules
+    rules: rules,
+    operatorOrder: operatorOrder
 };
