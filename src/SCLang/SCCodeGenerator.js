@@ -80,6 +80,9 @@ SCCodeGenerator.prototype.visitors = {
     BooleanLiteral: function (node) {
         return node.value ? 'true' : 'false';
     },
+    NullLiteral: function (node){
+        return "null";
+    },
     CallExpression: function (node) {
         var res = '';
         if (node.callee.type === 'Identifier' || node.callee.type === 'MemberExpression') {
