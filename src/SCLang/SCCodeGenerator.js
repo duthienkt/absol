@@ -54,7 +54,7 @@ SCCodeGenerator.prototype.visitors = {
         return this.accept(node.id);
     },
     LinkedType: function (node) {
-        return 'linktype '+ this.accept(node.address);
+        return 'linktype ' + this.accept(node.address);
     },
     Identifier: function (node) {
         return node.name;
@@ -63,7 +63,7 @@ SCCodeGenerator.prototype.visitors = {
         var res = 'var ' + node.id.name;
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
-        if (typeText && typeText !== 'any') res += ': '+ typeText;
+        if (typeText && typeText !== 'any') res += ': ' + typeText;
         res += ';';
         return res;
     },
@@ -183,8 +183,39 @@ SCCodeGenerator.prototype.visitors = {
     },
     ArrayExpression: function (node) {
         var res = '[';
-        res += node.elements.map(arg => this.accept(arg)).join(', ');
+        var elementTexts = node.elements.map(arg => this.accept(arg));
+        var needWrap = elementTexts.some(et => {
+            return et.length > 60;
+        });
+        if (needWrap) {
+            res += '\n';
+            res += elementTexts.join(',\n').split('\n').map(t => '    ' + t).join('\n');
+            res += '\n';
+        }
+        else {
+            res += elementTexts.join(', ');
+        }
         res += ']';
+        return res;
+    },
+    ObjectProperty: function (node) {
+        return this.accept(node.key) + ': ' + this.accept(node.value);
+    },
+    ObjectExpression: function (node) {
+        var res = '{';
+        var propertyTexts = node.properties.map(arg => this.accept(arg));
+        var needWrap = propertyTexts.some(et => {
+            return et.length > 60;
+        });
+        if (needWrap) {
+            res += '\n';
+            res += propertyTexts.join(',\n').split('\n').map(t => '    ' + t).join('\n');
+            res += '\n';
+        }
+        else {
+            res += propertyTexts.join(', ');
+        }
+        res += '}';
         return res;
     }
 };
