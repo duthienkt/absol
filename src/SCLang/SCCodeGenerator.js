@@ -83,6 +83,20 @@ SCCodeGenerator.prototype.visitors = {
     NullLiteral: function (node){
         return "null";
     },
+    NewExpression: function (node) {
+        var res = 'new ';
+        if (node.callee.type === 'Identifier' || node.callee.type === 'MemberExpression') {
+            res += this.accept(node.callee);
+        }
+        else {
+            res += '(' + this.accept(node.callee) + ')';
+        }
+
+        res += '(';
+        res += node.arguments.map(arg => this.accept(arg)).join(', ');
+        res += ')';
+        return res;
+    },
     CallExpression: function (node) {
         var res = '';
         if (node.callee.type === 'Identifier' || node.callee.type === 'MemberExpression') {
