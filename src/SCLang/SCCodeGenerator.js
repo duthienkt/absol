@@ -38,11 +38,13 @@ SCCodeGenerator.prototype.visitors = {
     FunctionDeclaration: function (node) {
         var bodyCode = this.accept(node.body);
         var argsCode = node.params.map(arg => this.accept(arg)).join(', ');
-        return `function ${node.id.name}(${argsCode})${bodyCode}`;
+        return `function ${node.id.name}(${argsCode}) ${bodyCode}`;
     },
     ArgumentDeclaration: function (node) {
         var res = node.id.name;
-        if (node.typeAnnotation) res += ': ' + this.accept(node.typeAnnotation);
+        var typeText;
+        if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
+        if (typeText && typeText !== 'any') res += ': ' + typeText;
         return res;
     },
     TypeAnnotation: function (node) {
@@ -59,7 +61,9 @@ SCCodeGenerator.prototype.visitors = {
     },
     VariableDeclaration: function (node) {
         var res = 'var ' + node.id.name;
-        if (node.typeAnnotation) res += ': ' + this.accept(node.typeAnnotation);
+        var typeText;
+        if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
+        if (typeText && typeText !== 'any') res += ': '+ typeText;
         res += ';';
         return res;
     },
