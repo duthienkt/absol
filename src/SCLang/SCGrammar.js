@@ -572,7 +572,7 @@ rules.push({
 /***********************************************************************************************************************/
 
 rules.push({
-    target: 'var_type',
+    target: 'generic_type',
     elements: ['ident'],
     toAST: function (parsedNode) {
         return {
@@ -583,6 +583,36 @@ rules.push({
 });
 
 rules.push({
+    target: 'linked_type',
+    elements: ['_linktype' ,'exp'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'LinkedType',
+            address: parsedNodeToAST(parsedNode.children[1])
+        }
+    }
+});
+
+
+rules.push({
+    target: 'var_type',
+    elements: ['generic_type'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0])
+    }
+});
+
+rules.push({
+    target: 'var_type',
+    elements: ['linked_type'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0])
+    }
+});
+
+
+/*
+rules.push({
     target: 'var_type',
     elements: ['ident', '<', 'var_type', '>']
 });
@@ -591,6 +621,7 @@ rules.push({
     target: 'var_type',
     elements: ['ident', '<', '.string', '>']
 });
+*/
 
 rules.push({
     target: 'type_annotation',

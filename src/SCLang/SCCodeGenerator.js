@@ -51,6 +51,9 @@ SCCodeGenerator.prototype.visitors = {
     GenericType: function (node) {
         return this.accept(node.id);
     },
+    LinkedType: function (node) {
+        return 'linktype '+ this.accept(node.address);
+    },
     Identifier: function (node) {
         return node.name;
     },
@@ -117,6 +120,7 @@ SCCodeGenerator.prototype.visitors = {
         }
         return res;
     },
+
     WhileStatement: function (node) {
         var res = 'while (';
         res += this.accept(node.test);
@@ -137,10 +141,12 @@ SCCodeGenerator.prototype.visitors = {
     },
     BinaryExpression: function (node) {
         var callOrderOf = snode => {
+            if (!snode) return 100;
             if (snode.type === 'BinaryExpression') {
                 return Math.max(SCGrammar.operatorOrder[snode.operator.content], callOrderOf(snode.right), callOrderOf(snode.right));
             }
-            else return -1;
+            else if (snode.type === 'UnaryExpression') return -1;
+            else return -2;
         };
         var operatorContent = node.operator.content;
         var cOrder = SCGrammar.operatorOrder[operatorContent];
@@ -154,11 +160,22 @@ SCCodeGenerator.prototype.visitors = {
     },
     UnaryExpression: function (node) {
         var res = node.operator.content;
-        res += '(' + this.accept(node.argument) + ')';
+        if (node.argument && node.argument.type === 'BinaryExpression') {
+            res += '(' + this.accept(node.argument) + ')';
+        }
+        else {
+            res += this.accept(node.argument);
+        }
         return res;
+    },
+    ExpressionStatement: function (node) {
+        return this.accept(node.expression) + ';';
     },
     NumericLiteral: function (node) {
         return node.value;
+    },
+    StringLiteral: function (node) {
+        return JSON.stringify(node.value);
     },
     ArrayExpression: function (node) {
         var res = '[';
@@ -167,7 +184,6 @@ SCCodeGenerator.prototype.visitors = {
         return res;
     }
 };
-
 
 
 export default SCCodeGenerator();
