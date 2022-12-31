@@ -169,4 +169,11 @@ SCCodeGenerator.prototype.visitors = {
 };
 
 
+
 export default SCCodeGenerator();
+
+
+export function generateSCCode(ast) {
+    var generator = new SCCodeGenerator();
+    return generator.generate(ast);
+}
