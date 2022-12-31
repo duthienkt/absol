@@ -34,11 +34,12 @@ SCProgramInstance.prototype.exec = function () {
 SCProgramInstance.prototype.accept = function (node) {
     var visitor = this.visitors[node.type];
     if (visitor) {
-        try {
-            return this.visitors[node.type].apply(this, arguments);
-        } catch (e) {
-            console.error(e, node)
-        }
+        return this.visitors[node.type].apply(this, arguments);
+        // try {
+        //
+        // } catch (e) {
+        //     console.error(e, node)
+        // }
     }
     else {
         throw { message: 'Can not handle ', node: node };
