@@ -1013,6 +1013,16 @@ rules.push({
 });
 
 rules.push({
+    target: 'return_statement',
+    elements: ['_return', '_;'],
+    toAST: function (parsedNode) {
+        return {
+            type: "ReturnStatement"
+        };
+    }
+});
+
+rules.push({
     target: 'statement',
     elements: ['return_statement'],
     toAST: function (parsedNode) {
