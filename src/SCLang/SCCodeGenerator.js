@@ -80,7 +80,7 @@ SCCodeGenerator.prototype.visitors = {
     BooleanLiteral: function (node) {
         return node.value ? 'true' : 'false';
     },
-    NullLiteral: function (node){
+    NullLiteral: function (node) {
         return "null";
     },
     NewExpression: function (node) {
@@ -158,7 +158,9 @@ SCCodeGenerator.prototype.visitors = {
         return 'break;';
     },
     ReturnStatement: function (node) {
-        return 'return ' + this.accept(node.argument) + ';';
+        if (node.argument)
+            return 'return ' + this.accept(node.argument) + ';';
+        return 'return;';
     },
     BinaryExpression: function (node) {
         var callOrderOf = snode => {
