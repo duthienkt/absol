@@ -330,13 +330,13 @@ rules.push({
 });
 
 
-rules.push({
-    target: 'exp',
-    elements: ['_(', 'exp', '_)'],
-    toAST: function (parsedNode) {
-        return parsedNodeToAST(parsedNode.children[1]);
-    }
-});
+// rules.push({
+//     target: 'exp',
+//     elements: ['_(', 'exp', '_)'],
+//     toAST: function (parsedNode) {
+//         return parsedNodeToAST(parsedNode.children[1]);
+//     }
+// });
 
 ['+', '-', '!'].forEach(function (op) {
     ['number', 'bracket_group', 'ident', 'function_call', 'mem_exp', 'unary_exp'].forEach(function (arg) {
@@ -446,6 +446,33 @@ rules.push({
     }
 });
 
+
+
+rules.push({
+    target: 'mem_exp',
+    elements: ['bracket_group', '_.', 'ident'],
+    toAST: function (parsedNode) {
+        return {
+            type: "MemberExpression",
+            computed: false,
+            object: parsedNodeToAST(parsedNode.children[0]),
+            property: parsedNodeToAST(parsedNode.children[2])
+        }
+    }
+});
+
+rules.push({
+    target: 'mem_exp',
+    elements: ['bracket_group', '_[', 'exp', '_]'],
+    toAST: function (parsedNode) {
+        return {
+            type: "MemberExpression",
+            computed: true,
+            object: parsedNodeToAST(parsedNode.children[0]),
+            property: parsedNodeToAST(parsedNode.children[2])
+        }
+    }
+});
 
 
 rules.push({
