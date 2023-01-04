@@ -614,9 +614,10 @@ export function beginOfYear(date, gmt) {
  * @return {number}
  */
 export function compareDate(date0, date1, gmt) {
-    var date0 = beginOfDay(date0, !!gmt);
-    var date1 = beginOfDay(date1, !!gmt);
-    return (date0.getTime() - date1.getTime()) / (86400000);
+    date0 = beginOfDay(date0, !!gmt);
+    date1 = beginOfDay(date1, !!gmt);
+    //Date(1975, 5, 12) has 1 hour extend
+    return Math.floor((date0.getTime() - date1.getTime()) / 86400000);
 }
 
 
