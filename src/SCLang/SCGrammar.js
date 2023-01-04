@@ -395,6 +395,33 @@ rules.push({
 
 rules.push({
     target: 'mem_exp',
+    elements: ['new_expression', '_.', 'ident'],
+    toAST: function (parsedNode) {
+        return {
+            type: "MemberExpression",
+            computed: false,
+            object: parsedNodeToAST(parsedNode.children[0]),
+            property: parsedNodeToAST(parsedNode.children[2])
+        }
+    }
+});
+
+rules.push({
+    target: 'mem_exp',
+    elements: ['new_expression', '_[', 'exp', '_]'],
+    toAST: function (parsedNode) {
+        return {
+            type: "MemberExpression",
+            computed: true,
+            object: parsedNodeToAST(parsedNode.children[0]),
+            property: parsedNodeToAST(parsedNode.children[2])
+        }
+    }
+});
+
+
+rules.push({
+    target: 'mem_exp',
     elements: ['mem_exp', '_.', 'ident'],
     toAST: function (parsedNode) {
         return {
@@ -418,6 +445,8 @@ rules.push({
         }
     }
 });
+
+
 
 rules.push({
     target: 'exp',
