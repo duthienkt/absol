@@ -73,7 +73,7 @@ IFrameBridge.prototype._detectHost = function () {
             this.origin = '*';
 
         }
-        else if (typeof window.WorkerGlobalScope !== 'undefined' && this.elt instanceof WorkerGlobalScope) {
+        else if (IFrameBridge.isInWorker()) {
             this.type = TYPE_WORKER;
             this.sender = this.host;
             this.receiver = this.host;
@@ -132,7 +132,7 @@ IFrameBridge.fromIFrame = function (iframe) {
 IFrameBridge.getInstance = function () {
     if (!IFrameBridge.shareInstance) {
         var origin = location.origin;
-        var rootOrigin = IFrameBridge.getParentUrl().match(/^(http|https):\/\/[^/]+/);
+        var rootOrigin = IFrameBridge.fromIFrame() ? IFrameBridge.getParentUrl().match(/^(http|https):\/\/[^/]+/): null;
         if (rootOrigin) {
             rootOrigin = rootOrigin[0];
         }
@@ -152,7 +152,7 @@ Object.defineProperties(IFrameBridge.prototype, Object.getOwnPropertyDescriptors
 IFrameBridge.prototype.constructor = IFrameBridge;
 
 IFrameBridge.isInIFrame = function () {
-    return (top !== self) && !IFrameBridge.isInWorker();
+    return !IFrameBridge.isInWorker()  && (top !== self) ;
 };
 
 
