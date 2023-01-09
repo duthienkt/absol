@@ -11,14 +11,8 @@ export var MILLIS_PER_MINUTE = 60000;
  * @returns {String}
  */
 export function ddmmyyyy(date) {
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
-    var dd = date.getDate();
-
-    return [(dd > 9 ? '' : '0') + dd,
-        (mm > 9 ? '' : '0') + mm,
-        date.getFullYear()
-    ].join('/');
-};
+    return formatDateTime(date, 'dd/MM/yyyy');
+}
 
 export var language2LocalDateFormat = {
     "af-ZA": "yyyy/mm/dd",
@@ -247,15 +241,8 @@ export var dateFormatList = Object.keys(dateFormat2LocationList);
  * @returns {String}
  */
 export function yyymmdd(date) {
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
-    var dd = date.getDate();
-
-    return [
-        date.getFullYear(),
-        (mm > 9 ? '' : '0') + mm,
-        (dd > 9 ? '' : '0') + dd
-    ].join('/');
-};
+    return formatDateTime(date, 'yyyy/MM/dd');
+}
 
 
 export var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -414,9 +401,11 @@ export function parseDateString(text, format) {
                 month = shortMonthNames.indexOf(textToken.substr(0, 1).toUpperCase() + textToken.substr(1).toLowerCase());
                 break;
             case "mm":
+            case 'MM':
                 month = parseInt(textToken) - 1;
                 break;
             case "m":
+            case 'M':
                 month = parseInt(textToken) - 1;
                 break;
             case 'yy':
