@@ -575,7 +575,36 @@ export function beginOfMonth(date, gmt) {
     else
         res.setFullYear(y, m, 1);
     return beginOfDay(res, gmt);
-};
+}
+
+
+/**
+ * @param {Date} date
+ * @param {Boolean=} gmt default:false
+ * @return {Date} date at 00:00 AM
+ */
+export function beginOfQuarter(date, gmt) {
+    gmt = !!gmt;
+    var y = gmt ? date.getUTCFullYear() : date.getFullYear();
+    var m = gmt ? date.getUTCMonth() : date.getMonth();
+    m = Math.floor(m / 3) * 3;
+    var res = new Date();
+    if (gmt)
+        res.setUTCFullYear(y, m, 1);
+    else
+        res.setFullYear(y, m, 1);
+    return beginOfDay(res, gmt);
+}
+
+export function nextQuarter(date, gmt) {
+    gmt = !!gmt;
+    return nextMonth(nextMonth(nextMonth(date, gmt), gmt), gmt);
+}
+
+export function prevQuarter(date, gmt) {
+    gmt = !!gmt;
+    return prevMonth(prevMonth(prevMonth(date, gmt), gmt), gmt);
+}
 
 /**
  * @param {Date} date
@@ -594,6 +623,42 @@ export function beginOfYear(date, gmt) {
         res.setFullYear(y, 0, 1);
     return beginOfDay(res, gmt);
 }
+
+
+
+/**
+ * @param {Date} date
+ * @param {Boolean=} gmt default:false
+ * @return {Date} date at 00:00 AM
+ */
+export function nextYear(date, gmt) {
+    var res = beginOfYear(new Date(date.getTime()), gmt);
+    if (gmt) {
+        res.setFullYear(date.getFullYear() + 1);
+
+    }
+    else {
+        res.setUTCFullYear(date.getUTCFullYear() + 1);
+    }
+}
+
+
+/**
+ * @param {Date} date
+ * @param {Boolean=} gmt default:false
+ * @return {Date} date at 00:00 AM
+ */
+export function prevYear(date, gmt) {
+    var res = beginOfYear(new Date(date.getTime()), gmt);
+    if (gmt) {
+        res.setFullYear(date.getFullYear() - 1);
+
+    }
+    else {
+        res.setUTCFullYear(date.getUTCFullYear() - 1);
+    }
+}
+
 
 
 /**
@@ -647,9 +712,10 @@ export function compareYear(date0, date1, gmt) {
 /**
  *
  * @param {Date} date
+ * @param {boolean=} gmt
  * @returns {Date}
  */
-export function nextMonth(date) {
+export function nextMonth(date, gmt) {
     var m = date.getMonth();
     var y = date.getFullYear();
     if (m == 11) {
