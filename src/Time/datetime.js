@@ -5,6 +5,18 @@ export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
 export var MILLIS_PER_MINUTE = 60000;
 
+var _default_first_day_of_week = 1;
+
+export function getDefaultFirstDayOfWeek() {
+    return _default_first_day_of_week;
+}
+
+export function setDefaultFirstDayOfWeek(value) {
+    if (isNaN(value) || !isFinite(value)) return;
+    value = Math.floor(value) % 7;
+    _default_first_day_of_week = value;
+}
+
 /**
  *
  * @param {Date} date
@@ -440,40 +452,61 @@ export function parseDateString(text, format) {
     return new Date(year, month, day);
 }
 
-
-/**
- * @param {Date} date
- * @return {Date}
+/***
+ *
+ * @param date
+ * @param {number} delta - must be a integer
+ * @param {boolean=} gmt
+ * @returns {Date}
  */
-export function prevDate(date) {
-    return new Date(date.getTime() - MILLIS_PER_DAY);
+export function addDate(date, delta, gmt) {
+    delta = Math.round(delta);
+    var res = beginOfDay(date, gmt);
+    if (gmt) {
+        res.setUTCDate(date.getUTCDate() + delta);
+    }
+    else {
+        res.setDate(date.getDate() + delta);
+    }
+    return beginOfDay(res, gmt);
 }
 
 /**
  * @param {Date} date
+ * @param {boolean=} gmt
  * @return {Date}
  */
-export function nextDate(date) {
-    return new Date(date.getTime() + MILLIS_PER_DAY);
+export function prevDate(date, gmt) {
+    return addDate(date, -1, gmt);
+}
+
+/**
+ * @param {Date} date
+ * @param {boolean=} gmt
+ * @return {Date}
+ */
+export function nextDate(date, gmt) {
+    return addDate(date, 1, gmt);
 }
 
 
 /****
  *
  * @param {Date} date
- * @param {boolean=}gmt
- * @param {number=}startDayOfWeek
+ * @param {boolean=} gmt
+ * @param {number=} startDayOfWeek
  * @returns {number}
  */
 export function weekIndexOf(date, gmt, startDayOfWeek) {
-    var by = beginOfYear(date, !!gmt);
-    var byw = beginOfWeek(by, !!gmt, startDayOfWeek);
-    var bw = beginOfWeek(date, !!gmt, startDayOfWeek);
+    if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
+    var by = beginOfYear(date, gmt);
+    var byw = beginOfWeek(by, gmt, startDayOfWeek);
+    var bw = beginOfWeek(date, gmt, startDayOfWeek);
     if (compareYear(by, bw) > 0) {
         return weekIndexOf(bw, gmt, startDayOfWeek);
     }
     var i = compareYear(byw, by) < 0 ? -1 : 0;
-    return Math.floor(compareDate(date, byw, !!gmt) / 7) + i;
+    return Math.floor(compareDate(date, byw, gmt) / 7) + i;
 }
 
 /***
@@ -485,47 +518,42 @@ export function weekIndexOf(date, gmt, startDayOfWeek) {
  * @returns {Date}
  */
 export function weekInYear(year, weekIdx, gmt, startDayOfWeek) {
+    if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
     var bg = new Date(year, 0, 1);
     if (gmt) bg.setUTCHours(0);
-    var byw = beginOfWeek(bg, !!gmt, startDayOfWeek || 0);
+    var byw = beginOfWeek(bg, gmt, startDayOfWeek);
     var d = compareYear(bg, byw) > 0 ? MILLIS_PER_DAY * 7 : 0;
     return new Date(byw.getTime() + d + weekIdx * 7 * MILLIS_PER_DAY);
 }
 
 /**
  * @param {Date} date
+ * @param {Boolean=} gmt default:false
  * @return {Date} date at xx:xx:xx:00
  */
-export function beginOfSecond(date) {
+export function beginOfSecond(date, gmt) {
     var res = new Date(date.getTime());
-    res.setMilliseconds(0);
+    if (gmt)
+        res.setUTCMilliseconds(0);
+    else
+        res.setMilliseconds(0);
     return res;
 }
 
 
 /**
  * @param {Date} date
+ * @param {Boolean=} gmt default:false
  * @return {Date} date at xx:xx:00
  */
-export function beginOfMinute(date) {
+export function beginOfMinute(date, gmt) {
     var res = new Date(date.getTime());
-    res.setMilliseconds(0);
-    res.setSeconds(0);
+    if (gmt)
+        res.setUTCSeconds(0, 0);
+    else
+        res.setSeconds(0, 0);
     return res;
 }
-
-/**
- * @param {Date} date
- * @return {Date} date at xx:00
- */
-export function beginOfHour(date) {
-    var res = new Date(date.getTime());
-    res.setMilliseconds(0);
-    res.setSeconds(0);
-    res.setMinutes(0);
-    return res;
-}
-
 
 /**
  * @param {Date} date
@@ -534,12 +562,10 @@ export function beginOfHour(date) {
  */
 export function beginOfDay(date, gmt) {
     var res = new Date(date.getTime());
-    res.setMilliseconds(0);
-    res.setSeconds(0);
-    res.setMinutes(0);
     if (gmt)
-        res.setUTCHours(0);
-    else res.setHours(0);
+        res.setUTCHours(0, 0, 0, 0);
+    else
+        res.setHours(0, 0, 0, 0)
     return res;
 }
 
@@ -547,17 +573,64 @@ export function beginOfDay(date, gmt) {
 /**
  * @param {Date} date
  * @param {Boolean=} gmt default:false
- * @param {number=} begin default:0
+ * @return {Date} date at xx:00
+ */
+export function beginOfHour(date, gmt) {
+    var res = new Date(date.getTime());
+    if (gmt) res.setUTCMinutes(0, 0, 0);
+    else res.setMinutes(0, 0, 0);
+    return res;
+}
+
+
+/**
+ * @param {Date} date
+ * @param {Boolean=} gmt default:false
+ * @param {number=} startDayOfWeek default:0
  * @return {Date} date at 00:00
  */
-export function beginOfWeek(date, gmt, begin) {
-    begin = begin || 0;
+export function beginOfWeek(date, gmt, startDayOfWeek) {
+    if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
     var res = beginOfDay(date, gmt);
-    while ((gmt ? res.getUTCDay() : res.getDay()) !== begin) {
-        res = prevDate(res);
+    while ((gmt ? res.getUTCDay() : res.getDay()) !== startDayOfWeek) {
+        res = prevDate(res, gmt);
     }
     return res;
-};
+}
+
+/***
+ *
+ * @param {Date} date
+ * @param {number} delta
+ * @param {boolean=} gmt
+ */
+export function addWeek(date, delta, gmt) {
+    date = beginOfWeek(date, gmt);
+    delta = Math.round(delta);
+    return addDate(date, delta * 7, gmt);
+}
+
+/****
+ *
+ * @param {Date} date
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
+export function nextWeek(date, gmt) {
+    return addWeek(date, 1, gmt);
+}
+
+
+/****
+ *
+ * @param {Date} date
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
+export function prevWeek(date, gmt) {
+    return addWeek(date, -1, gmt);
+}
+
 
 /**
  * @param {Date} date
@@ -565,8 +638,6 @@ export function beginOfWeek(date, gmt, begin) {
  * @return {Date} date at 00:00 AM
  */
 export function beginOfMonth(date, gmt) {
-    gmt = !!gmt;
-    var d = gmt ? date.getUTCDate() : date.getDate();
     var m = gmt ? date.getUTCMonth() : date.getMonth();
     var y = gmt ? date.getUTCFullYear() : date.getFullYear();
     var res = new Date();
@@ -584,7 +655,6 @@ export function beginOfMonth(date, gmt) {
  * @return {Date} date at 00:00 AM
  */
 export function beginOfQuarter(date, gmt) {
-    gmt = !!gmt;
     var y = gmt ? date.getUTCFullYear() : date.getFullYear();
     var m = gmt ? date.getUTCMonth() : date.getMonth();
     m = Math.floor(m / 3) * 3;
@@ -596,13 +666,37 @@ export function beginOfQuarter(date, gmt) {
     return beginOfDay(res, gmt);
 }
 
+/***
+ *
+ * @param {Date} date
+ * @param {number=} delta
+ * @param {boolean=} gmt
+ */
+export function addQuarter(date, delta, gmt) {
+    delta = Math.round(delta);
+    date = beginOfQuarter(date, gmt);
+    return addMonth(date, delta * 3, gmt);
+}
+
+/***
+ *
+ * @param {Date} date
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
 export function nextQuarter(date, gmt) {
-    gmt = !!gmt;
+    date = beginOfQuarter(date);
     return nextMonth(nextMonth(nextMonth(date, gmt), gmt), gmt);
 }
 
+/***
+ *
+ * @param {Date} date
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
 export function prevQuarter(date, gmt) {
-    gmt = !!gmt;
+    date = beginOfQuarter(date, gmt);
     return prevMonth(prevMonth(prevMonth(date, gmt), gmt), gmt);
 }
 
@@ -612,9 +706,6 @@ export function prevQuarter(date, gmt) {
  * @return {Date} date at 00:00 AM
  */
 export function beginOfYear(date, gmt) {
-    gmt = !!gmt;
-    var d = gmt ? date.getUTCDate() : date.getDate();
-    var m = gmt ? date.getUTCMonth() : date.getMonth();
     var y = gmt ? date.getUTCFullYear() : date.getFullYear();
     var res = new Date();
     if (gmt)
@@ -625,6 +716,23 @@ export function beginOfYear(date, gmt) {
 }
 
 
+/**
+ * @param {Date} date
+ * @param {number} delta
+ * @param {Boolean=} gmt default:false
+ * @return {Date} date at 00:00 AM
+ */
+export function addYear(date, delta, gmt) {
+    delta = Math.round(delta);
+    var y = gmt ? date.getUTCFullYear() : date.getFullYear();
+    var res = new Date();
+    if (gmt)
+        res.setUTCFullYear(y + delta, 0, 1);
+    else
+        res.setFullYear(y + delta, 0, 1);
+    return beginOfDay(res, gmt);
+}
+
 
 /**
  * @param {Date} date
@@ -632,14 +740,7 @@ export function beginOfYear(date, gmt) {
  * @return {Date} date at 00:00 AM
  */
 export function nextYear(date, gmt) {
-    var res = beginOfYear(new Date(date.getTime()), gmt);
-    if (gmt) {
-        res.setFullYear(date.getFullYear() + 1);
-
-    }
-    else {
-        res.setUTCFullYear(date.getUTCFullYear() + 1);
-    }
+    return addYear(date, 1, gmt);
 }
 
 
@@ -649,16 +750,8 @@ export function nextYear(date, gmt) {
  * @return {Date} date at 00:00 AM
  */
 export function prevYear(date, gmt) {
-    var res = beginOfYear(new Date(date.getTime()), gmt);
-    if (gmt) {
-        res.setFullYear(date.getFullYear() - 1);
-
-    }
-    else {
-        res.setUTCFullYear(date.getUTCFullYear() - 1);
-    }
+    return addYear(date, -1, gmt);
 }
-
 
 
 /**
@@ -668,8 +761,8 @@ export function prevYear(date, gmt) {
  * @return {number}
  */
 export function compareDate(date0, date1, gmt) {
-    date0 = beginOfDay(date0, !!gmt);
-    date1 = beginOfDay(date1, !!gmt);
+    date0 = beginOfDay(date0, gmt);
+    date1 = beginOfDay(date1, gmt);
     //Date(1975, 5, 12) has 1 hour extend
     return Math.floor((date0.getTime() - date1.getTime()) / 86400000);
 }
@@ -683,7 +776,6 @@ export function compareDate(date0, date1, gmt) {
  */
 
 export function compareMonth(date0, date1, gmt) {
-    gmt = !!gmt;
     var m0 = gmt ? date0.getUTCMonth() : date0.getMonth();
     var y0 = gmt ? date0.getUTCFullYear() : date0.getFullYear();
 
@@ -702,12 +794,28 @@ export function compareMonth(date0, date1, gmt) {
  * @returns {number}
  */
 export function compareYear(date0, date1, gmt) {
-    gmt = !!gmt;
     var y0 = gmt ? date0.getUTCFullYear() : date0.getFullYear();
     var y1 = gmt ? date1.getUTCFullYear() : date1.getFullYear();
     return y0 - y1;
 }
 
+/**
+ *
+ * @param {Date} date
+ * @param {number} delta
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
+export function addMonth(date, delta, gmt) {
+    var res = beginOfMonth(date, gmt);
+    if (gmt) {
+        res.setUTCMonth(res.getUTCMonth() + delta);
+    }
+    else {
+        res.setMonth(res.getMonth() + delta);
+    }
+    return beginOfDay(res, gmt);
+}
 
 /**
  *
@@ -716,30 +824,17 @@ export function compareYear(date0, date1, gmt) {
  * @returns {Date}
  */
 export function nextMonth(date, gmt) {
-    var m = date.getMonth();
-    var y = date.getFullYear();
-    if (m == 11) {
-        return new Date(y + 1, 0, 1, 0, 0, 0, 0);
-    }
-    else {
-        return new Date(y, m + 1, 1, 0, 0, 0, 0);
-    }
+    return addMonth(date, 1, gmt);
 }
 
 /**
  *
  * @param {Date} date
+ * @param {boolean=} gmt
  * @returns {Date}
  */
-export function prevMonth(date) {
-    var m = date.getMonth();
-    var y = date.getFullYear();
-    if (m == 0) {
-        return new Date(y - 1, 11, 1, 0, 0, 0, 0);
-    }
-    else {
-        return new Date(y, m - 1, 1, 0, 0, 0, 0);
-    }
+export function prevMonth(date, gmt) {
+    return addMonth(date, -1, gmt);
 }
 
 /**
@@ -929,33 +1024,6 @@ export function formatDateTime(date, format, opt) {
 }
 
 
-function test() {
-    var y = new Date().getFullYear();
-    var M = new Date().getMonth();
-    var d = new Date().getDate();
-
-    [['22/12/2021', 'dd/MM/yyyy', new Date(2021, 11, 22)],
-        ['12:55 AM', 'hh:mm a', new Date(y, M, d, 0, 55)],
-        ['12:55 PM', 'hh:mm a', new Date(y, M, d, 12, 55)],
-        ['22-12', 'dd-MM', new Date(y, 11, 22, 0, 0)],
-        ['2020-11', 'yyyy-MM', new Date(2020, 10, 1, 0, 0)],
-        ['11-2020', 'MM-yyyy', new Date(2020, 10, 1, 0, 0)],
-        ['quarter 04, 2020', 'quarter QQ, yyyy', new Date(2020, 9, 1, 0, 0)],
-
-    ].forEach(function (pr) {
-        var d = parseDateTime(pr[0], pr[1]);
-        if ((d && d.getTime()) === pr[2].getTime()) {
-            console.info("Pass ", pr);
-        }
-        else {
-            console.error("Text fail with ", pr.slice(0, 2), ', expect ', pr[2], ', return ' + d);
-        }
-    });
-    console.log(formatDateTime(new Date(), "Mùa QQ, năm y, H giờ m phút"));
-
-}
-
-// setTimeout(test, 100);
 
 
 var number = [/[+-]?\d+$/, matched => new Date(parseInt(matched[0]))];
