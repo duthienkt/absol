@@ -55,7 +55,7 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
     var content = Dom.ShareInstance._({
         style: {
             width: 794 - 57 * 2 + 'px',
-            //WIDTH: 1056 - 57*2
+            //WIDTH: 1123 - 57*2
 
         },
         class: 'as-printer-content',

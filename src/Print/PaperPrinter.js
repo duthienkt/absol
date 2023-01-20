@@ -169,7 +169,8 @@ PaperPrinter.prototype.exportAsPDF = function () {
         });
 
         objectHolders.sort((a, b) => a.y - b.y);
-        var pageContentHeight = 1056 - 57 * 2;
+        var pageContentWidth = 794 - 57 * 2;
+        var pageContentHeight = 1123 - 57 * 2;
         var pages = objectHolders.reduce((ac, cr) => {
             var page = ac[ac.length - 1];
             if (cr.height > pageContentHeight) {
@@ -211,9 +212,14 @@ PaperPrinter.prototype.exportAsPDF = function () {
                         return this.pdfHandlers[type](page, doc, obj);
                     });
                 });
+                syn2 = syn2.then(() => {
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(14 * P2D);
+                    doc.setFont('arial');
+                    doc.text((i + 1) + '/' + pages.length, 794 - 20, 1123 - 20, { align: 'right' });
+                });
                 return syn2;
-            })
-
+            });
         });
 
         //width: 794px;margin 57
