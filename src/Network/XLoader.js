@@ -38,4 +38,32 @@ export function loadScript(url, onComplete, onError) {
 
 XLoader.loadScript = loadScript;
 
+
+export function isImageURLAllowCrossOrigin(url) {
+    return new Promise((rs, rj) => {
+        var img = new Image();
+        // img.crossOrigin = "anonymous";
+        img.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = 10;
+            canvas.height = 10;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(this, 0, 0);
+
+            try {
+                ctx.getImageData(0, 0, 10, 10);
+                rs(true);
+            } catch (err) {
+                rs(false);
+            }
+        }
+
+        img.onerror = function (event) {
+            rj(event.error || event);
+        }
+
+        img.src = url;
+    });
+}
+
 export default XLoader;
