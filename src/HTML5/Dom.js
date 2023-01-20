@@ -846,6 +846,8 @@ export function getTextNodeBound(textNode) {
     return null;
 }
 
+Dom.getTextNodeBound = getTextNodeBound;
+
 /***
  * get absol construct descriptor for HTML element only
  * @param {AElement | Text} elt
