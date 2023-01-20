@@ -242,10 +242,15 @@ PaperPrinter.prototype.pdfHandlers = {
         doc.setLineHeightFactor(lineHeight);
         doc.setFontSize(fontSize * P2D);
         doc.setFont(fontIdOf(fontFamily), 'regular');
-        doc.text(data.text, textPos.x, textPos.y + fontSize * (lineHeight - 1) / 2, {
+        var style = {
             baseline: 'top',
             maxWidth: data.pos.width
-        });
+        };
+        if (data.style.align) {
+            //todo: check align
+            style.align = { start: 'left', end: 'right', center: 'center' }[data.style.align] || 'left';
+        }
+        doc.text(data.text, textPos.x, textPos.y + fontSize * (lineHeight - 1) / 2, style);
     },
     rect: function (context, doc, data) {
         var fillColor = null;
@@ -293,7 +298,8 @@ PaperPrinter.prototype.pdfHandlers = {
         }
 
         if (data.image.then) {
-            return data.image.then(handleImage).catch(err=>{});
+            return data.image.then(handleImage).catch(err => {
+            });
         }
         else return handleImage(data.image);
     }
