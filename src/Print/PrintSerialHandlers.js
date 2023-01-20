@@ -52,7 +52,6 @@ PrintSerialHandlers.push({
         var borderWidth = style.getPropertyValue('border-width');
         var borderRadius = style.getPropertyValue('border-radius');
         if (borderStyle === 'none' || borderWidth === '0px') return false;
-        console.log(borderRadius)
         scope.declare('borderStyle', {
             width: parseFloat(borderWidth.replace('px', '')),
             radius: parseMeasureValue(borderRadius),
@@ -81,19 +80,16 @@ PrintSerialHandlers.push({
                     break;
             }
         }
-        console.log(borderStyle.radius);
         printer.rect(rect, {
             stroke: borderStyle.color,
             rounded: rounded
-        })
-        console.log(borderStyle)
-        return true;
+        });
     }
 });
 
 PrintSerialHandlers.push({
     id: 'Img',
-    match: elt => elt.tagName && elt.tagName.toLowerCase() === 'img',
+    match: elt => elt.tagName && elt.tagName.toLowerCase() === 'img' && elt.src && elt.naturalWidth,
     exec: (printer, elt, scope, stack, accept) => {
         var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
         var rect = bound.clone();
@@ -125,7 +121,7 @@ PrintSerialHandlers.push({
         var rect = bound.clone();
         rect.x -= printer.O.x;
         rect.y -= printer.O.y;
-        var res = Svg.svgToCanvas(elt);
+        var res = Svg.svgToCanvas(elt).catch(err=> {});
         printer.image(res, rect);
     }
 });

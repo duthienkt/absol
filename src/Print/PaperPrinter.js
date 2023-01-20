@@ -285,6 +285,7 @@ PaperPrinter.prototype.pdfHandlers = {
     },
     image: function (context, doc, data) {
         var handleImage = image => {
+            if (!image) return;
             var rect = data.rect.clone();
             rect.x += context.O.x;
             rect.y += context.O.y;
@@ -292,7 +293,7 @@ PaperPrinter.prototype.pdfHandlers = {
         }
 
         if (data.image.then) {
-            return data.image.then(handleImage)
+            return data.image.then(handleImage).catch(err=>{});
         }
         else return handleImage(data.image);
     }
