@@ -86,10 +86,10 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
             maxWidth: '90vw',
             background: 'white',
             // zIndex: 1000,
-            // opacity: '0',
-            // zIndex: '-100',
-            // visibility: 'hidden',
-            // pointerEvents: 'none'
+            opacity: '0',
+            zIndex: '-100',
+            visibility: 'hidden',
+            pointerEvents: 'none'
         },
         child: content
     }).addTo(document.body);
