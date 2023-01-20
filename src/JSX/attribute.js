@@ -25,3 +25,34 @@ export function parseStyleAttr(text) {
 export function parseClassAttr(text) {
     return text.trim().split(/\s+/);
 }
+
+
+/**
+ *
+ * @param mValue
+ * @returns {{unit: null, value: string}|{unit: string, value: number}|null}
+ */
+export function parseMeasureValue(mValue) {
+    if (mValue === 'auto') return { unit: null, value: 'auto' };
+    if (mValue === 'match_parent') return { unit: null, value: 'match_parent' };
+    var value = NaN;
+    var unit = null;
+    var matched;
+    if (typeof mValue === "number") {
+        value = mValue;
+        unit = 'px';
+    }
+    else if (typeof mValue === "string") {
+        matched = mValue.match(/([+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?)(px|%|vw|vh)?/i);
+        if (matched) {
+            value = parseFloat(matched[1]);
+            unit = matched[4];
+        }
+    }
+    if (isNaN(value)) return null;
+    unit = unit || 'px';
+    return {
+        value: value,
+        unit: unit
+    };
+}
