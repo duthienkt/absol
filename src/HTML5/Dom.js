@@ -834,6 +834,18 @@ export function getSystemFontSize() {
     return Math.round(defaultSize * 14 / 16);
 }
 
+
+export function getTextNodeBound(textNode) {
+    if (document.createRange) {
+        var range = document.createRange();
+        range.selectNodeContents(textNode);
+        if (range.getBoundingClientRect) {
+            return range.getBoundingClientRect();
+        }
+    }
+    return null;
+}
+
 /***
  * get absol construct descriptor for HTML element only
  * @param {AElement | Text} elt
