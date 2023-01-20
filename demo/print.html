@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>JSX</title>
+    <title>Print</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -11,208 +11,235 @@
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <style>
+        html,body {
+            /*text-size-adjust: none;*/
+            /*-webkit-text-size-adjust: none;*/
+            /*-moz-text-size-adjust: none;*/
+            /*-ms-text-size-adjust: none;*/
+        }
         :root{
             font-family: Arial;
+            font-size: 14px;
+        }
+
+        .as-message-input-attach-preview-image{
+            width: 10em;
+            height: 10em;
+            background-size: cover;
+            color: red;
+            padding: 10px;
+        }
+
+        .as-printer .cke_widget_drag_handler_container{
+            display: none;
         }
     </style>
 </head>
 
 <body>
-<div id="wrapper">
-    <h1>Print demo</h1>
-    <div class="cke4-inline" style="border: 1px solid black; padding: 5px; border-radius: 6%">
-        <div class="cke4-inline__anchor cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" contenteditable="true" style="text-align: center; position: relative;" aria-readonly="false" tabindex="0" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor11" title="Bộ soạn thảo văn bản có định dạng, editor11" aria-describedby="cke_2522" aria-controls="cke_2709" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h2>Simply delicious newsletter</h2><h3>Food, travel and inspirations</h3></div>
-        <div class="cke4-inline__anchor cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" contenteditable="true" aria-readonly="false" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor12" title="Bộ soạn thảo văn bản có định dạng, editor12" aria-describedby="cke_2568" aria-controls="cke_2711" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>Friday favorites - Homemade pizza</h3><div tabindex="-1" contenteditable="false" data-cke-widget-wrapper="1" data-cke-filter="off" class="cke_widget_wrapper cke_widget_block cke_widget_image" data-cke-display-name="ảnh" data-cke-widget-id="0" role="region" aria-label="A picture of a homemade pizza. ảnh widget" style="float: right;"><figure class="image cke_widget_element" data-cke-widget-data="%7B%22hasCaption%22%3Atrue%2C%22src%22%3A%22%2Fassets%2Fimages%2Flegacy%2Fbg%2Fpizza-b61fe86b3c.jpg%22%2C%22alt%22%3A%22A%20picture%20of%20a%20homemade%20pizza.%22%2C%22width%22%3A%22500%22%2C%22height%22%3A%22%22%2C%22lock%22%3Atrue%2C%22align%22%3A%22right%22%2C%22classes%22%3A%7B%7D%7D" data-cke-widget-upcasted="1" data-cke-widget-keep-attr="0" data-widget="image"><span class="cke_image_resizer_wrapper">
+<div class="a4">
+    <div id="wrapper">
+        <h1>Print demo</h1>
+        <div class="cke4-inline" style="border: 5px solid black; padding: 2px; border-radius: 6%">
+            <div class="cke4-inline__anchor cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" contenteditable="true" style="text-align: center; position: relative;" aria-readonly="false" tabindex="0" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor11" title="Bộ soạn thảo văn bản có định dạng, editor11" aria-describedby="cke_2522" aria-controls="cke_2709" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h2>Simply delicious newsletter</h2><h3>Food, travel and inspirations</h3></div>
+            <div class="cke4-inline__anchor cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" contenteditable="true" aria-readonly="false" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor12" title="Bộ soạn thảo văn bản có định dạng, editor12" aria-describedby="cke_2568" aria-controls="cke_2711" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>Friday favorites - Homemade pizza</h3><div tabindex="-1" contenteditable="false" data-cke-widget-wrapper="1" data-cke-filter="off" class="cke_widget_wrapper cke_widget_block cke_widget_image" data-cke-display-name="ảnh" data-cke-widget-id="0" role="region" aria-label="A picture of a homemade pizza. ảnh widget" style="float: right;"><figure class="image cke_widget_element" data-cke-widget-data="%7B%22hasCaption%22%3Atrue%2C%22src%22%3A%22%2Fassets%2Fimages%2Flegacy%2Fbg%2Fpizza-b61fe86b3c.jpg%22%2C%22alt%22%3A%22A%20picture%20of%20a%20homemade%20pizza.%22%2C%22width%22%3A%22500%22%2C%22height%22%3A%22%22%2C%22lock%22%3Atrue%2C%22align%22%3A%22right%22%2C%22classes%22%3A%7B%7D%7D" data-cke-widget-upcasted="1" data-cke-widget-keep-attr="0" data-widget="image"><span class="cke_image_resizer_wrapper">
             <img style="width: 400px;" data-cke-saved-src="https://ckeditor.com/assets/images/legacy/bg/pizza-b61fe86b3c.jpg" src="https://ckeditor.com/assets/images/legacy/bg/pizza-b61fe86b3c.jpg" title="Kéo rê để thay đổi kích cỡ">&ZeroWidthSpace;</span></span><figcaption contenteditable="true" data-cke-widget-editable="caption" data-cke-enter-mode="2" data-cke-filter="2559" class="cke_widget_editable" data-cke-display-name="chú thích">Bon Appétit!</figcaption></figure><span class="cke_reset cke_widget_drag_handler_container" style="background: url(&quot;https://ckeditor.com/assets/libs/ckeditor4/4.20.1/plugins/widget/images/handle.png&quot;) rgba(220, 220, 220, 0.5); top: 8px; left: 23px;"><img class="cke_reset cke_widget_drag_handler" data-cke-widget-drag-handler="1" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" width="15" title="Nhấp chuột và kéo để di chuyển" height="15" role="presentation"></span></div><p>Friday is finally here! I know it’s been an exhausting week and the last thing on your mind right now is getting stuck in the kitchen preparing a snack to accompany you during your regular Netflix session.</p><p>Don’t worry - I have just the thing for you.</p><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out how to prepare a delicious homemade pizza in 15 minutes!</a></p><p><br></p></div>
-        <div class="demo-row">
-            <div class="demo-row__third">
-                <div contenteditable="true" aria-readonly="false" class="cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor13" title="Bộ soạn thảo văn bản có định dạng, editor13" aria-describedby="cke_2605" aria-controls="cke_2730" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>How to spend your weekend outside the city limits</h3><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out more</a></p></div>
-            </div>
-            <div class="demo-row__third">
-                <div contenteditable="true" aria-readonly="false" class="cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor14" title="Bộ soạn thảo văn bản có định dạng, editor14" aria-describedby="cke_2642" aria-controls="cke_2737" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>Essential things to think about before starting a blog</h3><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out more</a></p></div>
-            </div>
-            <div class="demo-row__third">
-                <div contenteditable="true" aria-readonly="false" class="cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor15" title="Bộ soạn thảo văn bản có định dạng, editor15" aria-describedby="cke_2679" aria-controls="cke_2748" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>Castagnaccio - a cake easier to bake than to pronounce</h3><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out more</a></p></div>
+            <div class="demo-row">
+                <div class="demo-row__third">
+                    <div contenteditable="true" aria-readonly="false" class="cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor13" title="Bộ soạn thảo văn bản có định dạng, editor13" aria-describedby="cke_2605" aria-controls="cke_2730" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>How to spend your weekend outside the city limits</h3><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out more</a></p></div>
+                </div>
+                <div class="demo-row__third">
+                    <div contenteditable="true" aria-readonly="false" class="cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor14" title="Bộ soạn thảo văn bản có định dạng, editor14" aria-describedby="cke_2642" aria-controls="cke_2737" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>Essential things to think about before starting a blog</h3><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out more</a></p></div>
+                </div>
+                <div class="demo-row__third">
+                    <div contenteditable="true" aria-readonly="false" class="cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-multiline="true" aria-label="Bộ soạn thảo văn bản có định dạng, editor15" title="Bộ soạn thảo văn bản có định dạng, editor15" aria-describedby="cke_2679" aria-controls="cke_2748" aria-activedescendant="" aria-autocomplete="list" aria-expanded="false"><h3>Castagnaccio - a cake easier to bake than to pronounce</h3><p><a data-cke-saved-href="https://ckeditor.com/ckeditor-4/#" href="https://ckeditor.com/ckeditor-4/#">Find out more</a></p></div>
+                </div>
             </div>
         </div>
-    </div>
-    <br>
-    <canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;"></canvas>
-
-    <svg width="615.99199" height="625.68599" xmlns="http://www.w3.org/2000/svg" id="svg2" version="1.1"
-         viewBox="0 0 615.99199 625.68599">
-        <g id="Layer_1" transform="translate(4.752,4.346)">
-            <g id="dp_group001">
-                <path id="dp_path002" style="fill-rule:evenodd;stroke:#22240e;stroke-width:1.3333;fill:#22241a"
-                      d="m14.12 5.6533h584.21v596.42h-584.21z"/>
-                <g id="dp_group003">
-                    <g id="dp_group004">
-                        <path id="dp_path005" style="fill-rule:evenodd;fill:#e84727"
-                              d="m8.1987 85.427 147.53-73.271 147.53 73.271 147.54-73.271 147.53 73.271v73.273l-147.53-73.273-147.54 73.273-147.53-73.273-147.53 73.273z"/>
-                        <g id="dp_group006" style="fill:#1f2111">
-                            <path id="dp_path007"
-                                  d="m303.26 96.591 147.54-73.271 137.53 68.304v50.946l-137.53-68.307-147.54 73.267-147.53-73.267-137.53 68.307-0.003-50.946 137.53-68.304 147.53 73.271v-7.443l-147.53-73.271-144.2 71.616v65.827l144.2-71.615 147.53 73.275 147.54-73.275 144.2 71.615v-65.827l-144.2-71.616-147.54 73.271z"/>
-                            <path id="dp_path008"
-                                  d="m303.26 81.705 147.54-73.27 150.86 74.925v80.71l-150.86-74.922-147.54 73.272-147.53-73.272-150.86 74.922-0.0047-80.71 150.86-74.925 147.53 73.27v-7.442l-147.53-73.271-157.53 78.237-0.006 95.591 157.53-78.229 147.53 73.269 147.54-73.269 157.53 78.229v-95.591l-157.53-78.237-147.54 73.271z"/>
+        <br>
+        <div>
+            <h3>Canvas</h3>
+            <canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;"></canvas>
+        </div>
+        <h3>SVG</h3>
+        <svg style="width: 300px; height: auto" width="615.99199" height="625.68599" xmlns="http://www.w3.org/2000/svg" id="svg2" version="1.1"
+             viewBox="0 0 615.99199 625.68599">
+            <g id="Layer_1" transform="translate(4.752,4.346)">
+                <g id="dp_group001">
+                    <path id="dp_path002" style="fill-rule:evenodd;stroke:#22240e;stroke-width:1.3333;fill:#22241a"
+                          d="m14.12 5.6533h584.21v596.42h-584.21z"/>
+                    <g id="dp_group003">
+                        <g id="dp_group004">
+                            <path id="dp_path005" style="fill-rule:evenodd;fill:#e84727"
+                                  d="m8.1987 85.427 147.53-73.271 147.53 73.271 147.54-73.271 147.53 73.271v73.273l-147.53-73.273-147.54 73.273-147.53-73.273-147.53 73.273z"/>
+                            <g id="dp_group006" style="fill:#1f2111">
+                                <path id="dp_path007"
+                                      d="m303.26 96.591 147.54-73.271 137.53 68.304v50.946l-137.53-68.307-147.54 73.267-147.53-73.267-137.53 68.307-0.003-50.946 137.53-68.304 147.53 73.271v-7.443l-147.53-73.271-144.2 71.616v65.827l144.2-71.615 147.53 73.275 147.54-73.275 144.2 71.615v-65.827l-144.2-71.616-147.54 73.271z"/>
+                                <path id="dp_path008"
+                                      d="m303.26 81.705 147.54-73.27 150.86 74.925v80.71l-150.86-74.922-147.54 73.272-147.53-73.272-150.86 74.922-0.0047-80.71 150.86-74.925 147.53 73.27v-7.442l-147.53-73.271-157.53 78.237-0.006 95.591 157.53-78.229 147.53 73.269 147.54-73.269 157.53 78.229v-95.591l-157.53-78.237-147.54 73.271z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group009">
+                            <path id="dp_path010" style="fill-rule:evenodd;fill:#d72fe6"
+                                  d="m8.1987 85.427 147.53 73.273 147.53-73.273 147.54 73.273 147.53-73.273v-73.27l-147.53 73.27-147.54-73.27-147.53 73.27-147.53-73.27z"/>
+                            <g id="dp_group011" style="fill:#1f2111">
+                                <path id="dp_path012"
+                                      d="m303.26 96.591 147.54 73.269 157.53-78.236v-95.596l-157.53 78.235-147.54-73.27-147.53 73.27-157.53-78.235 0.0013 95.596 157.53 78.236 147.53-73.269v-7.44l-147.53 73.272-150.86-74.927-0.0034-80.713 150.86 74.925 147.53-73.269 147.54 73.269 150.86-74.925v80.713l-150.86 74.927-147.54-73.272z"/>
+                                <path id="dp_path013"
+                                      d="m303.26 81.705 147.54 73.275 144.2-71.62v-65.825l-144.2 71.613-147.54-73.269-147.53 73.269-144.2-71.613 0.001 65.825 144.2 71.62 147.53-73.275v-7.437l-147.53 73.267-137.53-68.301-0.002-50.942 137.53 68.304 147.53-73.27 147.54 73.27 137.53-68.304v50.942l-137.53 68.301-147.54-73.267z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group014">
+                            <path id="dp_path015" style="fill-rule:evenodd;fill:#87e727"
+                                  d="m6.6813 233.69 147.54-73.27 147.53 73.27 147.53-73.27 147.54 73.27v73.27l-147.54-73.27-147.53 73.27-147.53-73.27-147.54 73.27z"/>
+                            <g id="dp_group016" style="fill:#1f2111">
+                                <path id="dp_path017"
+                                      d="m301.75 244.85 147.53-73.27 137.54 68.31v50.94l-137.54-68.31-147.53 73.28-147.53-73.28-137.54 68.31v-50.94l137.54-68.31 147.53 73.27v-7.44l-147.53-73.27-144.21 71.62 0.006 65.82 144.2-71.61 147.53 73.27 147.53-73.27 144.2 71.61v-65.82l-144.2-71.62-147.53 73.27z"/>
+                                <path id="dp_path018"
+                                      d="m301.75 229.97 147.53-73.27 150.87 74.92v80.72l-150.87-74.93-147.53 73.27-147.53-73.27-150.87 74.93-0.002-80.72 150.87-74.92 147.53 73.27v-7.45l-147.53-73.26-157.54 78.23 0.0013 95.6 157.54-78.24 147.53 73.27 147.53-73.27 157.54 78.24-0.01-95.6-157.53-78.23-147.53 73.26z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group019">
+                            <path id="dp_path020" style="fill-rule:evenodd;fill:#ebeb0d"
+                                  d="m6.6813 233.69 147.54 73.27 147.53-73.27 147.53 73.27 147.54-73.27v-73.27l-147.54 73.27-147.53-73.27-147.53 73.27-147.54-73.27z"/>
+                            <g id="dp_group021" style="fill:#1f2111">
+                                <path id="dp_path022"
+                                      d="m301.75 244.85 147.53 73.27 157.53-78.23 0.01-95.6-157.54 78.23-147.53-73.26-147.53 73.26-157.54-78.23 0.004 95.6 157.54 78.23 147.53-73.27v-7.44l-147.53 73.27-150.87-74.92-0.002-80.72 150.87 74.93 147.53-73.27 147.53 73.27 150.87-74.93v80.72l-150.87 74.92-147.53-73.27z"/>
+                                <path id="dp_path023"
+                                      d="m301.75 229.97 147.53 73.27 144.2-71.62v-65.82l-144.2 71.61-147.53-73.27-147.53 73.27-144.2-71.61-0.007 65.82 144.21 71.62 147.53-73.27v-7.45l-147.53 73.28-137.54-68.31v-50.94l137.54 68.3 147.53-73.27 147.53 73.27 137.54-68.3v50.94l-137.54 68.31-147.53-73.28z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group024">
+                            <path id="dp_path025" style="fill-rule:evenodd;fill:#d1b32d"
+                                  d="m6.6813 381.95 147.54-73.27 147.53 73.27 147.53-73.27 147.54 73.27v73.27l-147.54-73.27-147.53 73.27-147.53-73.27-147.54 73.27z"/>
+                            <g id="dp_group026" style="fill:#1f2111">
+                                <path id="dp_path027"
+                                      d="m301.75 393.12 147.53-73.28 137.54 68.31v50.94l-137.54-68.3-147.53 73.27-147.53-73.27-137.54 68.3v-50.94l137.54-68.31 147.53 73.28v-7.45l-147.53-73.27-144.21 71.62 0.006 65.82 144.2-71.61 147.53 73.27 147.53-73.27 144.2 71.61v-65.82l-144.2-71.62-147.53 73.27z"/>
+                                <path id="dp_path028"
+                                      d="m301.75 378.23 147.53-73.27 150.87 74.92v80.72l-150.87-74.93-147.53 73.27-147.53-73.27-150.87 74.93-0.002-80.72 150.87-74.92 147.53 73.27v-7.44l-147.53-73.27-157.54 78.24 0.0013 95.59 157.54-78.23 147.53 73.26 147.53-73.26 157.54 78.23-0.01-95.59-157.53-78.24-147.53 73.27z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group029">
+                            <path id="dp_path030" style="fill-rule:evenodd;fill:#86aa5f"
+                                  d="m6.6813 381.95 147.54 73.27 147.53-73.27 147.53 73.27 147.54-73.27v-73.27l-147.54 73.27-147.53-73.27-147.53 73.27-147.54-73.27z"/>
+                            <g id="dp_group031" style="fill:#1f2111">
+                                <path id="dp_path032"
+                                      d="m301.75 393.12 147.53 73.27 157.53-78.24 0.01-95.6-157.54 78.24-147.53-73.27-147.53 73.27-157.54-78.24 0.004 95.6 157.54 78.24 147.53-73.27v-7.45l-147.53 73.27-150.87-74.92 0.002-80.72 150.87 74.93 147.53-73.27 147.53 73.27 150.87-74.93v80.72l-150.87 74.92-147.53-73.27z"/>
+                                <path id="dp_path033"
+                                      d="m301.75 378.23 147.53 73.27 144.2-71.62v-65.82l-144.2 71.61-147.53-73.27-147.53 73.27-144.2-71.61-0.007 65.82 144.21 71.62 147.53-73.27v-7.44l-147.53 73.27-137.54-68.3v-50.95l137.54 68.31 147.53-73.27 147.53 73.27 137.54-68.31v50.95l-137.54 68.3-147.53-73.27z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group034">
+                            <path id="dp_path035" style="fill-rule:evenodd;fill:#9a70e3"
+                                  d="m6.6813 531.94 147.54-73.27 147.53 73.27 147.53-73.27 147.54 73.27v73.27l-147.54-73.27-147.53 73.27-147.53-73.27-147.54 73.27z"/>
+                            <g id="dp_group036" style="fill:#1f2111">
+                                <path id="dp_path037"
+                                      d="m301.75 543.1 147.53-73.27 137.54 68.31v50.94l-137.54-68.31-147.53 73.27-147.53-73.27-137.54 68.31v-50.94l137.54-68.31 147.53 73.27v-7.44l-147.53-73.27-144.21 71.61 0.006 65.83 144.2-71.61 147.53 73.26 147.53-73.26 144.2 71.61v-65.83l-144.2-71.61-147.53 73.27z"/>
+                                <path id="dp_path038"
+                                      d="m301.75 528.22 147.53-73.28 150.87 74.93v80.71l-150.87-74.92-147.53 73.27-147.53-73.27-150.87 74.92-0.002-80.71 150.87-74.93 147.53 73.28v-7.45l-147.53-73.27-157.54 78.24 0.0013 95.6 157.54-78.24 147.53 73.27 147.53-73.27 157.54 78.24-0.01-95.6-157.53-78.24-147.53 73.27z"/>
+                            </g>
+                        </g>
+                        <g id="dp_group039">
+                            <path id="dp_path040" style="fill-rule:evenodd;fill:#e84727"
+                                  d="m6.6813 531.94 147.54 73.27 147.53-73.27 147.53 73.27 147.54-73.27v-73.27l-147.54 73.27-147.53-73.27-147.53 73.27-147.54-73.27z"/>
+                            <g id="dp_group041" style="fill:#1f2111">
+                                <path id="dp_path042"
+                                      d="m301.75 543.1 147.53 73.27 157.53-78.23 0.01-95.6-157.54 78.24-147.53-73.28-147.53 73.28-157.54-78.24 0.004 95.6 157.54 78.23 147.53-73.27v-7.44l-147.53 73.27-150.87-74.93 0.002-80.71 150.87 74.93 147.53-73.27 147.53 73.27 150.87-74.93v80.71l-150.87 74.93-147.53-73.27z"/>
+                                <path id="dp_path043"
+                                      d="m301.75 528.22 147.53 73.27 144.2-71.62v-65.82l-144.2 71.61-147.53-73.27-147.53 73.27-144.2-71.61-0.007 65.82 144.21 71.62 147.53-73.27v-7.44l-147.53 73.26-137.54-68.3v-50.94l137.54 68.3 147.53-73.27 147.53 73.27 137.54-68.3v50.94l-137.54 68.3-147.53-73.26z"/>
+                            </g>
                         </g>
                     </g>
-                    <g id="dp_group009">
-                        <path id="dp_path010" style="fill-rule:evenodd;fill:#d72fe6"
-                              d="m8.1987 85.427 147.53 73.273 147.53-73.273 147.54 73.273 147.53-73.273v-73.27l-147.53 73.27-147.54-73.27-147.53 73.27-147.53-73.27z"/>
-                        <g id="dp_group011" style="fill:#1f2111">
-                            <path id="dp_path012"
-                                  d="m303.26 96.591 147.54 73.269 157.53-78.236v-95.596l-157.53 78.235-147.54-73.27-147.53 73.27-157.53-78.235 0.0013 95.596 157.53 78.236 147.53-73.269v-7.44l-147.53 73.272-150.86-74.927-0.0034-80.713 150.86 74.925 147.53-73.269 147.54 73.269 150.86-74.925v80.713l-150.86 74.927-147.54-73.272z"/>
-                            <path id="dp_path013"
-                                  d="m303.26 81.705 147.54 73.275 144.2-71.62v-65.825l-144.2 71.613-147.54-73.269-147.53 73.269-144.2-71.613 0.001 65.825 144.2 71.62 147.53-73.275v-7.437l-147.53 73.267-137.53-68.301-0.002-50.942 137.53 68.304 147.53-73.27 147.54 73.27 137.53-68.304v50.942l-137.53 68.301-147.54-73.267z"/>
+                    <g id="dp_group044">
+                        <g id="dp_group045">
+                            <path id="dp_path046" style="fill-rule:evenodd;fill:#e84727"
+                                  d="m83.316 607.02-72.176-150.34 72.176-150.34-72.176-150.34 72.176-150.34 72.174-0.0013l-72.174 150.34 72.174 150.34-72.174 150.34 72.174 150.34z"/>
+                            <g id="dp_group047" style="fill:#f8f9f3">
+                                <path id="dp_path048"
+                                      d="m94.408 306.34-72.176-150.34 67.373-140.34 49.995-0.001-67.376 140.34 72.176 150.34-72.176 150.34 67.376 140.34h-49.995l-67.373-140.34 72.176-150.34h-7.395l-72.176 150.34 70.576 147.01h64.777l-70.571-147.01 72.171-150.34-72.171-150.34 70.571-147.01-64.777 0.001-70.576 147.01 72.176 150.34z"/>
+                                <path id="dp_path049"
+                                      d="m79.619 306.34-72.176-150.34 73.776-153.67 79.571-0.0047l-73.777 153.67 72.177 150.34-72.177 150.34 73.777 153.68h-79.571l-73.776-153.68 72.176-150.34h-7.395l-72.176 150.34 76.979 160.34h94.353l-76.972-160.34 72.172-150.34-72.172-150.34 76.972-160.34-94.353-0.006-76.979 160.34 72.176 150.34z"/>
+                            </g>
                         </g>
-                    </g>
-                    <g id="dp_group014">
-                        <path id="dp_path015" style="fill-rule:evenodd;fill:#87e727"
-                              d="m6.6813 233.69 147.54-73.27 147.53 73.27 147.53-73.27 147.54 73.27v73.27l-147.54-73.27-147.53 73.27-147.53-73.27-147.54 73.27z"/>
-                        <g id="dp_group016" style="fill:#1f2111">
-                            <path id="dp_path017"
-                                  d="m301.75 244.85 147.53-73.27 137.54 68.31v50.94l-137.54-68.31-147.53 73.28-147.53-73.28-137.54 68.31v-50.94l137.54-68.31 147.53 73.27v-7.44l-147.53-73.27-144.21 71.62 0.006 65.82 144.2-71.61 147.53 73.27 147.53-73.27 144.2 71.61v-65.82l-144.2-71.62-147.53 73.27z"/>
-                            <path id="dp_path018"
-                                  d="m301.75 229.97 147.53-73.27 150.87 74.92v80.72l-150.87-74.93-147.53 73.27-147.53-73.27-150.87 74.93-0.002-80.72 150.87-74.92 147.53 73.27v-7.45l-147.53-73.26-157.54 78.23 0.0013 95.6 157.54-78.24 147.53 73.27 147.53-73.27 157.54 78.24-0.01-95.6-157.53-78.23-147.53 73.26z"/>
+                        <g id="dp_group050">
+                            <path id="dp_path051" style="fill-rule:evenodd;fill:#d72fe6"
+                                  d="m83.315 607.02 72.175-150.34-72.175-150.34 72.175-150.34-72.175-150.34-72.175-0.0013l72.175 150.34-72.175 150.34 72.175 150.34-72.175 150.34z"/>
+                            <g id="dp_group052" style="fill:#f8f9f3">
+                                <path id="dp_path053"
+                                      d="m94.407 306.34 72.173-150.34-76.976-160.34-94.356-0.0013l76.975 160.34-72.175 150.34 72.175 150.34-76.975 160.34h94.356l76.976-160.34-72.173-150.34h-7.395l72.178 150.34-73.778 153.68h-79.569l73.774-153.68-72.174-150.34 72.174-150.34-73.774-153.67 79.569-0.006 73.778 153.67-72.178 150.34z"/>
+                                <path id="dp_path054"
+                                      d="m79.617 306.34 72.173-150.34-70.573-147.01l-64.78 0.002 70.575 147.01-72.175 150.34 72.175 150.34-70.575 147.01h64.78l70.573-147.01-72.173-150.34h-7.394l72.177 150.34-67.375 140.34h-49.993l67.375-140.34-72.175-150.34 72.175-150.34-67.375-140.34 49.993 0.001 67.375 140.34-72.177 150.34z"/>
+                            </g>
                         </g>
-                    </g>
-                    <g id="dp_group019">
-                        <path id="dp_path020" style="fill-rule:evenodd;fill:#ebeb0d"
-                              d="m6.6813 233.69 147.54 73.27 147.53-73.27 147.53 73.27 147.54-73.27v-73.27l-147.54 73.27-147.53-73.27-147.53 73.27-147.54-73.27z"/>
-                        <g id="dp_group021" style="fill:#1f2111">
-                            <path id="dp_path022"
-                                  d="m301.75 244.85 147.53 73.27 157.53-78.23 0.01-95.6-157.54 78.23-147.53-73.26-147.53 73.26-157.54-78.23 0.004 95.6 157.54 78.23 147.53-73.27v-7.44l-147.53 73.27-150.87-74.92-0.002-80.72 150.87 74.93 147.53-73.27 147.53 73.27 150.87-74.93v80.72l-150.87 74.92-147.53-73.27z"/>
-                            <path id="dp_path023"
-                                  d="m301.75 229.97 147.53 73.27 144.2-71.62v-65.82l-144.2 71.61-147.53-73.27-147.53 73.27-144.2-71.61-0.007 65.82 144.21 71.62 147.53-73.27v-7.45l-147.53 73.28-137.54-68.31v-50.94l137.54 68.3 147.53-73.27 147.53 73.27 137.54-68.3v50.94l-137.54 68.31-147.53-73.28z"/>
+                        <g id="dp_group055">
+                            <path id="dp_path056" style="fill-rule:evenodd;fill:#87e727"
+                                  d="m229.37 608.57-72.18-150.34 72.18-150.34-72.18-150.35 72.18-150.34l72.17 0.004-72.17 150.34 72.17 150.35-72.17 150.34 72.17 150.34z"/>
+                            <g id="dp_group057" style="fill:#f8f9f3">
+                                <path id="dp_path058"
+                                      d="m240.46 307.89-72.18-150.35 67.38-140.34l49.99 0.004-67.37 140.34 72.17 150.35-72.17 150.34 67.37 140.34h-49.99l-67.38-140.34 72.18-150.34h-7.4l-72.17 150.34 70.57 147.01h64.78l-70.57-147.01 72.17-150.34-72.17-150.35 70.57-147-64.78-0.003-70.57 147 72.17 150.35z"/>
+                                <path id="dp_path059"
+                                      d="m225.67 307.89-72.17-150.35 73.77-153.67l79.57 0.0007-73.78 153.67 72.18 150.35-72.18 150.34 73.78 153.67h-79.57l-73.77-153.67 72.17-150.34h-7.39l-72.18 150.34 76.98 160.34h94.36l-76.98-160.34 72.18-150.34-72.18-150.35 76.98-160.34-94.36 0.004-76.98 160.34 72.18 150.35z"/>
+                            </g>
                         </g>
-                    </g>
-                    <g id="dp_group024">
-                        <path id="dp_path025" style="fill-rule:evenodd;fill:#d1b32d"
-                              d="m6.6813 381.95 147.54-73.27 147.53 73.27 147.53-73.27 147.54 73.27v73.27l-147.54-73.27-147.53 73.27-147.53-73.27-147.54 73.27z"/>
-                        <g id="dp_group026" style="fill:#1f2111">
-                            <path id="dp_path027"
-                                  d="m301.75 393.12 147.53-73.28 137.54 68.31v50.94l-137.54-68.3-147.53 73.27-147.53-73.27-137.54 68.3v-50.94l137.54-68.31 147.53 73.28v-7.45l-147.53-73.27-144.21 71.62 0.006 65.82 144.2-71.61 147.53 73.27 147.53-73.27 144.2 71.61v-65.82l-144.2-71.62-147.53 73.27z"/>
-                            <path id="dp_path028"
-                                  d="m301.75 378.23 147.53-73.27 150.87 74.92v80.72l-150.87-74.93-147.53 73.27-147.53-73.27-150.87 74.93-0.002-80.72 150.87-74.92 147.53 73.27v-7.44l-147.53-73.27-157.54 78.24 0.0013 95.59 157.54-78.23 147.53 73.26 147.53-73.26 157.54 78.23-0.01-95.59-157.53-78.24-147.53 73.27z"/>
+                        <g id="dp_group060">
+                            <path id="dp_path061" style="fill-rule:evenodd;fill:#ebeb0d"
+                                  d="m229.36 608.57 72.18-150.34-72.18-150.34 72.18-150.35-72.18-150.34l-72.17 0.004 72.17 150.34-72.17 150.35 72.17 150.34-72.17 150.34z"/>
+                            <g id="dp_group062" style="fill:#f8f9f3">
+                                <path id="dp_path063"
+                                      d="m240.46 307.89 72.17-150.35-76.97-160.34l-94.36 0.004 76.97 160.34-72.17 150.35 72.17 150.34-76.97 160.34h94.36l76.97-160.34-72.17-150.34h-7.4l72.18 150.34-73.78 153.67h-79.57l73.78-153.67-72.18-150.34 72.18-150.35-73.78-153.67 79.57 0.0007 73.78 153.67-72.18 150.35z"/>
+                                <path id="dp_path064"
+                                      d="m225.67 307.89 72.17-150.35-70.57-147-64.78-0.003 70.57 147-72.17 150.35 72.17 150.34-70.57 147.01h64.78l70.57-147.01-72.17-150.34h-7.4l72.18 150.34-67.37 140.34h-50l67.38-140.34-72.18-150.34 72.18-150.35-67.38-140.34 50 0.004 67.37 140.34-72.18 150.35z"/>
+                            </g>
                         </g>
-                    </g>
-                    <g id="dp_group029">
-                        <path id="dp_path030" style="fill-rule:evenodd;fill:#86aa5f"
-                              d="m6.6813 381.95 147.54 73.27 147.53-73.27 147.53 73.27 147.54-73.27v-73.27l-147.54 73.27-147.53-73.27-147.53 73.27-147.54-73.27z"/>
-                        <g id="dp_group031" style="fill:#1f2111">
-                            <path id="dp_path032"
-                                  d="m301.75 393.12 147.53 73.27 157.53-78.24 0.01-95.6-157.54 78.24-147.53-73.27-147.53 73.27-157.54-78.24 0.004 95.6 157.54 78.24 147.53-73.27v-7.45l-147.53 73.27-150.87-74.92 0.002-80.72 150.87 74.93 147.53-73.27 147.53 73.27 150.87-74.93v80.72l-150.87 74.92-147.53-73.27z"/>
-                            <path id="dp_path033"
-                                  d="m301.75 378.23 147.53 73.27 144.2-71.62v-65.82l-144.2 71.61-147.53-73.27-147.53 73.27-144.2-71.61-0.007 65.82 144.21 71.62 147.53-73.27v-7.44l-147.53 73.27-137.54-68.3v-50.95l137.54 68.31 147.53-73.27 147.53 73.27 137.54-68.31v50.95l-137.54 68.3-147.53-73.27z"/>
+                        <g id="dp_group065">
+                            <path id="dp_path066" style="fill-rule:evenodd;fill:#d1b32d"
+                                  d="m375.42 608.57-72.18-150.34 72.18-150.34-72.18-150.35 72.18-150.34l72.17 0.004-72.17 150.34 72.17 150.35-72.17 150.34 72.17 150.34z"/>
+                            <g id="dp_group067" style="fill:#f8f9f3">
+                                <path id="dp_path068"
+                                      d="m386.51 307.89-72.17-150.35 67.37-140.34l49.99 0.004-67.37 140.34 72.17 150.35-72.17 150.34 67.37 140.34h-49.99l-67.37-140.34 72.17-150.34h-7.39l-72.18 150.34 70.58 147.01h64.78l-70.58-147.01 72.18-150.34-72.18-150.35 70.58-147-64.78-0.003-70.58 147 72.18 150.35z"/>
+                                <path id="dp_path069"
+                                      d="m371.72 307.89-72.18-150.35 73.78-153.67l79.57 0.0007-73.77 153.67 72.17 150.35-72.17 150.34 73.77 153.67h-79.57l-73.78-153.67 72.18-150.34h-7.39l-72.18 150.34 76.98 160.34h94.35l-76.97-160.34 72.17-150.34-72.17-150.35 76.97-160.34-94.35 0.004-76.98 160.34 72.18 150.35z"/>
+                            </g>
                         </g>
-                    </g>
-                    <g id="dp_group034">
-                        <path id="dp_path035" style="fill-rule:evenodd;fill:#9a70e3"
-                              d="m6.6813 531.94 147.54-73.27 147.53 73.27 147.53-73.27 147.54 73.27v73.27l-147.54-73.27-147.53 73.27-147.53-73.27-147.54 73.27z"/>
-                        <g id="dp_group036" style="fill:#1f2111">
-                            <path id="dp_path037"
-                                  d="m301.75 543.1 147.53-73.27 137.54 68.31v50.94l-137.54-68.31-147.53 73.27-147.53-73.27-137.54 68.31v-50.94l137.54-68.31 147.53 73.27v-7.44l-147.53-73.27-144.21 71.61 0.006 65.83 144.2-71.61 147.53 73.26 147.53-73.26 144.2 71.61v-65.83l-144.2-71.61-147.53 73.27z"/>
-                            <path id="dp_path038"
-                                  d="m301.75 528.22 147.53-73.28 150.87 74.93v80.71l-150.87-74.92-147.53 73.27-147.53-73.27-150.87 74.92-0.002-80.71 150.87-74.93 147.53 73.28v-7.45l-147.53-73.27-157.54 78.24 0.0013 95.6 157.54-78.24 147.53 73.27 147.53-73.27 157.54 78.24-0.01-95.6-157.53-78.24-147.53 73.27z"/>
+                        <g id="dp_group070">
+                            <path id="dp_path071" style="fill-rule:evenodd;fill:#86aa5f"
+                                  d="m375.42 608.57 72.17-150.34-72.17-150.34 72.17-150.35-72.17-150.34l-72.18 0.004 72.18 150.34-72.18 150.35 72.18 150.34-72.18 150.34z"/>
+                            <g id="dp_group072" style="fill:#f8f9f3">
+                                <path id="dp_path073"
+                                      d="m386.51 307.89 72.17-150.35-76.97-160.34l-94.36 0.004 76.97 160.34-72.17 150.35 72.17 150.34-76.97 160.34h94.36l76.97-160.34-72.17-150.34h-7.39l72.17 150.34-73.77 153.67h-79.58l73.78-153.67-72.18-150.34 72.18-150.35-73.78-153.67 79.58 0.0007 73.77 153.67-72.17 150.35z"/>
+                                <path id="dp_path074"
+                                      d="m371.72 307.89 72.18-150.35-70.58-147-64.78-0.003 70.58 147-72.18 150.35 72.18 150.34-70.58 147.01h64.78l70.58-147.01-72.18-150.34h-7.4l72.18 150.34-67.37 140.34h-49.99l67.37-140.34-72.17-150.34 72.17-150.35-67.37-140.34 49.99 0.004 67.37 140.34-72.18 150.35z"/>
+                            </g>
                         </g>
-                    </g>
-                    <g id="dp_group039">
-                        <path id="dp_path040" style="fill-rule:evenodd;fill:#e84727"
-                              d="m6.6813 531.94 147.54 73.27 147.53-73.27 147.53 73.27 147.54-73.27v-73.27l-147.54 73.27-147.53-73.27-147.53 73.27-147.54-73.27z"/>
-                        <g id="dp_group041" style="fill:#1f2111">
-                            <path id="dp_path042"
-                                  d="m301.75 543.1 147.53 73.27 157.53-78.23 0.01-95.6-157.54 78.24-147.53-73.28-147.53 73.28-157.54-78.24 0.004 95.6 157.54 78.23 147.53-73.27v-7.44l-147.53 73.27-150.87-74.93 0.002-80.71 150.87 74.93 147.53-73.27 147.53 73.27 150.87-74.93v80.71l-150.87 74.93-147.53-73.27z"/>
-                            <path id="dp_path043"
-                                  d="m301.75 528.22 147.53 73.27 144.2-71.62v-65.82l-144.2 71.61-147.53-73.27-147.53 73.27-144.2-71.61-0.007 65.82 144.21 71.62 147.53-73.27v-7.44l-147.53 73.26-137.54-68.3v-50.94l137.54 68.3 147.53-73.27 147.53 73.27 137.54-68.3v50.94l-137.54 68.3-147.53-73.26z"/>
+                        <g id="dp_group075">
+                            <path id="dp_path076" style="fill-rule:evenodd;fill:#9a70e3"
+                                  d="m523.17 608.57-72.18-150.34 72.18-150.34-72.18-150.35 72.18-150.34l72.17 0.004-72.17 150.34 72.17 150.35-72.17 150.34 72.17 150.34z"/>
+                            <g id="dp_group077" style="fill:#f8f9f3">
+                                <path id="dp_path078"
+                                      d="m534.26 307.89-72.18-150.35 67.38-140.34l49.99 0.004-67.37 140.34 72.17 150.35-72.17 150.34 67.37 140.34h-49.99l-67.38-140.34 72.18-150.34h-7.39l-72.18 150.34 70.58 147.01h64.78l-70.58-147.01 72.18-150.34-72.18-150.35 70.58-147-64.78-0.003-70.58 147 72.18 150.35z"/>
+                                <path id="dp_path079"
+                                      d="m519.47 307.89-72.17-150.35 73.77-153.67l79.57 0.0007-73.77 153.67 72.17 150.35-72.17 150.34 73.77 153.67h-79.57l-73.77-153.67 72.17-150.34h-7.39l-72.18 150.34 76.98 160.34h94.36l-76.98-160.34 72.18-150.34-72.18-150.35 76.98-160.34-94.36 0.004-76.98 160.34 72.18 150.35z"/>
+                            </g>
                         </g>
-                    </g>
-                </g>
-                <g id="dp_group044">
-                    <g id="dp_group045">
-                        <path id="dp_path046" style="fill-rule:evenodd;fill:#e84727"
-                              d="m83.316 607.02-72.176-150.34 72.176-150.34-72.176-150.34 72.176-150.34 72.174-0.0013l-72.174 150.34 72.174 150.34-72.174 150.34 72.174 150.34z"/>
-                        <g id="dp_group047" style="fill:#f8f9f3">
-                            <path id="dp_path048"
-                                  d="m94.408 306.34-72.176-150.34 67.373-140.34 49.995-0.001-67.376 140.34 72.176 150.34-72.176 150.34 67.376 140.34h-49.995l-67.373-140.34 72.176-150.34h-7.395l-72.176 150.34 70.576 147.01h64.777l-70.571-147.01 72.171-150.34-72.171-150.34 70.571-147.01-64.777 0.001-70.576 147.01 72.176 150.34z"/>
-                            <path id="dp_path049"
-                                  d="m79.619 306.34-72.176-150.34 73.776-153.67 79.571-0.0047l-73.777 153.67 72.177 150.34-72.177 150.34 73.777 153.68h-79.571l-73.776-153.68 72.176-150.34h-7.395l-72.176 150.34 76.979 160.34h94.353l-76.972-160.34 72.172-150.34-72.172-150.34 76.972-160.34-94.353-0.006-76.979 160.34 72.176 150.34z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group050">
-                        <path id="dp_path051" style="fill-rule:evenodd;fill:#d72fe6"
-                              d="m83.315 607.02 72.175-150.34-72.175-150.34 72.175-150.34-72.175-150.34-72.175-0.0013l72.175 150.34-72.175 150.34 72.175 150.34-72.175 150.34z"/>
-                        <g id="dp_group052" style="fill:#f8f9f3">
-                            <path id="dp_path053"
-                                  d="m94.407 306.34 72.173-150.34-76.976-160.34-94.356-0.0013l76.975 160.34-72.175 150.34 72.175 150.34-76.975 160.34h94.356l76.976-160.34-72.173-150.34h-7.395l72.178 150.34-73.778 153.68h-79.569l73.774-153.68-72.174-150.34 72.174-150.34-73.774-153.67 79.569-0.006 73.778 153.67-72.178 150.34z"/>
-                            <path id="dp_path054"
-                                  d="m79.617 306.34 72.173-150.34-70.573-147.01l-64.78 0.002 70.575 147.01-72.175 150.34 72.175 150.34-70.575 147.01h64.78l70.573-147.01-72.173-150.34h-7.394l72.177 150.34-67.375 140.34h-49.993l67.375-140.34-72.175-150.34 72.175-150.34-67.375-140.34 49.993 0.001 67.375 140.34-72.177 150.34z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group055">
-                        <path id="dp_path056" style="fill-rule:evenodd;fill:#87e727"
-                              d="m229.37 608.57-72.18-150.34 72.18-150.34-72.18-150.35 72.18-150.34l72.17 0.004-72.17 150.34 72.17 150.35-72.17 150.34 72.17 150.34z"/>
-                        <g id="dp_group057" style="fill:#f8f9f3">
-                            <path id="dp_path058"
-                                  d="m240.46 307.89-72.18-150.35 67.38-140.34l49.99 0.004-67.37 140.34 72.17 150.35-72.17 150.34 67.37 140.34h-49.99l-67.38-140.34 72.18-150.34h-7.4l-72.17 150.34 70.57 147.01h64.78l-70.57-147.01 72.17-150.34-72.17-150.35 70.57-147-64.78-0.003-70.57 147 72.17 150.35z"/>
-                            <path id="dp_path059"
-                                  d="m225.67 307.89-72.17-150.35 73.77-153.67l79.57 0.0007-73.78 153.67 72.18 150.35-72.18 150.34 73.78 153.67h-79.57l-73.77-153.67 72.17-150.34h-7.39l-72.18 150.34 76.98 160.34h94.36l-76.98-160.34 72.18-150.34-72.18-150.35 76.98-160.34-94.36 0.004-76.98 160.34 72.18 150.35z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group060">
-                        <path id="dp_path061" style="fill-rule:evenodd;fill:#ebeb0d"
-                              d="m229.36 608.57 72.18-150.34-72.18-150.34 72.18-150.35-72.18-150.34l-72.17 0.004 72.17 150.34-72.17 150.35 72.17 150.34-72.17 150.34z"/>
-                        <g id="dp_group062" style="fill:#f8f9f3">
-                            <path id="dp_path063"
-                                  d="m240.46 307.89 72.17-150.35-76.97-160.34l-94.36 0.004 76.97 160.34-72.17 150.35 72.17 150.34-76.97 160.34h94.36l76.97-160.34-72.17-150.34h-7.4l72.18 150.34-73.78 153.67h-79.57l73.78-153.67-72.18-150.34 72.18-150.35-73.78-153.67 79.57 0.0007 73.78 153.67-72.18 150.35z"/>
-                            <path id="dp_path064"
-                                  d="m225.67 307.89 72.17-150.35-70.57-147-64.78-0.003 70.57 147-72.17 150.35 72.17 150.34-70.57 147.01h64.78l70.57-147.01-72.17-150.34h-7.4l72.18 150.34-67.37 140.34h-50l67.38-140.34-72.18-150.34 72.18-150.35-67.38-140.34 50 0.004 67.37 140.34-72.18 150.35z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group065">
-                        <path id="dp_path066" style="fill-rule:evenodd;fill:#d1b32d"
-                              d="m375.42 608.57-72.18-150.34 72.18-150.34-72.18-150.35 72.18-150.34l72.17 0.004-72.17 150.34 72.17 150.35-72.17 150.34 72.17 150.34z"/>
-                        <g id="dp_group067" style="fill:#f8f9f3">
-                            <path id="dp_path068"
-                                  d="m386.51 307.89-72.17-150.35 67.37-140.34l49.99 0.004-67.37 140.34 72.17 150.35-72.17 150.34 67.37 140.34h-49.99l-67.37-140.34 72.17-150.34h-7.39l-72.18 150.34 70.58 147.01h64.78l-70.58-147.01 72.18-150.34-72.18-150.35 70.58-147-64.78-0.003-70.58 147 72.18 150.35z"/>
-                            <path id="dp_path069"
-                                  d="m371.72 307.89-72.18-150.35 73.78-153.67l79.57 0.0007-73.77 153.67 72.17 150.35-72.17 150.34 73.77 153.67h-79.57l-73.78-153.67 72.18-150.34h-7.39l-72.18 150.34 76.98 160.34h94.35l-76.97-160.34 72.17-150.34-72.17-150.35 76.97-160.34-94.35 0.004-76.98 160.34 72.18 150.35z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group070">
-                        <path id="dp_path071" style="fill-rule:evenodd;fill:#86aa5f"
-                              d="m375.42 608.57 72.17-150.34-72.17-150.34 72.17-150.35-72.17-150.34l-72.18 0.004 72.18 150.34-72.18 150.35 72.18 150.34-72.18 150.34z"/>
-                        <g id="dp_group072" style="fill:#f8f9f3">
-                            <path id="dp_path073"
-                                  d="m386.51 307.89 72.17-150.35-76.97-160.34l-94.36 0.004 76.97 160.34-72.17 150.35 72.17 150.34-76.97 160.34h94.36l76.97-160.34-72.17-150.34h-7.39l72.17 150.34-73.77 153.67h-79.58l73.78-153.67-72.18-150.34 72.18-150.35-73.78-153.67 79.58 0.0007 73.77 153.67-72.17 150.35z"/>
-                            <path id="dp_path074"
-                                  d="m371.72 307.89 72.18-150.35-70.58-147-64.78-0.003 70.58 147-72.18 150.35 72.18 150.34-70.58 147.01h64.78l70.58-147.01-72.18-150.34h-7.4l72.18 150.34-67.37 140.34h-49.99l67.37-140.34-72.17-150.34 72.17-150.35-67.37-140.34 49.99 0.004 67.37 140.34-72.18 150.35z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group075">
-                        <path id="dp_path076" style="fill-rule:evenodd;fill:#9a70e3"
-                              d="m523.17 608.57-72.18-150.34 72.18-150.34-72.18-150.35 72.18-150.34l72.17 0.004-72.17 150.34 72.17 150.35-72.17 150.34 72.17 150.34z"/>
-                        <g id="dp_group077" style="fill:#f8f9f3">
-                            <path id="dp_path078"
-                                  d="m534.26 307.89-72.18-150.35 67.38-140.34l49.99 0.004-67.37 140.34 72.17 150.35-72.17 150.34 67.37 140.34h-49.99l-67.38-140.34 72.18-150.34h-7.39l-72.18 150.34 70.58 147.01h64.78l-70.58-147.01 72.18-150.34-72.18-150.35 70.58-147-64.78-0.003-70.58 147 72.18 150.35z"/>
-                            <path id="dp_path079"
-                                  d="m519.47 307.89-72.17-150.35 73.77-153.67l79.57 0.0007-73.77 153.67 72.17 150.35-72.17 150.34 73.77 153.67h-79.57l-73.77-153.67 72.17-150.34h-7.39l-72.18 150.34 76.98 160.34h94.36l-76.98-160.34 72.18-150.34-72.18-150.35 76.98-160.34-94.36 0.004-76.98 160.34 72.18 150.35z"/>
-                        </g>
-                    </g>
-                    <g id="dp_group080">
-                        <path id="dp_path081" style="fill-rule:evenodd;fill:#e84727"
-                              d="m523.17 608.57 72.17-150.34-72.17-150.34 72.17-150.35-72.17-150.34l-72.18 0.004 72.18 150.34-72.18 150.35 72.18 150.34-72.18 150.34z"/>
-                        <g id="dp_group082" style="fill:#f8f9f3">
-                            <path id="dp_path083"
-                                  d="m534.26 307.89 72.18-150.35-76.98-160.34l-94.36 0.004 76.98 160.34-72.18 150.35 72.18 150.34-76.98 160.34h94.36l76.98-160.34-72.18-150.34h-7.4l72.18 150.34-73.78 153.67h-79.56l73.77-153.67-72.17-150.34 72.17-150.35-73.77-153.67 79.56 0.0007 73.78 153.67-72.18 150.35z"/>
-                            <path id="dp_path084"
-                                  d="m519.47 307.89 72.17-150.35-70.57-147-64.78-0.003 70.57 147-72.17 150.35 72.17 150.34-70.57 147.01h64.78l70.57-147.01-72.17-150.34h-7.39l72.17 150.34-67.37 140.34h-50l67.38-140.34-72.18-150.34 72.18-150.35-67.38-140.34 50 0.004 67.37 140.34-72.17 150.35z"/>
+                        <g id="dp_group080">
+                            <path id="dp_path081" style="fill-rule:evenodd;fill:#e84727"
+                                  d="m523.17 608.57 72.17-150.34-72.17-150.34 72.17-150.35-72.17-150.34l-72.18 0.004 72.18 150.34-72.18 150.35 72.18 150.34-72.18 150.34z"/>
+                            <g id="dp_group082" style="fill:#f8f9f3">
+                                <path id="dp_path083"
+                                      d="m534.26 307.89 72.18-150.35-76.98-160.34l-94.36 0.004 76.98 160.34-72.18 150.35 72.18 150.34-76.98 160.34h94.36l76.98-160.34-72.18-150.34h-7.4l72.18 150.34-73.78 153.67h-79.56l73.77-153.67-72.17-150.34 72.17-150.35-73.77-153.67 79.56 0.0007 73.78 153.67-72.18 150.35z"/>
+                                <path id="dp_path084"
+                                      d="m519.47 307.89 72.17-150.35-70.57-147-64.78-0.003 70.57 147-72.17 150.35 72.17 150.34-70.57 147.01h64.78l70.57-147.01-72.17-150.34h-7.39l72.17 150.34-67.37 140.34h-50l67.38-140.34-72.18-150.34 72.18-150.35-67.38-140.34 50 0.004 67.37 140.34-72.17 150.35z"/>
+                            </g>
                         </g>
                     </g>
                 </g>
             </g>
-        </g>
-    </svg>
-
+        </svg>
+        <h3>Background-image</h3>
+        <div class="as-message-input-attach-preview-image" style="background-image: url(&quot;https://kobiebroomes.files.wordpress.com/2017/09/history.png&quot;);">This div with background image</div>
+        <h3>Input</h3>
+        <input type="text" value="Giá trị của input"/>
+    </div>
 </div>
 <script>
     var c = document.getElementById("myCanvas");
@@ -229,24 +256,41 @@
 
     absol.$(c).addStyle('border-radius', '5px')
 
-    absol._({
+    var printBtn = absol._({
         tag: 'button',
-        child: { text: 'print' },
+        style: {'font-size': '20px', marginLeft: '10px'},
+        child: { text: 'Print' },
         on: {
             click: function () {
-                // absol.Dom.printElement('#wrapper');
+                absol.Dom.printElement('#wrapper');
+            }
+        }
+    });
+
+   var pdfBtn = absol._({
+        tag: 'button',
+       style: {'font-size': '20px'},
+        child: { text: 'SaveAsPDF' },
+        on: {
+            click: function () {
+                pdfBtn.disabled = true;
+                pdfBtn.innerHTML = "In process...";
                 var serializer = new absol.printer.PrintSerializer();
                 var printer = new absol.printer.PaperPrinter();
                 serializer.serialize( absol.$('#wrapper'), printer)
                     .then(printer=>{
                         printer.exportAsPDF().then(doc=>{
-                            window.open(doc.output('bloburl'), '_blank')
+                            absol.FileSaver.saveAs(doc.output('bloburl'), 'demo_export_pdf.pdf');
+                            pdfBtn.disabled = false;
+                            pdfBtn.innerHTML = "SaveAsPDF";
                         })
                     })
 
             }
         }
-    }).addTo(document.body);
+    });
+    document.body.insertBefore(printBtn, document.body.firstChild)
+    document.body.insertBefore(pdfBtn, document.body.firstChild)
 
 
 </script>
