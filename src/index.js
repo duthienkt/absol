@@ -75,6 +75,9 @@ import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
 import Const from "./AppPattern/Const";
 import SCScope from "./SCLang/SCScope";
 import SCCodeGenerator from "./SCLang/SCCodeGenerator";
+import PaperPrinter from "./Print/PaperPrinter";
+import PrintSerializer from "./Print/PrintSerializer";
+import * as printer from './Print/printer';
 
 var absol = {
     int: int,
@@ -170,7 +173,8 @@ var absol = {
         'SCDynamicLibScope': SCDynamicLibScope,
         'SCScope': SCScope,
         'SCCodeGenerator': SCCodeGenerator
-    }
+    },
+    printer: printer
 };
 
 
