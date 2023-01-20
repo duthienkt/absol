@@ -43,7 +43,7 @@ PrintSerializer.prototype.accept = function (printer, elt, scope, stack) {
         handler = this.handlers[i];
         matched = handler.match(elt, scope, stack);
         if (matched) {
-            cont =  handler.exec(printer, elt, scope, stack, elt1 => {
+            cont = handler.exec(printer, elt, scope, stack, elt1 => {
                 this.accept(printer, elt1, new VarScope(scope), stack.concat([{ elt: elt, scope: scope }]));
             });
         }
@@ -56,15 +56,38 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
         style: {
             width: 794 - 57 * 2 + 'px',
             //WIDTH: 1123 - 57*2
+            display: 'inline-block',
+            overflow: 'visible'
 
         },
         class: 'as-printer-content',
         child: depthClone(elt, (originElt, copyElt) => {
-            if (originElt.tagName && originElt.tagName.toLowerCase() === 'canvas') {
+            var parent, fontWeight, style;
+            if (originElt.nodeType === Node.TEXT_NODE) {
+                sync.push(new Promise(rs=>{
+                    setTimeout(()=>{
+                        parent = originElt.parentElement;
+                        if (!copyElt.__fontWeight__) {
+                            style = getComputedStyle(parent);
+                            fontWeight = parseInt(style.getPropertyValue('font-weight'));//not support other style
+                            copyElt.__fontWeight__ = fontWeight;
+                            if (fontWeight <= 400) {
+                                copyElt.parentElement.style.setProperty('font-weight', 'normal');
+                            }
+                            else if (fontWeight > 400) {
+                                copyElt.parentElement.style.setProperty('font-weight', 'bold');
+                            }
+                        }
+                        rs();
+                    }, 0)
+                }));
+
+            }
+            else if (originElt.tagName && originElt.tagName.toLowerCase() === 'canvas') {
                 copyElt.getContext('2d').drawImage(originElt, 0, 0);
             }
             else if (originElt.tagName === 'IMG' && originElt.src) {
-                sync.push(isImageURLAllowCrossOrigin(originElt.src).then(result=>{
+                sync.push(isImageURLAllowCrossOrigin(originElt.src).then(result => {
                     var newElt;
                     if (!result) {
                         newElt = copyElt.cloneNode();
@@ -72,20 +95,31 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
                         copyElt.parentElement.replaceChild(newElt, copyElt);
                         return waitImageLoaded(newElt, 10000);
                     }
-                }, ()=>{}))
+                }, () => {
+                }))
+            }
+            else if (originElt.tagName === 'INPUT') {
+                copyElt.value = originElt.value;
             }
         })
     });
     var scroller = Dom.ShareInstance._({
+        class: 'as-printer',
         style: {
+            'text-size-adjust': 'none',
+            '-webkit-text-size-adjust': 'none',
+            '-moz-text-size-adjust': 'none',
+            '-ms-text-size-adjust': 'none',
             position: 'fixed',
             top: '10px',
             bottom: '10px',
             left: '10px',
-            overflow: 'auto',
-            maxWidth: '90vw',
+            overflow: 'scroll',
+            width: '794px',
+            // maxWidth: '90vw',
             background: 'white',
             // zIndex: 1000,
+
             opacity: '0',
             zIndex: '-100',
             visibility: 'hidden',
@@ -93,11 +127,14 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
         },
         child: content
     }).addTo(document.body);
-    sync = [Promise.all(sync).then(()=>{
+    sync = [Promise.all(sync).then(() => {
         return Promise.all(Dom.ShareInstance.$$('img').map(img => {
             return waitImageLoaded(img, 10000);
         }))
-    })]
+    })];
+    sync.push(new Promise(rs => {
+        setTimeout(rs, 50);
+    }));
 
     return Promise.all(sync).then(() => {
         printer.O = Rectangle.fromClientRect(content.getBoundingClientRect()).A();

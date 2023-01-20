@@ -50,6 +50,11 @@ PaperPrinter.prototype.share = {
         {
             url: 'https://absol.cf/vendor/materialdesignicons/materialdesignicons-webfont_6_7_96.ttf',
             fileName: 'mdi_6_7_96.ttf', name: 'MDI_6_7_96', style: 'regular'
+        },
+        {
+            url:'http://absol.cf/vendor/fonts/ARIALBD.TTF',
+            name: 'arial',
+            style: 'bold'
         }
     ]
 };
@@ -215,7 +220,7 @@ PaperPrinter.prototype.exportAsPDF = function () {
                 syn2 = syn2.then(() => {
                     doc.setTextColor(0, 0, 0);
                     doc.setFontSize(14 * P2D);
-                    doc.setFont('arial');
+                    doc.setFont('arial', 'regular');
                     doc.text((i + 1) + '/' + pages.length, 794 - 20, 1123 - 20, { align: 'right' });
                 });
                 return syn2;
@@ -241,7 +246,7 @@ PaperPrinter.prototype.pdfHandlers = {
         var textPos = data.pos.A().add(context.O);
         doc.setLineHeightFactor(lineHeight);
         doc.setFontSize(fontSize * P2D);
-        doc.setFont(fontIdOf(fontFamily), 'regular');
+        doc.setFont(fontIdOf(fontFamily), data.style.fontStyle);
         var style = {
             baseline: 'top',
             maxWidth: data.pos.width
