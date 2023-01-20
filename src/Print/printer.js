@@ -3,9 +3,11 @@ import PrintSerializer from "./PrintSerializer";
 import PaperPrinter from "./PaperPrinter";
 import { saveAs } from "../Network/FileSaver";
 
+export var ShareSerializer = new PrintSerializer();
+
 export function downloadAsPDF(elt, fileName) {
     elt = Dom.ShareInstance.$(elt);
-    var serializer = new PrintSerializer();
+    var serializer = ShareSerializer;
     var printer = new PaperPrinter();
     return serializer.serialize(elt, printer)
         .then(printer => printer.exportAsPDF())
@@ -16,3 +18,4 @@ export function downloadAsPDF(elt, fileName) {
 
 export { PaperPrinter };
 export { PrintSerializer } ;
+
