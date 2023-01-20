@@ -9,6 +9,41 @@ import Dom from "../HTML5/Dom";
 var _ = Dom.ShareInstance._;
 var $ = Dom.ShareInstance.$;
 var $$ = Dom.ShareInstance.$$;
+
+
+export function computePrintAttr(elt) {
+    var style = getComputedStyle(elt);
+    var fontSize = elt.getFontSize();
+    var lineHeight = style.getPropertyValue('line-height');
+    if (lineHeight === 'normal') lineHeight = 1.2;
+    else lineHeight = parseFloat(lineHeight.replace('px', '')) / fontSize;
+    if (!isNaN(lineHeight)) lineHeight = 1.2;
+    var fontWeight = style.getPropertyValue('font-weight');
+    var fontStyle = fontWeight === '400' ? 'regular' : 'bold';
+    var dirs = ['top', 'right', 'bottom', 'left'];
+
+    var paddingStyle = dirs.map(dir => parseMeasureValue(style.getPropertyValue('padding-' + dir)));
+    var borderWidthStyle = dirs.map(dir => parseMeasureValue(style.getPropertyValue('border-' + dir + '-width')));
+
+    var contentBound = Rectangle.fromClientRect(elt.getBoundingClientRect());
+    contentBound.x += paddingStyle[3].value + borderWidthStyle[3].value;
+    contentBound.y += paddingStyle[0].value + borderWidthStyle[0].value;
+    contentBound.width += paddingStyle[1].value + borderWidthStyle[1].value + paddingStyle[3].value + borderWidthStyle[3].value;
+    contentBound.height += paddingStyle[2].value + borderWidthStyle[2].value + paddingStyle[0].value + borderWidthStyle[0].value;
+
+    return {
+        contentBound: contentBound,
+        style: {
+            color: style.getPropertyValue('color'),
+            fontFamily: style.getPropertyValue('font-family'),
+            fontStyle: fontStyle,
+            lineHeight: lineHeight,
+            fontSize: fontSize,
+            align: style.getPropertyValue('text-align')
+        }
+    }
+}
+
 /***
  *
  * @type {PSHandler[]}
