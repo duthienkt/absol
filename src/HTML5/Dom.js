@@ -590,9 +590,11 @@ export function waitImageLoaded(img, timeout) {
         isLoaded = false;
     }
     if (isLoaded) return Promise.resolve();
+    if (!img.src) return Promise.resolve();
     return new Promise(function (rs) {
         if (img.addEventListener) {
             img.addEventListener('load', rs, false);
+            img.addEventListener('error', rs, false);
         }
         else {
             img.attachEvent('onload', rs, false);
