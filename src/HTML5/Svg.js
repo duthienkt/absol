@@ -69,19 +69,17 @@ Svg.svgToCanvas = function (element) {
         element = Dom.ShareInstance.$(element);
     }
     if (element && element.tagName == 'svg') {
-        var cssTexts = {};
         var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
-            var cssRules = AElement.prototype.getCSSRules.call(originElt);
-            var cssKey = cssRules.reduce(function (ac, rule) {
-                for (var i = 0; i < rule.style.length; ++i) {
-                    ac[rule.style[i]] = true;
+            var style = getComputedStyle(originElt);
+            var key, value;
+            for (var i = 0; i < style.length; ++i) {
+                key = style[i];
+                value = style.getPropertyValue(key);
+                if (value && value.length > 0 && value !== 'auto') {
+                    newElt.style.setProperty(key, value);
                 }
-                return ac;
-            }, {});
-            for (var key in cssKey) {
-                newElt.style[key] = AElement.prototype.getComputedStyleValue.call(originElt, key);
             }
             var children = Array.prototype.map.call(originElt.childNodes, depthClone);
             for (var i = 0; i < children.length; ++i) {
@@ -252,7 +250,7 @@ Dom.printElement = function (option) {
                         newElt.setAttribute('checked', true);
                     }
                 }
-                else if (originElt.getAttribute('type') === 'text' || !originElt.getAttribute('type') ||originElt.getAttribute('type') === 'number' ) {
+                else if (originElt.getAttribute('type') === 'text' || !originElt.getAttribute('type') || originElt.getAttribute('type') === 'number') {
                     newElt.setAttribute('value', originElt.value);
                 }
             }
