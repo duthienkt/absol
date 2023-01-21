@@ -49,19 +49,19 @@ PaperPrinter.prototype.share = {
             style: 'regular'
         },
         {
-            url: 'http://absol.cf/vendor/fonts/arialbd.ttf',
+            url: 'https://absol.cf/vendor/fonts/arialbd.ttf',
             fileName: 'arialbd.ttf',
             name: 'arial',
             style: 'bold'
         },
         {
-            url: 'http://absol.cf/vendor/fonts/ariali.ttf',
+            url: 'https://absol.cf/vendor/fonts/ariali.ttf',
             fileName: 'ariali.ttf',
             name: 'arial',
             style: 'italic'
         },
         {
-            url: 'http://absol.cf/vendor/fonts/arialbi.ttf',
+            url: 'https://absol.cf/vendor/fonts/arialbi.ttf',
             fileName: 'arialbi.ttf',
             name: 'arial',
             style: 'bold_italic'
@@ -74,19 +74,19 @@ PaperPrinter.prototype.share = {
             style: 'regular'
         },
         {
-            url: 'http://absol.cf/vendor/fonts/timesbd.ttf',
+            url: 'https://absol.cf/vendor/fonts/timesbd.ttf',
             fileName: 'timesbd.ttf',
             name: 'times',
             style: 'bold'
         },
         {
-            url: 'http://absol.cf/vendor/fonts/timesi.ttf',
+            url: 'https://absol.cf/vendor/fonts/timesi.ttf',
             fileName: 'timesi.ttf',
             name: 'times',
             style: 'italic'
         },
         {
-            url: 'http://absol.cf/vendor/fonts/timesbi.ttf',
+            url: 'https://absol.cf/vendor/fonts/timesbi.ttf',
             fileName: 'timesbi.ttf',
             name: 'times',
             style: 'bold_italic'
