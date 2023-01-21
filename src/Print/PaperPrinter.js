@@ -4,8 +4,11 @@ import AElement from "../HTML5/AElement";
 import Vec2 from "../Math/Vec2";
 import Rectangle from "../Math/Rectangle";
 
+import { copyJSVariable } from "../JSMaker/generator";
+
 var fontIdOf = fontName => {
     if (fontName.toLowerCase().indexOf('arial') >= 0) return 'arial';
+    if (fontName.toLowerCase().indexOf('times') >= 0) return 'times';
     if (fontName === "Material Design Icons") return 'MDI_6_7_96';
     return fontName;
 
@@ -29,6 +32,7 @@ function PaperPrinter(opt) {
     }, opt);
 
     this.objects = [];
+    this.processInfo = {};
 
 }
 
@@ -39,22 +43,53 @@ PaperPrinter.prototype.share = {
     readySync: null,
     fonts: [
         {
-            url: 'https://absol.cf/vendor/fonts/arial.ttf', fileName: 'arial.ttf',
+            url: 'https://absol.cf/vendor/fonts/arial.ttf',
+            fileName: 'arial.ttf',
             name: 'arial',
             style: 'regular'
         },
         {
-            url: 'https://absol.cf/vendor/materialdesignicons/materialdesignicons-webfont_5_9_55.ttf',
-            fileName: 'mdi_5_9_55.ttf', name: 'MDI_5_9_55', style: 'regular'
-        },
-        {
-            url: 'https://absol.cf/vendor/materialdesignicons/materialdesignicons-webfont_6_7_96.ttf',
-            fileName: 'mdi_6_7_96.ttf', name: 'MDI_6_7_96', style: 'regular'
-        },
-        {
-            url:'http://absol.cf/vendor/fonts/ARIALBD.TTF',
+            url: 'http://absol.cf/vendor/fonts/arialbd.ttf',
+            fileName: 'arialbd.ttf',
             name: 'arial',
             style: 'bold'
+        },
+        {
+            url: 'http://absol.cf/vendor/fonts/ariali.ttf',
+            fileName: 'ariali.ttf',
+            name: 'arial',
+            style: 'italic'
+        },
+        {
+            url: 'http://absol.cf/vendor/fonts/arialbi.ttf',
+            fileName: 'arialbi.ttf',
+            name: 'arial',
+            style: 'bold_italic'
+        },
+
+        {
+            url: 'https://absol.cf/vendor/fonts/times.ttf',
+            fileName: 'times.ttf',
+            name: 'times',
+            style: 'regular'
+        },
+        {
+            url: 'http://absol.cf/vendor/fonts/timesbd.ttf',
+            fileName: 'timesbd.ttf',
+            name: 'times',
+            style: 'bold'
+        },
+        {
+            url: 'http://absol.cf/vendor/fonts/timesi.ttf',
+            fileName: 'timesi.ttf',
+            name: 'times',
+            style: 'italic'
+        },
+        {
+            url: 'http://absol.cf/vendor/fonts/timesbi.ttf',
+            fileName: 'timesbi.ttf',
+            name: 'times',
+            style: 'bold_italic'
         }
     ]
 };
@@ -147,8 +182,18 @@ PaperPrinter.prototype.boundOf = function (objectData) {
 };
 
 
-PaperPrinter.prototype.exportAsPDF = function () {
+PaperPrinter.prototype.exportAsPDF = function (onProcess) {
+    var processInfo = copyJSVariable(this.processInfo);
+    processInfo.pdf = {
+        all: this.objects.length,
+        done: 0
+    };
+    processInfo.state = 'LOAD_LIB';
+    processInfo.onProcess = () => {
+        onProcess && onProcess(processInfo);
+    };
     return this.ready().then(() => {
+        processInfo.state = 'RENDER_PDF';
         var doc = new jspdf.jsPDF({
             orientation: 'p',
             unit: 'px',
@@ -214,7 +259,10 @@ PaperPrinter.prototype.exportAsPDF = function () {
                 page.objects.forEach(obj => {
                     var type = obj.type;
                     syn2 = syn2.then(() => {
-                        return this.pdfHandlers[type](page, doc, obj);
+                        var res = this.pdfHandlers[type](page, doc, obj);
+                        processInfo.pdf.done++;
+                        processInfo.onProcess();
+                        return res;
                     });
                 });
                 syn2 = syn2.then(() => {
