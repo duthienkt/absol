@@ -57,27 +57,63 @@ PrintSerialHandlers.push({
     exec: (printer, text, scope, stack, accept) => {
         var O = printer.O;
         var elt = text.parentElement;
-        var style = getComputedStyle(elt);
         var bound = Rectangle.fromClientRect(getTextNodeBound(text));
         if (bound.width === 0) return;
-        var fontSize = elt.getFontSize();
-        var lineHeight = style.getPropertyValue('line-height');
-        if (lineHeight === 'normal') lineHeight = 1.2;
-        else lineHeight = parseFloat(lineHeight.replace('px', '')) / fontSize;
-        if (!isNaN(lineHeight)) lineHeight = 1.2;
-        var fontWeight = style.getPropertyValue('font-weight');
-        var fontStyle = fontWeight === '400' ? 'regular' : 'bold';
-        var rect = bound.clone();
-        rect.x -= O.x;
-        rect.y -= O.y;
-        rect.width += fontSize / 5;
-        printer.text(text.data, rect, {
-            color: style.getPropertyValue('color'),
-            fontFamily: style.getPropertyValue('font-family'),
-            fontStyle: fontStyle,
-            lineHeight: lineHeight,
-            fontSize: fontSize,
-            align: style.getPropertyValue('text-align')
+        var printAttr = computePrintAttr(elt);
+        var txt = text.data;
+        var y = -Infinity;
+        var c;
+        var range;
+        var parts = [];
+        var cPart;
+        var j;
+        var delta = printAttr.style.lineHeight * printAttr.style.fontSize / 3;
+        var rect;
+        var i = 0;
+
+        while (i < txt.length) {
+            c = txt[i];
+            if (!c.match(/\s/)) {
+                j = i + 1;
+                while (j < txt.length) {
+                    c = txt[j];
+                    if (c.match(/\s/)) {
+                        break;
+                    }
+                    else {
+                        ++j;
+                    }
+                }
+                range = document.createRange();
+                range.setStart(text, i);
+                range.setEnd(text, j);
+                rect = Rectangle.fromClientRect(range.getBoundingClientRect());
+                if (Math.abs(rect.y - y) < delta) {
+                    cPart.end = j;
+                    cPart.rect = cPart.rect.merge(rect);
+                }
+                else {
+                    cPart = {
+                        start: i,
+                        end: j,
+                        rect: rect
+                    };
+                    y = rect.y;
+                    parts.push(cPart);
+                }
+                i = j;
+            }
+            else {
+                ++i;
+            }
+        }
+
+        parts.forEach(part=>{
+            rect = part.rect;
+            rect.x -= O.x;
+            rect.y -= O.y;
+            rect.width += printAttr.style.fontSize;
+            printer.text(txt.substring(part.start, part.end), rect, printAttr.style);
         });
     }
 });
@@ -169,9 +205,15 @@ PrintSerialHandlers.push({
                             ctx.drawImage(image, 0, 0);
                     }
                     rs(canvas);
+                };
+                image.onerror = function () {
+                    console.error('can not load ', image.src)
+                    rs(null);
                 }
             })
-        }).catch(noop);
+        }).catch(err => {
+            console.error(err);
+        });
         printer.image(image, rect);
         return true;
     }
@@ -215,7 +257,9 @@ PrintSerialHandlers.push({
         rect.x -= printer.O.x;
         rect.y -= printer.O.y;
         var res = Svg.svgToCanvas(elt).catch(err => {
+            console.error(err);
         });
+        res.elt = elt;
         printer.image(res, rect);
     }
 });
