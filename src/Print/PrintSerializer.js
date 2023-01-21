@@ -3,6 +3,7 @@ import Dom, { depthClone, waitImageLoaded } from "../HTML5/Dom";
 import Rectangle from "../Math/Rectangle";
 import PrintSerialHandlers from "./PrintSerialHandlers";
 import { isImageURLAllowCrossOrigin } from "../Network/XLoader";
+import noop from "../Code/noop";
 
 
 /***
@@ -50,8 +51,97 @@ PrintSerializer.prototype.accept = function (printer, elt, scope, stack) {
     }
 };
 
-PrintSerializer.prototype.serialize = function (elt, printer) {
+PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
     var sync = [];
+    var processInfo = {
+        state: 'RENDER_DOM',
+        total: {
+            all: 0,
+            text: 0,
+            image: 0
+        },
+        dom: {
+            text: 0,
+            image: 0
+        },
+        onProcess: () => {
+            onProcess && onProcess(processInfo);
+        }
+    };
+    printer.processInfo = processInfo;
+    var contentChild = depthClone(elt, (originElt, copyElt) => {
+        copyElt.__idx__ = processInfo.total.all;
+        processInfo.total.all++;
+        var parent, fontWeight, style;
+        var done = false;
+
+        if (originElt.nodeType === Node.TEXT_NODE) {
+            processInfo.total.text++;
+            sync.push(new Promise(rs => {
+                setTimeout(() => {
+                    parent = originElt.parentElement;
+                    if (!copyElt.__fontWeight__) {
+                        style = getComputedStyle(parent);
+                        fontWeight = parseInt(style.getPropertyValue('font-weight'));//not support other style
+                        copyElt.__fontWeight__ = fontWeight;
+                        if (fontWeight <= 400) {
+                            copyElt.parentElement.style.setProperty('font-weight', 'normal');
+                        }
+                        else if (fontWeight > 400) {
+                            copyElt.parentElement.style.setProperty('font-weight', 'bold');
+                        }
+                        processInfo.dom.text++;
+                    }
+                    processInfo.dom.text++;
+                    rs();
+                }, 0)
+            }));
+
+        }
+        else if (originElt.tagName && originElt.tagName.toLowerCase() === 'canvas') {
+            copyElt.getContext('2d').drawImage(originElt, 0, 0);
+        }
+        else if (originElt.tagName === 'IMG' && !originElt.classList.contains('absol-attachhook') && originElt.src) {
+            processInfo.total.image++;
+
+            sync.push(isImageURLAllowCrossOrigin(originElt.src).then(result => {
+                var newElt;
+                if (!result) {
+                    newElt = copyElt.cloneNode();
+                    newElt.__idx__ = copyElt.__idx__;
+                    newElt.src = 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src);
+                    copyElt.parentElement.replaceChild(newElt, copyElt);
+                    return waitImageLoaded(newElt, 10000).then(() => {
+                        if (!done) {
+                            processInfo.dom.image++;
+                            processInfo.onProcess();
+                            done = true;
+                        }
+                    });
+                }
+                else {
+                    return waitImageLoaded(copyElt, 10000).then(() => {
+                        if (!done) {
+                            processInfo.dom.image++;
+                            processInfo.onProcess();
+                            done = true;
+                        }
+                    });
+                }
+            }, (err) => {
+                console.error(err);
+                if (!done) {
+                    processInfo.dom.image++;
+                    processInfo.onProcess();
+                    done = true;
+                }
+
+            }));
+        }
+        else if (originElt.tagName === 'INPUT') {
+            copyElt.value = originElt.value;
+        }
+    })
     var content = Dom.ShareInstance._({
         style: {
             width: 794 - 57 * 2 + 'px',
@@ -61,47 +151,7 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
 
         },
         class: 'as-printer-content',
-        child: depthClone(elt, (originElt, copyElt) => {
-            var parent, fontWeight, style;
-            if (originElt.nodeType === Node.TEXT_NODE) {
-                sync.push(new Promise(rs=>{
-                    setTimeout(()=>{
-                        parent = originElt.parentElement;
-                        if (!copyElt.__fontWeight__) {
-                            style = getComputedStyle(parent);
-                            fontWeight = parseInt(style.getPropertyValue('font-weight'));//not support other style
-                            copyElt.__fontWeight__ = fontWeight;
-                            if (fontWeight <= 400) {
-                                copyElt.parentElement.style.setProperty('font-weight', 'normal');
-                            }
-                            else if (fontWeight > 400) {
-                                copyElt.parentElement.style.setProperty('font-weight', 'bold');
-                            }
-                        }
-                        rs();
-                    }, 0)
-                }));
-
-            }
-            else if (originElt.tagName && originElt.tagName.toLowerCase() === 'canvas') {
-                copyElt.getContext('2d').drawImage(originElt, 0, 0);
-            }
-            else if (originElt.tagName === 'IMG' && originElt.src) {
-                sync.push(isImageURLAllowCrossOrigin(originElt.src).then(result => {
-                    var newElt;
-                    if (!result) {
-                        newElt = copyElt.cloneNode();
-                        newElt.src = 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src);
-                        copyElt.parentElement.replaceChild(newElt, copyElt);
-                        return waitImageLoaded(newElt, 10000);
-                    }
-                }, () => {
-                }))
-            }
-            else if (originElt.tagName === 'INPUT') {
-                copyElt.value = originElt.value;
-            }
-        })
+        child: contentChild
     });
     var scroller = Dom.ShareInstance._({
         class: 'as-printer',
@@ -127,21 +177,19 @@ PrintSerializer.prototype.serialize = function (elt, printer) {
         },
         child: content
     }).addTo(document.body);
-    sync = [Promise.all(sync).then(() => {
-        return Promise.all(Dom.ShareInstance.$$('img').map(img => {
-            return waitImageLoaded(img, 10000);
-        }))
-    })];
+
     sync.push(new Promise(rs => {
         setTimeout(rs, 50);
     }));
 
     return Promise.all(sync).then(() => {
+        processInfo.state = "SERIALIZE";
         printer.O = Rectangle.fromClientRect(content.getBoundingClientRect()).A();
         this.accept(printer, content, new VarScope(), []);
     })
         .then(() => {
             // scroller.remove();
+            processInfo.onProcess = noop;
             return printer;
         });
 };
