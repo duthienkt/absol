@@ -184,11 +184,12 @@ PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
 
     return Promise.all(sync).then(() => {
         processInfo.state = "SERIALIZE";
+        processInfo.onProcess();
         printer.O = Rectangle.fromClientRect(content.getBoundingClientRect()).A();
         this.accept(printer, content, new VarScope(), []);
     })
         .then(() => {
-            // scroller.remove();
+            scroller.remove();
             processInfo.onProcess = noop;
             return printer;
         });

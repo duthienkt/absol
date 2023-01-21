@@ -33,6 +33,7 @@ export function computePrintAttr(elt) {
 
     return {
         contentBound: contentBound,
+        whiteSpace: style.getPropertyValue('white-space'),
         style: {
             color: style.getPropertyValue('color'),
             fontFamily: style.getPropertyValue('font-family'),
@@ -73,11 +74,11 @@ PrintSerialHandlers.push({
 
         while (i < txt.length) {
             c = txt[i];
-            if (!c.match(/\s/)) {
+            if (!c.match(/[\s\n]/)) {
                 j = i + 1;
                 while (j < txt.length) {
                     c = txt[j];
-                    if (c.match(/\s/)) {
+                    if (c.match(/[\s\n]/)) {
                         break;
                     }
                     else {
@@ -112,8 +113,12 @@ PrintSerialHandlers.push({
             rect = part.rect;
             rect.x -= O.x;
             rect.y -= O.y;
-            rect.width += printAttr.style.fontSize;
-            printer.text(txt.substring(part.start, part.end), rect, printAttr.style);
+            rect.width += printAttr.style.fontSize * 1000;
+            var lineTxt =  txt.substring(part.start, part.end);
+            if (printAttr.whiteSpace === 'normal') {
+                lineTxt = lineTxt.replace(/[\s\n]+/g, ' ');
+            }
+            printer.text(lineTxt, rect, printAttr.style);
         });
     }
 });
