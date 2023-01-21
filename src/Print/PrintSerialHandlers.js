@@ -109,12 +109,12 @@ PrintSerialHandlers.push({
             }
         }
 
-        parts.forEach(part=>{
+        parts.forEach(part => {
             rect = part.rect;
             rect.x -= O.x;
             rect.y -= O.y;
             rect.width += printAttr.style.fontSize * 1000;
-            var lineTxt =  txt.substring(part.start, part.end);
+            var lineTxt = txt.substring(part.start, part.end);
             if (printAttr.whiteSpace === 'normal') {
                 lineTxt = lineTxt.replace(/[\s\n]+/g, ' ');
             }
@@ -194,17 +194,26 @@ PrintSerialHandlers.push({
              * @type {HTMLCanvasElement}
              */
             var canvas = document.createElement('canvas');
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            var width = rect.width;
+            var height = rect.height;
+            canvas.width = width;
+            canvas.height = height;
             var image = new Image();
             image.crossOrigin = 'anonymous';
             image.src = result ? url : 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(url);
             var ctx = canvas.getContext('2d');
             return new Promise(rs => {
                 image.onload = function () {
+                    var scale;
+                    var nW;
+                    var nH;//todo: handle more
                     switch (backgroundSize) {
                         case 'cover':
-                        // break;
+                            scale = Math.max(width / image.naturalWidth, height / image.height);
+                            nW = image.naturalWidth * scale;
+                            nH = image.naturalHeight * scale
+                            ctx.drawImage(image, 0, 0, nW, nH);
+                            break;
                         case 'auto':
                         default:
                             ctx.drawImage(image, 0, 0);
@@ -261,7 +270,7 @@ PrintSerialHandlers.push({
         var rect = bound.clone();
         rect.x -= printer.O.x;
         rect.y -= printer.O.y;
-        var res = Svg.svgToCanvas(elt).catch(err => {
+        var res = Svg.svgToCanvas(elt.__origin__).catch(err => {
             console.error(err);
         });
         res.elt = elt;

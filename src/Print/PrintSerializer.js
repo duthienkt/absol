@@ -71,6 +71,8 @@ PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
     printer.processInfo = processInfo;
     var contentChild = depthClone(elt, (originElt, copyElt) => {
         copyElt.__idx__ = processInfo.total.all;
+        copyElt.__origin__ = originElt;
+
         processInfo.total.all++;
         var parent, fontWeight, style;
         var done = false;
@@ -109,6 +111,7 @@ PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
                 if (!result) {
                     newElt = copyElt.cloneNode();
                     newElt.__idx__ = copyElt.__idx__;
+                    newElt.__origin__ = copyElt.__origin__;
                     newElt.src = 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src);
                     copyElt.parentElement.replaceChild(newElt, copyElt);
                     return waitImageLoaded(newElt, 10000).then(() => {
