@@ -1,3 +1,4 @@
+
 var XLoader = {};
 
 export function loadScript(url, onComplete, onError) {
@@ -41,6 +42,11 @@ XLoader.loadScript = loadScript;
 
 export function isImageURLAllowCrossOrigin(url) {
     return new Promise((rs, rj) => {
+        url = url ||'';
+        if (url.startsWith('data:') || url.startsWith('blob:')) {
+            rs(true);
+            return;
+        }
         var img = new Image();
         // img.crossOrigin = "anonymous";
         img.onload = function () {
