@@ -118,6 +118,7 @@ PrintSerialHandlers.push({
             if (printAttr.whiteSpace === 'normal') {
                 lineTxt = lineTxt.replace(/[\s\n]+/g, ' ');
             }
+            delete printAttr.style.align;//text-node bound
             printer.text(lineTxt, rect, printAttr.style);
         });
     }
@@ -188,6 +189,7 @@ PrintSerialHandlers.push({
         var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
         rect.x -= printer.O.x;
         rect.y -= printer.O.y;
+        var borderRadius = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map(key => parseMeasureValue(style.getPropertyValue('border-' + key + '-radius')));
         var image = isImageURLAllowCrossOrigin(url).then(result => {
             /***
              *
@@ -202,6 +204,82 @@ PrintSerialHandlers.push({
             image.crossOrigin = 'anonymous';
             image.src = result ? url : 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(url);
             var ctx = canvas.getContext('2d');
+
+            var isRect = borderRadius.every(x => x.value === 0);
+            var x, y, r;
+            var eclipses = [];
+            var points = [];
+            if (!isRect) {
+                r = borderRadius[0];
+                x = r.unit === '%' ? r.value : r.value / 100 * width;
+                y = 0;
+
+                points.push([x, y]);
+                r = borderRadius[1];
+                x = r.unit === '%' ? width - r.value : (1 - r.value / 100) * width;
+                points.push([x, y]);
+                if (r.value > 0) {
+                    y = r.unit === '%' ? r.value : r.value / 100 * height;
+                    eclipses.push([x, y, width - x, y, 0, -Math.PI / 2, 0])
+                    x = width;
+                    points.push([x, y]);
+
+                }
+                else {
+                    x = width;
+                }
+                r = borderRadius[2];
+                y = r.unit === '%' ? height - r.value : (1 - r.value / 100) * height;
+                points.push([x, y]);
+                if (r.value > 0) {
+                    x = r.unit === '%' ? width - r.value : (1 - r.value / 100) * width;
+                    eclipses.push([x, y, width - x, height - y, 0, 0, Math.PI / 2]);
+                    y = height;
+                    points.push([x, y]);
+                }
+                else {
+                    y = height;
+
+                }
+                r = borderRadius[3];
+                x = r.unit === '%' ? r.value : r.value / 100 * width;
+                points.push([x, y]);
+                if (r.value > 0) {
+                    y = r.unit === '%' ? height - r.value : (1 - r.value / 100) * height;
+                    eclipses.push([x, y, x, height - y, 0, Math.PI / 2, Math.PI]);
+                    x = 0;
+                    points.push([x, y]);
+                }
+                else {
+                    x = 0;
+
+                }
+                r = borderRadius[0];
+                y = r.unit === '%' ? r.value : r.value / 100 * height;
+                points.push([x, y]);
+                if (r.value > 0) {
+                    x = r.unit === '%' ? r.value : r.value / 100 * width;
+                    eclipses.push([x, y, x, y, 0, Math.PI, Math.PI * 3 / 2]);
+                }
+
+                ctx.beginPath();
+                points.forEach((p, i) => {
+                    if (i === 0) ctx.moveTo(p[0], p[1]);
+                    else ctx.lineTo(p[0], p[1]);
+                });
+                ctx.closePath();
+                ctx.fillStyle = 'red';
+                ctx.fill();
+
+                eclipses.forEach(e => {
+                    ctx.beginPath();
+                    ctx.ellipse(e[0], e[1], e[2], e[3], e[4], e[5], e[6]);
+                    ctx.fill();
+                });
+                ctx.globalCompositeOperation ='source-in';
+            }
+
+
             return new Promise(rs => {
                 image.onload = function () {
                     var scale;
