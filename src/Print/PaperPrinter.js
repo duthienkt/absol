@@ -148,6 +148,24 @@ PaperPrinter.prototype.text = function (text, pos, style) {
 
 /***
  *
+ * @param {string} text
+ * @param {Vec2} start
+ * @param {Vec2} end
+ * @param {Object=}style
+ */
+PaperPrinter.prototype.line = function (start, end, style) {
+    this.objects.push({
+        type: 'line',
+        start: start,
+        end: end,
+        style: style || {}
+    });
+    return this;
+};
+
+
+/***
+ *
  * @param {Rectangle}rect
  * @param {Object=}style
  */
@@ -341,6 +359,25 @@ PaperPrinter.prototype.pdfHandlers = {
             doc.rect(A.x, A.y, data.rect.width, data.rect.height, flat);
         }
     },
+    line: function (context, doc, data) {
+        var fillColor = null;
+        var strokeColor = null;
+        var strokeWidth = data.style.strokeWidth || 1;
+        if (data.style.stroke) {
+            strokeColor = color2RGB255(data.style.stroke);
+        }
+
+        if (strokeColor) {
+            doc.setLineWidth(strokeWidth);
+            doc.setDrawColor(strokeColor[0], strokeColor[1], strokeColor[2]);
+        }
+        var flat = 'S';
+        var O = context.O;
+        var A = data.start.add(O);
+        var B = data.end.add(O);
+        doc.line(A.x, A.y, B.x, B.y, flat);
+    },
+
     image: function (context, doc, data) {
         var handleImage = image => {
             if (!image) return;
@@ -369,6 +406,9 @@ PaperPrinter.prototype.measures = {
     image: data => {
         return data.rect;
     },
+    line: data=>{
+        return Rectangle.boundingPoints([data.start, data.end]);
+    }
 };
 
 
