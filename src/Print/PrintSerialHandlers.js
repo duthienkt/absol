@@ -311,6 +311,30 @@ PrintSerialHandlers.push({
     }
 });
 
+
+PrintSerialHandlers.push({
+    id: 'MDI',
+    match: (elt, scope, stack) => elt.classList && elt.classList.contains('mdi'),
+    exec: (printer, elt, scope, stack, accept) => {
+        var style = getComputedStyle(elt, '::before');
+        var content = style.getPropertyValue('content');
+        content = content.replace('"', '');
+        var font = style.getPropertyValue('font');
+        var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        var canvas = document.createElement('canvas');
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        var ctx = canvas.getContext('2d');
+        ctx.font = font;
+        ctx.textBaseline = "top";
+        rect.x -= printer.O.x;
+        rect.y -= printer.O.y;
+        ctx.fillStyle = style.getPropertyValue('color');
+        ctx.fillText(content, 0, 0);
+        printer.image(canvas, rect);
+    }
+});
+
 PrintSerialHandlers.push({
     id: 'Img',
     match: elt => elt.tagName && elt.tagName.toLowerCase() === 'img' && elt.src && elt.naturalWidth,
