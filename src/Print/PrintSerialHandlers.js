@@ -211,15 +211,15 @@ PrintSerialHandlers.push({
             var points = [];
             if (!isRect) {
                 r = borderRadius[0];
-                x = r.unit === '%' ?  r.value / 100 * width: r.value ;
+                x = r.unit === '%' ? r.value / 100 * width : r.value;
                 y = 0;
 
                 points.push([x, y]);
                 r = borderRadius[1];
-                x = r.unit === '%' ?  (1 - r.value / 100) * width : width - r.value ;
+                x = r.unit === '%' ? (1 - r.value / 100) * width : width - r.value;
                 points.push([x, y]);
                 if (r.value > 0) {
-                    y = r.unit === '%' ?  r.value / 100 * height : r.value;
+                    y = r.unit === '%' ? r.value / 100 * height : r.value;
                     eclipses.push([x, y, width - x, y, 0, -Math.PI / 2, 0])
                     x = width;
                     points.push([x, y]);
@@ -229,10 +229,10 @@ PrintSerialHandlers.push({
                     x = width;
                 }
                 r = borderRadius[2];
-                y = r.unit === '%' ?   (1 - r.value / 100) * height : height - r.value;
+                y = r.unit === '%' ? (1 - r.value / 100) * height : height - r.value;
                 points.push([x, y]);
                 if (r.value > 0) {
-                    x = r.unit === '%' ? (1 - r.value / 100) * width :  width - r.value;
+                    x = r.unit === '%' ? (1 - r.value / 100) * width : width - r.value;
                     eclipses.push([x, y, width - x, height - y, 0, 0, Math.PI / 2]);
                     y = height;
                     points.push([x, y]);
@@ -242,10 +242,10 @@ PrintSerialHandlers.push({
 
                 }
                 r = borderRadius[3];
-                x = r.unit === '%' ?  r.value / 100 * width : r.value;
+                x = r.unit === '%' ? r.value / 100 * width : r.value;
                 points.push([x, y]);
                 if (r.value > 0) {
-                    y = r.unit === '%' ?  (1 - r.value / 100) * height : height - r.value;
+                    y = r.unit === '%' ? (1 - r.value / 100) * height : height - r.value;
                     eclipses.push([x, y, x, height - y, 0, Math.PI / 2, Math.PI]);
                     x = 0;
                     points.push([x, y]);
@@ -255,10 +255,10 @@ PrintSerialHandlers.push({
 
                 }
                 r = borderRadius[0];
-                y = r.unit === '%' ?  r.value / 100 * height : r.value ;
+                y = r.unit === '%' ? r.value / 100 * height : r.value;
                 points.push([x, y]);
                 if (r.value > 0) {
-                    x = r.unit === '%' ? r.value / 100 * width :  r.value ;
+                    x = r.unit === '%' ? r.value / 100 * width : r.value;
                     eclipses.push([x, y, x, y, 0, Math.PI, Math.PI * 3 / 2]);
                 }
 
@@ -276,7 +276,7 @@ PrintSerialHandlers.push({
                     ctx.ellipse(e[0], e[1], e[2], e[3], e[4], e[5], e[6]);
                     ctx.fill();
                 });
-                ctx.globalCompositeOperation ='source-in';
+                ctx.globalCompositeOperation = 'source-in';
             }
 
 
