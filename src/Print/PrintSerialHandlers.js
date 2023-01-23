@@ -313,14 +313,16 @@ PrintSerialHandlers.push({
 
 
 PrintSerialHandlers.push({
-    id: 'MDI',
-    match: (elt, scope, stack) => elt.classList && elt.classList.contains('mdi'),
+    id: 'MDI_FA',
+    match: (elt, scope, stack) => elt.classList && (elt.classList.contains('mdi')
+        || elt.classList.contains('fab') || elt.classList.contains('far') ||  elt.classList.contains('fas')),
     exec: (printer, elt, scope, stack, accept) => {
         var style = getComputedStyle(elt, '::before');
         var content = style.getPropertyValue('content');
         content = content.replace('"', '');
         var font = style.getPropertyValue('font');
         var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        if (rect.width * rect.height === 0) return;
         var canvas = document.createElement('canvas');
         canvas.width = rect.width;
         canvas.height = rect.height;
