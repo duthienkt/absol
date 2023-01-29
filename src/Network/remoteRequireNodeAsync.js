@@ -85,16 +85,13 @@ export default function remoteRequireNodeAsync(filename, entry) {
                 case 'js':
                     factors[fullPath] = new Function('require', 'module', 'exports', '__dir', '__filename', 'global', text)
                     break;
-                case 'html':
-                case 'tpl':
-                case 'svg':
-                    factors[fullPath] = true;
-                    moduleCache = { exports: text };
-                    break;
                 case 'json':
                     factors[fullPath] = true;
                     moduleCache = { exports: JSON.parse(text) };
                     break;
+                default:
+                    factors[fullPath] = true;
+                    moduleCache = { exports: text };
             }
             var requiredNodes;
             if (ext === 'js') {
