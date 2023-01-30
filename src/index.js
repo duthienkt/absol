@@ -78,6 +78,7 @@ import SCCodeGenerator from "./SCLang/SCCodeGenerator";
 import PaperPrinter from "./Print/PaperPrinter";
 import PrintSerializer from "./Print/PrintSerializer";
 import * as printer from './Print/printer';
+import * as measurements from './Math/measurements';
 
 var absol = {
     int: int,
@@ -174,10 +175,9 @@ var absol = {
         'SCScope': SCScope,
         'SCCodeGenerator': SCCodeGenerator
     },
-    printer: printer
+    printer: printer,
+    measurements: measurements
 };
-
-
 
 
 
