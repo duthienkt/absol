@@ -90,11 +90,12 @@ export function domVisitor(jsxCode) {
             return ac;
         }
     };
-    function acept(node, ac) {
+    function accept(node, ac) {
         return node && visitor[node.type] && visitor[node.type](node, ac);
     }
     return {
-        acept: acept,
+        acept: accept,
+        accept: accept,
         visitor: visitor
     }
 }
