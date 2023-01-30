@@ -19,7 +19,7 @@ export function computePrintAttr(elt) {
     else lineHeight = parseFloat(lineHeight.replace('px', '')) / fontSize;
     if (!isNaN(lineHeight)) lineHeight = 1.2;
     var fontWeight = style.getPropertyValue('font-weight');
-    var fontStyle = fontWeight === '400' ? 'regular' : 'bold';
+    var fontStyle = fontWeight === '400' ? 'normal' : 'bold';
     var dirs = ['top', 'right', 'bottom', 'left'];
 
     var paddingStyle = dirs.map(dir => parseMeasureValue(style.getPropertyValue('padding-' + dir)));
@@ -403,7 +403,7 @@ PrintSerialHandlers.push({
         else lineHeight = parseFloat(lineHeight.replace('px', '')) / fontSize;
         if (!isNaN(lineHeight)) lineHeight = 1.2;
         var fontWeight = style.getPropertyValue('font-weight');
-        var fontStyle = fontWeight === '400' ? 'regular' : 'bold';
+        var fontStyle = fontWeight === '400' ? 'normal' : 'bold';
         rect.width = 700;
         rect.x += borderLeftWidth.value + paddingLeft.value - O.x;
         rect.height -= borderTopWidth.value + borderBottomWidth.value + paddingTop.value + paddingBottom.value;

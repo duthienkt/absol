@@ -28,7 +28,7 @@ var color2RGB255 = color => {
 function PaperPrinter(opt) {
     this.opt = Object.assign({
         size: 'a4',
-        margin: { top: 57, left: 57 },
+        margin: { top: 57, left: 57, bottom: 57, right: 57 },
     }, opt);
 
     this.objects = [];
@@ -46,7 +46,7 @@ PaperPrinter.prototype.share = {
             url: 'https://absol.cf/vendor/fonts/arial.ttf',
             fileName: 'arial.ttf',
             name: 'arial',
-            style: 'regular'
+            style: 'normal'
         },
         {
             url: 'https://absol.cf/vendor/fonts/arialbd.ttf',
@@ -71,7 +71,7 @@ PaperPrinter.prototype.share = {
             url: 'https://absol.cf/vendor/fonts/times.ttf',
             fileName: 'times.ttf',
             name: 'times',
-            style: 'regular'
+            style: 'normal'
         },
         {
             url: 'https://absol.cf/vendor/fonts/timesbd.ttf',
@@ -286,7 +286,7 @@ PaperPrinter.prototype.exportAsPDF = function (onProcess) {
                 syn2 = syn2.then(() => {
                     doc.setTextColor(0, 0, 0);
                     doc.setFontSize(14 * P2D);
-                    doc.setFont('arial', 'regular');
+                    doc.setFont('helvetica', 'normal');
                     doc.text((i + 1) + '/' + pages.length, 794 - 20, 1123 - 20, { align: 'right' });
                 });
                 return syn2;
@@ -406,7 +406,7 @@ PaperPrinter.prototype.measures = {
     image: data => {
         return data.rect;
     },
-    line: data=>{
+    line: data => {
         return Rectangle.boundingPoints([data.start, data.end]);
     }
 };
