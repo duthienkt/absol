@@ -128,6 +128,7 @@ PrintSerialHandlers.push({
 PrintSerialHandlers.push({
     id: 'Border',
     match: (elt, scope, stack) => {
+        if (scope.isDeclared('borderStyle')) return false;
         var style = getComputedStyle(elt);
         var borderColor = style.getPropertyValue('border-color');
         var borderStyle = style.getPropertyValue('border-style');
@@ -149,10 +150,18 @@ PrintSerialHandlers.push({
         var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
         var rect = bound.clone();
         var strokeWidth = borderStyle.width;
-        rect.x -= printer.O.x - strokeWidth / 2;
-        rect.y -= printer.O.y - strokeWidth / 2;
-        rect.width -= strokeWidth;
-        rect.height -= strokeWidth;
+        if (elt.tagName === 'TD' ||elt.tagName === 'TH' ){
+            rect.x -= printer.O.x ;
+            rect.y -= printer.O.y;
+        }
+        else {
+            rect.x -= printer.O.x - strokeWidth / 2;
+            rect.y -= printer.O.y - strokeWidth / 2;
+            rect.width -= strokeWidth;
+            rect.height -= strokeWidth;
+        }
+
+
         var radius = borderStyle.radius;
         var rounded;
         if (radius) {
