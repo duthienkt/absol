@@ -46,7 +46,6 @@ export function centimeterToPx(cm) {
     return meterToInch(cm / 100) * 96;
 }
 
-console.log(1.5)
 
 export var PAGE_SIZE_IN_DOT = {
     a0: [2383.94, 3370.39],
