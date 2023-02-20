@@ -99,7 +99,7 @@ SCCodeGenerator.prototype.visitors = {
     },
     CallExpression: function (node) {
         var res = '';
-        if (node.callee.type === 'Identifier' || node.callee.type === 'MemberExpression') {
+        if (node.callee && (node.callee.type === 'Identifier' || node.callee.type === 'MemberExpression')) {
             res += this.accept(node.callee);
         }
         else {
