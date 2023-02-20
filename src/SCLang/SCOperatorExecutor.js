@@ -1,4 +1,4 @@
-function SCOperatorExecutor() {
+export function OperatorExecutor() {
     this.oFXYs = {};
     this.oFXs = {};
 }
@@ -8,7 +8,7 @@ function SCOperatorExecutor() {
  * @param {string} operator
  * @param {function(x, y, next: function):void} fxy
  */
-SCOperatorExecutor.prototype.addBinaryOperator = function (operator, fxy) {
+OperatorExecutor.prototype.addBinaryOperator = function (operator, fxy) {
     if (!this.oFXYs[operator]) this.oFXYs[operator] = [];
     this.oFXYs[operator].unshift(fxy);
 };
@@ -19,12 +19,12 @@ SCOperatorExecutor.prototype.addBinaryOperator = function (operator, fxy) {
  * @param {string} operator
  * @param {function(x,  next: function):void} fx
  */
-SCOperatorExecutor.prototype.addUnaryOperator = function (operator, fx) {
+OperatorExecutor.prototype.addUnaryOperator = function (operator, fx) {
     if (!this.oFXs[operator]) this.oFXs[operator] = [];
     this.oFXs[operator].unshift(fx);
 };
 
-SCOperatorExecutor.prototype.executeBinaryOperator = function (operator, x, y) {
+OperatorExecutor.prototype.executeBinaryOperator = function (operator, x, y) {
     var fXYs = this.oFXYs[operator];
     var i, next;
     if (fXYs) {
@@ -46,7 +46,7 @@ SCOperatorExecutor.prototype.executeBinaryOperator = function (operator, x, y) {
 };
 
 
-SCOperatorExecutor.prototype.executeUnaryOperator = function (operator, x) {
+OperatorExecutor.prototype.executeUnaryOperator = function (operator, x) {
     var fXs = this.oFXs[operator];
     var i, next;
     if (fXs) {
@@ -67,6 +67,6 @@ SCOperatorExecutor.prototype.executeUnaryOperator = function (operator, x) {
 };
 
 /***
- * @type {SCOperatorExecutor}
+ * @type {OperatorExecutor}
  */
-export default new SCOperatorExecutor();
+export default new OperatorExecutor();
