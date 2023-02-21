@@ -1,11 +1,13 @@
 /***
  *
  * @param {T} value
+ * @param {*=} type
  * @constructor
  * @template T
  */
-function Ref(value) {
-    this.set(value);
+function Ref(value, type) {
+    this.type = type;
+    this.value = value;
 }
 
 Ref.prototype.toString = function () {

@@ -1,11 +1,13 @@
 /***
  *
  * @param {T} value
+ * @param {*=} type
  * @constructor
  * @template T
  */
-function Const(value) {
+function Const(value, type) {
     this.value = value;
+    this.type = type;
 }
 
 Const.prototype.toString = function () {

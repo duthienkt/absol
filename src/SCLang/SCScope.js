@@ -27,21 +27,21 @@ SCScope.prototype.set = function (name, value) {
 };
 
 
-SCScope.prototype.get = function (name, value) {
+SCScope.prototype.get = function (name) {
     var ref = this.findRef(name);
     if (!ref) throw new Error('"' + name + '" was not declared!');
     return ref.get();
 };
 
-SCScope.prototype.declareConst = function (name, value, force) {
+SCScope.prototype.declareConst = function (name, value, force, type) {
     if ((name in this.data) && !force) throw new Error("Cannot redefine an already declared variable");
-    this.data[name] = new Const(value);
+    this.data[name] = new Const(value, type);
 };
 
 
-SCScope.prototype.declareVar = function (name, value, force) {
+SCScope.prototype.declareVar = function (name, value, force, type) {
     if ((name in this.data) && !force) throw new Error("Cannot redefine an already declared variable");
-    this.data[name] = new Ref(value);
+    this.data[name] = new Ref(value, type);
 };
 
 SCScope.prototype.revoke = function (name) {
