@@ -69,4 +69,5 @@ OperatorExecutor.prototype.executeUnaryOperator = function (operator, x) {
 /***
  * @type {OperatorExecutor}
  */
-export default new OperatorExecutor();
+var SCOperatorExecutor = new OperatorExecutor();
+export default SCOperatorExecutor;
