@@ -150,8 +150,8 @@ PrintSerialHandlers.push({
         var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
         var rect = bound.clone();
         var strokeWidth = borderStyle.width;
-        if (elt.tagName === 'TD' ||elt.tagName === 'TH' ){
-            rect.x -= printer.O.x ;
+        if (elt.tagName === 'TD' || elt.tagName === 'TH') {
+            rect.x -= printer.O.x;
             rect.y -= printer.O.y;
         }
         else {
@@ -324,10 +324,10 @@ PrintSerialHandlers.push({
 PrintSerialHandlers.push({
     id: 'MDI_FA',
     match: (elt, scope, stack) => elt.classList && (elt.classList.contains('mdi')
-        || elt.classList.contains('fab') || elt.classList.contains('far') ||  elt.classList.contains('fas')),
+        || elt.classList.contains('fab') || elt.classList.contains('far') || elt.classList.contains('fas') || elt.classList.contains('material-icons')),
     exec: (printer, elt, scope, stack, accept) => {
-        var style = getComputedStyle(elt, '::before');
-        var content = style.getPropertyValue('content');
+        var style = elt.classList.contains('material-icons') ? getComputedStyle(elt) : getComputedStyle(elt, '::before');
+        var content = elt.classList.contains('material-icons') ? elt.innerHTML : style.getPropertyValue('content');
         content = content.replace('"', '');
         var font = style.getPropertyValue('font');
         var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
@@ -345,6 +345,7 @@ PrintSerialHandlers.push({
         printer.image(canvas, rect);
     }
 });
+
 
 PrintSerialHandlers.push({
     id: 'Img',
