@@ -1,6 +1,10 @@
 import SCParser from "./SCParser";
 import SCGrammar from "./SCGrammar";
 
+/***
+ *
+ * @constructor
+ */
 function SCCodeGenerator() {
 
 }
@@ -240,7 +244,7 @@ SCCodeGenerator.prototype.visitors = {
 };
 
 
-export default SCCodeGenerator();
+export default SCCodeGenerator;
 
 
 export function generateSCCode(ast) {

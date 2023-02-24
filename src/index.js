@@ -74,7 +74,7 @@ import SCProgramInstance, { SCDynamicLibScope, SCStaticLibScope } from "./SCLang
 import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
 import Const from "./AppPattern/Const";
 import SCScope from "./SCLang/SCScope";
-import SCCodeGenerator from "./SCLang/SCCodeGenerator";
+import SCCodeGenerator, { generateSCCode } from "./SCLang/SCCodeGenerator";
 import PaperPrinter from "./Print/PaperPrinter";
 import PrintSerializer from "./Print/PrintSerializer";
 import * as printer from './Print/printer';
@@ -173,7 +173,8 @@ var absol = {
         'SCStaticLibScope':SCStaticLibScope,
         'SCDynamicLibScope': SCDynamicLibScope,
         'SCScope': SCScope,
-        'SCCodeGenerator': SCCodeGenerator
+        'SCCodeGenerator': SCCodeGenerator,
+        generateSCCode: generateSCCode
     },
     printer: printer,
     measurements: measurements
