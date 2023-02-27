@@ -62,11 +62,11 @@ export default function remoteRequireNodeAsync(filename, entry) {
                     break;
                 case 'json':
                     factors[fullPath] = true;
-                    moduleCache = { exports: JSON.parse(text) };
+                    moduleCache[fullPath] = { exports: JSON.parse(text) };
                     break;
                 default:
                     factors[fullPath] = true;
-                    moduleCache = { exports: text };
+                    moduleCache[fullPath] = { exports: text };
             }
             var requiredNodes;
             if (ext === 'js') {
