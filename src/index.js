@@ -75,10 +75,9 @@ import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
 import Const from "./AppPattern/Const";
 import SCScope from "./SCLang/SCScope";
 import SCCodeGenerator, { generateSCCode } from "./SCLang/SCCodeGenerator";
-import PaperPrinter from "./Print/PaperPrinter";
-import PrintSerializer from "./Print/PrintSerializer";
 import * as printer from './Print/printer';
 import * as measurements from './Math/measurements';
+import QRCode from "./Converter/QRCode";
 
 var absol = {
     int: int,
@@ -141,7 +140,7 @@ var absol = {
         dom: jsxdom,
         attribute: jsxattribute
     },
-
+    QRCode:QRCode,
     clipboard: clipboard,
     dataStructure: { Heap: Heap },
     datetime: datetime,
