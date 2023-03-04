@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QRCode</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+</head>
+<body>
+<style>
+
+    .qr-table{
+        border-collapse: collapse;
+    }
+    .qr-table td {
+        width: 5px;
+        height: 5px;
+
+    }
+
+    .qr-table td.black {
+        background-color: black;
+    }
+
+</style>
+<script>
+    var bitmap = new absol.QRCode("https://absol.cf/libs/absol-doc").getBitmap();
+    var table = absol._({
+        tag: 'table',
+        class: 'qr-table',
+        child: [
+            {
+                tag: 'tbody',
+                child: bitmap.map(row => {
+                    return {
+                        tag: 'tr',
+                        child: row.map(cell => ({
+                            tag: 'td',
+                            class: cell ? 'black' : 'white'
+                        }))
+                    };
+                })
+
+            }
+        ]
+    }).addTo(document.body);
+
+</script>
+</body>
+</html>
