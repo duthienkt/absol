@@ -88,7 +88,7 @@ Rectangle.prototype.centerPoint = function () {
 /***
  *
  * @param {Rectangle} r
- * @param {number} margin
+ * @param {number=} margin
  * @return {boolean}
  */
 Rectangle.prototype.isCollapse = function (r, margin) {
