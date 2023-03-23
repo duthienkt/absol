@@ -1,10 +1,10 @@
+import BrowserDetector from "../Detector/BrowserDetector";
+
+
 /***
  * @typedef {{revokeTimeout?: number, autoBom?:boolean }} FileSaverOpts
  *
  */
-
-import BrowserDetector from "../Detector/BrowserDetector";
-
 export function fileExist(url) {
     var xhr = new XMLHttpRequest();
     xhr.open('HEAD', url, true);
@@ -55,12 +55,16 @@ function bom(blob, opts) {
 
 function corsEnabled(url) {
     var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', url, false);
-    try {
+    return new Promise(function (resolve) {
+        xhr.onload = function () {
+            resolve(xhr.status >= 200 && xhr.status < 299);
+        };
+        xhr.onerror = function () {
+            resolve(xhr.status >= 200 && xhr.status < 299);
+        }
+        xhr.open('HEAD', url, true);
         xhr.send();
-    } catch (e) {
-    }
-    return xhr.status >= 200 && xhr.status < 299;
+    });
 }
 
 function click(node) {
@@ -83,13 +87,15 @@ function normalSaveAs(blob, name, opts) {
     if (typeof blob === 'string') {
         a.href = blob;
         if (a.origin !== location.origin) {
-            if (corsEnabled(a.href)) {
-                download(blob, name, opts);
-            }
-            else {
-                a.target = '_blank';
-                click(a);
-            }
+            corsEnabled(a.href).then(function (result){
+               if (result) {
+                   download(blob, name, opts);
+               }
+               else {
+                   a.target = '_blank';
+                   click(a);
+               }
+            });
         }
         else {
             click(a);
@@ -108,17 +114,19 @@ function normalSaveAs(blob, name, opts) {
 function msSaveAs(blob, name, opts) {
     name = name || blob.name || 'download';
     if (typeof blob === 'string') {
-        if (corsEnabled(blob)) {
-            download(blob, name, opts);
-        }
-        else {
-            var a = document.createElement('a');
-            a.href = blob;
-            a.target = '_blank';
-            setTimeout(function () {
-                click(a);
-            });
-        }
+        corsEnabled(blob).then(function (result) {
+            if (result) {
+                download(blob, name, opts);
+            }
+            else {
+                var a = document.createElement('a');
+                a.href = blob;
+                a.target = '_blank';
+                setTimeout(function () {
+                    click(a);
+                });
+            }
+        });
     }
     else {
         navigator.msSaveOrOpenBlob(bom(blob, opts), name);
