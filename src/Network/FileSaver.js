@@ -185,6 +185,9 @@ export function saveAs(blob, name, opts, popup) {
     if (typeof window !== "object" || window !== self) {
         console.error("FileSaver is not support!")
     }
+    else if ('wkSaveAs' in navigator) {
+        navigator.wkSaveAs(blob, name, opts);
+    }
     else if ('download' in HTMLAnchorElement.prototype && !BrowserDetector.isMacOSWebView) {
         normalSaveAs(blob, name, opts);
     }
