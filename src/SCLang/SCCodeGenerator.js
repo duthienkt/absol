@@ -1,5 +1,5 @@
-import SCParser from "./SCParser";
 import SCGrammar from "./SCGrammar";
+import OOP from "../HTML5/OOP";
 
 /***
  *
@@ -246,8 +246,80 @@ SCCodeGenerator.prototype.visitors = {
 
 export default SCCodeGenerator;
 
+/***
+ * @extends SCCodeGenerator
+ * @constructor
+ */
+export function SCCodeHighlightingGenerator() {
+    SCCodeGenerator.apply(this, arguments);
+}
+
+OOP.mixClass(SCCodeHighlightingGenerator, SCCodeGenerator);
+
+SCCodeHighlightingGenerator.prototype.accept = function (node) {
+    if (!node) return '/*TODO*/';
+    var visitor = this.visitors[node.type];
+    if (visitor) {
+        try {
+            return `<div class="sclang-node sclang-${node.type}${node.error ? ' sclang-error' : ''}">${this.visitors[node.type].apply(this, arguments)}</div>`;
+        } catch (e) {
+            console.error(e, node)
+        }
+    }
+    else {
+        return '[' + node.type + ']';
+        // throw { message: 'Can not handle ', node: node };
+    }
+};
+
+SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerator.prototype.visitors, {
+    IfStatement: function (node) {
+        var res = '<span class="sclang-keyword">if</span> (';
+        res += this.accept(node.test);
+        res += ') ';
+        res += this.accept(node.consequent);
+        if (node.alternate) {
+            res += '\n<span class="sclang-keyword">else</span> ';
+            res += this.accept(node.alternate);
+        }
+        return res;
+    },
+    FunctionDeclaration: function (node) {
+        var bodyCode = this.accept(node.body);
+        var argsCode = node.params.map(arg => this.accept(arg)).join(', ');
+        return `<span class="sclang-keyword">function</span> ${node.id.name}(${argsCode}) ${bodyCode}`;
+    },
+    VariableDeclaration: function (node) {
+        var res = '<span class="sclang-keyword">var</span> ' + node.id.name;
+        var typeText;
+        if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
+        if (typeText && typeText !== 'any') res += ': ' + typeText;
+        res += ';';
+        return res;
+    },
+    LinkedType: function (node) {
+        return '<span class="sclang-keyword">linktype</span>&nbsp;' + this.accept(node.address);
+    },
+});
+
+
+SCCodeHighlightingGenerator.prototype.generate = function (ast) {
+    var text = this.accept(ast);
+    return text.split('\n').map(text => {
+        return text.replace(/^\s+/, (full) => {
+            return `<span>${'&nbsp;'.repeat(full.length)}</span>`
+        });
+    }).join('<br>');
+};
+
 
 export function generateSCCode(ast) {
     var generator = new SCCodeGenerator();
+    return generator.generate(ast);
+}
+
+
+export function generateSCHighlightPreviewCode(ast) {
+    var generator = new SCCodeHighlightingGenerator();
     return generator.generate(ast);
 }

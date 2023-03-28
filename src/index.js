@@ -74,7 +74,7 @@ import SCProgramInstance, { SCDynamicLibScope, SCStaticLibScope } from "./SCLang
 import SCOperatorExecutor from "./SCLang/SCOperatorExecutor";
 import Const from "./AppPattern/Const";
 import SCScope from "./SCLang/SCScope";
-import SCCodeGenerator, { generateSCCode } from "./SCLang/SCCodeGenerator";
+import SCCodeGenerator, { generateSCCode, generateSCHighlightPreviewCode } from "./SCLang/SCCodeGenerator";
 import * as printer from './Print/printer';
 import * as measurements from './Math/measurements';
 import QRCode from "./Converter/QRCode";
@@ -173,7 +173,8 @@ var absol = {
         'SCDynamicLibScope': SCDynamicLibScope,
         'SCScope': SCScope,
         'SCCodeGenerator': SCCodeGenerator,
-        generateSCCode: generateSCCode
+        generateSCCode: generateSCCode,
+        generateSCHighlightPreviewCode: generateSCHighlightPreviewCode
     },
     printer: printer,
     measurements: measurements

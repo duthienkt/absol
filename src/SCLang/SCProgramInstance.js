@@ -2,6 +2,7 @@ import "./SCOperators";
 import SCOperatorExecutor from "./SCOperatorExecutor";
 import SCScope from "./SCScope";
 import { randomIdent } from "../String/stringGenerate";
+import { generateSCCode } from "./SCCodeGenerator";
 
 
 export var SCStaticLibScope = new SCScope();
@@ -492,11 +493,18 @@ SCProgramInstance.prototype.visitors = {
         });
         if (sync.length > 0) {
             return Promise.all(sync).then(() => {
+                if (!calleeFunction) {
+                    throw { message: 'Undefined function ' + generateSCCode(node.callee), ast: node }
+                }
                 return calleeFunction.apply(object, argumentValues);
             });
         }
-        else
+        else {
+            if (!calleeFunction) {
+                throw { message: 'Undefined function ' + generateSCCode(node.callee), ast: node }
+            }
             return calleeFunction.apply(object, argumentValues);
+        }
     },
     NewExpression: function (node) {
         var calleeFunction;
@@ -529,6 +537,12 @@ SCProgramInstance.prototype.visitors = {
 
         if (key && key.then) {
             return key.then(key => {
+                if (!object) {
+                    throw {
+                        message: 'Can not access ' + JSON.stringify(key) + ' from ' + generateSCCode(node.object)
+                    };
+                }
+
                 if (type === 'const') return object[key];
                 return {
                     set: function (value) {
@@ -658,7 +672,7 @@ SCProgramInstance.prototype.visitors = {
 
         }
 
-        var code = `return function ${functionName}(${node.params.map(pr => pr.id.name|| randomIdent(5)).join(',')}) { return f.apply(this, arguments); }`;
+        var code = `return function ${functionName}(${node.params.map(pr => pr.id.name || randomIdent(5)).join(',')}) { return f.apply(this, arguments); }`;
         var func = (new Function('f', code))(f);
         this.topScope.declareVar(functionName, func);
         return func;
