@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCLang</title>
+    <script src="../dist/absol.js?date=<?php  echo stat('../dist/absol.js')['mtime'];?>"></script>
+    <style>
+        .sclang-Program {
+            font-family: Consolas, serif;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .sclang-keyword {
+            color: #2C82FF;
+        }
+
+        .sclang-node {
+            display: inline;
+        }
+
+        .sclang-CallExpression>.sclang-MemberExpression:first-child >.sclang-Identifier:last-child {
+            color: #41a01b;
+        }
+    </style>
+</head>
+<body>
+<script>
+    var code = `function convert_checkins_to_logs(employeesIdList: linktype -48, timestart: Date, timeend: Date) {
+    var worktime_checkinsCall;
+    var shiftsCall;
+    var assign_employee_shiftsCall;
+    var loadDataSync;
+    var shifts;
+    var worktime_checkins;
+    var assign_employee_shifts;
+    var logsList;
+    var save_logs_Call;
+    var res;
+    shiftsCall = sys.data.shifts.read();
+    worktime_checkinsCall = sys.data.worktime_checkins.read_by_employee_list_and_time(employeesIdList, timestart, timeend);
+    assign_employee_shiftsCall = sys.data.assign_employee_shifts.read_by_employee_list_and_time(employeesIdList, timestart, timeend);
+    loadDataSync = [];
+    loadDataSync.push(shiftsCall, worktime_checkinsCall, assign_employee_shiftsCall);
+    sys.libs.waitForResults(loadDataSync);
+    shifts = shiftsCall.content;
+    worktime_checkins = worktime_checkinsCall.content;
+    print(worktime_checkins);
+    assign_employee_shifts = assign_employee_shiftsCall.content;
+    logsList = sys.payroll.convertCheckinsToLogs(shifts, worktime_checkins, assign_employee_shifts);
+    print(logsList);
+    save_logs_Call = sys.data.worktime_logs.write_lists(logsList, timestart, timeend, employeesIdList);
+    sys.libs.waitForResult(save_logs_Call);
+    res = save_logs_Call.content;
+    print(res);
+}`;
+    var ins = absol.sclang.SCParser.parse(code, 'program');
+    // console.log(ins)
+    var previewCode = absol.sclang.generateSCHighlightPreviewCode(ins.ast);
+    // console.log(previewCode)
+    absol._({
+        props:{
+            innerHTML: previewCode
+        }
+    }).addTo(document.body);
+</script>
+</body>
+</html>
