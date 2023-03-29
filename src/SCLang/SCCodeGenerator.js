@@ -261,7 +261,7 @@ SCCodeHighlightingGenerator.prototype.accept = function (node) {
     var visitor = this.visitors[node.type];
     if (visitor) {
         try {
-            return `<div class="sclang-node sclang-${node.type}${node.error ? ' sclang-error' : ''}">${this.visitors[node.type].apply(this, arguments)}</div>`;
+            return `<div class="sclang-node sclang-${node.type}${node.error ? ' sclang-error' : ''}"${node.error ? ('title='+JSON.stringify(node.error)) : ''}>${this.visitors[node.type].apply(this, arguments)}</div>`;
         } catch (e) {
             console.error(e, node)
         }

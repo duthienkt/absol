@@ -2,7 +2,8 @@ import "./SCOperators";
 import SCOperatorExecutor from "./SCOperatorExecutor";
 import SCScope from "./SCScope";
 import { randomIdent } from "../String/stringGenerate";
-import { generateSCCode } from "./SCCodeGenerator";
+import { generateSCCode, generateSCHighlightPreviewCode } from "./SCCodeGenerator";
+import ext2MineType from "../Converter/ext2MineType";
 
 
 export var SCStaticLibScope = new SCScope();
@@ -43,8 +44,83 @@ SCProgramInstance.prototype.accept = function (node) {
         // }
     }
     else {
-        throw { message: 'Can not handle ', node: node };
+        throw this.makeError("NotHandle",'Can not handle node type '+ node && node.type,  node);
     }
+};
+
+SCProgramInstance.prototype.makeError = function (type, message, node) {
+    var err = {};
+    var copy = o => {
+        if (!o) return o;
+        if (o instanceof Array) {
+            return o.map(e => copy(e));
+        }
+        if (o instanceof Date) return new Date(o.getTime());
+        if (o.constructor === Object) return Object.keys(o).reduce((ac, key) => {
+            ac[key] = copy(o[key]);
+            return ac;
+        }, o === node ? { error: message || type || true } : {});
+        return o;
+    }
+
+    err.ast = copy(this.ast);
+    err.message = message;
+    err.errorNode = node;
+    err._shown = false;
+    Object.defineProperty(err, 'SHOW_ERROR', {
+        enumerable: false,
+        get: function () {
+            if (this._shown) return;
+            this._shown = true;
+            var text = generateSCHighlightPreviewCode(this.ast);
+            var html = `<html><head><title>Error</title>
+<style> 
+.sclang-Program {
+    font-family: Consolas, serif;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+.sclang-keyword {
+    color: #2C82FF;
+}
+.sclang-node {
+    display: inline;
+}
+ .sclang-error {
+    animation: 1s linear infinite condemned_blink_effect;
+ }
+ 
+
+
+@keyframes condemned_blink_effect {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: transparent;
+  }
+  51% {
+     background-color: #f76868;
+  }
+  100% {
+      background-color: #f76868;
+  }
+}
+         
+.sclang-CallExpression>.sclang-MemberExpression:first-child >.sclang-Identifier:last-child {
+    color: #41a01b;
+}</style></head><body>${text}</body></html>`
+            var blob = new Blob([html], { type: ext2MineType.html });
+            var url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 4000);
+            return true;
+        }
+    })
+
+    return err;
 };
 
 SCProgramInstance.prototype.getRefOf = function (name) {
@@ -453,7 +529,7 @@ SCProgramInstance.prototype.visitors = {
                 return ref.get();
             }
             else {
-                throw { type: "NotDeclare", name: node.name };
+                throw this.makeError("NotDeclare", "", node);
             }
         }
         else if (type === 'ref') {
@@ -462,7 +538,7 @@ SCProgramInstance.prototype.visitors = {
                 return ref;
             }
             else {
-                throw { type: "NotDeclare", name: node.name };
+                this.makeError("NotDeclare", "", node);
             }
         }
         return node.name;
