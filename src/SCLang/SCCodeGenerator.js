@@ -68,6 +68,7 @@ SCCodeGenerator.prototype.visitors = {
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
+        if (node.init) res+= ' = ' + this.accept(node.init);
         res += ';';
         return res;
     },
@@ -294,6 +295,7 @@ SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerat
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
+        if (node.init) res+= ' = ' + this.accept(node.init);
         res += ';';
         return res;
     },
