@@ -55,7 +55,13 @@ SCCodeGenerator.prototype.visitors = {
         return this.accept(node.typeAnnotation);
     },
     GenericType: function (node) {
-        return this.accept(node.id);
+        var typeText = this.accept(node.id);
+        if (node.typeParameters && node.typeParameters.length > 0) {
+            typeText += '<';
+            typeText += node.typeParameters.map(it => this.accept(it)).join(', ');
+            typeText += '>';
+        }
+        return typeText;
     },
     LinkedType: function (node) {
         return 'linktype ' + this.accept(node.address);
@@ -68,7 +74,7 @@ SCCodeGenerator.prototype.visitors = {
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
-        if (node.init) res+= ' = ' + this.accept(node.init);
+        if (node.init) res += ' = ' + this.accept(node.init);
         res += ';';
         return res;
     },
@@ -156,6 +162,11 @@ SCCodeGenerator.prototype.visitors = {
     },
     ForCountStatement: function (node) {
         var res = ['for', this.accept(node.for), 'from', this.accept(node.from), 'to', this.accept(node.to)].join(' ') + ' ';
+        res += this.accept(node.body)
+        return res;
+    },
+    ForOfStatement: function (node) {
+        var res = ['for', this.accept(node.for), 'of', this.accept(node.of)].join(' ') + ' ';
         res += this.accept(node.body)
         return res;
     },
@@ -262,7 +273,7 @@ SCCodeHighlightingGenerator.prototype.accept = function (node) {
     var visitor = this.visitors[node.type];
     if (visitor) {
         try {
-            return `<div class="sclang-node sclang-${node.type}${node.error ? ' sclang-error' : ''}"${node.error ? ('title='+JSON.stringify(node.error)) : ''}>${this.visitors[node.type].apply(this, arguments)}</div>`;
+            return `<div class="sclang-node sclang-${node.type}${node.error ? ' sclang-error' : ''}"${node.error ? ('title=' + JSON.stringify(node.error)) : ''}>${this.visitors[node.type].apply(this, arguments)}</div>`;
         } catch (e) {
             console.error(e, node)
         }
@@ -290,12 +301,22 @@ SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerat
         var argsCode = node.params.map(arg => this.accept(arg)).join(', ');
         return `<span class="sclang-keyword">function</span> ${node.id.name}(${argsCode}) ${bodyCode}`;
     },
+    ForCountStatement: function (node) {
+        var res = ['<span class="sclang-keyword">for</span>', this.accept(node.for), '<span class="sclang-keyword">from</span>', this.accept(node.from), '<span class="sclang-keyword">to</span>', this.accept(node.to)].join(' ') + ' ';
+        res += this.accept(node.body)
+        return res;
+    },
+    ForOfStatement: function (node) {
+        var res = ['<span class="sclang-keyword">for</span>', this.accept(node.for), '<span class="sclang-keyword">of</span>', this.accept(node.of)].join(' ') + ' ';
+        res += this.accept(node.body)
+        return res;
+    },
     VariableDeclaration: function (node) {
         var res = '<span class="sclang-keyword">var</span> ' + node.id.name;
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
-        if (node.init) res+= ' = ' + this.accept(node.init);
+        if (node.init) res += ' = ' + this.accept(node.init);
         res += ';';
         return res;
     },

@@ -44,7 +44,7 @@ SCProgramInstance.prototype.accept = function (node) {
         // }
     }
     else {
-        throw this.makeError("NotHandle",'Can not handle node type '+ node && node.type,  node);
+        throw this.makeError("NotHandle", 'Can not handle node type ' + node && node.type, node);
     }
 };
 
@@ -75,7 +75,7 @@ SCProgramInstance.prototype.makeError = function (type, message, node) {
             var text = generateSCHighlightPreviewCode(this.ast);
             var html = `<html><head><title>Error</title>
 <style> 
-.sclang-Program {
+ .sclang-Program {
     font-family: Consolas, serif;
     white-space: pre-wrap;
     line-height: 1.5;
@@ -106,8 +106,8 @@ SCProgramInstance.prototype.makeError = function (type, message, node) {
       background-color: #f76868;
   }
 }
-         
-.sclang-CallExpression>.sclang-MemberExpression:first-child >.sclang-Identifier:last-child {
+.sclang-CallExpression > .sclang-MemberExpression:first-child > .sclang-Identifier:last-child,
+.sclang-CallExpression > .sclang-Identifier:first-child{
     color: #41a01b;
 }</style></head><body>${text}</body></html>`
             var blob = new Blob([html], { type: ext2MineType.html });
@@ -441,6 +441,49 @@ SCProgramInstance.prototype.visitors = {
             return sync;
         }
     },
+
+    ForOfStatement: function (node) {
+        var valRef = this.accept(node.for, 'ref');
+        var of = this.accept(node.of, 'const');
+        var result;
+        var resolved = false;
+        var resolveWith;
+        var sync = new Promise(function (rs) {
+            resolveWith = (res) => {
+                result = res;
+                resolved = true;
+                rs(res);
+            }
+        });
+        var i = 0;
+
+        var runStep = () => {
+            while (i < of.length) {
+                valRef.set(of[i]);
+                ++i;
+                var stResult = this.accept(node.body);
+                if (stResult && stResult.then) {
+                    stResult.then(runStep);
+                    return;
+                }
+            }
+            resolveWith(0);
+        }
+        if (of.then)
+            of.then((value)=>{
+                of = value;
+                runStep();
+            } );
+        else runStep();
+        if (resolved) {
+            return result;
+        }
+        else {
+            return sync;
+        }
+
+    },
+
     AssignStatement: function (node) {
         var leftRef = this.accept(node.left, 'ref');
         var right = this.accept(node.right, 'const');
