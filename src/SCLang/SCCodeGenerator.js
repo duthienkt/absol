@@ -170,6 +170,11 @@ SCCodeGenerator.prototype.visitors = {
         res += this.accept(node.body)
         return res;
     },
+    ForInStatement: function (node) {
+        var res = ['for', this.accept(node.for), 'in', this.accept(node.of)].join(' ') + ' ';
+        res += this.accept(node.body);
+        return res;
+    },
     BreakStatement: function () {
         return 'break;';
     },
@@ -308,6 +313,11 @@ SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerat
     },
     ForOfStatement: function (node) {
         var res = ['<span class="sclang-keyword">for</span>', this.accept(node.for), '<span class="sclang-keyword">of</span>', this.accept(node.of)].join(' ') + ' ';
+        res += this.accept(node.body)
+        return res;
+    },
+    ForInStatement: function (node) {
+        var res = ['<span class="sclang-keyword">for</span>', this.accept(node.for), '<span class="sclang-keyword">in</span>', this.accept(node.in)].join(' ') + ' ';
         res += this.accept(node.body)
         return res;
     },

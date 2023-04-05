@@ -445,6 +445,7 @@ SCProgramInstance.prototype.visitors = {
     ForOfStatement: function (node) {
         var valRef = this.accept(node.for, 'ref');
         var of = this.accept(node.of, 'const');
+        var values;
         var result;
         var resolved = false;
         var resolveWith;
@@ -458,8 +459,8 @@ SCProgramInstance.prototype.visitors = {
         var i = 0;
 
         var runStep = () => {
-            while (i < of.length) {
-                valRef.set(of[i]);
+            while (i < values.length) {
+                valRef.set(values[i]);
                 ++i;
                 var stResult = this.accept(node.body);
                 if (stResult && stResult.then) {
@@ -470,11 +471,62 @@ SCProgramInstance.prototype.visitors = {
             resolveWith(0);
         }
         if (of.then)
-            of.then((value)=>{
+            of.then((value) => {
                 of = value;
+                values = (of instanceof Array) ? of : Object.values(value);
                 runStep();
-            } );
-        else runStep();
+            });
+        else {
+            values = (of instanceof Array) ? of : Object.values(value);
+            runStep();
+        }
+        if (resolved) {
+            return result;
+        }
+        else {
+            return sync;
+        }
+
+    },
+
+    ForInStatement: function (node) {
+        var valRef = this.accept(node.for, 'ref');
+        var inObj = this.accept(node.in, 'const');
+        var keys;
+        var result;
+        var resolved = false;
+        var resolveWith;
+        var sync = new Promise(function (rs) {
+            resolveWith = (res) => {
+                result = res;
+                resolved = true;
+                rs(res);
+            }
+        });
+        var i = 0;
+
+        var runStep = () => {
+            while (i < keys.length) {
+                valRef.set(keys[i]);
+                ++i;
+                var stResult = this.accept(node.body);
+                if (stResult && stResult.then) {
+                    stResult.then(runStep);
+                    return;
+                }
+            }
+            resolveWith(0);
+        }
+        if (inObj.then)
+            inObj.then((value) => {
+                inObj = value;
+                keys = Object.keys(inObj);
+                runStep();
+            });
+        else {
+            keys = Object.keys(inObj)
+            runStep();
+        }
         if (resolved) {
             return result;
         }

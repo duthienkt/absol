@@ -841,6 +841,19 @@ rules.push({
 });
 
 rules.push({
+    target: 'for_in_statement',
+    elements: ['_for', 'ident', '_in', 'exp', 'block_statement'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'ForInStatement',
+            for: parsedNodeToAST(parsedNode.children[1]),
+            in: parsedNodeToAST(parsedNode.children[3]),
+            body: parsedNodeToAST(parsedNode.children[4])
+        };
+    }
+});
+
+rules.push({
     target: 'iterable_range',
     elements: ['iterable_range_limit', '_...', 'iterable_range_limit']
 });
@@ -977,6 +990,14 @@ rules.push({
 rules.push({
     target: 'statement',
     elements: ['for_count_statement'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+rules.push({
+    target: 'statement',
+    elements: ['for_in_statement'],
     toAST: function (parsedNode) {
         return parsedNodeToAST(parsedNode.children[0]);
     }
