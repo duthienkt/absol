@@ -171,7 +171,7 @@ SCCodeGenerator.prototype.visitors = {
         return res;
     },
     ForInStatement: function (node) {
-        var res = ['for', this.accept(node.for), 'in', this.accept(node.of)].join(' ') + ' ';
+        var res = ['for', this.accept(node.for), 'in', this.accept(node.in)].join(' ') + ' ';
         res += this.accept(node.body);
         return res;
     },
