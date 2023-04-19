@@ -34,13 +34,13 @@ SCScope.prototype.get = function (name) {
 };
 
 SCScope.prototype.declareConst = function (name, value, force, type) {
-    if ((name in this.data) && !force) throw new Error("Cannot redefine an already declared variable");
+    if ((name in this.data) && !force) throw  new Error("Cannot redefine variable, "+ name +" is already declared!");
     this.data[name] = new Const(value, type);
 };
 
 
 SCScope.prototype.declareVar = function (name, value, force, type) {
-    if ((name in this.data) && !force) throw new Error("Cannot redefine an already declared variable");
+    if ((name in this.data) && !force) throw new Error("Cannot redefine variable, "+ name +" is already declared!");
     this.data[name] = new Ref(value, type);
 };
 
