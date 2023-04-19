@@ -216,7 +216,9 @@ SCCodeGenerator.prototype.visitors = {
         return this.accept(node.expression) + ';';
     },
     NumericLiteral: function (node) {
-        return node.value;
+        if (typeof node.value === "number")
+            return node.value.toString();
+        return '0';
     },
     StringLiteral: function (node) {
         return JSON.stringify(node.value);
