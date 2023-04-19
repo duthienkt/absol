@@ -19,50 +19,60 @@
             display: inline;
         }
 
-        .sclang-CallExpression>.sclang-MemberExpression:first-child >.sclang-Identifier:last-child {
+        .sclang-error {
+            background-color: #f76868;
+        }
+
+        .sclang-NumericLiteral {
+            color: #b49d00;
+        }
+
+        .sclang-CallExpression > .sclang-MemberExpression:first-child > .sclang-Identifier:last-child,
+        .sclang-CallExpression > .sclang-Identifier:first-child {
             color: #41a01b;
         }
     </style>
 </head>
 <body>
 <script>
-    var code = `function convert_checkins_to_logs(employeesIdList: linktype -48, timestart: Date, timeend: Date) {
-    var worktime_checkinsCall;
-    var shiftsCall;
-    var assign_employee_shiftsCall;
-    var loadDataSync;
-    var shifts;
-    var worktime_checkins;
-    var assign_employee_shifts;
-    var logsList;
-    var save_logs_Call;
-    var res;
-    shiftsCall = sys.data.shifts.read();
-    worktime_checkinsCall = sys.data.worktime_checkins.read_by_employee_list_and_time(employeesIdList, timestart, timeend);
-    assign_employee_shiftsCall = sys.data.assign_employee_shifts.read_by_employee_list_and_time(employeesIdList, timestart, timeend);
-    loadDataSync = [];
-    loadDataSync.push(shiftsCall, worktime_checkinsCall, assign_employee_shiftsCall);
-    sys.libs.waitForResults(loadDataSync);
-    shifts = shiftsCall.content;
-    worktime_checkins = worktime_checkinsCall.content;
-    print(worktime_checkins);
-    assign_employee_shifts = assign_employee_shiftsCall.content;
-    logsList = sys.payroll.convertCheckinsToLogs(shifts, worktime_checkins, assign_employee_shifts);
-    print(logsList);
-    save_logs_Call = sys.data.worktime_logs.write_lists(logsList, timestart, timeend, employeesIdList);
-    sys.libs.waitForResult(save_logs_Call);
-    res = save_logs_Call.content;
-    print(res);
-}`;
+    var code = `function foo(x){
+        var i;
+        var arr = [];
+        var y;
+        for i from 0 to 100 {
+            arr.push(i);
+        }
+        console.log(arr);
+
+
+        for x of fa(arr)
+        {
+        print(x);
+        }
+    }
+foo(1,2 ,3);`;
+    /*for x of fa(arr) {
+    print(x);
+    }*/
     var ins = absol.sclang.SCParser.parse(code, 'program');
     // console.log(ins)
+    if (ins.error) {
+        console.log(ins)
+    }
     var previewCode = absol.sclang.generateSCHighlightPreviewCode(ins.ast);
-    // console.log(previewCode)
+
     absol._({
-        props:{
+        props: {
             innerHTML: previewCode
         }
     }).addTo(document.body);
+    // console.log(previewCode)
+    var program = new absol.sclang.SCProgramInstance(ins.ast, {
+        fa: Promise.resolve.bind(Promise),
+        console: console,
+        print: console.log.bind(console)
+    });
+    program.exec();
 </script>
 </body>
 </html>
