@@ -238,12 +238,12 @@ SCProgramInstance.prototype.visitors = {
     VariableDeclaration: function (node) {
         var initValue = null;
         if (node.init) {
-            initValue = this.accept(node.init);
+            initValue = this.accept(node.init, 'const');
         }
         if (initValue && initValue.then) {
             return initValue.then((result) => {
                 this.topScope.declareVar(node.id.name, result);
-            })
+            });
         }
         else {
             this.topScope.declareVar(node.id.name, initValue);

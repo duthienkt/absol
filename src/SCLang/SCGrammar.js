@@ -728,8 +728,21 @@ rules.push({
     }
 });
 
+rules.push({
+    target: 'variable_declaration',
+    elements: ['_var', 'ident','type_annotation', '_=', 'exp', '_;'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'VariableDeclaration',
+            id: parsedNodeToAST(parsedNode.children[1]),
+            typeAnnotation: parsedNodeToAST(parsedNode.children[2]),
+            init: parsedNodeToAST(parsedNode.children[4])
+        }
 
-/**********************************************************************************************************************/
+    }
+});
+
+
 //todo
 rules.push({
     target: 'expression_statement',
