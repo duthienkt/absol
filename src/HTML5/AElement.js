@@ -339,6 +339,7 @@ AElement.prototype.getBoundingRecursiveRect = function (depth) {
  * @returns {boolean}
  */
 AElement.prototype.isDescendantOf = function (parent) {
+    if (!parent || !parent.childNodes || !parent.childNodes.length) return false;
     var child = this;
     while (child) {
         if (child === parent) return true;
