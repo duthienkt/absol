@@ -543,7 +543,7 @@ SCProgramInstance.prototype.visitors = {
 
     },
     IfStatement: function (node) {
-        var test = this.accept(node.test);
+        var test = this.accept(node.test, 'const');
         if (test && (typeof test.then === 'function')) {
             return test.then((test) => {
                 if (test) {
