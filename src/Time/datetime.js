@@ -592,6 +592,7 @@ export function beginOfHour(date, gmt) {
 export function beginOfWeek(date, gmt, startDayOfWeek) {
     if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
     var res = beginOfDay(date, gmt);
+    if (isNaN(res.getTime())) return res;
     while ((gmt ? res.getUTCDay() : res.getDay()) !== startDayOfWeek) {
         res = prevDate(res, gmt);
     }
@@ -1022,8 +1023,6 @@ export function formatDateTime(date, format, opt) {
         return res;
     });
 }
-
-
 
 
 var number = [/[+-]?\d+$/, matched => new Date(parseInt(matched[0]))];
