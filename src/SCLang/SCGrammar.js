@@ -78,6 +78,8 @@ rules.push({
 rules.push({
     target: 'args_list',
     elements: ['args_list', '_,', 'exp'],
+    longestOnly:true,
+    ident: 'args_list_rec',
     toASTChain: function (parsedNode) {
         return parsedNodeToASTChain(parsedNode.children[0]).concat(parsedNodeToAST(parsedNode.children[2]));
     }
@@ -255,6 +257,8 @@ rules.push({
 rules.push({
     target: 'exp',
     elements: ['exp', 'bin_op', 'exp'],
+    longestOnly: true,
+    ident: 'bin_op_rec',
     toASTChain: function (parseNode) {
         var res = [];
         if (parseNode.children[0].rule === this) {
@@ -423,6 +427,8 @@ rules.push({
 rules.push({
     target: 'mem_exp',
     elements: ['mem_exp', '_.', 'ident'],
+    longestOnly: true,
+    ident: 'mem_exp_ident_rev',
     toAST: function (parsedNode) {
         return {
             type: "MemberExpression",
@@ -554,6 +560,8 @@ rules.push({
 rules.push({
     target: 'object_property_list',
     elements: ['object_property_list', '_,', 'object_property'],
+    longestOnly: true,
+    ident: 'object_property_list_rec',
     toASTChain: function (parsedNode) {
         return parsedNodeToASTChain(parsedNode.children[0]).concat([parsedNodeToAST(parsedNode.children[2])]);
     }
@@ -604,6 +612,8 @@ rules.push({
 rules.push({
     target: 'array_item_list',
     elements: ['array_item_list', '_,', 'exp'],
+    longestOnly: true,
+    ident: 'array_item_list_rec',
     toASTChain: function (parsedNode) {
         return parsedNodeToASTChain(parsedNode.children[0]).concat([parsedNodeToAST(parsedNode.children[2])]);
     }
@@ -1045,6 +1055,7 @@ rules.push({
 rules.push({
     target: 'statement_arr',
     elements: ['statement_arr', 'statement'],
+    longestOnly: true,
     toASTChain: function (parsedNode) {
         return parsedNodeToASTChain(parsedNode.children[0]).concat([parsedNodeToAST(parsedNode.children[1])]);
     }

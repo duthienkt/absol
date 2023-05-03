@@ -1,4 +1,5 @@
 import Heap from "../DataStructure/Heap";
+import { stringHashCode } from "../String/stringUtils";
 
 
 var TARGET = 0;
@@ -24,6 +25,10 @@ function indexingItem(item) {
     return item[TARGET] + '*' + item[PASSED] + '*' + item[LENGTH];
 }
 
+function arrayKey(item) {
+    return item[TARGET] + '*' + item[PASSED];
+}
+
 /****
  *
  * @param {DPParser} parser
@@ -36,9 +41,11 @@ function DPParseInstance(parser, source, target) {
     this.parser = parser;
     this.targets = parser.targets;
     this.rules = parser.rules;
+    console.log(this.rules.filter(x => x.target === 'array_item_list'))
     this.tokenTypes = parser.tokenizer.types;
     this.error = null;
     this.source = source;
+    var start = Date.now();
     if (typeof source === "string") {
         this.tokens = parser.tokenizer.tokenize(source).filter(function (tk) {
             return tk.type !== 'skip';
@@ -50,13 +57,14 @@ function DPParseInstance(parser, source, target) {
     else {
         throw new Error("Invalid source, source must be string or array of token");
     }
-
     this.tokenIdx = 0;
     this.priQueue = new Heap(this._cmpFunction);
     this.maxSize = 0;
     this.expectedArr = [];
     this.parsedNode = null;
     this.ast = null;
+    start = Date.now();
+
     this._dp();
     this._trackBack();
     if (this.parsedNode) {
@@ -65,8 +73,8 @@ function DPParseInstance(parser, source, target) {
     else {
         this._findError();
     }
-
 }
+
 
 DPParseInstance.prototype._dp = function () {
     while (this.tokenIdx < this.tokens.length) {
@@ -74,9 +82,8 @@ DPParseInstance.prototype._dp = function () {
     }
 };
 
-
 DPParseInstance.prototype._cmpFunction = function (a, b) {
-    return a[1] - b[1];
+    return b[LENGTH] - a[LENGTH];
 };
 
 
@@ -89,14 +96,15 @@ DPParseInstance.prototype._nextToken = function () {
     var expected = {};
     var pushed = {};
     var itemIndex;
+    var longestChecked = {};
+
     this.expectedArr.push(expected);
     var cur, next;
     var i, j, rule;
 
     var prevExpectedList, prevRule;
     var prevExpectedItem;
-
-
+    //nếu cùng 1 rule, cùng điểm bắt dầu, cùng passed thì dài hơn lấy
     while (this.priQueue.size() > 0) {
         this.maxSize = Math.max(this.maxSize, this.priQueue.size());
         cur = this.priQueue.pop();
@@ -107,10 +115,11 @@ DPParseInstance.prototype._nextToken = function () {
                 if (rule.elements.length === 1) {
                     next = mkItem(rule.target, rule, cur[PASSED], cur[LENGTH], [null, cur]);
                     itemIndex = indexingItem(next);
-                    if (pushed) {
+                    if (!pushed[itemIndex]) {
                         pushed[itemIndex] = true;
                         this.priQueue.push(next);
                     }
+
                     expected['^'] = expected['^'] || [];
                     expected['^'].push(next);
                 }
@@ -131,14 +140,24 @@ DPParseInstance.prototype._nextToken = function () {
                 next = mkItem(prevRule.target, prevRule, prevExpectedItem[PASSED] + 1, prevExpectedItem[LENGTH] + cur[LENGTH], [prevExpectedItem, cur]);
                 if (prevExpectedItem[PASSED] + 1 === prevRule.elements.length) {
                     itemIndex = indexingItem(next);
-                    if (pushed) {
+
+                    if (next[RULE] && next[RULE].longestOnly) {
+                        if (longestChecked[next[RULE].ident] && longestChecked[next[RULE].ident] >=  next[LENGTH]){
+                            continue;
+                        }
+                        longestChecked[next[RULE].ident] =  next[LENGTH];
+                    }
+
+                    if (!pushed[itemIndex]) {
                         pushed[itemIndex] = true;
                         this.priQueue.push(next);
                     }
+
                     expected['^'] = expected['^'] || [];
                     expected['^'].push(next);//[rule index, passed, length]
                 }
                 else {
+
                     expected[prevRule.elements[prevExpectedItem[PASSED] + 1]] = expected[prevRule.elements[prevExpectedItem[PASSED] + 1]] || [];
                     expected[prevRule.elements[prevExpectedItem[PASSED] + 1]].push(next);
                 }
