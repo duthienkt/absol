@@ -395,7 +395,7 @@ PrintSerialHandlers.push({
 PrintSerialHandlers.push({
     id: 'TextInput',
     match: (elt, scope, stack) => {
-        return elt.tagName === 'INPUT' && (elt.attr('type') === 'text' || elt.attr('type') === 'number');
+        return elt.tagName === 'INPUT' && (elt.attr('type') === 'text' || elt.attr('type') === 'number' || !elt.attr('type'));
     },
     exec: (printer, elt, scope, stack, accept) => {
         var O = printer.O;

@@ -29,6 +29,8 @@ function PaperPrinter(opt) {
     this.opt = Object.assign({
         size: 'a4',
         margin: { top: 57, left: 57, bottom: 57, right: 57 },
+        footer: null,
+        header: null
     }, opt);
 
     this.objects = [];
@@ -286,8 +288,12 @@ PaperPrinter.prototype.exportAsPDF = function (onProcess) {
                 syn2 = syn2.then(() => {
                     doc.setTextColor(0, 0, 0);
                     doc.setFontSize(14 * P2D);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text((i + 1) + '/' + pages.length, 794 - 20, 1123 - 20, { align: 'right' });
+                    doc.setFont('arial', 'normal');
+                    doc.text((i + 1) + '/' + pages.length, 794 - 25, 1123 - 25, { align: 'right' });
+                    if (typeof this.opt.footer === 'string') {
+                        doc.text(this.opt.footer, 25, 1123 - 25, { align: 'left' });
+                    }
+
                 });
                 return syn2;
             });
