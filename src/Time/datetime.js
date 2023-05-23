@@ -1052,3 +1052,30 @@ export function implicitDate(o) {
     if (res && isNaN(res.getTime())) res = null;
     return res;
 }
+
+/***
+ *
+ * @param {null|{dayOffset?: number, duration?: number}}range
+ * @param opt
+ */
+export function formatTimeRange24(range, opt) {
+    opt = Object.assign({
+        nextDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
+            || (window.systemconfig.language.toLowerCase().indexOf('vn') >= 0 || window.systemconfig.language.toLowerCase().indexOf('vi') >= 0)) ? 'Hôm sau' : 'Next day'
+    }, opt || {});
+    range = range || {};
+    var m0 = Math.floor(range.dayOffset / MILLIS_PER_MINUTE);
+    var h0 = Math.floor(m0 / 60);
+    var d0 = Math.floor(h0 / 24);
+    m0 = m0 % 60;
+    h0 = h0 % 24;
+    var endOffset = range.dayOffset + range.duration;
+    var m1 = Math.floor(endOffset / MILLIS_PER_MINUTE);
+    var h1 = Math.floor(m1 / 60);
+    var d1 = Math.floor(h1 / 24);
+    m1 = m1 % 60;
+    h1 = h1 % 24;
+    var res = h0 + ':' + integerZeroPadding(m0, 2) + ' - ' + h1 + ':' + integerZeroPadding(m1, 2);
+    if (d0 !== d1) res += '(' + opt.nextDayText + ')';
+    return res;
+}
