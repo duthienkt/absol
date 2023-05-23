@@ -26,17 +26,24 @@ var color2RGB255 = color => {
 };
 
 function PaperPrinter(opt) {
-    this.opt = Object.assign({
-        size: 'a4',
-        margin: { top: 57, left: 57, bottom: 57, right: 57 },
-        footer: null,
-        header: null
-    }, opt);
+    this.opt = Object.assign(copyJSVariable(this.defaultOptions), opt);
 
     this.objects = [];
     this.processInfo = {};
-
+    this.subDocs = null;
+    this.pages = null; // not computed
+    this.pdfDoc = null;
+    this.pageFormat = null;
+    this.sync = this.ready();
 }
+
+PaperPrinter.prototype.defaultOptions = {
+    size: 'a4',
+    margin: { top: 57, left: 57, bottom: 57, right: 57 },
+    footer: null,
+    header: null,
+    paddingEven: true
+};
 
 
 PaperPrinter.prototype.share = {
@@ -118,12 +125,12 @@ PaperPrinter.prototype.ready = function () {
                     font.content = b64;
                 })
         });
-        if (window.jsPDF) {
-            this.share.jsPDF = window.jsPDF;
+        if (window.jspdf) {
+            this.share.jsPDF = window.jspdf.jsPDF;
         }
         else {
             sync.push(loadScript(this.share.jsPDFUrl).then(() => {
-                this.share.jsPDF = window.jsPDF;
+                this.share.jsPDF = window.jspdf.jsPDF;
             }))
         }
         this.share.readySync = Promise.all(sync);
@@ -131,6 +138,18 @@ PaperPrinter.prototype.ready = function () {
     return this.share.readySync;
 };
 
+/***
+ *
+ * @param at
+ * @param opt
+ */
+PaperPrinter.prototype.addSubDocument = function (at, opt) {
+    this.objects.push({
+        type: 'sub_document',
+        at: at,
+        opt: opt
+    });
+};
 
 /***
  *
@@ -165,6 +184,19 @@ PaperPrinter.prototype.line = function (start, end, style) {
     return this;
 };
 
+/***
+ *
+ * @param {Vec2} at
+ * @param {boolean=} paddingEven
+ */
+PaperPrinter.prototype.pageBreak = function (at, paddingEven) {
+    this.objects.push({
+        type: 'page_break',
+        at: at,
+        paddingEven: !!paddingEven
+    });
+    return this;
+};
 
 /***
  *
@@ -201,20 +233,73 @@ PaperPrinter.prototype.boundOf = function (objectData) {
     return this.measures[objectData.type](objectData);
 };
 
+PaperPrinter.prototype.computeObjects = function () {
+    this.pages = [];
+    var objects = this.objects.slice();
+    if (!objects[0] || objects[0].type !== 'sub_document') {
+        objects.unshift({
+            type: 'sub_document',
+            at: Vec2.ZERO,
+        })
+    }
+    this.subDocs = objects.reduce((ac, obj) => {
+        switch (obj.type) {
+            case 'sub_document':
+                ac.push({
+                    objects: [obj]
+                });
+                break;
+            default:
+                ac[ac.length - 1].objects.push(obj);
+                break;
+        }
+        return ac;
+    }, []);
+    this.subDocs.forEach((doc, i) => {
+        doc.objects.forEach((o, i) => {
+            o.idx = i;
+            o.bound = this.boundOf(o);
+        });
+        var newDocCmd = doc.objects.shift();
+        doc.objects.sort((a, b) => {
+            return a.bound.y - b.bound.y;
+        });
+        doc.opt = Object.assign(copyJSVariable(this.opt), newDocCmd.opt || {});
+        doc.objects.unshift(newDocCmd);
+        doc.startPage = i > 0 ? this.subDocs[i - 1].startPage + this.subDocs[i - 1].pages.length : 0;
+        if (this.opt.paddingEven && doc.startPage % 2 > 0) doc.startPage++;
 
-PaperPrinter.prototype.exportAsPDF = function (onProcess) {
-    var processInfo = copyJSVariable(this.processInfo);
-    processInfo.pdf = {
-        all: this.objects.length,
-        done: 0
-    };
-    processInfo.state = 'LOAD_LIB';
-    processInfo.onProcess = () => {
-        onProcess && onProcess(processInfo);
-    };
-    return this.ready().then(() => {
-        processInfo.state = 'RENDER_PDF';
-        var doc = new jspdf.jsPDF({
+        var pageContentHeight = 1123 - doc.opt.margin.top - doc.opt.margin.bottom;
+        doc.pages = doc.objects.reduce((ac, cr) => {
+            var page = ac[ac.length - 1];
+            if (cr.bound.height > pageContentHeight) {
+                page.object.push(cr);
+            }
+            else {
+                if (cr.bound.y + cr.bound.height - page.y > pageContentHeight || cr.type === 'page_break') {
+                    page = {
+                        y: cr.bound.y,
+                        objects: [cr]
+                    };
+                    ac.push(page);
+                }
+                else {
+                    page.objects.push(cr);
+                }
+            }
+
+            return ac;
+
+        }, [{ objects: [], y: 0 }]);
+        doc.pages.forEach(page => page.objects.sort((a, b) => a.idx - b.idx));
+    });
+};
+
+
+PaperPrinter.prototype.newPDFDoc = function () {
+    this.sync = this.ready().then(() => {
+        var jsPDF = jspdf.jsPDF;
+        this.pdfDoc = new jsPDF({
             orientation: 'p',
             unit: 'px',
             format: 'a4',
@@ -224,87 +309,74 @@ PaperPrinter.prototype.exportAsPDF = function (onProcess) {
             hotfixes: ["px_scaling"]
         });
         this.share.fonts.forEach(font => {
-            doc.addFileToVFS(font.fileName, font.content);
-            doc.addFont(font.fileName, font.name, font.style);
+            this.pdfDoc.addFileToVFS(font.fileName, font.content);
+            this.pdfDoc.addFont(font.fileName, font.name, font.style);
         });
-
-        var objectHolders = this.objects.map((o, i) => {
-            var bound = this.boundOf(o);
-            return {
-                i: i,
-                o: o,
-                y: bound.y,
-                height: bound.height
-            };
-        });
-
-        objectHolders.sort((a, b) => a.y - b.y);
-        var pageContentWidth = 794 - 57 * 2;
-        var pageContentHeight = 1123 - 57 * 2;
-        var pages = objectHolders.reduce((ac, cr) => {
-            var page = ac[ac.length - 1];
-            if (cr.height > pageContentHeight) {
-                page.holders.push(cr);
-            }
-            else {
-                if (cr.y + cr.height - page.y > pageContentHeight) {
-                    page = {
-                        y: cr.y,
-                        holders: [cr]
-                    };
-                    ac.push(page);
-                }
-                else {
-                    page.holders.push(cr);
-                }
-            }
-
-            return ac;
-
-        }, [{ holders: [], y: 0 }]);
-        var sync = Promise.resolve();
-        pages.forEach(page => {
-            page.holders.sort((a, b) => a.i - b.i);
-            page.objects = page.holders.map(h => h.o);
-        });
-
-        pages.forEach((page, i) => {
-            sync = sync.then(() => {
-                if (i > 0) {
-                    doc.addPage();
-                }
-                doc.setPage(i + 1);
-                page.O = new Vec2(this.opt.margin.left, this.opt.margin.top - page.y);
-                var syn2 = Promise.resolve();
-                page.objects.forEach(obj => {
-                    var type = obj.type;
-                    syn2 = syn2.then(() => {
-                        var res = this.pdfHandlers[type](page, doc, obj);
-                        processInfo.pdf.done++;
-                        processInfo.onProcess();
-                        return res;
-                    });
-                });
-                syn2 = syn2.then(() => {
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(14 * P2D);
-                    doc.setFont('arial', 'normal');
-                    doc.text((i + 1) + '/' + pages.length, 794 - 25, 1123 - 25, { align: 'right' });
-                    if (typeof this.opt.footer === 'string') {
-                        doc.text(this.opt.footer, 25, 1123 - 25, { align: 'left' });
-                    }
-
-                });
-                return syn2;
-            });
-        });
-
-        //width: 794px;margin 57
-        //     /*height: 1056px;*/
-
-        return sync.then(() => doc);
-
+        return this.pdfDoc;
     });
+    return this.sync;
+};
+
+
+PaperPrinter.prototype.exec = function () {
+    this.computeObjects();
+    var onProcess = this.onProcess;
+    var processInfo = this.processInfo;
+    processInfo.pdf = {
+        all: this.subDocs.reduce((ac, sD) => ac + sD.objects.length, 0),
+        done: 0
+    };
+    processInfo.state = 'LOAD_LIB';
+    processInfo.onProcess = () => {
+        onProcess && onProcess(processInfo);
+    };
+
+
+    return this.newPDFDoc().then(pdfDoc => {
+        processInfo.state = 'RENDER_PDF';
+        return this.subDocs.reduce((sync, doc, i) => {
+            return sync.then(() => {
+                var startPage = doc.startPage;
+                while (pdfDoc.getNumberOfPages() <= startPage) {
+                    pdfDoc.addPage();
+                }
+
+                return doc.pages.reduce((docSync, page, i) => {
+                    return docSync.then(() => {
+                        if (pdfDoc.getNumberOfPages() <= startPage + i) {
+                            pdfDoc.addPage();
+                        }
+                        pdfDoc.setPage(startPage + i + 1);
+                        page.O = new Vec2(this.opt.margin.left, this.opt.margin.top - page.y);
+                        return page.objects.reduce((pageSync, obj) => {
+                            return pageSync.then(() => {
+                                var type = obj.type;
+                                var res = this.pdfHandlers[type](page, pdfDoc, obj);
+                                processInfo.pdf.done++;
+                                if (res && res.then) {
+                                    res.then(() => processInfo.onProcess())
+                                }
+                                return res;
+                            });
+                        }, Promise.resolve()).then(() => {
+                            pdfDoc.setTextColor(0, 0, 0);
+                            pdfDoc.setFontSize(14 * P2D);
+                            pdfDoc.setFont('arial', 'normal');
+                            pdfDoc.text((i + 1) + '/' + doc.pages.length, 794 - 25, 1123 - 25, { align: 'right' });
+                            if (typeof doc.opt.footer === 'string') {
+                                pdfDoc.text(doc.opt.footer, 25, 1123 - 25, { align: 'left' });
+                            }
+                        });
+                    })
+                }, Promise.resolve())
+            })
+        }, Promise.resolve()).then(() => pdfDoc);
+    });
+};
+
+
+PaperPrinter.prototype.exportAsPDF = function (onProcess) {
+    return this.exec();
 };
 
 
@@ -398,12 +470,18 @@ PaperPrinter.prototype.pdfHandlers = {
             });
         }
         else return handleImage(data.image);
+    },
+    page_break: function (context, doc, data) {
+    },
+    sub_document: function (context, doc, data) {
     }
 };
 
 
 PaperPrinter.prototype.measures = {
-    rect: data => {
+    sub_document: data => {
+        return new Rectangle(0, 0, 0, 0);
+    }, rect: data => {
         return data.rect;
     },
     text: data => {
@@ -414,6 +492,9 @@ PaperPrinter.prototype.measures = {
     },
     line: data => {
         return Rectangle.boundingPoints([data.start, data.end]);
+    },
+    page_break: data => {
+        return new Rectangle(0, data.at.y, 0, 0);
     }
 };
 

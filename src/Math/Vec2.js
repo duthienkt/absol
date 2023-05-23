@@ -200,4 +200,9 @@ Vec2.make = function (x, y) {
         return new Vec2(x, y);
 };
 
+
+Vec2.ZERO = new Vec2(0, 0);
+Vec2.OX = new Vec2(1, 0);
+Vec2.OY = new Vec2(0, 1);
+
 export default Vec2;

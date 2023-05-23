@@ -1,5 +1,5 @@
 import VarScope from "../AppPattern/VarScope";
-import Dom, { depthClone, waitImageLoaded } from "../HTML5/Dom";
+import Dom, { depthClone, isDomNode, waitImageLoaded } from "../HTML5/Dom";
 import Rectangle from "../Math/Rectangle";
 import PrintSerialHandlers from "./PrintSerialHandlers";
 import { isImageURLAllowCrossOrigin } from "../Network/XLoader";
@@ -51,7 +51,34 @@ PrintSerializer.prototype.accept = function (printer, elt, scope, stack) {
     }
 };
 
-PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
+/***
+ *
+ * @param {Array<AElement> | AElement | Array<{elt: AElement, opt:Object}>} docList
+ * @param printer
+ * @param onProcess
+ * @return {Promise<Awaited<unknown>[]>}
+ */
+PrintSerializer.prototype.serialize = function (docList, printer, onProcess) {
+    var $ = Dom.ShareInstance.$;
+    if (!(docList instanceof Array)) docList = [docList];
+    docList = docList.map(doc => {
+        if (typeof doc === "string") {
+            return {
+                elt: $(doc)
+            }
+        }
+        else if (isDomNode(doc)) {
+            return {
+                elt: $(doc)
+            }
+        }
+        else if (typeof doc === "object" && doc) {
+            if (typeof doc.elt === "string") doc.elt = $(doc.elt);
+            if (doc.elt && isDomNode(doc.elt))
+                return doc;
+        }
+        else return null;
+    }).filter(it => !!it);
     var sync = [];
     var processInfo = {
         state: 'RENDER_DOM',
@@ -69,82 +96,87 @@ PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
         }
     };
     printer.processInfo = processInfo;
-    var contentChild = depthClone(elt, (originElt, copyElt) => {
-        copyElt.__idx__ = processInfo.total.all;
-        copyElt.__origin__ = originElt;
+    var contentChildList = docList.map(doc => {
+        var elt = doc.elt;
+        return depthClone(elt, (originElt, copyElt) => {
+            copyElt.__idx__ = processInfo.total.all;
+            copyElt.__origin__ = originElt;
 
-        processInfo.total.all++;
-        var parent, fontWeight, style;
-        var done = false;
+            processInfo.total.all++;
+            var parent, fontWeight, style;
+            var done = false;
 
-        if (originElt.nodeType === Node.TEXT_NODE) {
-            processInfo.total.text++;
-            sync.push(new Promise(rs => {
-                setTimeout(() => {
-                    parent = originElt.parentElement;
-                    if (!copyElt.__fontWeight__) {
-                        style = getComputedStyle(parent);
-                        fontWeight = parseInt(style.getPropertyValue('font-weight'));//not support other style
-                        copyElt.__fontWeight__ = fontWeight;
-                        if (fontWeight <= 400) {
-                            copyElt.parentElement.style.setProperty('font-weight', 'normal');
-                        }
-                        else if (fontWeight > 400) {
-                            copyElt.parentElement.style.setProperty('font-weight', 'bold');
+            if (originElt.nodeType === Node.TEXT_NODE) {
+                processInfo.total.text++;
+                sync.push(new Promise(rs => {
+                    setTimeout(() => {
+                        parent = originElt.parentElement;
+                        if (!copyElt.__fontWeight__) {
+                            style = getComputedStyle(parent);
+                            fontWeight = parseInt(style.getPropertyValue('font-weight'));//not support other style
+                            copyElt.__fontWeight__ = fontWeight;
+                            if (fontWeight <= 400) {
+                                copyElt.parentElement.style.setProperty('font-weight', 'normal');
+                            }
+                            else if (fontWeight > 400) {
+                                copyElt.parentElement.style.setProperty('font-weight', 'bold');
+                            }
+                            processInfo.dom.text++;
                         }
                         processInfo.dom.text++;
+                        rs();
+                    }, 0)
+                }));
+
+            }
+            else if (originElt.tagName && originElt.tagName.toLowerCase() === 'canvas') {
+                copyElt.getContext('2d').drawImage(originElt, 0, 0);
+            }
+            else if (originElt.tagName === 'IMG' && !originElt.classList.contains('absol-attachhook') && originElt.src) {
+                processInfo.total.image++;
+
+                sync.push(isImageURLAllowCrossOrigin(originElt.src).then(result => {
+                    var newElt;
+                    if (!result) {
+                        newElt = copyElt.cloneNode();
+                        newElt.__idx__ = copyElt.__idx__;
+                        newElt.__origin__ = copyElt.__origin__;
+                        newElt.src = 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src);
+                        copyElt.parentElement.replaceChild(newElt, copyElt);
+                        return waitImageLoaded(newElt, 10000).then(() => {
+                            if (!done) {
+                                processInfo.dom.image++;
+                                processInfo.onProcess();
+                                done = true;
+                            }
+                        });
                     }
-                    processInfo.dom.text++;
-                    rs();
-                }, 0)
-            }));
+                    else {
+                        return waitImageLoaded(copyElt, 10000).then(() => {
+                            if (!done) {
+                                processInfo.dom.image++;
+                                processInfo.onProcess();
+                                done = true;
+                            }
+                        });
+                    }
+                }, (err) => {
+                    console.error(err);
+                    if (!done) {
+                        processInfo.dom.image++;
+                        processInfo.onProcess();
+                        done = true;
+                    }
 
-        }
-        else if (originElt.tagName && originElt.tagName.toLowerCase() === 'canvas') {
-            copyElt.getContext('2d').drawImage(originElt, 0, 0);
-        }
-        else if (originElt.tagName === 'IMG' && !originElt.classList.contains('absol-attachhook') && originElt.src) {
-            processInfo.total.image++;
+                }));
+            }
+            else if (originElt.tagName === 'INPUT') {
+                copyElt.value = originElt.value;
+            }
+        });
+    });
 
-            sync.push(isImageURLAllowCrossOrigin(originElt.src).then(result => {
-                var newElt;
-                if (!result) {
-                    newElt = copyElt.cloneNode();
-                    newElt.__idx__ = copyElt.__idx__;
-                    newElt.__origin__ = copyElt.__origin__;
-                    newElt.src = 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src);
-                    copyElt.parentElement.replaceChild(newElt, copyElt);
-                    return waitImageLoaded(newElt, 10000).then(() => {
-                        if (!done) {
-                            processInfo.dom.image++;
-                            processInfo.onProcess();
-                            done = true;
-                        }
-                    });
-                }
-                else {
-                    return waitImageLoaded(copyElt, 10000).then(() => {
-                        if (!done) {
-                            processInfo.dom.image++;
-                            processInfo.onProcess();
-                            done = true;
-                        }
-                    });
-                }
-            }, (err) => {
-                console.error(err);
-                if (!done) {
-                    processInfo.dom.image++;
-                    processInfo.onProcess();
-                    done = true;
-                }
 
-            }));
-        }
-        else if (originElt.tagName === 'INPUT') {
-            copyElt.value = originElt.value;
-        }
-    })
     var content = Dom.ShareInstance._({
         style: {
             width: 794 - 57 * 2 + 'px',
@@ -154,7 +186,7 @@ PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
 
         },
         class: 'as-printer-content',
-        child: contentChild
+        child: contentChildList
     });
     var scroller = Dom.ShareInstance._({
         class: 'as-printer',
@@ -188,8 +220,11 @@ PrintSerializer.prototype.serialize = function (elt, printer, onProcess) {
     return Promise.all(sync).then(() => {
         processInfo.state = "SERIALIZE";
         processInfo.onProcess();
-        printer.O = Rectangle.fromClientRect(content.getBoundingClientRect()).A();
-        this.accept(printer, content, new VarScope(), []);
+        docList.forEach((doc, i) => {
+            printer.O = Rectangle.fromClientRect(contentChildList[i].getBoundingClientRect()).A();
+            printer.addSubDocument(printer.O, doc.opt);
+            this.accept(printer, contentChildList[i], new VarScope(), []);
+        });
     })
         .then(() => {
             scroller.remove();

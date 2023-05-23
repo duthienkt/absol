@@ -431,6 +431,18 @@ PrintSerialHandlers.push({
     }
 });
 
+PrintSerialHandlers.push({
+    id: 'BreakPage',
+    match: elt =>elt.hasClass && elt.hasClass('as-page-break'),
+    exec: (printer, elt, scope, stack, accept) => {
+        var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        rect.x -= printer.O.x;
+        rect.y -= printer.O.y;
+        printer.pageBreak(rect.A());
+    }
+});
+
+
 
 PrintSerialHandlers.push({
     id: '*',
