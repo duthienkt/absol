@@ -46,6 +46,8 @@
     <div id="wrapper">
         <i class="material-icons bsc-icon-hover-black">more_vert</i>
         <h1>Print demo <i class="fab fa-adobe"></i></h1>
+        <div class="as-page-break as-padding-even-page"></div>
+
         <div class="cke4-inline" style="border: 5px solid black; padding: 2px; border-radius: 6%">
             <div class="cke4-inline__anchor cke_editable cke_editable_inline cke_contents_ltr cke_show_borders"
                  contenteditable="true" style="text-align: center; position: relative;" aria-readonly="false"
@@ -364,8 +366,8 @@
                 pdfBtn.disabled = true;
                 pdfBtn.innerHTML = "In process...";
                 var serializer = new absol.printer.PrintSerializer();
-                var printer = new absol.printer.PaperPrinter();
-                serializer.serialize(absol.$('#wrapper'), printer, processInfo => {
+                var printer = new absol.printer.PaperPrinter({footer:'Footer bằng tiếng Việt'});
+                serializer.serialize([{ elt:'#wrapper' , opt:{footer:"Nội dung 1"}}, { elt:'#wrapper' , opt:{footer:"Nội dung 2"}}], printer, processInfo => {
                     var percent;
                     var totalJob, done;
                     if (processInfo.state === "RENDER_DOM") {
