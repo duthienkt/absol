@@ -97,3 +97,51 @@ export var PAGE_SIZE_IN_POINT = Object.keys(PAGE_SIZE_IN_DOT).reduce((ac, key) =
     ac[key] = PAGE_SIZE_IN_DOT[key].map(d => dotToPoint(d));
     return ac;
 }, {});
+
+
+export function latLngRectFromCenter(center, distance) {
+    var lat = center.latitude;
+    var lng = center.longitude;
+    var r_earth = 6378;
+    var pi = Math.PI;
+
+    var northLat = lat + (distance / r_earth) * (180 / pi);
+    var eastLng = lng + (distance / r_earth) * (180 / pi) / Math.cos(lat * pi / 180);
+    var southLat = lat - (distance / r_earth) * (180 / pi);
+    var westLng = lng - (distance / r_earth) * (180 / pi) / Math.cos(lat * pi / 180)
+    return {
+        latitude: { min: Math.min(northLat, southLat), max: Math.max(northLat, southLat) },
+        longitude: { min: Math.min(eastLng, westLng), max: Math.max(eastLng, westLng) }
+    }
+}
+
+
+
+
+/***
+ *
+ * @param p0
+ * @param p1
+ * @returns {number}
+ */
+export function latLngDistance(p0, p1) {
+    var lat0 = p0.latitude;
+    var lat1 = p1.latitude;
+    var lng0 = p0.longitude;
+    var lng1 = p1.longitude;
+
+    var toRad = function (value) {
+        return value * Math.PI / 180;
+    };
+    var R = 6371;
+    var dLat = toRad(lat1 - lat0);
+    var dLng = toRad(lng1 - lng0);
+    lat0 = toRad(lat0);
+    lat1 = toRad(lat1);
+
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat0) * Math.cos(lat1);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d;
+}
