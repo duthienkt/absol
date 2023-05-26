@@ -130,6 +130,21 @@ export function numberToString(numb, floatFixed, decimalSeparator, thousandsSepa
     return decText + realText;
 }
 
+/***
+ *
+ * @param value
+ * @param {string=}decimalSeparator
+ */
+export function isNumber(value, decimalSeparator) {
+    decimalSeparator = decimalSeparator || '.';
+    if (typeof value === "number") return true;
+    if (typeof value !== "string") return false;
+    var thousandsSeparator = decimalSeparator === '.' ? ',' : '.';
+    value = value.split(thousandsSeparator).join('');
+    value = value.replace(decimalSeparator, '.');
+    return !!value.match(/^[+-]?\d+(\.\d+)?$/);
+}
+
 
 export function numberAutoFixed(x, eDelta) {
     eDelta = eDelta || 10;
