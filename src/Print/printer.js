@@ -25,7 +25,6 @@ export function downloadAsPDF(docList, arg2, onProcess) {
     else Object.assign(opt, arg2);
     var $ = Dom.ShareInstance.$;
     if (!(docList instanceof Array)) docList = [docList];
-    console.log(docList)
     docList = docList.map(doc => {
         if (typeof doc === "string") {
             return {
