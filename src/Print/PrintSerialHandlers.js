@@ -10,9 +10,32 @@ var _ = Dom.ShareInstance._;
 var $ = Dom.ShareInstance.$;
 var $$ = Dom.ShareInstance.$$;
 
+/***
+ *
+ * @param {AElement|HTMLElement} elt
+ * @param {string=} ps
+ * @return {*}
+ */
+export function getComputedStyleCache(elt, ps) {
+    ps = ps || '';
+    var key = '__computedStyleCache__' + ps;
+    if (elt[key]) return elt[key];
+    elt[key] = ps ? getComputedStyle(elt, ps) : getComputedStyle(elt);
+    return elt[key];
+}
+
+/***
+ *
+ * @param {AElement|HTMLElement} elt
+ * @param {string} pName
+ * @return {string}
+ */
+export function getComputedStyleValueCache(elt, pName) {
+    return getComputedStyleCache(elt).getPropertyValue(pName);
+}
 
 export function computePrintAttr(elt) {
-    var style = getComputedStyle(elt);
+    var style = getComputedStyleCache(elt);
     var fontSize = elt.getFontSize();
     var lineHeight = style.getPropertyValue('line-height');
     if (lineHeight === 'normal') lineHeight = 1.2;
@@ -129,7 +152,7 @@ PrintSerialHandlers.push({
     id: 'Border',
     match: (elt, scope, stack) => {
         if (scope.isDeclared('borderStyle')) return false;
-        var style = getComputedStyle(elt);
+        var style = getComputedStyleCache(elt);
         var borderColor = style.getPropertyValue('border-color');
         var borderStyle = style.getPropertyValue('border-style');
         var borderWidth = style.getPropertyValue('border-width');
@@ -190,7 +213,7 @@ PrintSerialHandlers.push({
         return elt.getComputedStyleValue('background-image') !== 'none';
     },
     exec: (printer, elt, scope, stack, accept) => {
-        var style = getComputedStyle(elt);
+        var style = getComputedStyleCache(elt);
         var backgroundSize = style.getPropertyValue('background-size');
         var url = style.getPropertyValue('background-image').trim()
             .replace('url("', '')
@@ -322,11 +345,27 @@ PrintSerialHandlers.push({
 
 
 PrintSerialHandlers.push({
+    id: 'BreakInside',
+    match: (elt, scope, stack) => {
+        return getComputedStyleValueCache(elt, 'break-inside') === 'avoid';
+    },
+    exec: (printer, elt, scope, stack, accept) => {
+        var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        rect.x -= printer.O.x;
+        rect.y -= printer.O.y;
+
+        printer.rect(rect, {});
+        return true;
+    }
+});
+
+
+PrintSerialHandlers.push({
     id: 'MDI_FA',
     match: (elt, scope, stack) => elt.classList && (elt.classList.contains('mdi')
         || elt.classList.contains('fab') || elt.classList.contains('far') || elt.classList.contains('fas') || elt.classList.contains('material-icons')),
     exec: (printer, elt, scope, stack, accept) => {
-        var style = elt.classList.contains('material-icons') ? getComputedStyle(elt) : getComputedStyle(elt, '::before');
+        var style = elt.classList.contains('material-icons') ? getComputedStyleCache(elt) : getComputedStyleCache(elt, '::before');
         var content = elt.classList.contains('material-icons') ? elt.innerHTML : style.getPropertyValue('content');
         content = content.replace('"', '');
         var font = style.getPropertyValue('font');
@@ -399,7 +438,7 @@ PrintSerialHandlers.push({
     },
     exec: (printer, elt, scope, stack, accept) => {
         var O = printer.O;
-        var style = getComputedStyle(elt);
+        var style = getComputedStyleCache(elt);
         var paddingLeft = parseMeasureValue(style.getPropertyValue('padding-left'));
         var paddingTop = parseMeasureValue(style.getPropertyValue('padding-top'));
         var paddingBottom = parseMeasureValue(style.getPropertyValue('padding-bottom'));
@@ -433,7 +472,7 @@ PrintSerialHandlers.push({
 
 PrintSerialHandlers.push({
     id: 'BreakPage',
-    match: elt =>elt.hasClass && elt.hasClass('as-page-break'),
+    match: elt => elt.hasClass && elt.hasClass('as-page-break'),
     exec: (printer, elt, scope, stack, accept) => {
         var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
         rect.x -= printer.O.x;
@@ -441,7 +480,6 @@ PrintSerialHandlers.push({
         printer.pageBreak(rect.A());
     }
 });
-
 
 
 PrintSerialHandlers.push({
