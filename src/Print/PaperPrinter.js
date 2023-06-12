@@ -46,7 +46,8 @@ PaperPrinter.prototype.defaultOptions = {
     margin: { top: 57, left: 57, bottom: 57, right: 57 },
     footer: null,
     header: null,
-    paddingEven: true
+    paddingEven: true,
+    lastPagePaddingEven: false
 };
 
 
@@ -372,6 +373,13 @@ PaperPrinter.prototype.flush = function () {
                         });
                     })
                 }, Promise.resolve())
+                    .then(() => {
+                        if (this.opt.lastPagePaddingEven) {
+                            while (pdfDoc.getNumberOfPages() % 2 > 0) {
+                                pdfDoc.addPage();
+                            }
+                        }
+                    })
             })
         }, Promise.resolve());
     });
@@ -379,10 +387,8 @@ PaperPrinter.prototype.flush = function () {
 };
 
 
-
-
 PaperPrinter.prototype.exportAsPDF = function () {
-    return this.flush().then(()=> this.pdfDoc);
+    return this.flush().then(() => this.pdfDoc);
 };
 
 
