@@ -29,12 +29,16 @@ function PaperPrinter(opt) {
     this.opt = Object.assign(copyJSVariable(this.defaultOptions), opt);
 
     this.objects = [];
-    this.processInfo = {};
+    this.processInfo = {
+        state: "STAND_BY"
+    };
     this.subDocs = null;
-    this.pages = null; // not computed
     this.pdfDoc = null;
     this.pageFormat = null;
-    this.sync = this.ready();
+    this.computedPages = 0;
+    this.sync = this.ready().then(() => {
+        this.processInfo.state = 'READY';
+    });
 }
 
 PaperPrinter.prototype.defaultOptions = {
@@ -234,7 +238,6 @@ PaperPrinter.prototype.boundOf = function (objectData) {
 };
 
 PaperPrinter.prototype.computeObjects = function () {
-    this.pages = [];
     var objects = this.objects.slice();
     if (!objects[0] || objects[0].type !== 'sub_document') {
         objects.unshift({
@@ -266,7 +269,7 @@ PaperPrinter.prototype.computeObjects = function () {
         });
         doc.opt = Object.assign(copyJSVariable(this.opt), newDocCmd.opt || {});
         doc.objects.unshift(newDocCmd);
-        doc.startPage = i > 0 ? this.subDocs[i - 1].startPage + this.subDocs[i - 1].pages.length : 0;
+        doc.startPage = i > 0 ? this.subDocs[i - 1].startPage + this.subDocs[i - 1].pages.length : this.computedPages;
         if (this.opt.paddingEven && doc.startPage % 2 > 0) doc.startPage++;
 
         var pageContentHeight = 1123 - doc.opt.margin.top - doc.opt.margin.bottom;
@@ -292,12 +295,14 @@ PaperPrinter.prototype.computeObjects = function () {
 
         }, [{ objects: [], y: 0 }]);
         doc.pages.forEach(page => page.objects.sort((a, b) => a.idx - b.idx));
+        this.computedPages = doc.startPage + doc.pages.length;
     });
 };
 
 
-PaperPrinter.prototype.newPDFDoc = function () {
-    this.sync = this.ready().then(() => {
+PaperPrinter.prototype.getDoc = function () {
+    this.sync = this.sync.then(() => {
+        if (this.pdfDoc) return this.pdfDoc;
         var jsPDF = jspdf.jsPDF;
         this.pdfDoc = new jsPDF({
             orientation: 'p',
@@ -317,24 +322,22 @@ PaperPrinter.prototype.newPDFDoc = function () {
     return this.sync;
 };
 
-
-PaperPrinter.prototype.exec = function () {
-    this.computeObjects();
-    var onProcess = this.onProcess;
-    var processInfo = this.processInfo;
-    processInfo.pdf = {
-        all: this.subDocs.reduce((ac, sD) => ac + sD.objects.length, 0),
-        done: 0
-    };
-    processInfo.state = 'LOAD_LIB';
-    processInfo.onProcess = () => {
-        onProcess && onProcess(processInfo);
-    };
-
-
-    return this.newPDFDoc().then(pdfDoc => {
+PaperPrinter.prototype.flush = function () {
+    this.sync = this.getDoc().then(pdfDoc => {
+        this.computeObjects();
+        var subDocs = this.subDocs;
+        this.subDocs = null;//reset
+        var onProcess = this.onProcess;
+        var processInfo = this.processInfo;
+        processInfo.pdf = {
+            all: subDocs.reduce((ac, sD) => ac + sD.objects.length, 0),
+            done: 0
+        };
+        processInfo.onProcess = () => {
+            onProcess && onProcess(processInfo);
+        };
         processInfo.state = 'RENDER_PDF';
-        return this.subDocs.reduce((sync, doc, i) => {
+        return subDocs.reduce((sync, doc, i) => {
             return sync.then(() => {
                 var startPage = doc.startPage;
                 while (pdfDoc.getNumberOfPages() <= startPage) {
@@ -370,13 +373,16 @@ PaperPrinter.prototype.exec = function () {
                     })
                 }, Promise.resolve())
             })
-        }, Promise.resolve()).then(() => pdfDoc);
+        }, Promise.resolve());
     });
+    return this.sync;
 };
 
 
-PaperPrinter.prototype.exportAsPDF = function (onProcess) {
-    return this.exec();
+
+
+PaperPrinter.prototype.exportAsPDF = function () {
+    return this.flush().then(()=> this.pdfDoc);
 };
 
 
