@@ -26,9 +26,18 @@ function loadPdf(data) {
     else return null;
 }
 
-export function mergePdfs(pdfsToMerges) {
+export function mergePdfs(pdfsToMerges, onProcess) {
+    var processInfo = {
+        all: pdfsToMerges.length,
+        loaded: 0,
+        merged: 0
+    }
     return loadVendorLib().then(() => {
-        var pdfSync = pdfsToMerges.map(it => loadPdf(it));
+        var pdfSync = pdfsToMerges.map(it => loadPdf(it).then(r => {
+            processInfo.loaded++;
+            onProcess && onProcess(processInfo);
+            return r;
+        }));
         pdfSync.push(PDFLib.PDFDocument.create());
         return Promise.all(pdfSync);
     }).then(pdfs => {
@@ -39,6 +48,8 @@ export function mergePdfs(pdfsToMerges) {
                     copiedPages.forEach((page) => {
                         mergedPdf.addPage(page);
                     });
+                    processInfo.merged++;
+                    onProcess && onProcess(processInfo);
                 });
         }, Promise.resolve()).then(() => mergedPdf);
     }).then(mergedPdf => mergedPdf)
