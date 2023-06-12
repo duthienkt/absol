@@ -59,10 +59,11 @@ export function downloadAsPDF(docList, arg2, onProcess) {
     });
 
     var serializer = ShareSerializer;
+    opt.onProcess = (typeof onProcess === "function") ? onProcess : (function (){});
 
     var printer = new PaperPrinter(opt);
-    return serializer.serialize(docList, printer, onProcess)
-        .then(printer => printer.exportAsPDF(onProcess))
+    return serializer.serialize(docList, printer, opt.onProcess)
+        .then(printer => printer.exportAsPDF())
         .then(doc => {
             saveAs(doc.output('blob'), opt.fileName);
         });
