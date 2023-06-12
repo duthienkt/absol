@@ -302,7 +302,8 @@ PaperPrinter.prototype.computeObjects = function () {
 
 
 PaperPrinter.prototype.getDoc = function () {
-    this.sync = this.sync.then(() => {
+    if  (this.docSync)  return this.docSync;
+    this.docSync =  this.sync.then(() => {
         if (this.pdfDoc) return this.pdfDoc;
         var jsPDF = jspdf.jsPDF;
         this.pdfDoc = new jsPDF({
@@ -320,7 +321,8 @@ PaperPrinter.prototype.getDoc = function () {
         });
         return this.pdfDoc;
     });
-    return this.sync;
+    this.sync = this.docSync;
+    return this.docSync;
 };
 
 PaperPrinter.prototype.flush = function () {
