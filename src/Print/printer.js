@@ -47,7 +47,7 @@ export function downloadAsPDF(docList, arg2, onProcess) {
         if (elt.fmComponent) {
             if (!doc.opt) doc.opt = {};
             if (!doc.opt.margin) {
-                opt.margin = {
+                doc.opt.margin = {
                     top: elt.fmComponent.style.paddingTop || 57,
                     left: elt.fmComponent.style.paddingLeft || 57,
                     bottom: elt.fmComponent.style.paddingBottom || 57,
