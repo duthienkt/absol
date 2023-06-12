@@ -4,6 +4,7 @@ import PaperPrinter from "./PaperPrinter";
 import { saveAs } from "../Network/FileSaver";
 
 export var ShareSerializer = new PrintSerializer();
+export { mergePdfs }  from "./pdf";
 
 /***
  *
@@ -19,7 +20,7 @@ export var ShareSerializer = new PrintSerializer();
  */
 export function downloadAsPDF(docList, arg2, onProcess) {
     var opt = {
-        fileName: 'exports.pdf'
+        fileName: 'exports.pdf.js'
     };
     if (typeof arg2 === 'string') opt.fileName = arg2;
     else Object.assign(opt, arg2);

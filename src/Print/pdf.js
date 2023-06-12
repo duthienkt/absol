@@ -1,7 +1,7 @@
 import { loadScript } from "../Network/XLoader";
 
 // var pdLibUrl = 'https://unpkg.com/pdf-lib/dist/pdf-lib.js';
-var pdLibUrl = 'https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js';
+var pdLibUrl = 'https://absol.cf/vendor/pdf-lib.js';
 
 var libSync = null;
 
@@ -21,7 +21,7 @@ function loadPdf(data) {
         return fetch(data).then(res => res.arrayBuffer()).then(buff => loadPdf(buff));
     }
     else if (data instanceof ArrayBuffer) {
-        return PDFLib.PDFDocument.create(data);
+        return PDFLib.PDFDocument.load(data);
     }
     else return null;
 }
