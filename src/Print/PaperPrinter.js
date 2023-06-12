@@ -327,7 +327,7 @@ PaperPrinter.prototype.flush = function () {
         this.computeObjects();
         var subDocs = this.subDocs;
         this.subDocs = null;//reset
-        var onProcess = this.onProcess;
+        var onProcess = this.opt.onProcess;
         var processInfo = this.processInfo;
         processInfo.pdf = {
             all: subDocs.reduce((ac, sD) => ac + sD.objects.length, 0),
