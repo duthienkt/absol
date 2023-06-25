@@ -72,4 +72,18 @@ export function isImageURLAllowCrossOrigin(url) {
     });
 }
 
+var blobCache = {};
+
+/***
+ *
+ * @param {string} url
+ * @param {boolean=}noCache
+ * @return {*}
+ */
+export function loadToBlobURL(url, noCache) {
+    if (blobCache[url]) return blobCache[url];
+    blobCache[url] = fetch(url).then(res=> res.blob()).then(blob=> URL.createObjectURL(blob));
+    return blobCache[url];
+}
+
 export default XLoader;

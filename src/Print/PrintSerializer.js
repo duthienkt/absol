@@ -2,7 +2,7 @@ import VarScope from "../AppPattern/VarScope";
 import Dom, { depthClone, isDomNode, waitImageLoaded } from "../HTML5/Dom";
 import Rectangle from "../Math/Rectangle";
 import PrintSerialHandlers from "./PrintSerialHandlers";
-import { isImageURLAllowCrossOrigin } from "../Network/XLoader";
+import { cacheLoadToBlobURL, isImageURLAllowCrossOrigin, loadToBlobURL } from "../Network/XLoader";
 import noop from "../Code/noop";
 
 
@@ -141,15 +141,17 @@ PrintSerializer.prototype.serialize = function (docList, printer, onProcess) {
                         newElt = copyElt.cloneNode();
                         newElt.__idx__ = copyElt.__idx__;
                         newElt.__origin__ = copyElt.__origin__;
-                        newElt.src = 'https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src);
+                        ;
                         copyElt.parentElement.replaceChild(newElt, copyElt);
-                        return waitImageLoaded(newElt, 10000).then(() => {
-                            if (!done) {
-                                processInfo.dom.image++;
-                                processInfo.onProcess();
-                                done = true;
-                            }
-                        });
+                        return loadToBlobURL('https://absol.cf/crossdownload.php?file=' + encodeURIComponent(originElt.src)).then(url => newElt.src = url)
+                            .then(() => waitImageLoaded(newElt, 10000))
+                            .then(() => {
+                                if (!done) {
+                                    processInfo.dom.image++;
+                                    processInfo.onProcess();
+                                    done = true;
+                                }
+                            });
                     }
                     else {
                         return waitImageLoaded(copyElt, 10000).then(() => {
