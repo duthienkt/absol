@@ -51,28 +51,54 @@
         }
     }
 foo(1,2 ,3);`;
+    code = `function convert_checkins_to_logs(employeesIdList: linktype -48, timestart: Date, timeend: Date) {
+    var worktime_checkinsCall;
+    var shiftsCall;
+    var assign_employee_shiftsCall;
+    var loadDataSync;
+    var shifts;
+    var worktime_checkins;
+    var assign_employee_shifts;
+    shiftsCall = sys.data.shifts.read();
+    worktime_checkinsCall = sys.data.worktime_checkins.read(employeesIdList, timestart, timeend);
+    assign_employee_shiftsCall = sys.data.assign_employee_shifts.read(employeesIdList, timestart, timeend);
+    loadDataSync = new Array();
+    loadDataSync.push(shiftsCall, worktime_checkinsCall, assign_employee_shiftsCall);
+    libs.waitForResults(loadDataSync);
+    shifts = shiftsCall.content;
+    worktime_checkins = worktime_checkinsCall.content;
+    assign_employee_shifts = assign_employee_shiftsCall.content;
+    print(shifts, worktime_checkins, assign_employee_shifts);
+}`;
     /*for x of fa(arr) {
     print(x);
     }*/
-    var ins = absol.sclang.SCParser.parse(code, 'program');
-    // console.log(ins)
-    if (ins.error) {
-        console.log(ins)
-    }
-    var previewCode = absol.sclang.generateSCHighlightPreviewCode(ins.ast);
-
-    absol._({
-        props: {
-            innerHTML: previewCode
+    function test(){
+        var startTime = Date.now();
+        var ins = absol.sclang.SCParser.parse(code, 'program');
+        var parseTime = Date.now() - startTime;
+        console.log('parse time =', parseTime);
+        // console.log(ins)
+        if (ins.error) {
+            console.log(ins)
         }
-    }).addTo(document.body);
-    // console.log(previewCode)
-    var program = new absol.sclang.SCProgramInstance(ins.ast, {
-        fa: Promise.resolve.bind(Promise),
-        console: console,
-        print: console.log.bind(console)
-    });
-    program.exec();
+        var previewCode = absol.sclang.generateSCHighlightPreviewCode(ins.ast);
+
+        absol._({
+            props: {
+                innerHTML: previewCode
+            }
+        }).addTo(document.body);
+        // // console.log(previewCode)
+        // var program = new absol.sclang.SCProgramInstance(ins.ast, {
+        //     fa: Promise.resolve.bind(Promise),
+        //     console: console,
+        //     print: console.log.bind(console)
+        // });
+        // program.exec();
+    }
+    setTimeout(test,500);
+
 </script>
 </body>
 </html>
