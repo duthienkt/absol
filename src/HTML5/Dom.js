@@ -274,10 +274,13 @@ Dom.prototype._ = function (option, isInherited) {
     option.style && res.addStyle(option.style);
     option.id && res.attr('id', option.id);
     if (!isInherited) res.init(option.props);
-    if (option.child) {
-        option.child = option.child instanceof Array ? option.child : [option.child];
-        for (var i = 0; i < option.child.length; ++i) {
-            res.addChild(this._(option.child[i], false, true));
+    var children = option.child;
+    if (children) {
+        if (!children.forEach || !children.map) {
+            children = [children];
+        }
+        for (var i = 0; i < children.length; ++i) {
+            res.addChild(this._(children[i], false));
         }
     }
     return res;
