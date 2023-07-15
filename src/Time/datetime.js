@@ -471,6 +471,7 @@ export function addDate(date, delta, gmt) {
     return beginOfDay(res, gmt);
 }
 
+
 /**
  * @param {Date} date
  * @param {boolean=} gmt
@@ -817,6 +818,37 @@ export function addMonth(date, delta, gmt) {
     }
     return beginOfDay(res, gmt);
 }
+
+/**
+ *
+ * @param {Date} date
+ * @param {number} delta
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
+export function addMonthKeepDate(date, delta, gmt) {
+    var res = addMonth(date, delta, gmt);
+    var dateNum = gmt ? date.getUTCDate() : date.getDate();
+    var dim = daysInMonth(gmt ? date.getUTCFullYear() : date.getFullYear(), gmt ? date.getUTCFullYear() : date.getFullYear());
+    dateNum = Math.min(dateNum, dim);
+    res = addDate(res, dateNum - 1, gmt);
+    return res;
+}
+
+/**
+ *
+ * @param {Date} date
+ * @param {number} delta
+ * @param {boolean=} gmt
+ * @returns {Date}
+ */
+export function addMonthKeepDateTime(date, delta, gmt) {
+    var dayOffset = date.getTime() - beginOfDay(date, gmt).getTime();
+    var res = addMonthKeepDate(date, delta, gmt);
+    res = new Date(res.getTime() + dayOffset);
+    return res;
+}
+
 
 /**
  *
