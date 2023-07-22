@@ -88,7 +88,7 @@ Context.prototype.pause = function () {
 };
 Context.prototype.resume = function () {
     if (!this.state.match(/STANDBY|PAUSE|RUNNING/)) {
-        console.warn(this, 'NOT READY!', this.state);
+        // console.warn(this, 'NOT READY!', this.state);
         return;
     }
     if (this.state === "RUNNING") return;
@@ -101,7 +101,7 @@ Context.prototype.resume = function () {
  */
 Context.prototype.start = function (standBy) {
     if (this.state.match(/DIE/)) {
-        console.warn(this, 'DIED!');
+        // console.warn(this, 'DIED!');
         return;
     }
 
