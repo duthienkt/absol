@@ -41,7 +41,6 @@ function DPParseInstance(parser, source, target) {
     this.parser = parser;
     this.targets = parser.targets;
     this.rules = parser.rules;
-    console.log(this.rules.filter(x => x.target === 'array_item_list'))
     this.tokenTypes = parser.tokenizer.types;
     this.error = null;
     this.source = source;
