@@ -4,6 +4,7 @@ import Rectangle from "../Math/Rectangle";
 import PrintSerialHandlers from "./PrintSerialHandlers";
 import { cacheLoadToBlobURL, isImageURLAllowCrossOrigin, loadToBlobURL } from "../Network/XLoader";
 import noop from "../Code/noop";
+import { randomIdent } from "../String/stringGenerate";
 
 
 /***
@@ -173,7 +174,13 @@ PrintSerializer.prototype.serialize = function (docList, printer, onProcess) {
                 }));
             }
             else if (originElt.tagName === 'INPUT') {
-                copyElt.value = originElt.value;
+                if (originElt.getAttribute('type') === 'text' || !originElt.getAttribute('type') || originElt.getAttribute('type') === 'number') {
+                    copyElt.value = originElt.value;
+                }
+                else if (originElt.getAttribute('type') === 'radio') {
+                    copyElt.setAttribute('name', (copyElt.getAttribute('name') || randomIdent()) + '_for_print');
+                    copyElt.checked = originElt.checked;
+                }
             }
         });
     });
