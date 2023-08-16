@@ -10,7 +10,7 @@ import DPParseInstance from "./DPParseInstance";
 
 /***
  *
- * @param opt
+ * @param {{rules?:Array, elementRegexes?:Array}}opt
  * @constructor
  */
 function DPParser(opt) {
