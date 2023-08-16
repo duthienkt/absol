@@ -1108,6 +1108,6 @@ export function formatTimeRange24(range, opt) {
     m1 = m1 % 60;
     h1 = h1 % 24;
     var res = h0 + ':' + integerZeroPadding(m0, 2) + ' - ' + h1 + ':' + integerZeroPadding(m1, 2);
-    if (d0 !== d1) res += '(' + opt.nextDayText + ')';
+    if (d0 !== d1) res += ' (' + opt.nextDayText + ')';
     return res;
 }
