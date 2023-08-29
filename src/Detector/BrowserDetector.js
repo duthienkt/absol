@@ -4,28 +4,29 @@ import BrowserRules from './BrowserRules';
 /**
  *
  * @param {BrowserRules} rulesheet
+ * @param {string=} userAgent
  */
-function BrowserDetector(rulesheet) {
-    this.au = global.navigator ? (navigator.userAgent || '') : '';
+function BrowserDetector(rulesheet, userAgent) {
+    this.au = userAgent || (global.navigator ? (navigator.userAgent || '') : '');
     this.rulesheet = rulesheet;
     this.os = this.detectByRules(this.rulesheet.os);
     this.device = this.detectByRules(this.rulesheet.device);
     this.engine = this.detectByRules(this.rulesheet.engine);
     this.browser = this.detectByRules(this.rulesheet.browser);
 
-    this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    this.isCococ = navigator.userAgent.toLowerCase().indexOf('coc_coc_browser') >= 1;
-    this.isSafari = !this.isCococ && navigator.userAgent.toLowerCase().indexOf('safari') > -1
-        && navigator.userAgent.toLowerCase().indexOf('win') < 0
-        && navigator.userAgent.toLowerCase().indexOf('android') < 0;
+    this.isFirefox = this.au.toLowerCase().indexOf('firefox') > -1;
+    this.isCococ = this.au.toLowerCase().indexOf('coc_coc_browser') >= 1;
+    this.isSafari = !this.isCococ && this.au.toLowerCase().indexOf('safari') > -1
+        && this.au.toLowerCase().indexOf('win') < 0
+        && this.au.toLowerCase().indexOf('android') < 0;
     // this.isSafari = /constructor/i.test(window.HTMLElement) || window.safari;
-    this.isMobile = navigator.userAgent.indexOf('KFFOWI') > -1 || navigator.userAgent.toLowerCase().indexOf('mobile') > -1;
+    this.isMobile = this.au.indexOf('KFFOWI') > -1 || this.au.toLowerCase().indexOf('mobile') > -1
+        || this.browser.type === 'iphone';
     this.isMacOSWebView = /Macintosh/.test(this.au) && /AppWebkit/.test(this.au) && !/Safari/.test(this.au);
     this.isChromeIOS = /CriOS\/[\d]+/.test(this.au);
-    this.hasTouch = 'ontouchstart' in window ||
-        window.DocumentTouch && document instanceof window.DocumentTouch ||
-        navigator.maxTouchPoints > 0 ||
-        window.navigator.msMaxTouchPoints > 0;
+    this.hasTouch = 'ontouchstart' in global ||
+        global.DocumentTouch && document instanceof global.DocumentTouch ||
+        (global.navigator && (navigator.maxTouchPoints > 0 || global.navigator.msMaxTouchPoints > 0));
     this.isTouchDevice = this.isMobile && this.hasTouch;
     this.supportPassiveEvent = (function () {
         var supportsPassiveOption = false;
@@ -35,13 +36,13 @@ function BrowserDetector(rulesheet) {
                     supportsPassiveOption = true;
                 }
             });
-            window.addEventListener('test', null, opts);
-            window.removeEventListener('test', null, opts);
+            global.addEventListener('test', null, opts);
+            global.removeEventListener('test', null, opts);
         } catch (e) {
         }
         return supportsPassiveOption;
     })();
-    this.supportGridLayout = typeof document.createElement('div').style.grid === 'string';
+    this.supportGridLayout =global.document && ( typeof document.createElement('div').style.grid === 'string');
 
     Object.defineProperty(this, 'zoom', {
         get: function () {
@@ -67,7 +68,7 @@ BrowserDetector.prototype.detectByRules = function (rules) {
             if (matched) {
                 result.type = type;
                 if (matched[1]) {
-                    result.version = matched[1];
+                    result.version = matched[1].replace(/_/g, '.');
                 }
                 break;
             }
@@ -85,26 +86,26 @@ BrowserDetector.prototype.detectByRules = function (rules) {
 BrowserDetector.prototype.getZoom = function () {
     //todo: wrong on chrome
     var type;
-    if ('chrome' in window) {
+    if ('chrome' in global) {
         type = "chrome";
     }
     else if (this.isSafari) {
         type = 'safari';
     }
-    else if ('orientation' in window && 'webkitRequestAnimationFrame' in window){
+    else if ('orientation' in global && 'webkitRequestAnimationFrame' in global) {
         type = 'webkitMobile';
     }
-    else if ('webkitRequestAnimationFrame' in window){
+    else if ('webkitRequestAnimationFrame' in global) {
         type = 'webkit';
     }
 
     switch (type) {
         case 'chrome':
-            return Math.round(((window.outerWidth) / window.innerWidth) * 100) / 100;
+            return Math.round(((global.outerWidth) / global.innerWidth) * 100) / 100;
         case 'safari':
-            return Math.round(((document.documentElement.clientWidth) / window.innerWidth) * 100) / 100;
+            return Math.round(((document.documentElement.clientWidth) / global.innerWidth) * 100) / 100;
         case 'webkitMobile':
-            return ((Math.abs(window.orientation) == 90) ? screen.height : screen.width) / window.innerWidth;
+            return ((Math.abs(global.orientation) == 90) ? screen.height : screen.width) / global.innerWidth;
         case 'webkit':
             return (() => {
                 var important = (str) => {

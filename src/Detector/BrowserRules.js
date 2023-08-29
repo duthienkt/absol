@@ -131,7 +131,9 @@ const OS = [
     }],
     ["chromeos", /\bcros i686 ([0-9.]+)/],
     ["linux", "linux"],
+    ["linux", /\blinux\s(?:[xi][0-9_]+;)\srv:([0-9.]+)/],//Linux x86_64; rv:34.0
     ["windowsce", /\bwindows ce(?: ([0-9.]+))?/],
+    ["cros", /\bcros armv7l ([0-9.]+)/],//CrOS armv7l 7077.134.0
     ["symbian", /\bsymbian(?:os)?\/([0-9.]+)/],
     ["blackberry", function (ua) {
         const m = ua.match(re_blackberry_10) ||
@@ -287,7 +289,7 @@ const BROWSER = [
     }],
     ["safari", /\bversion\/([0-9.]+(?: beta)?)(?: mobile(?:\/[a-z0-9]+)?)? safari\//],
     //  Safari， WebView
-    ["webview", /\bcpu(?: iphone)? os (?:[0-9._]+).+\bapplewebkit\b/],
+    ["webview", /\bcpu(?: iphone)? os (?:[0-9._]+).+\bapplewebkit\/([0-9.]+)\b/],
     ["firefox", /\bfirefox\/([0-9.ab]+)/],
     ["nokia", /\bnokiabrowser\/([0-9.]+)/]
 ];
