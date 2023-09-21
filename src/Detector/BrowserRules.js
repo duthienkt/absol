@@ -290,6 +290,7 @@ const BROWSER = [
     ["safari", /\bversion\/([0-9.]+(?: beta)?)(?: mobile(?:\/[a-z0-9]+)?)? safari\//],
     //  Safari， WebView
     ["webview", /\bcpu(?: iphone)? os (?:[0-9._]+).+\bapplewebkit\/([0-9.]+)\b/],
+    ["webview", /os x (?:[0-9._]+).+\bapplewebkit\/([0-9.]+)\b/],
     ["firefox", /\bfirefox\/([0-9.ab]+)/],
     ["nokia", /\bnokiabrowser\/([0-9.]+)/]
 ];

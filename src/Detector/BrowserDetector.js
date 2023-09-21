@@ -3,7 +3,7 @@ import BrowserRules from './BrowserRules';
 
 /**
  *
- * @param {BrowserRules} rulesheet
+ * @param  rulesheet
  * @param {string=} userAgent
  */
 function BrowserDetector(rulesheet, userAgent) {
@@ -16,12 +16,12 @@ function BrowserDetector(rulesheet, userAgent) {
 
     this.isFirefox = this.au.toLowerCase().indexOf('firefox') > -1;
     this.isCococ = this.au.toLowerCase().indexOf('coc_coc_browser') >= 1;
-    this.isSafari = !this.isCococ && this.au.toLowerCase().indexOf('safari') > -1
+    this.isSafari = this.browser.type === 'safari' || (!this.isCococ && this.au.toLowerCase().indexOf('safari') > -1
         && this.au.toLowerCase().indexOf('win') < 0
-        && this.au.toLowerCase().indexOf('android') < 0;
+        && this.au.toLowerCase().indexOf('android') < 0);
     // this.isSafari = /constructor/i.test(window.HTMLElement) || window.safari;
     this.isMobile = this.au.indexOf('KFFOWI') > -1 || this.au.toLowerCase().indexOf('mobile') > -1
-        || this.browser.type === 'iphone';
+        || this.device.type === 'iphone'||  this.device.type === 'ipad';
     this.isMacOSWebView = /Macintosh/.test(this.au) && /AppWebkit/.test(this.au) && !/Safari/.test(this.au);
     this.isChromeIOS = /CriOS\/[\d]+/.test(this.au);
     this.hasTouch = 'ontouchstart' in global ||
@@ -42,7 +42,7 @@ function BrowserDetector(rulesheet, userAgent) {
         }
         return supportsPassiveOption;
     })();
-    this.supportGridLayout =global.document && ( typeof document.createElement('div').style.grid === 'string');
+    this.supportGridLayout = global.document && (typeof document.createElement('div').style.grid === 'string');
 
     Object.defineProperty(this, 'zoom', {
         get: function () {
@@ -79,6 +79,8 @@ BrowserDetector.prototype.detectByRules = function (rules) {
             }
         }
     }
+    result.type = result.type || 'unknow';
+    result.version = result.version || '0';
     return result;
 };
 
