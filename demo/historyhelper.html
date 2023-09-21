@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HistoryHelper</title>
+</head>
+<body>
+<script src="../src/Network/HistoryHelper.js"></script>
+<button onclick="test()">TEST</button>
+<script>
+    var count = 0;
+    function test(){
+        var id = ++count;
+        HistoryHelper.setNewLink('?count='+id, function (bundle) {
+            console.log(id);
+        }, {id: id});
+    }
+</script>
+</body>
+</html>

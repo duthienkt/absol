@@ -9,17 +9,17 @@ HistoryHelper._id = 1;
  * current state info(exculde hock without url)
  * @type {{id: number, callback: function, bundle: any}}
  */
-Object.defineProperty(HistoryHelper, 'current', {
-    get: function () {
-        var holder;
-        for (var i = HistoryHelper._stack.length - 1; i >= 0; --i) {
-            holder = HistoryHelper._stack[i];
-            if (!holder.preventBack)
-                return holder;
-        }
-        return null;
-    }
-})
+// Object.defineProperty(HistoryHelper, 'current', {
+//     get: function () {
+//         var holder;
+//         for (var i = HistoryHelper._stack.length - 1; i >= 0; --i) {
+//             holder = HistoryHelper._stack[i];
+//             if (!holder.preventBack)
+//                 return holder;
+//         }
+//         return null;
+//     }
+// })
 
 HistoryHelper._onpopstate = function (event) {
     var state = event.state;
@@ -36,9 +36,9 @@ HistoryHelper._onpopstate = function (event) {
             HistoryHelper.current = HistoryHelper._stack[idx];
         }
         else {
-            // setTimeout(function (){
+            setTimeout(function (){
             window.history.back();
-            // }, 10);
+            }, 10);
         }
 
         return;
