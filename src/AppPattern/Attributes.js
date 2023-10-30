@@ -6,7 +6,7 @@
 import Ref from './Ref';
 
 /***
- * @typedef {{get?:function, set?: function, descriptor?: Object|function, export?: function}} AttributeHandler
+ * @typedef {{defined?:function,revoked?:function,get?:function, set?: function, descriptor?: Object|function, export?: function}} AttributeHandler
  */
 
 
@@ -59,6 +59,38 @@ Object.defineProperty(Attributes.prototype, 'loadAttributeHandlers', {
     }
 });
 
+
+Object.defineProperty(Attributes.prototype, 'unloadAttributeHandlers', {
+    enumerable: false,
+    configurable: true,
+    writable: false,
+    value: function (oldHandlers) {
+        var self = this;
+        Object.keys(oldHandlers).forEach(function (key) {
+            self.revokeProperty(key, oldHandlers[key]);
+        });
+    }
+});
+
+
+Object.defineProperty(Attributes.prototype, 'revokeProperty', {
+    enumerable: false,
+    configurable: true,
+    writable: false,
+    value: function (name, handler) {
+        if (!this._definedProperties[name]) return;
+        if (handler && this._definedProperties[name] !== handler) return;//verify
+        if (handler.revoked) {
+            handler.revoked.call(this, this._definedComputedHandlers[name].ref);
+        }
+        var value = this[name];
+        delete this[name];
+        this[name] = value;
+        delete this._definedProperties[name];
+    }
+});
+
+
 Object.defineProperty(Attributes.prototype, 'defineProperty', {
     enumerable: false,
     configurable: true,
@@ -87,6 +119,9 @@ Object.defineProperty(Attributes.prototype, 'defineProperty', {
         Object.defineProperty(this, name, objectDescriptor);
         this._definedComputedHandlers[name] = objectDescriptor;
         objectDescriptor.ref = privateValueRef;
+        if (handler.defined) {
+            handler.defined.call(this, privateValueRef);
+        }
         if (hadValue) this[name] = privateValueRef.get();
     }
 });
@@ -150,9 +185,9 @@ Object.defineProperty(Attributes.prototype, 'getPropertyDescriptor', {
     writable: false,
     value: function (name) {
         var handler = this._definedProperties[name];
-        if (handler && (typeof handler.descriptor === "function")) return handler.descriptor.call(this.$$node);
+        if (handler && (typeof handler.descriptor === 'function')) return handler.descriptor.call(this.$$node);
         var value = this[name];
-        return (handler && handler.descriptor) || { type: typeof value };
+        return (handler && handler.descriptor) || { type: typeof value }
     }
 });
 
