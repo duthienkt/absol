@@ -37,17 +37,21 @@ ResizeSystem.prototype.goDownAndCache = function (elt) {
 };
 
 ResizeSystem.prototype.notifyToElt = function (elt) {
-    if (typeof elt.requestUpdateSize == 'function') {
-        elt.requestUpdateSize();
-        return true;
-    }
-    else if (typeof elt.updateSize == 'function') {
-        elt.updateSize();
-        return true;
-    }
-    else if (typeof elt.onresize == 'function') {
-        elt.onresize();
-        return true;
+    try {
+        if (typeof elt.requestUpdateSize == 'function') {
+            elt.requestUpdateSize();
+            return true;
+        }
+        else if (typeof elt.updateSize == 'function') {
+            elt.updateSize();
+            return true;
+        }
+        else if (typeof elt.onresize == 'function') {
+            elt.onresize();
+            return true;
+        }
+    } catch (err) {
+        console.error(err);
     }
 };
 
@@ -94,19 +98,7 @@ ResizeSystem.prototype.removeTrash = function () {
 ResizeSystem.prototype.updateUp = function (fromElt, toRoot) {
     var found = false;
     while (fromElt && (!found || toRoot)) {
-        if (typeof fromElt.requestUpdateSize == 'function') {
-            fromElt.requestUpdateSize();
-            found = true;
-        }
-        else if (typeof fromElt.updateSize == 'function') {
-            fromElt.updateSize();
-            found = true;
-
-        }
-        else if (typeof fromElt.onresize == 'function') {
-            fromElt.onresize();
-            found = true;
-        }
+        found = this.notifyToElt(fromElt);
         fromElt = fromElt.parentElement;
     }
     return found;
