@@ -41,19 +41,19 @@ AttachHook.render = function (data, domInstance) {
 
 AttachHook.prototype.waitAttaching = function () {
     var self = this;
-    if (BrowserDetector.browser.type.startsWith('chrome') && parseInt((BrowserDetector.browser.version || '').split('.').shift()) >= 113) {
-        if (this.waitTimeout > 0) clearTimeout(this.waitTimeout);
-        this.waitTimeout = setTimeout(function wait() {
-            self.waitTimeout = -1;
-            if (!self._attached && self.isDescendantOf(document.body)) {
-                self._attached = true;
-                self.emit('attached', { target: this }, self);
-            }
-            else if (!self._attached) {
-                self.waitTimeout = setTimeout(wait, 10);
-            }
-        }, 0);
-    }
+    // if (BrowserDetector.browser.type.startsWith('chrome') && parseInt((BrowserDetector.browser.version || '').split('.').shift()) >= 113) {
+    if (this.waitTimeout > 0) clearTimeout(this.waitTimeout);
+    this.waitTimeout = setTimeout(function wait() {
+        self.waitTimeout = -1;
+        if (!self._attached && self.isDescendantOf(document.body)) {
+            self._attached = true;
+            self.emit('attached', { target: this }, self);
+        }
+        else if (!self._attached ) {
+            self.waitTimeout = setTimeout(wait, 10);
+        }
+    }, 0);
+    // }
 };
 
 AttachHook.prototype.resetState = function () {
