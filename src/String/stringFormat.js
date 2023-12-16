@@ -243,7 +243,6 @@ export function kebabCaseToUnderScore(s) {
 }
 
 
-
 /**
  *
  * @param {String} s
@@ -294,6 +293,50 @@ export function normalizeIdent(text, opt) {
         res = '$' + res;
     }
     return res;
+}
+
+
+export function breakTextToLineByLength(text, limitLength) {
+    var lines = text.split(/\n/);
+    var newLines = [];
+
+    var breakLine = line => {
+        var testLine = nonAccentVietnamese(line).toLowerCase();
+        var wordRgx = /([a-z0-9,.]+)|([^\sa-z0-9,.])/g;
+        var poss = [];
+        var matched = wordRgx.exec(testLine);
+        while (matched) {
+            poss.push(matched.index);
+            matched = wordRgx.exec(testLine);
+        }
+        if (poss[0] !== 0) poss.unshift(0);
+        poss.push(testLine.length);
+        var start = poss[0] || 0;
+        var end;
+        var newLine;
+        var chars;
+        for (var i = 1; i < poss.length; ++i) {
+            end = poss[i];
+            if (end - start >= limitLength || i + 1 === poss.length) {
+                newLine = line.substring(start, end).trimEnd();
+                if (newLine.length > limitLength) {
+                    chars = newLine.split('');
+                    while (chars.length > 0) {
+                        newLine = chars.splice(0, limitLength).join('');
+                        newLines.push(newLine);
+                    }
+                }
+                else {
+                    newLines.push(newLine);
+                }
+                start = end;
+            }
+        }
+    };
+
+    lines.forEach(line => breakLine(line));
+
+    return newLines.join('\n');
 }
 
 String.nonAccentVietnamese = nonAccentVietnamese;
