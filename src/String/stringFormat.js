@@ -297,12 +297,13 @@ export function normalizeIdent(text, opt) {
 
 
 export function breakTextToLineByLength(text, limitLength) {
+    limitLength = limitLength || 256;
     var lines = text.split(/\n/);
     var newLines = [];
 
     var breakLine = line => {
         var testLine = nonAccentVietnamese(line).toLowerCase();
-        var wordRgx = /([a-z0-9,.]+)|([^\sa-z0-9,.])/g;
+        var wordRgx = /(\(?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)\)?)|([()_a-z0-9,.]+)|([^\sa-z0-9,._()])/g;
         var poss = [];
         var matched = wordRgx.exec(testLine);
         while (matched) {
@@ -311,14 +312,15 @@ export function breakTextToLineByLength(text, limitLength) {
         }
         if (poss[0] !== 0) poss.unshift(0);
         poss.push(testLine.length);
+        poss.push(testLine.length);
         var start = poss[0] || 0;
-        var end;
+        var end, pend = start;
         var newLine;
         var chars;
         for (var i = 1; i < poss.length; ++i) {
             end = poss[i];
-            if (end - start >= limitLength || i + 1 === poss.length) {
-                newLine = line.substring(start, end).trimEnd();
+            if (end - start > limitLength || i+1 === poss.length) {
+                newLine = line.substring(start, pend).trimEnd();
                 if (newLine.length > limitLength) {
                     chars = newLine.split('');
                     while (chars.length > 0) {
@@ -326,11 +328,12 @@ export function breakTextToLineByLength(text, limitLength) {
                         newLines.push(newLine);
                     }
                 }
-                else {
+                else  if (newLine.length >0){
                     newLines.push(newLine);
                 }
-                start = end;
+                start = pend;
             }
+            pend = end;
         }
     };
 
@@ -338,6 +341,9 @@ export function breakTextToLineByLength(text, limitLength) {
 
     return newLines.join('\n');
 }
+
+// window.t = `Sử dụng công thức tính: (Luong_Gio  OT150  0.5) + (Luong_Gio  OT200  1.0) + (Luong_Gio  OT210  1.1) + (Luong_Gio  OT270  1.7) + (Luong_Gio  OT300  2.0)`;
+// console.log(breakTextToLineByLength(t, 50))
 
 String.nonAccentVietnamese = nonAccentVietnamese;
 
