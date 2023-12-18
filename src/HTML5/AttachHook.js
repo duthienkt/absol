@@ -1,4 +1,3 @@
-import BrowserDetector from "../Detector/BrowserDetector";
 
 /***
  * @extends AElement
