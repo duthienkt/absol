@@ -26,6 +26,7 @@ import AttachHook from "./AttachHook";
  * @property {CSSStyleDeclaration} style
  * @property {Array | string} extendEvent
  * @property {Array | string} class
+ * @property {Object} data
  * @property {AElementAttributeDescriptor|AElementNSAttributeDescriptor} attr
  * @property {string|AElement | AElementNS | AbsolConstructDescriptor | string[] |AElement[] | AElementNS[] | AbsolConstructDescriptor[]} child
  * @property {string} text to create a TextNode, not Element
@@ -226,10 +227,10 @@ Dom.prototype._ = function (option, isInherited) {
         if (!res) {
             if (creator) {
                 if (creator.render) {
-                    res = creator.render(option.data, this);
+                    res = creator.render(option.data, option,this);
                 }
                 else {
-                    res = creator(option.data, this);
+                    res = creator(option.data,option ,this);
                 }
 
             }
