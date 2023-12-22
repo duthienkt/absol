@@ -169,3 +169,15 @@ export function NOT_EQUAL(a, b) {
 
 SCOperatorExecutor.addBinaryOperator('!=', NOT_EQUAL);
 
+export function AND(a, b) {
+    return a && b;
+}
+
+SCOperatorExecutor.addBinaryOperator('&&', AND);
+
+export function OR(a, b) {
+    return a || b;
+}
+
+SCOperatorExecutor.addBinaryOperator('||', OR);
+
