@@ -14,7 +14,7 @@ export function AttachHook() {
     this.waitAttaching();
 }
 
-AttachHook.render = function (data, domInstance) {
+AttachHook.render = function (data, option,domInstance) {
     var attributes = {};
     var tag;
     if (domInstance.defaultTag === 'div') {
