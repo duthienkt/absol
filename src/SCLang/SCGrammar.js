@@ -1,7 +1,6 @@
 import { parsedNodeToAST, parsedNodeToASTChain } from "../Pharse/DPParseInstance";
 
 
-
 /*********************************
  * EXPRESSION
  */
@@ -33,7 +32,7 @@ var elementRegexes = [
     ['number', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
     ['word', /[_a-zA-Z][_a-zA-Z0-9]*/],
     ['skip', /([\s\r\n]+)|(\/\/[^\n]*)|(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)/],
-    ['dsymbol', /\+\+|--|==|!=|<=|>=/],
+    ['dsymbol', /\+\+|--|==|!=|<=|>=|\|\||&&/],
     ['tsymbol', /\.\.\./],
     ['symbol', /[^\s_a-zA-Z0-9]/],
 ];
@@ -78,7 +77,7 @@ rules.push({
 rules.push({
     target: 'args_list',
     elements: ['args_list', '_,', 'exp'],
-    longestOnly:true,
+    longestOnly: true,
     ident: 'args_list_rec',
     toASTChain: function (parsedNode) {
         return parsedNodeToASTChain(parsedNode.children[0]).concat(parsedNodeToAST(parsedNode.children[2]));
@@ -129,8 +128,8 @@ rules.push({
 
 
 rules.push({
-    target:'new_expression',
-    elements:['_new', 'function_call'],
+    target: 'new_expression',
+    elements: ['_new', 'function_call'],
     toAST: function (parsedNode) {
         var callAst = parsedNodeToAST(parsedNode.children[1])
         return {
@@ -257,7 +256,7 @@ rules.push({
 rules.push({
     target: 'exp',
     elements: ['exp', 'bin_op', 'exp'],
-    longestOnly: true,
+    // longestOnly: true,//* error when parse return (...)...
     ident: 'bin_op_rec',
     toASTChain: function (parseNode) {
         var res = [];
@@ -451,7 +450,6 @@ rules.push({
         }
     }
 });
-
 
 
 rules.push({
@@ -650,7 +648,7 @@ rules.push({
 
 rules.push({
     target: 'linked_type',
-    elements: ['_linktype' ,'exp'],
+    elements: ['_linktype', 'exp'],
     toAST: function (parsedNode) {
         return {
             type: 'LinkedType',
@@ -740,7 +738,7 @@ rules.push({
 
 rules.push({
     target: 'variable_declaration',
-    elements: ['_var', 'ident','type_annotation', '_=', 'exp', '_;'],
+    elements: ['_var', 'ident', 'type_annotation', '_=', 'exp', '_;'],
     toAST: function (parsedNode) {
         return {
             type: 'VariableDeclaration',
