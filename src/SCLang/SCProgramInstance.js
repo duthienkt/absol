@@ -587,7 +587,14 @@ SCProgramInstance.prototype.visitors = {
         return node.value;
     },
     BinaryExpression: function (node) {
+        var op = node.operator.content;
         var leftValue = this.accept(node.left, 'const');
+        if (op === '&&' && !leftValue) {
+            return leftValue;
+        }
+        else if (op === '||' && (leftValue && !leftValue.then)) {
+            return leftValue;
+        }
         var rightValue = this.accept(node.right, 'const');
         var sync = [];
         if (leftValue && leftValue.then) {
