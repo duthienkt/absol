@@ -871,6 +871,45 @@ export function prevMonth(date, gmt) {
 }
 
 /**
+ * note:argument will be converted to 00h00
+ * @param date0
+ * @param date1
+ */
+export function monthOfTwoDate(date0, date1) {
+    date0 = beginOfDay(date0);
+    date1 = beginOfDay(date1);
+    var temp;
+    var sign = 1;
+    var res = 0;
+    var cmdv = compareDate(date0, date1);
+    if (cmdv > 0) {
+        sign = -1;
+        temp = date0;
+        date0 = date1;
+        date1 = temp;
+    }
+    else if (cmdv === 0) return 0;
+    var d1 = date0.getDate();
+    var d2 = date1.getDate();
+    var y0 = date0.getFullYear();
+    var y1 = date1.getFullYear();
+    var m0 = date0.getMonth();
+    var m1 = date1.getMonth();
+    var nextMD0;
+    if (d1 <= d2) {
+        res += (y1 - y0) * 12 + (m1 - m0);
+        res += 2 * (d2 - d1) / (daysInMonth(y0, m0) + daysInMonth(y1, m1));
+    }
+    else {
+        res += (y1 - y0) * 12 + (m1 - m0) - 1;
+        nextMD0 = beginOfMonth(nextMonth(date0));
+        res += 2 * (compareDate(nextMD0, date0) + compareDate(date1, beginOfMonth(date1))) / (daysInMonth(y0, m0) + daysInMonth(y1, m1))
+    }
+
+    return sign * res;
+}
+
+/**
  *
  * @param {Number} year
  * @param {Number} month
@@ -942,7 +981,7 @@ export function parseDateTime(text, format, opt) {
                 break;
             default:
                 if (tkText !== fmText) {
-                    throw  new Error('Unexpected token ' + JSON.stringify(tkText) +
+                    throw new Error('Unexpected token ' + JSON.stringify(tkText) +
                         ' at ' + tkMatched.index + ', expected ' + fmText);
                 }
         }
