@@ -59,6 +59,7 @@ foo(1,2 ,3);`;
     var shifts;
     var worktime_checkins;
     var assign_employee_shifts;
+    var m;
     shiftsCall = sys.data.shifts.read();
     worktime_checkinsCall = sys.data.worktime_checkins.read(employeesIdList, timestart, timeend);
     assign_employee_shiftsCall = sys.data.assign_employee_shifts.read(employeesIdList, timestart, timeend);
@@ -69,7 +70,11 @@ foo(1,2 ,3);`;
     worktime_checkins = worktime_checkinsCall.content;
     assign_employee_shifts = assign_employee_shiftsCall.content;
     print(shifts, worktime_checkins, assign_employee_shifts);
+    m =  a+1 ==5 && b+2==6;
+       m =  a+1 ||5 && b+2==6;
+
 }`;
+    code += `return (paysheetConfig.payroll_date.getTime() - start_date.getTime())/86400000/365*12;`;
     /*for x of fa(arr) {
     print(x);
     }*/
