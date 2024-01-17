@@ -2,6 +2,7 @@ import EventEmitter from "./EventEmitter";
 import AElement from "./AElement";
 import OOP from "./OOP";
 import AttachHook from "./AttachHook";
+import safeThrow from "../Code/safeThrow";
 
 /***
  *
@@ -20,7 +21,7 @@ function DomSignal(attachHookElt) {
 
 OOP.mixClass(DomSignal, EventEmitter);
 
-DomSignal.prototype.createBuildInAttachHook = function (){
+DomSignal.prototype.createBuildInAttachHook = function () {
     var elt = document.createElement('img');
     Object.defineProperties(elt, Object.getOwnPropertyDescriptors(AElement.prototype));
     Object.defineProperties(elt, Object.getOwnPropertyDescriptors(AttachHook.prototype));
@@ -59,3 +60,38 @@ DomSignal.prototype.ev_attached = function () {
 };
 
 export default DomSignal;
+
+
+var currentAT = null;
+var callbackList = {};
+var id = 0;
+
+export function setDomImmediate(callback) {
+    var cid = ++id;
+    callbackList[cid] = { exec: callback, args: Array.prototype.slice.call(arguments, 1) };
+    if (!currentAT) {
+        currentAT = document.createElement('img');
+        currentAT.setAttribute('src', '');
+        currentAT.addEventListener('error', function () {
+            currentAT.remove();
+            currentAT = null;
+            Object.keys(callbackList).map(function (key) {
+                var cb = callbackList[key];
+                delete callbackList[key];
+                if (cb) {
+                    try {
+                        cb.exec.call(null, cb.args);
+                    } catch (error) {
+                        safeThrow(error);
+                    }
+                }
+            })
+        })
+    }
+    return cid;
+}
+
+
+export function clearDomImmediate(id) {
+    delete callbackList[id];
+}

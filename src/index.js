@@ -44,7 +44,7 @@ import * as datetime from './Time/datetime';
 import CMDRunner from './AppPattern/CMDRunner';
 import AElement from "./HTML5/Element";
 import AElementNS from "./HTML5/AElementNS";
-import DomSignal from "./HTML5/DomSignal";
+import DomSignal, { clearDomImmediate, setDomImmediate } from "./HTML5/DomSignal";
 import CookieStore from "./Cookie/CookieStore";
 import parseCookieString from "./Cookie/parseCookieString";
 import ResizeSystem from "./HTML5/ResizeSystem";
@@ -157,6 +157,8 @@ var absol = {
     },
     FileSaver,
     Thread: Thread,
+    setDomImmediate: setDomImmediate,
+    clearDomImmediate: clearDomImmediate,
     generateJSVariable: generateJSVariable,
     copyJSVariable: copyJSVariable,
     normalizeIdent: normalizeIdent,
