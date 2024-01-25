@@ -207,10 +207,25 @@ export function isMouseLeft(event) {
     return isLeftMB;
 }
 
+/**
+ *
+ * @type AElement
+ * @name sponsorElement
+ * @memberof AElement#
+ */
+/**
+ *
+ * @param {AElement} element
+ * @param {Event |{target: AElement}} event
+ * @returns {boolean}
+ */
 export function hitElement(element, event) {
     var current = event.target;
     while (current) {
-        if (current == element) return true;
+        if (current === element) return true;
+        if (current.sponsorElement && current.sponsorElement !== current.parentElement) {// sponsorElement like trigger of quick-menu
+            if (hitElement(element, { target: current.sponsorElement })) return true;
+        }
         current = current.parentElement;
     }
     return false;
