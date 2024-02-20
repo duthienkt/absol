@@ -28,6 +28,11 @@ export function yardToMeter(yd) {
     return yd / 1.09361;
 }
 
+/**
+ * dot is same pixel in web
+ * @param p
+ * @returns {number}
+ */
 export function pointToDot(p) {
     return p * 72 / 96;
 }
