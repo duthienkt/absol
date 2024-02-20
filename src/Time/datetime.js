@@ -1150,3 +1150,35 @@ export function formatTimeRange24(range, opt) {
     if (d0 !== d1) res += ' (' + opt.nextDayText + ')';
     return res;
 }
+
+
+/**
+ *
+ * @param {Date} date
+ * @param type
+ * @param {number} n
+ * @returns {{expireddate: Date, startdate: Date}}
+ */
+export function getTimeRangeFromStep(date, type, n) {
+    var startDate, expiredDate;
+
+    var initHandlers = {
+        month: x => beginOfMonth(x),
+        quarter: x => beginOfQuarter(x),
+        year: x => beginOfYear(x)
+    }
+
+    var addHandlers = {
+        month: (x, d) => addMonth(x, d),
+        quarter: (x, d) => addQuarter(x, d),
+        year: (x, d) => addYear(x, d)
+    }
+
+
+    startDate = initHandlers[type](addHandlers[type](date, n));
+    expiredDate = addHandlers[type](startDate, 1);
+
+    return {
+        startdate: startDate, expireddate: expiredDate
+    };
+}
