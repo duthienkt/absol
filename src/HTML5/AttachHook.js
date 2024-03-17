@@ -58,10 +58,11 @@ AttachHook.prototype.waitAttaching = function () {
 AttachHook.prototype.resetState = function () {
     this._attached = false;
     if (this.tagName.toLowerCase() === 'img') {
-        this.src = '';
+        this.attr('src', '');
     }
     else {
-        this.href = '';
+        this.attr('href', '');
+
     }
     this.waitAttaching();
 };
