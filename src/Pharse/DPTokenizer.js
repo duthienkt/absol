@@ -8,11 +8,12 @@ function DPTokenizer(opt) {
 
 DPTokenizer.prototype.elementRegexes = [
     ['string', /("(?:[^"\\]|\\.)*?")|('(?:[^'\\]|\\.)*?')/],
-    ['number', /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
+    ['number', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
     ['word', /[_a-zA-Z][_a-zA-Z0-9]*/],
-    ['dsymbol', /\+\+|--/],
+    ['skip', /([\s\r\n]+)|(\/\/[^\n]*)|(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)/],
+    ['dsymbol', /\+\+|--|==|!=|<=|>=|\|\||&&/],
+    ['tsymbol', /\.\.\./],
     ['symbol', /[^\s_a-zA-Z0-9]/],
-    ['skip', /[\s\r\n]+/]
 ];
 
 DPTokenizer.prototype._combineTokenRegex = function () {
