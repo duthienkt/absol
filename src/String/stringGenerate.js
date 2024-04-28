@@ -22,7 +22,7 @@ export function parallelMatch(a, b) {
     var l = Math.min(a.length, b.length);
     var res = 0;
     for (var i = 0; i < l; ++i) {
-        if (a[i] == b[i])++res;
+        if (a[i] == b[i]) ++res;
     }
     return res;
 }
@@ -68,20 +68,30 @@ export function randomWord() {
     return arr[idx];
 }
 
-export function randomPhrase(limitLenght) {
-    if (!limitLenght) limitLenght = 50;
-    var length = Math.ceil(Math.random() * limitLenght / 7);
+/**
+ * @param {number}arg1
+ * @param {number=}arg2
+ * @also
+ * @param {number} arg1
+ * @returns {string}
+ */
+export function randomPhrase(arg1, arg2) {
+    var limitLength = arguments[arguments.length - 1];
+    var minLength = 1;
+    if (arguments.length > 1) minLength = arguments[0];
+
+    if (!limitLength) limitLength = 50;
+    var length = Math.ceil((Math.random() * (limitLength - minLength) + minLength) / 7);
     return new Array(length)
         .fill(null)
         .map(randomWord)
         .reduce(function (ac, cr) {
-            if (ac.length + cr.length < limitLenght) {
+            if (ac.length + cr.length < limitLength || ac.length < minLength) {
                 ac.parts.push(cr);
             }
             return ac;
         }, { parts: [], length: 0 }).parts
         .join(' ');
-
 }
 
 export function randomSentence(limitLenght) {
