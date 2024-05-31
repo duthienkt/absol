@@ -3,6 +3,31 @@ import AElementNS from "./AElementNS";
 import DomSignal from "./DomSignal";
 
 /**
+ * @name requestUpdateSize
+ * @type {function}
+ * @memberof AElement#
+ */
+
+/**
+ * @name updateSize
+ * @type {function}
+ * @memberof AElement#
+ */
+
+/**
+ * @name onresize
+ * @type {function}
+ * @memberof AElement#
+ */
+
+/**
+ * @name requestRevokeResource
+ * @type {function}
+ * @memberof AElement#
+ */
+
+
+/**
  *
  * @constructor
  */
@@ -17,11 +42,19 @@ function ResizeSystem() {
     window.addEventListener('resize', this.update.bind(this));
     this['goDown' + 'AndCache'] = this.goDownAndCache.bind(this);
     this['notify' + 'ToElt'] = this.notifyToElt.bind(this);
-    setTimeout(() => {
+
+    var setup = ()=>{
         this.domSignal = new DomSignal();
         this.domSignal.on('request_update_signal', this.update.bind(this));
         this.domSignal.on('request_update_pending_signal', this.updatePending.bind(this));
-    }, 1000);
+        window.removeEventListener("load", setup);
+    }
+    if (document.body) {
+       setup();
+    }
+    else {
+        window.addEventListener("load", setup);
+    }
 }
 
 /***
@@ -83,10 +116,22 @@ ResizeSystem.prototype.requestUpdateSignal = function () {
     this.domSignal.emit('request_update_signal');
 };
 
+
 ResizeSystem.prototype.removeTrash = function () {
-    this.elts = this.elts.filter(function (element) {
-        return AElement.prototype.isDescendantOf.call(element, document.body);
-    });
+    var oldArr = this.elts;
+    var newArr = [];
+    var elt;
+    var n = oldArr.length;
+    for (var i = 0; i < n; ++i) {
+        elt = oldArr[i];
+        if (AElement.prototype.isDescendantOf.call(elt, document.body)) {
+            newArr.push(elt);
+        }
+        else if (typeof elt.requestRevokeResource === "function") {
+            elt.requestRevokeResource();
+        }
+    }
+    this.elts = newArr;
 };
 
 /***
