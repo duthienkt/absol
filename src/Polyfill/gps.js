@@ -2,15 +2,17 @@ if (navigator.geolocation) {
     var getCurrentPosition = navigator.geolocation.getCurrentPosition;
     var lastResult = null;
     navigator.geolocation.getCurrentPosition = function (successCallback, errorCallback, options) {
+        if (typeof successCallback !== "function") successCallback = function (){};
+        if (typeof errorCallback !== "function") errorCallback = function (){};
         var ended = false;
         var to = setTimeout(function (){
             if (lastResult && !ended) {
                 ended = true;
-                successCallback(lastResult);
+                successCallback && successCallback(lastResult);
             }
             else if (!ended) {
                 ended = true;
-                errorCallback(new Error("GPS không phản hồi."));
+                errorCallback && errorCallback(new Error("GPS không phản hồi."));
             }
         }, lastResult?5000: 10000);
         getCurrentPosition.call(this, function (result){
