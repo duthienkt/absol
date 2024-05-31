@@ -35,6 +35,7 @@ export function wordLike(a, b) {
  *
  * @param {Array<String>} sq1
  * @param {Array<String>} sq2
+ * @param {number=} matchWordPow
  */
 export function wordsMatch(sq1, sq2, matchWordPow) {
     matchWordPow = matchWordPow === undefined ? 1 : matchWordPow;
