@@ -99,7 +99,9 @@ export function randomSentence(limitLenght) {
     var length = Math.ceil(Math.random() * limitLenght / 70);
     var res = new Array(length)
         .fill(null)
-        .map(randomPhrase)
+        .map(function (value) {
+            return randomPhrase(value);
+        })
         .reduce(function (ac, cr) {
             if (ac.length + cr.length < limitLenght) {
                 ac.parts.push(cr);
@@ -121,7 +123,9 @@ export function randomParagraph(limitLength) {
     if (!limitLength) limitLength = 1000;
     var length = Math.ceil(Math.random() * limitLength / 200);
     return new Array(length).fill(null)
-        .map(randomSentence)
+        .map(function (value) {
+            return randomSentence(value);
+        })
         .reduce(function (ac, cr) {
             if (ac.length + cr.length < limitLength) {
                 ac.parts.push(cr);
