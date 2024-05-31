@@ -1,4 +1,11 @@
-export function generateJSVariable(obj, indent) {
+/**
+ *
+ * @param obj
+ * @param {string=}indent
+ * @param {object=}opt
+ * @returns {string}
+ */
+export function generateJSVariable(obj,indent, opt) {
     indent = indent || '';
     var childIndent = indent + '    ';
     if (obj === null) {
@@ -12,7 +19,7 @@ export function generateJSVariable(obj, indent) {
             return '[]';
         return '[\n'
             + obj.map(function (it) {
-                return childIndent + generateJSVariable(it, childIndent);
+                return childIndent + generateJSVariable(it, childIndent, opt);
             }).join(',\n')
             + '\n' + indent + ']';
     }
@@ -26,7 +33,7 @@ export function generateJSVariable(obj, indent) {
             + keys.map(function (key) {
                 var value = obj[key];
                 if (!key.match(/^[a-zA-Z_$]([a-zA-Z_0-9$]*)$/)) key = JSON.stringify(key);
-                return childIndent + key + ': ' + generateJSVariable(value, childIndent)
+                return childIndent + key + ': ' + generateJSVariable(value, childIndent, opt)
             }).join(',\n')
             + '\n' + indent + '}';
     }
