@@ -35,14 +35,20 @@ EventEmitter.prototype.emit = function (eventName, data) {
 
 EventEmitter.prototype.fire = function (eventName, data) {
     var others = Array.prototype.slice.call(arguments, 1);
+    var listenerList;
+    var i;
+    var startTime, endTime;
     if (this.isSupportedEvent(eventName)) {
-        var listenerList;
-        var i;
         if (this._azar_extendEvents.prioritize[eventName]) {
             listenerList = this._azar_extendEvents.prioritize[eventName].slice();
             for (i = 0; i < listenerList.length; ++i) {
                 try {
+                    startTime = Date.now();
                     listenerList[i].wrappedCallback.apply(this, others);
+                    endTime = Date.now();
+                    if (endTime - startTime > 200) {
+                        console.log('slow function call ('+endTime - startTime+')', listenerList[i]);
+                    }
                 } catch (e) {
                     safeThrow(e);
                 }
@@ -53,7 +59,12 @@ EventEmitter.prototype.fire = function (eventName, data) {
             listenerList = this._azar_extendEvents.nonprioritize[eventName].slice();
             for (i = 0; i < listenerList.length; ++i) {
                 try {
+                    startTime = Date.now();
                     listenerList[i].wrappedCallback.apply(this, others);
+                    endTime = Date.now();
+                    if (endTime - startTime > 200) {
+                        console.log('slow function call ('+endTime - startTime+')', listenerList[i]);
+                    }
                 } catch (e) {
                     safeThrow(e);
                 }
