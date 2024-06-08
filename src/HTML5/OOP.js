@@ -1,11 +1,9 @@
-var OOP = {};
-
 /**
  * @param {Object} object
  * @param {String} key
  * @param {Function} method
  */
-OOP.overrideMethod = function (object, key, method) {
+export function overrideMethod(object, key, method) {
     if (object[key] === undefined) object[key] = method;
     else {
         var _superMethod = object[key];
@@ -20,15 +18,15 @@ OOP.overrideMethod = function (object, key, method) {
 
         })(_superMethod, method);
     }
-};
+}
 
 
-OOP.extends = function (object, prototype) {
+function extendsObject(object, prototype) {
     // do not use setter, getter
     for (var key in prototype) {
         if (key !== 'constructor' && key !== '__proto__') {
             if ((typeof prototype[key] == 'function')) {
-                OOP.overrideMethod(object, key, prototype[key]);
+                overrideMethod(object, key, prototype[key]);
             }
             else if (prototype[key] !== undefined && prototype[key] !== null) {
                 object[key] = prototype[key];//just copy
@@ -37,7 +35,7 @@ OOP.extends = function (object, prototype) {
     }
 };
 
-OOP.inherit = function (child, parent) {
+function quickInheritObject(child, parent) {
     // do not use setter, getter
 
     Object.keys(parent).forEach(function (key) {
@@ -59,7 +57,7 @@ OOP.inherit = function (child, parent) {
 };
 
 
-OOP.drillProperty = function (topObject, botObject, keyTop, keyBot) {
+export function drillProperty(topObject, botObject, keyTop, keyBot) {
     if (typeof (keyTop) == 'string') {
         keyBot = keyBot || keyTop;
         Object.defineProperty(topObject, keyTop, {
@@ -74,18 +72,18 @@ OOP.drillProperty = function (topObject, botObject, keyTop, keyBot) {
     else {
         if (keyTop instanceof Array) {
             for (var i = 0; i < keyTop.length; ++i) {
-                OOP.drillProperty(topObject, botObject, keyTop[i], keyTop[i]);
+                drillProperty(topObject, botObject, keyTop[i], keyTop[i]);
             }
         }
         else {
             for (var key in keyTop) {
-                OOP.drillProperty(topObject, botObject, key, keyTop[key]);
+                drillProperty(topObject, botObject, key, keyTop[key]);
             }
         }
     }
 };
 
-OOP.bindFunctions = function (_this, handlers) {
+export function bindFunctions(_this, handlers) {
     var res = {};
     for (var key in handlers) {
         res[key] = handlers[key].bind(_this);
@@ -94,7 +92,7 @@ OOP.bindFunctions = function (_this, handlers) {
 };
 
 
-OOP.inheritCreator = function (parent, child) {
+export function inheritCreator(parent, child) {
     var i;
     if (child.property) {
         if (parent.property) {
@@ -125,13 +123,25 @@ OOP.inheritCreator = function (parent, child) {
  *
  * @param {Function} constructor
  */
-OOP.mixClass = function (constructor) {
+export function mixClass(constructor) {
     var descriptors = {};
     for (var i = 1; i < arguments.length; ++i) {
         Object.assign(descriptors, Object.getOwnPropertyDescriptors(arguments[i].prototype));
     }
-    delete  descriptors.constructor;
+    delete descriptors.constructor;
     Object.defineProperties(constructor.prototype, descriptors);
+}
+
+
+var OOP = {
+    overrideMethod: overrideMethod,
+    extends: extendsObject,
+    inherit: quickInheritObject,
+    mixClass: mixClass,
+    inheritCreator: inheritCreator,
+    drillProperty: drillProperty,
+    bindFunctions: bindFunctions
 };
+
 
 export default OOP;

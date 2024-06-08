@@ -78,6 +78,7 @@ import SCCodeGenerator, { generateSCCode, generateSCHighlightPreviewCode } from 
 import * as printer from './Print/printer';
 import * as measurements from './Math/measurements';
 import QRCode from "./Converter/QRCode";
+import DelaySignal from "./HTML5/DelaySignal";
 
 var absol = {
     int: int,
@@ -102,6 +103,7 @@ var absol = {
     AElement: AElement,
     AElementNS: AElementNS,
     DomSignal: DomSignal,
+    DelaySignal: DelaySignal,
     JSPath: JSPath,
     TemplateString: TemplateString,
     TemplateXML: TemplateXML,
