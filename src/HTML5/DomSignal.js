@@ -17,6 +17,8 @@ function DomSignal(attachHookElt) {
     this.$attachhook = attachHookElt || this.createBuildInAttachHook();
     this.$attachhookParent = (attachHookElt && attachHookElt.parentElement) || null;
     this.$attachhook.on('attached', this.ev_attached);
+    this.$attachhook.ofDS = this;
+    this.isPending = false;
 }
 
 OOP.mixClass(DomSignal, EventEmitter);
@@ -29,28 +31,35 @@ DomSignal.prototype.createBuildInAttachHook = function () {
     AElement.call(elt);
     elt.setAttribute('src', '');
     elt.defineEvent('attached');
+    elt.addStyle('display', 'none');
     AttachHook.call(elt);
+    elt.cancelWaiting();
     return elt;
 }
 
 DomSignal.prototype.execSignal = function () {
     var signals = this.signals;
-    if (this.$attachhook) {
-        this.$attachhook.remove();
-        this.$attachhook.resetState();
-    }
     this.signals = {};
+    this.isPending = false;
     for (var name in signals) {
         this.fire.apply(this, [name].concat(signals[name]));
     }
+
 };
 
 DomSignal.prototype.emit = function (name) {
+    if (this.$attachhook && (this.$attachhook.canceled || this.$attachhook.attached) && !this.isPending) {
+        this.$attachhook.remove();
+        this.$attachhook.resetState();
+    }
     this.signals[name] = Array.prototype.slice.call(arguments, 1);
+    this.isPending = true;
     if (!this.$attachhookParent) {
         this.$attachhookParent = document.body;
+
     }
     if (!this.$attachhook.parentElement) {
+        this.$attachhook.resetState();
         this.$attachhookParent.appendChild(this.$attachhook);
     }
 };
