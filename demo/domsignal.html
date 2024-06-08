@@ -12,11 +12,12 @@
     var now = new Date().getTime();
     vds.on('tick', function tick(count) {
         var rt = new Date().getTime();
+        console.log('count', count)
         times.push(rt);
         if (count < 100)
             this.emit('tick', count + 1);
         else if (count == 100){
-            console.log(times);
+            console.log(times, count);
         }
         now = rt;
     });
