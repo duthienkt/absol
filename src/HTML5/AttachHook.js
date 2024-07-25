@@ -1,4 +1,5 @@
 import AElement from "./AElement";
+import EventEmitter from "./EventEmitter";
 
 window.pendingAttachHooks = {};
 var pendingId = 0;
@@ -22,6 +23,7 @@ AttachHook.prototype._addAttachedEvent = function () {
     this.addEventListener('error', function (event) {
         if (!this._attached && this.isDescendantOf(document.body)) {
             this._attached = true;
+            if (this.waitTimeout > 0) clearTimeout(this.waitTimeout);
             delete pendingAttachHooks[this._pendingId];
             if (this._canceled) return;
             this.emit('attached', event, this);
@@ -34,6 +36,15 @@ AttachHook.prototype._addAttachedEvent = function () {
     }
 };
 
+AttachHook.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, arg2) {
+    if (arg0 === 'attached') {
+        this._addAttachedEvent();
+       return  AElement.prototype.eventEmittorOnWithTime.apply(this, arguments);
+    } else {
+        return  AElement.prototype.eventEmittorOnWithTime.apply(this, arguments);
+    }
+};
+/*
 AttachHook.prototype.on = function () {
     if (arguments[0] === 'attached') {
         this._addAttachedEvent();
@@ -55,7 +66,7 @@ AttachHook.prototype.once = function () {
         AElement.prototype.once.apply(this, arguments);
     }
     return this;
-};
+};*/
 
 
 AttachHook.render = function (data, option, domInstance) {

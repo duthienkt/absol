@@ -66,7 +66,8 @@ export function drillProperty(topObject, botObject, keyTop, keyBot) {
             },
             get: function () {
                 return botObject[keyBot];
-            }
+            },
+            configurable: true
         });
     }
     else {

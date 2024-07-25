@@ -192,8 +192,8 @@ AElement.prototype.selfReplace = function (newNode) {
 };
 
 AElement.prototype.clearChild = function () {
-    while (this.firstChild) {
-        this.removeChild(this.firstChild);
+    while (this.lastChild) {
+        this.removeChild(this.lastChild);
     }
     return this;
 };

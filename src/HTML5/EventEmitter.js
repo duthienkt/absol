@@ -47,7 +47,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
                     listenerList[i].wrappedCallback.apply(this, others);
                     endTime = Date.now();
                     if (endTime - startTime > 200) {
-                        console.log('slow function call ('+endTime - startTime+')', listenerList[i]);
+                        console.log('slow function call ('+(endTime - startTime)+')', listenerList[i]);
                     }
                 } catch (e) {
                     safeThrow(e);
@@ -63,7 +63,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
                     listenerList[i].wrappedCallback.apply(this, others);
                     endTime = Date.now();
                     if (endTime - startTime > 200) {
-                        console.log('slow function call ('+endTime - startTime+')', listenerList[i]);
+                        console.log('slow function call ('+(endTime - startTime)+')', listenerList[i]);
                     }
                 } catch (e) {
                     safeThrow(e);

@@ -28,4 +28,8 @@ Fragment.prototype.getView = function () {
 
 Fragment.prototype.onCreated = noop;
 
+Fragment.prototype.revokeResource  = function () {
+    this.destroy();
+};
+
 export default Fragment;

@@ -47,7 +47,7 @@ XHR.getRequest = function (url, props, success, failure) {
                 }
                 else {
                     failure && failure(request.status, request.statusText);
-                    rj(request.status);
+                    rj({status: request.status });
                 }
             }
         };
