@@ -21,12 +21,12 @@ export function revokeResource(o) {
             while (o.lastChild) {
                 oc = o.lastChild;
                 revokeResource(oc);
-                if (oc.selfRemove) {
-                    oc.selfRemove();
-                }
-                else {
+                // if (oc.selfRemove) {
+                //     oc.selfRemove();
+                // }
+                // else {
                     oc.remove();
-                }
+                // }
             }
         }
     }

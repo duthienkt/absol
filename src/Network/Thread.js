@@ -1,6 +1,7 @@
 import IFrameBridge from "./IFrameBridge";
 import OOP from "../HTML5/OOP";
 import RemoteThreadCode from './RemoteThread.tpl';
+import noop from "../Code/noop";
 
 /***
  *
@@ -59,6 +60,18 @@ Thread.prototype._attachClientMethods = function (methods) {
     }, this);
 };
 
+Thread.prototype.destroy = function () {
+    if (this.worker) {
+        this.worker.terminate();
+        delete this.worker;
+    }
+};
+
+
+Thread.prototype.revokeResource = function () {
+    this.destroy();
+    this.revokeResource = noop;
+};
 
 OOP.mixClass(Thread, IFrameBridge);
 
