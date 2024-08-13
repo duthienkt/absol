@@ -289,6 +289,23 @@ export function normalizeIdent(text, opt) {
         }
     }
 
+    if (spaces) {
+        res = res.replace(new RegExp(`([${spaces}]+)`, 'g'), spaces);
+    }
+
+    if (symbols && symbols !== spaces) {
+        res = res.replace(new RegExp(`([${symbols}]+)`, 'g'), spaces);
+    }
+
+    if (spaces) {
+        res = res.replace(new RegExp(`([${spaces}]+$)|(^[${spaces}]+)`, 'g'), '');
+    }
+
+    if (symbols && symbols !== spaces) {
+        res = res.replace(new RegExp(`([${symbols}]+$)|(^[${symbols}]+$)`, 'g'), '');
+    }
+
+
     if (!startsWithDigit && res.match(/^[0-9]/)) {
         res = '$' + res;
     }
@@ -319,7 +336,7 @@ export function breakTextToLineByLength(text, limitLength) {
         var chars;
         for (var i = 1; i < poss.length; ++i) {
             end = poss[i];
-            if (end - start > limitLength || i+1 === poss.length) {
+            if (end - start > limitLength || i + 1 === poss.length) {
                 newLine = line.substring(start, pend).trimEnd();
                 if (newLine.length > limitLength) {
                     chars = newLine.split('');
@@ -328,7 +345,7 @@ export function breakTextToLineByLength(text, limitLength) {
                         newLines.push(newLine);
                     }
                 }
-                else  if (newLine.length >0){
+                else if (newLine.length > 0) {
                     newLines.push(newLine);
                 }
                 start = pend;
