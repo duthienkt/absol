@@ -1,3 +1,5 @@
+export { computeMeasureExpression } from  './CSSParser';
+
 /**
  * 
  * @param {String} text 
