@@ -3,7 +3,7 @@
  * @param {String} a
  * @param {String} b
  */
-import {harmonicMean} from "absol/src/Math/int";
+import { harmonicMean } from "../Math/int";
 
 
 export function wordLike(a, b) {
@@ -96,3 +96,7 @@ export function phraseLike(a, b, matchWordPow) {
     return wordsMatchScore / Math.max(harmonicMean(m, n), 1);
 }
 
+export function exportStringMatchingCode() {
+    return [harmonicMean, phraseLike, phraseMatch, wordLike, wordsMatch].map(f => f + '').join('\n')
+        +'\nvar _stringFormat = {harmonicMean, phraseLike, wordLike, wordsMatch};';
+}
