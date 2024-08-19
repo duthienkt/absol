@@ -57,3 +57,53 @@ export function revokeResource(o) {
     key = undefined;
     o = undefined;
 }
+
+
+/**
+ *
+ * @param obj
+ * @param {string|Array<string>} keys
+ * @param {function} callback
+ */
+export function observePropertyChanges(obj, keys, callback) {
+    var value;
+    if (Array.isArray(keys)) {
+        keys.forEach(key => {
+            observePropertyChanges(obj, key, callback);
+        });
+    }
+    else {
+        value = obj[keys];
+        Object.defineProperty(obj, keys, {
+            get: function () {
+                return value;
+            },
+            set: function (newValue) {
+                value = newValue;
+                callback(keys, newValue);
+            },
+            configurable: true,
+            enumerable: true
+        });
+    }
+}
+
+
+/**
+ *
+ * @param obj
+ * @param {string|Array<string>} keys
+ */
+export function unobservePropertyChanges(obj, keys) {
+    var value;
+    if (Array.isArray(keys)) {
+        keys.forEach(key=>{
+            unobservePropertyChanges(obj, key);
+        })
+    }
+    else {
+        value = obj[keys];
+        delete obj[keys];
+        obj[keys] = value;
+    }
+}
