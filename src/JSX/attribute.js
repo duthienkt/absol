@@ -45,7 +45,7 @@ export function parseMeasureValue(mValue) {
         unit = 'px';
     }
     else if (typeof mValue === "string") {
-        matched = mValue.match(/([+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?)(px|%|vw|vh)?/i);
+        matched = mValue.match(/([+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?)(px|%|vw|vh|em|rem|pt)?/i);
         if (matched) {
             value = parseFloat(matched[1]);
             unit = matched[4];
