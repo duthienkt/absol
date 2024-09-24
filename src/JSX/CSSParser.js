@@ -1,5 +1,6 @@
 import DPParser from "../Pharse/DPParser";
 import { parsedNodeToAST, parsedNodeToASTChain } from "../Pharse/DPParseInstance";
+import { arrayLexicographicalCompare } from "../DataStructure/Array";
 
 
 /***** css expression rules****/
@@ -18,7 +19,6 @@ var elementRegexes = [
 
 
 var rules = [];
-
 
 
 rules.push({
@@ -89,8 +89,6 @@ rules.push({
         return parsedNodeToAST(parsedNode.children[0]);
     }
 });
-
-
 
 
 ['+', '-', '*', '/'].forEach(function (op) {
@@ -458,7 +456,7 @@ export function computeMeasureExpression(exp, ctx, debug) {
 }
 
 
-function getSpecificity(selector) {
+export function getQuerySelectorSpecificity(selector) {
     let inline = 0;
     let idCount = 0;
     let classCount = 0;
@@ -490,15 +488,7 @@ function getSpecificity(selector) {
 
 
 export function compareQuerySelectorSpecificity(selector1, selector2) {
-    const specificity1 = getSpecificity(selector1);
-    const specificity2 = getSpecificity(selector2);
-
-    for (let i = 0; i < 4; i++) {
-        if (specificity1[i] > specificity2[i]) {
-            return 1; // selector1 has higher specificity
-        } else if (specificity1[i] < specificity2[i]) {
-            return -1; // selector2 has higher specificity
-        }
-    }
-    return 0; // They are equal in specificity
+    const specificity1 = getQuerySelectorSpecificity(selector1);
+    const specificity2 = getQuerySelectorSpecificity(selector2);
+    return arrayLexicographicalCompare(selector1, specificity2);
 }
