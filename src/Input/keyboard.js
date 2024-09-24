@@ -54,6 +54,7 @@ export function normalizeKeyBindingIdent(text) {
  */
 export function keyboardEventToKeyBindingIdent(event) {
     var keys = [];
+    var keyName =  event.key || String.fromCharCode(event.which || event.keyCode);
     if (event.metaKey) {
         keys.push('meta');
     }
@@ -64,13 +65,13 @@ export function keyboardEventToKeyBindingIdent(event) {
     if (event.shiftKey)
         keys.push('shift');
 
-    if (isSpaceKey(event.key)) {
+    if (isSpaceKey(keyName)) {
         keys.push('space');
     }
-    else if (isFnKey(event.key)) {
-        keys.push(event.key.toLowerCase())
+    else if (isFnKey(keyName)) {
+        keys.push(keyName.toLowerCase())
     }
-    else if (!isMetaKey(event.key) && !isAltKey(event.key) && !isCtrlKey(event.key) && !isShiftKey(event.key))
-        keys.push(event.key.toLowerCase());
+    else if (!isMetaKey(keyName) && !isAltKey(keyName) && !isCtrlKey(keyName) && !isShiftKey(keyName))
+        keys.push(keyName.toLowerCase());
     return keys.join('-');
 }
