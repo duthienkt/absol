@@ -101,6 +101,34 @@ export function arrayCompare(a1, a2, order) {
     return true;
 }
 
+
+/**
+ *
+ * @param {number[]} a1
+ * @param {number[]} a2
+ * @returns {number}
+ */
+export function arrayLexicographicalCompare(a1, a2) {
+    var minLength = Math.min(a1.length, a2.length);
+
+    for (var i = 0; i < minLength; i++) {
+        if (a1[i] < a2[i]) {
+            return -1; // array1 nhỏ hơn array2
+        } else if (a1[i] > a2[i]) {
+            return 1; // array1 lớn hơn array2
+        }
+    }
+
+    if (a1.length < a2.length) {
+        return -1;
+    } else if (a1.length > a2.length) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 /***
  *
  * @param {Array} arr
