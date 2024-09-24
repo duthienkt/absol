@@ -20,8 +20,16 @@ function BrowserDetector(rulesheet, userAgent) {
         && this.au.toLowerCase().indexOf('win') < 0
         && this.au.toLowerCase().indexOf('android') < 0);
     // this.isSafari = /constructor/i.test(window.HTMLElement) || window.safari;
-    this.isMobile = this.au.indexOf('KFFOWI') > -1 || this.au.toLowerCase().indexOf('mobile') > -1
-        || this.device.type === 'iphone'||  this.device.type === 'ipad';
+    var isMobile = this.au.indexOf('KFFOWI') > -1 || this.au.toLowerCase().indexOf('mobile') > -1
+        || this.device.type === 'iphone' || this.device.type === 'ipad' || this.device.type === 'android';
+    Object.defineProperty(this, 'isMobile', {
+        get: function () {
+            return isMobile || window.isMobile || !!window['mobileHost'];
+        },
+        set: v => {
+            //do nothing
+        }
+    });
     this.isMacOSWebView = /Macintosh/.test(this.au) && /AppWebkit/.test(this.au) && !/Safari/.test(this.au);
     this.isChromeIOS = /CriOS\/[\d]+/.test(this.au);
     this.hasTouch = 'ontouchstart' in global ||
