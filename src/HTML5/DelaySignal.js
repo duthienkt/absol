@@ -36,5 +36,12 @@ DelaySignal.prototype.emit = function (name) {
     return this;
 };
 
+DelaySignal.prototype.revokeResource = function () {
+    if (this.to !== this.NO_WAIT) {
+        clearTimeout(this.to);
+    }
+    delete this.signals;
+    delete this.execSignal;
+}
 
 export default DelaySignal;
