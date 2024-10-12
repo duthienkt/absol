@@ -1086,6 +1086,10 @@ export function formatDateTime(date, format, opt) {
             case 'mm':
                 res = integerZeroPadding(date.getMinutes(), s.length);
                 break;
+            case 's':
+            case 'ss':
+                res = integerZeroPadding(date.getSeconds(), s.length);
+                break;
             case 'Q':
             case 'QQ':
                 res = integerZeroPadding(Math.floor(date.getMonth() / 3) + 1, s.length)
