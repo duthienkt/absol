@@ -110,6 +110,22 @@ LanguageSystem.prototype.addExtension = function (ex){
 
 export var LangSys = new LanguageSystem();
 
+LangSys.getText = function () {
+    if (window.LanguageModule && window.LanguageModule.text){
+        LangSys.addExtension({
+            getText: function () {
+                var text = window.LanguageModule.text.apply(window.LanguageModule, arguments);
+                if (text && (text.startsWith('[key:') && text.charAt(text.length - 1) === ']')) return null;
+                return text || null;
+            }
+        });
+        LangSys.getText = LanguageSystem.prototype.getText;
+        return this.getText.apply(this, arguments);
+    }
+
+    return LanguageSystem.prototype.getText.apply(this, arguments);
+}
+
 export function textNodeLanguageChangeHandler() {
     if (this.__as_language_key) {
         var newText = LangSys.getText(this.__as_language_key);
