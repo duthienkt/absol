@@ -502,13 +502,9 @@ export function weekIndexOf(date, gmt, startDayOfWeek) {
     if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
     var by = beginOfYear(date, gmt);
     var byw = beginOfWeek(by, gmt, startDayOfWeek);
-    var bw = beginOfWeek(date, gmt, startDayOfWeek);
-    if (compareYear(by, bw) > 0) {
-        return weekIndexOf(bw, gmt, startDayOfWeek);
-    }
-    var i = compareYear(byw, by) < 0 ? -1 : 0;
-    return Math.floor(compareDate(date, byw, gmt) / 7) + i;
+    return Math.floor(compareDate(date, byw, gmt) / 7) ;
 }
+
 
 /***
  *
@@ -520,11 +516,11 @@ export function weekIndexOf(date, gmt, startDayOfWeek) {
  */
 export function weekInYear(year, weekIdx, gmt, startDayOfWeek) {
     if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
-    var bg = new Date(year, 0, 1);
+    var bg = new Date(year, 0, 1, 0, 0, 0, 0);
     if (gmt) bg.setUTCHours(0);
     var byw = beginOfWeek(bg, gmt, startDayOfWeek);
-    var d = compareYear(bg, byw) > 0 ? MILLIS_PER_DAY * 7 : 0;
-    return new Date(byw.getTime() + d + weekIdx * 7 * MILLIS_PER_DAY);
+    if (weekIdx === 0) return bg;
+    return new Date(byw.getTime() +  weekIdx * 7 * MILLIS_PER_DAY);
 }
 
 /**
