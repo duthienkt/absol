@@ -1048,7 +1048,7 @@ export function formatDateTime(date, format, opt) {
                 break;
             case 'w':
             case 'ww':
-                res = integerZeroPadding(weekIndexOf(date, false, opt.startDayOfWeek || 0) + 1, s.length);
+                res = integerZeroPadding(weekIndexOf(date, false, opt.startDayOfWeek || getDefaultFirstDayOfWeek()) + 1, s.length);
                 break;
             case 'M':
             case 'MM':
