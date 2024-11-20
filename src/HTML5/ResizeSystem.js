@@ -1,6 +1,6 @@
 import AElement from "./AElement";
 import AElementNS from "./AElementNS";
-import DomSignal from "./DomSignal";
+import DelaySignal from "./DelaySignal";
 
 /**
  * @name requestUpdateSize
@@ -44,7 +44,7 @@ function ResizeSystem() {
     this['notify' + 'ToElt'] = this.notifyToElt.bind(this);
 
     var setup = ()=>{
-        this.domSignal = new DomSignal();
+        this.domSignal = new DelaySignal();
         this.domSignal.on('request_update_signal', this.update.bind(this));
         this.domSignal.on('request_update_pending_signal', this.updatePending.bind(this));
         window.removeEventListener("load", setup);
