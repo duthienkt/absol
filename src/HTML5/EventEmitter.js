@@ -203,7 +203,7 @@ export var touchProperties = ['clientX', 'clientY', 'force', 'identifier', 'page
 export function isMouseRight(event) {
     var isRightMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        isRightMB = event.which == 3;
+        isRightMB = event.which === 3;
     else if ("button" in event)  // IE, Opera
         isRightMB = event.button == 2;
     return isRightMB;
@@ -212,10 +212,19 @@ export function isMouseRight(event) {
 export function isMouseLeft(event) {
     var isLeftMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        isLeftMB = event.which == 1;
+        isLeftMB = event.which === 1;
     else if ("button" in event)  // IE, Opera
-        isLeftMB = event.button == 1;
+        isLeftMB = event.button === 0;
     return isLeftMB;
+}
+
+export function isMouseMiddle(event) {
+    var isMiddleMB = false;
+    if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+        isMiddleMB = event.which === 2;
+    else if ("button" in event)  // IE, Opera
+        isMiddleMB = event.button === 1;
+    return isMiddleMB;
 }
 
 /**
