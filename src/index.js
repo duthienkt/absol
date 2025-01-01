@@ -79,12 +79,14 @@ import * as printer from './Print/printer';
 import * as measurements from './Math/measurements';
 import QRCode from "./Converter/QRCode";
 import DelaySignal from "./HTML5/DelaySignal";
+import BezierCurve  from "./Math/BezierCurve";
 
 var absol = {
     int: int,
     array: array,
     safeThrow: safeThrow,
     Rectangle: Rectangle,
+    BezierCurve: BezierCurve,
     ResizeSystem: ResizeSystem,
     Arc: Arc,
     Polygon: Polygon,
