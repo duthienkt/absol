@@ -21,9 +21,14 @@ function BezierCurve(startPoint, ctrlPoint1, ctrlPoint2, endPoint) {
  */
 BezierCurve.prototype.pointAt = function (t) {
     var s1 = this.ctrlPoint1.sub(this.startPoint).mult(t).add(this.startPoint);
-    var s2 = this.endPoint.sub(this.ctrlPoint2).mult(t).add(this.ctrlPoint2);
-    return s2.sub(s1).mult(t).add(s1);
+    var s2  = this.ctrlPoint2.sub(this.ctrlPoint1).mult(t).add(this.ctrlPoint1);
+    var s3 = this.endPoint.sub(this.ctrlPoint2).mult(t).add(this.ctrlPoint2);
+
+    var s4 = s2.sub(s1).mult(t).add(s1);
+    var s5 = s3.sub(s2).mult(t).add(s2);
+    return s5.sub(s4).mult(t).add(s4);
 };
+
 
 /**
  *
