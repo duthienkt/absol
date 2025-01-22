@@ -1,11 +1,12 @@
 /**
  * 
  * @param {Number} start 
+ * @param {Number} length
  */
 function NumRange(start, length) {
-    if (arguments.length == 1)
+    if (arguments.length === 1)
         length = 0;
-    else if (arguments.length == 0) {
+    else if (arguments.length === 0) {
         length = 0;
         start = 0;
     }
@@ -51,7 +52,7 @@ NumRange.prototype.isCollapse = function (other) {
 
 /**
  * @param {NumRange} other
- * @returns {Boolean}
+ * @returns {NumRange}
  */
 NumRange.prototype.collapsedNumRange = function (other) {
     var start = Math.max(this.start, other.start);
