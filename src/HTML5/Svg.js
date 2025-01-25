@@ -134,12 +134,17 @@ export function svgToRasterImageUrl(element) {
 
 Svg.svgToRasterImageUrl = svgToRasterImageUrl;
 
-
-export function svgToExportedString(element) {
+/**
+ *
+ * @param {string|AElement}element
+ * @param {"print"|null=} option
+ * @returns {string}
+ */
+export function svgToExportedString(element, option) {
     if (typeof element == 'string') {
         element = Dom.ShareInstance.$(element);
     }
-    if (element && element.tagName == 'svg') {
+    if (element && element.tagName === 'svg') {
         var depthClone = function (originElt) {
             var newElt = originElt.cloneNode();//no deep
             if (!originElt.getAttributeNS) return newElt;//is text node
@@ -182,9 +187,14 @@ export function svgToExportedString(element) {
 
 Svg.svgToExportedString = svgToExportedString;
 
-
-function svgToSvgUrl(element) {
-    var svg = svgToExportedString(element);
+/**
+ *
+ * @param element
+ * @param {"print"|null=}option
+ * @returns {string}
+ */
+function svgToSvgUrl(element, option) {
+    var svg = svgToExportedString(element, option);
     svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + svg;
     var blob = new Blob([svg], { type: 'image/svg+xml' });
     var url = URL.createObjectURL(blob);
@@ -221,12 +231,13 @@ Dom.printElement = function (option) {
             var url, img;
             var needCopyStyle = option.computeStyle;
             var needKeepBackgroundColor = option.keepBackgroundColor;
+            var printViewBox;
             if (tagName === 'canvas' || (tagName === 'svg' && option.convertSVG)) {
                 if (tagName === "canvas") {
                     url = originElt.toDataURL();
                 }
                 else {
-                    url = svgToSvgUrl(originElt);
+                    url = svgToSvgUrl(originElt, 'print');//todo: option
                 }
                 img = _({
                     tag: 'img',
@@ -237,6 +248,16 @@ Dom.printElement = function (option) {
                 $(newElt).selfReplace(img);
                 newElt = img;
                 needCopyStyle = true;
+            }
+            else if (tagName === 'svg' && originElt.getAttribute('data-print-view-box')) {
+                printViewBox = originElt.getAttribute('data-print-view-box').split(' ').map(function (v) {
+                    return parseFloat(v);
+                });
+                newElt.setAttribute('viewBox', printViewBox.join(' '));
+                newElt.setAttribute('width', printViewBox[2]);
+                newElt.setAttribute('height', printViewBox[3]);
+                newElt.style.setProperty('width', printViewBox[2] + 'px');
+                newElt.style.setProperty('height', printViewBox[3] + 'px');
             }
             else if (tagName === 'script') {
                 newElt.remove();
