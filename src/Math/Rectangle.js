@@ -159,12 +159,19 @@ Rectangle.prototype.merge = function (other) {
     return new Rectangle(left, top, right - left, bottom - top);
 };
 
+/**
+ * @returns {Rectangle}
+ */
+Rectangle.prototype.copy = function () {
+    return new Rectangle(this.x, this.y, this.width, this.height);
+};
+
 
 /**
  * @returns {Rectangle}
  */
 Rectangle.prototype.clone = function () {
-    return new Rectangle(this.x, this.y, this.width, this.height);
+    return this.copy();
 };
 
 /***

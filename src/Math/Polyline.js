@@ -1,5 +1,6 @@
 import SegmentLine from "./SegmentLine";
 import Vec2 from "./Vec2";
+
 function Polyline(points) {
     if (points.length < 2)
         points = [new Vec2(0, 0), new Vec2(0, 0)];
@@ -14,7 +15,7 @@ Polyline.prototype.nearestParamToPoint = function (point) {
     var param;
     for (var i = 0; i < this.points.length - 1; ++i) {
         sgm = new SegmentLine(this.points[i], this.points[i + 1]);
-        param= sgm.nearestParamToPoint(point);
+        param = sgm.nearestParamToPoint(point);
         if (sgm.pointAt(param).dist(point) < minDist) {
             minDist = sgm.pointAt(param).dist(point);
             minParam = i + param;
@@ -36,7 +37,11 @@ Polyline.prototype.pointAt = function (param) {
     return sgm.pointAt(param - idx);
 };
 
-
+Polyline.prototype.copy = function () {
+    return new Polyline(this.points.map((p) => {
+        return p.copy();
+    }));
+};
 
 
 export default Polyline;

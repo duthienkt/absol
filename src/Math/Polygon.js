@@ -53,6 +53,13 @@ Polygon.prototype.getPathString = function () {
     return res;
 };
 
+
+Polygon.prototype.copy = function () {
+    return new Polygon(this.vertices.map((v) => {
+        return v.copy();
+    }));
+};
+
 Polygon.make = function (vertices) {
     return new Polygon(vertices);
 };

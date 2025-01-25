@@ -83,9 +83,28 @@ SegmentLine.prototype.intersect = function (sgm) {
  */
 SegmentLine.prototype.isIntersectWithSegment = function (sgm) {
     return this.intersect(sgm) !== null;
+};
+
+
+/**
+ * @param {Vec2} point
+ */
+SegmentLine.prototype.orthogonalProjectionPoint = function (point) {
+    var v = this.end.sub(this.start);
+    var w = point.sub(this.start);
+    var c1 = w.dot(v);
+    var c2 = v.dot(v);
+    if (c2 === 0) return this.start;
+    return this.start.add(v.mult(c1 / c2));
+};
+
+SegmentLine.prototype.midpoint = function () {
+    return this.pointAt(0.5);
+};
+
+SegmentLine.prototype.clone = function () {
+    return new SegmentLine(this.start.clone(), this.end.clone());
 }
-
-
 
 
 export default SegmentLine;
