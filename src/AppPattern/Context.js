@@ -83,7 +83,7 @@ Context.prototype.pause = function () {
         }
     }
     else {
-        console.warn(this, "NOT RUNNING");
+        // console.warn(this, "NOT RUNNING");
     }
 };
 Context.prototype.resume = function () {
