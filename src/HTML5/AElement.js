@@ -407,7 +407,7 @@ AElement.prototype.afterDisplayed = function (requestTimesOut) {
 
 !(function () {
     var origin = AElement.prototype.on;
-    if (BrowserDetector.isSafari && !BrowserDetector.isMobile) {
+    if (BrowserDetector.isSafari && !BrowserDetector.isMobile && false) {
         AElement.prototype.on = function () {
             if (!this.isSupportedEvent('mouseleave') && arguments[0] == 'mouseleave') {
                 this.defineEvent('mouseleave');
@@ -427,7 +427,7 @@ AElement.prototype.afterDisplayed = function (requestTimesOut) {
         };
     }
 
-    if (BrowserDetector.isFirefox) {
+    if (BrowserDetector.isFirefox && false) {
         AElement.prototype.on = function () {
             if (!this.isSupportedEvent('wheel') && arguments[0] == 'wheel') {
 

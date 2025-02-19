@@ -19,7 +19,7 @@ Element.fixBrowserEvent = function (element) {
         }
     }
 
-    if (BrowserDetector.isFirefox) {
+    if (BrowserDetector.isFirefox && false) {
         if (!element.isSupportedEvent('wheel')) {
             element.defineEvent('wheel');
             var wheelEventHandler = function (oldEvent) {
