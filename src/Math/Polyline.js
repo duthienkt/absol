@@ -43,5 +43,40 @@ Polyline.prototype.copy = function () {
     }));
 };
 
+/**
+ * @param {number=} tolerance
+ * @returns {Polyline}
+ */
+Polyline.prototype.simplify = function (tolerance) {
+    tolerance = tolerance || 0.00001;
+    var points = this.points;
+    var newPoints = [];
+    var point, lastPoint;
+    var sm;
+    var dist;
+    for (var i =0; i< points.length; ++i){
+        point = points[i];
+        if (newPoints.length <2) {
+            newPoints.push(point);
+            continue;
+        }
+        lastPoint = newPoints[newPoints.length - 1];
+        sm = new SegmentLine(newPoints[newPoints.length - 2], point);
+        dist = sm.nearestPointToPoint(lastPoint).dist(lastPoint);
+        if (dist > tolerance){
+            newPoints.push(point);
+        }
+        else {
+            newPoints[newPoints.length - 1] = point;
+        }
+    }
+    return new Polyline(newPoints);
+};
+
 
 export default Polyline;
+
+
+var p = new Polyline([new Vec2(0, 0), new Vec2(1, 1), new Vec2(2, 2)]);
+var p1 = p.simplify();
+console.log(p1.points);
