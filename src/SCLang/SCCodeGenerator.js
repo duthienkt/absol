@@ -88,7 +88,6 @@ SCCodeGenerator.prototype.visitors = {
             node.type = 'VariableDeclarator';
             res += this.accept(node); //adapter for old version
         }
-        res += ';';
         return res;
     },
     BlockStatement: function (node) {
