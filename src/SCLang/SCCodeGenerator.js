@@ -259,6 +259,9 @@ SCCodeGenerator.prototype.visitors = {
         }
         res += '}';
         return res;
+    },
+    ConditionalExpression: function (node) {
+        return [this.accept(node.test), '?', this.accept(node.consequent), ':', this.accept(node.alternate)].join(' ');
     }
 };
 
@@ -308,6 +311,9 @@ SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerat
         var argsCode = node.params.map(arg => this.accept(arg)).join(', ');
         return `<span class="sclang-keyword">function</span> ${node.id.name}(${argsCode}) ${bodyCode}`;
     },
+    ForStatement: function (node) {
+
+    },
     ForCountStatement: function (node) {
         var res = ['<span class="sclang-keyword">for</span>', this.accept(node.for), '<span class="sclang-keyword">from</span>', this.accept(node.from), '<span class="sclang-keyword">to</span>', this.accept(node.to)].join(' ') + ' ';
         res += this.accept(node.body)
@@ -323,12 +329,24 @@ SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerat
         res += this.accept(node.body)
         return res;
     },
-    VariableDeclaration: function (node) {
-        var res = '<span class="sclang-keyword">var</span> ' + node.id.name;
+    VariableDeclarator: function (node) {
+        var res = node.id.name;
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
         if (node.init) res += ' = ' + this.accept(node.init);
+        return res;
+    },
+    VariableDeclaration: function (node) {
+        var res = '<span class="sclang-keyword">var</span> ';
+        if (node.declarations) {
+            res += node.declarations.map(arg => this.accept(arg)).join(', ');
+        }
+        else {
+            node  = Object.assign({}, node);
+            node.type = 'VariableDeclarator';
+            res += this.accept(node); //adapter for old version
+        }
         res += ';';
         return res;
     },

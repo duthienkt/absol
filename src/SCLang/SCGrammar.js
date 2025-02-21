@@ -321,6 +321,27 @@ rules.push({
     }
 });
 
+rules.push({
+    target: 'sequence_exp',
+    elements: ['exp', '_,', 'exp'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'SequenceExpression',
+            expressions: [parsedNodeToAST(parsedNode.children[0]), parsedNodeToAST(parsedNode.children[2])]
+        }
+    }
+});
+
+rules.push({
+    target: 'sequence_exp',
+    elements: ['sequence_exp', '_,', 'exp'],
+    toAST: function (parsedNode) {
+        var ast = parsedNodeToAST(parsedNode.children[0]);
+        ast.expressions.push(parsedNodeToAST(parsedNode.children[2]));
+        return ast;
+    }
+});
+
 
 rules.push({
     target: 'exp',
@@ -722,7 +743,8 @@ rules.push({
 
 
 /**********************************************************************************************************************/
-
+/*
+@decrepted ast
 rules.push({
     target: 'variable_declaration',
     elements: ['_var', 'ident', 'type_annotation', '_;'],
@@ -766,11 +788,95 @@ rules.push({
             type: 'VariableDeclaration',
             id: parsedNodeToAST(parsedNode.children[1]),
             typeAnnotation: parsedNodeToAST(parsedNode.children[2]),
-            init: parsedNodeToAST(parsedNode.children[4])
+            init: parsedNodeToAST(parsedNode.children[4]),
+            kind: 'var'
         }
 
     }
 });
+*/
+
+rules.push({
+    target: 'variable_declarator',
+    elements: ['ident', '_=', 'exp'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'VariableDeclarator',
+            id: parsedNodeToAST(parsedNode.children[0]),
+            init: parsedNodeToAST(parsedNode.children[2])
+        }
+    }
+});
+
+rules.push({
+    target: 'variable_declarator',
+    elements: ['ident', 'type_annotation' ,'_=', 'exp'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'VariableDeclarator',
+            id: parsedNodeToAST(parsedNode.children[0]),
+            typeAnnotation: parsedNodeToAST(parsedNode.children[1]),
+            init: parsedNodeToAST(parsedNode.children[3])
+        }
+    }
+});
+
+rules.push({
+    target: 'variable_declarator',
+    elements: ['ident'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'VariableDeclarator',
+            id: parsedNodeToAST(parsedNode.children[0]),
+            init: null
+        }
+    }
+});
+
+
+rules.push({
+    target: 'variable_declarator',
+    elements: ['ident', 'type_annotation'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'VariableDeclarator',
+            id: parsedNodeToAST(parsedNode.children[0]),
+            typeAnnotation: parsedNodeToAST(parsedNode.children[1]),
+            init: null
+        }
+    }
+});
+
+rules.push({
+    target: 'variable_declarator_sequence',
+    elements: ['variable_declarator'],
+    toASTChain: function (parsedNode) {
+        return [parsedNodeToAST(parsedNode.children[0])];
+    }
+});
+
+rules.push({
+    target: 'variable_declarator_sequence',
+    elements: ['variable_declarator_sequence', '_,', 'variable_declarator'],
+    toASTChain: function (parsedNode) {
+        return parsedNodeToASTChain(parsedNode.children[0]).concat([parsedNodeToAST(parsedNode.children[2])]);
+    }
+});
+
+
+
+rules.push({
+    target: 'variable_declaration',
+    elements: ['_var', 'variable_declarator_sequence', '_;'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'VariableDeclaration',
+            declarations: parsedNodeToASTChain(parsedNode.children[1]),
+            kind: 'var'
+        }
+    }
+});
+
 
 
 //todo
@@ -784,6 +890,7 @@ rules.push({
         }
     }
 });
+
 
 /**********************************************************************************************************************/
 

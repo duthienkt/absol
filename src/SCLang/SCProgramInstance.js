@@ -235,18 +235,66 @@ SCProgramInstance.prototype.visitors = {
     ExpressionStatement: function (node) {
         return this.accept(node.expression);
     },
-    VariableDeclaration: function (node) {
+    VariableDeclarator: function (node, kind) {
         var initValue = null;
         if (node.init) {
             initValue = this.accept(node.init, 'const');
         }
         if (initValue && initValue.then) {
             return initValue.then((result) => {
-                this.topScope.declareVar(node.id.name, result);
+                if (kind === 'const') {
+                    this.topScope.declareConst(node.id.name, result);
+                }
+                else {
+                    this.topScope.declareVar(node.id.name, result);
+
+                }
             });
         }
         else {
-            this.topScope.declareVar(node.id.name, initValue);
+            if (kind === 'const') {
+                this.topScope.declareConst(node.id.name, initValue);
+            }
+            else {
+                this.topScope.declareVar(node.id.name, initValue);
+            }
+        }
+    },
+
+    VariableDeclaration: function (node) {
+        var resolved = false;
+        var sync;
+        var resolve;
+        var doStep;
+        var i;
+        var declarations = node.declarations;
+        if (declarations) {
+            i = 0;
+            doStep = () => {
+                var dResult;
+                while (i < declarations.length) {
+                    dResult = this.accept(declarations[i++], node.kind);
+                    if (dResult && dResult.then) {
+                        if (!sync) {
+                            sync = new Promise(rs => {
+                                resolve = rs;
+                            });
+                        }
+                        dResult.then(doStep);
+                        return;
+                    }
+                }
+                if (resolve) resolve();
+                else
+                    resolved = true;
+            }
+            doStep();
+            if (!resolved) return sync;
+        }
+        else {
+            node = Object.assign({}, node);
+            node.type = 'VariableDeclarator';
+            return this.accept(node); //adapter for old version
         }
     },
 
@@ -593,19 +641,6 @@ SCProgramInstance.prototype.visitors = {
         }
     },
 
-    // CallExpression: function (node){
-    //     var funcRef;
-    //     var object = null;
-    //     var func = null;
-    //     if (node.callee.type === 'Identifier'){
-    //         funcRef = this.topScope.get(node.callee.name);
-    //     }
-    //     else {
-    //         console.log(node.callee)
-    //     }
-    //
-    //Vả
-    // },
     NullLiteral: function (node) {
         return null;
     },
