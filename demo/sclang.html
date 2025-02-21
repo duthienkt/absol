@@ -39,6 +39,7 @@
         var i;
         var arr = [];
         var y;
+        var z = 1> 2? 3: 4;
         for i from 0 to 100 {
             arr.push(i);
         }
@@ -47,11 +48,11 @@
 
         for x of fa(arr)
         {
-        print(x);
+        print(x %2 == 0? 1:0);
         }
     }
 foo(1,2 ,3);`;
-    code = `function convert_checkins_to_logs(employeesIdList: linktype -48, timestart: Date, timeend: Date) {
+    var code1 = `function convert_checkins_to_logs(employeesIdList: linktype -48, timestart: Date, timeend: Date) {
     var worktime_checkinsCall;
     var shiftsCall;
     var assign_employee_shiftsCall;
@@ -74,7 +75,7 @@ foo(1,2 ,3);`;
        m =  a+1 ||5 && b+2==6;
 
 }`;
-    code += `return (paysheetConfig.payroll_date.getTime() - start_date.getTime())/86400000/365*12;`;
+    code1 += `return (paysheetConfig.payroll_date.getTime() - start_date.getTime())/86400000/365*12;`;
     /*for x of fa(arr) {
     print(x);
     }*/
@@ -95,12 +96,12 @@ foo(1,2 ,3);`;
             }
         }).addTo(document.body);
         // // console.log(previewCode)
-        // var program = new absol.sclang.SCProgramInstance(ins.ast, {
-        //     fa: Promise.resolve.bind(Promise),
-        //     console: console,
-        //     print: console.log.bind(console)
-        // });
-        // program.exec();
+        var program = new absol.sclang.SCProgramInstance(ins.ast, {
+            fa: Promise.resolve.bind(Promise),
+            console: console,
+            print: console.log.bind(console)
+        });
+        program.exec();
     }
     setTimeout(test,500);
 
