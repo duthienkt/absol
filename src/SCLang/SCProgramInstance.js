@@ -539,8 +539,16 @@ SCProgramInstance.prototype.visitors = {
     AssignStatement: function (node) {
         var leftRef = this.accept(node.left, 'ref');
         var right = this.accept(node.right, 'const');
-        leftRef.set(right);
-
+        if (right && right.then) {
+            return right.then(function (value) {
+                leftRef.set(value);
+                return value;
+            });
+        }
+        else {
+            leftRef.set(right);
+            return right;
+        }
     },
     IfStatement: function (node) {
         var test = this.accept(node.test, 'const');
@@ -559,6 +567,27 @@ SCProgramInstance.prototype.visitors = {
                 return this.accept(node.consequent);
             }
             else if (node.alternate) {
+                return this.accept(node.alternate);
+            }
+        }
+    },
+    ConditionalExpression: function (node) {
+        var test = this.accept(node.test, 'const');
+        if (test && (typeof test.then === 'function')) {
+            return test.then((test) => {
+                if (test) {
+                    return this.accept(node.consequent);
+                }
+                else {
+                    return this.accept(node.alternate);
+                }
+            });
+        }
+        else {
+            if (test) {
+                return this.accept(node.consequent);
+            }
+            else {
                 return this.accept(node.alternate);
             }
         }

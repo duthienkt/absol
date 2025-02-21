@@ -309,6 +309,28 @@ rules.push({
 });
 
 rules.push({
+    target: 'condition_exp',
+    elements: ['exp', '_?', 'exp', '_:', 'exp'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'ConditionalExpression',
+            test: parsedNodeToAST(parsedNode.children[0]),
+            consequent: parsedNodeToAST(parsedNode.children[2]),
+            alternate: parsedNodeToAST(parsedNode.children[4])
+        }
+    }
+});
+
+
+rules.push({
+    target: 'exp',
+    elements: ['condition_exp'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+rules.push({
     target: 'exp',
     elements: ['function_call'],
     toAST: function (parsedNode) {
