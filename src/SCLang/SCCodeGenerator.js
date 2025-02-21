@@ -69,12 +69,25 @@ SCCodeGenerator.prototype.visitors = {
     Identifier: function (node) {
         return node.name;
     },
-    VariableDeclaration: function (node) {
-        var res = 'var ' + node.id.name;
+    VariableDeclarator: function (node) {
+        var res =  node.id.name;
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
         if (node.init) res += ' = ' + this.accept(node.init);
+        res += ';';
+        return res;
+    },
+    VariableDeclaration: function (node) {
+        var res = 'var ';
+        if (node.declarations) {
+            res += node.declarations.map(arg => this.accept(arg)).join(', ');
+        }
+        else {
+            node  = Object.assign({}, node);
+            node.type = 'VariableDeclarator';
+            res += this.accept(node); //adapter for old version
+        }
         res += ';';
         return res;
     },
