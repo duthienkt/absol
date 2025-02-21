@@ -38,7 +38,8 @@
     var code = `function foo(x){
         var i;
         var arr = [];
-        var y;
+        var y, xz = 3, tm = fetch("https://absol.cf");
+
         var z = 1> 2? 3: 4;
         for i from 0 to 100 {
             arr.push(i);
@@ -50,6 +51,7 @@
         {
         print(x %2 == 0? 1:0);
         }
+        print(tm.text());
     }
 foo(1,2 ,3);`;
     var code1 = `function convert_checkins_to_logs(employeesIdList: linktype -48, timestart: Date, timeend: Date) {
@@ -86,8 +88,11 @@ foo(1,2 ,3);`;
         console.log('parse time =', parseTime);
         // console.log(ins)
         if (ins.error) {
-            console.log(ins)
+            console.log(ins);
+            return;
         }
+        console.log(ins.ast)
+
         var previewCode = absol.sclang.generateSCHighlightPreviewCode(ins.ast);
 
         absol._({
@@ -95,11 +100,10 @@ foo(1,2 ,3);`;
                 innerHTML: previewCode
             }
         }).addTo(document.body);
-        // // console.log(previewCode)
         var program = new absol.sclang.SCProgramInstance(ins.ast, {
             fa: Promise.resolve.bind(Promise),
             console: console,
-            print: console.log.bind(console)
+            print: console.log.bind(console), fetch: fetch.bind(window)
         });
         program.exec();
     }
