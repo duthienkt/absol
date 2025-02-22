@@ -75,8 +75,3 @@ Polyline.prototype.simplify = function (tolerance) {
 
 
 export default Polyline;
-
-
-var p = new Polyline([new Vec2(0, 0), new Vec2(1, 1), new Vec2(2, 2)]);
-var p1 = p.simplify();
-console.log(p1.points);
