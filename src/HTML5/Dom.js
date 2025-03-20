@@ -477,12 +477,14 @@ export function traceOutBoundingClientRect(current) {
     var right = screenSize.width;
     var top = 0;
     var bottom = screenSize.height;
+    var ox, oy, fixed;
+    var bound;
     while (current) {
-        var ox = AElement.prototype.getComputedStyleValue.call(current, 'overflow-x') !== "visible";
-        var oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') !== "visible";
+        fixed =  AElement.prototype.getComputedStyleValue.call(current, 'position') == "fixed";
+        ox = AElement.prototype.getComputedStyleValue.call(current, 'overflow-x') !== "visible";
+        oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') !== "visible";
         var isHtml = current.tagName.toLowerCase() === 'html';
-        if (ox || oy || isHtml) {
-            var bound;
+        if (ox || oy || isHtml || fixed) {
             if (isHtml) {
                 bound = Object.assign({ left: 0, top: 0 }, getScreenSize());
                 bound.bottom = bound.height;
@@ -492,17 +494,17 @@ export function traceOutBoundingClientRect(current) {
             else {
                 bound = current.getBoundingClientRect();
             }
-            if (ox || isHtml) {
+            if (ox || isHtml|| fixed) {
                 left = Math.max(left, bound.left);
                 right = Math.min(right, bound.right);
             }
-            if (oy || isHtml) {
+            if (oy || isHtml|| fixed) {
                 top = Math.max(top, bound.top);
                 bottom = Math.min(bottom, bound.bottom);
             }
         }
 
-        if (isHtml) break;
+        if (isHtml || fixed) break;
         current = current.parentElement;
     }
     return { left: left, right: right, top: top, bottom: bottom, width: right - left, height: bottom - top };
