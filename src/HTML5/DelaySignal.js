@@ -31,7 +31,17 @@ DelaySignal.prototype.execSignal = function () {
 DelaySignal.prototype.emit = function (name) {
     this.signals[name] = Array.prototype.slice.call(arguments, 1);
     if (this.to === this.NO_WAIT) {
-        this.to = setTimeout(this.execSignal, this.delay);
+        if (window.Thread && window.Thread.setTimeout) {
+            this.to = window.Thread.setTimeout({
+                func: this.execSignal,
+                time: this.delay,
+                type: 'background',
+                args: []
+            });
+        }
+        else {
+            this.to = setTimeout(this.execSignal, this.delay);
+        }
     }
     return this;
 };
