@@ -80,6 +80,7 @@ import * as measurements from './Math/measurements';
 import QRCode from "./Converter/QRCode";
 import DelaySignal from "./HTML5/DelaySignal";
 import BezierCurve  from "./Math/BezierCurve";
+import { validateSCCode } from "./SCLang/SCCodeValidation";
 
 var absol = {
     int: int,
@@ -179,8 +180,9 @@ var absol = {
         'SCDynamicLibScope': SCDynamicLibScope,
         'SCScope': SCScope,
         'SCCodeGenerator': SCCodeGenerator,
-        generateSCCode: generateSCCode,
-        generateSCHighlightPreviewCode: generateSCHighlightPreviewCode
+        'generateSCCode': generateSCCode,
+        'generateSCHighlightPreviewCode': generateSCHighlightPreviewCode,
+        'validateSCCode': validateSCCode
     },
     printer: printer,
     measurements: measurements
