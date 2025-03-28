@@ -585,6 +585,21 @@ SCProgramInstance.prototype.visitors = {
     },
 
     AssignStatement: function (node) {
+        //@deprecated
+        var leftRef = this.accept(node.left, 'ref');
+        var right = this.accept(node.right, 'const');
+        if (right && right.then) {
+            return right.then(function (value) {
+                leftRef.set(value);
+                return value;
+            });
+        }
+        else {
+            leftRef.set(right);
+            return right;
+        }
+    },
+    AssignmentExpression: function (node) {
         var leftRef = this.accept(node.left, 'ref');
         var right = this.accept(node.right, 'const');
         if (right && right.then) {

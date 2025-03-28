@@ -137,10 +137,18 @@ SCOperatorExecutor.addBinaryOperator('>', MORE_THAN);
 export function EQUAL(a, b) {
     if (a instanceof Date) a = a.getTime();
     if (b instanceof Date) b = b.getTime();
-    return (a === b);
+    return (a == b);
 }
 
 SCOperatorExecutor.addBinaryOperator('==', EQUAL);
+
+export function EXTRACT_EQUAL(a, b) {
+    if (a instanceof Date) a = a.getTime();
+    if (b instanceof Date) b = b.getTime();
+    return (a === b);
+}
+
+SCOperatorExecutor.addBinaryOperator('===', EXTRACT_EQUAL);
 
 
 export function LESS_AND_EQUAL(a, b) {
