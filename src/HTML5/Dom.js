@@ -227,10 +227,10 @@ Dom.prototype._ = function (option, isInherited) {
         if (!res) {
             if (creator) {
                 if (creator.render) {
-                    res = creator.render(option.data, option,this);
+                    res = creator.render(option.data, option, this);
                 }
                 else {
-                    res = creator(option.data,option ,this);
+                    res = creator(option.data, option, this);
                 }
 
             }
@@ -480,7 +480,7 @@ export function traceOutBoundingClientRect(current) {
     var ox, oy, fixed;
     var bound;
     while (current) {
-        fixed =  AElement.prototype.getComputedStyleValue.call(current, 'position') == "fixed";
+        fixed = AElement.prototype.getComputedStyleValue.call(current, 'position') == "fixed";
         ox = AElement.prototype.getComputedStyleValue.call(current, 'overflow-x') !== "visible";
         oy = AElement.prototype.getComputedStyleValue.call(current, 'overflow-y') !== "visible";
         var isHtml = current.tagName.toLowerCase() === 'html';
@@ -494,11 +494,11 @@ export function traceOutBoundingClientRect(current) {
             else {
                 bound = current.getBoundingClientRect();
             }
-            if (ox || isHtml|| fixed) {
+            if (ox || isHtml || fixed) {
                 left = Math.max(left, bound.left);
                 right = Math.min(right, bound.right);
             }
-            if (oy || isHtml|| fixed) {
+            if (oy || isHtml || fixed) {
                 top = Math.max(top, bound.top);
                 bottom = Math.min(bottom, bound.bottom);
             }
@@ -940,3 +940,35 @@ Dom.updateSizeUp = function (fromElt) {
 
 
 export default Dom;
+
+
+/**
+ *
+ * @param elt
+ */
+export function isVisibilityOnScreen(elt) {
+    if (!elt) return false;
+    if (!AElement.prototype.isDescendantOf.call(elt, document.body)) {
+        return false;
+    }
+
+    var current = elt;
+    var comStyle;
+    while (current) {
+        if (current === document.body) break;
+        comStyle = window.getComputedStyle(current, null);
+        if (comStyle.getPropertyValue('display') === 'none') return false;
+        if (comStyle.getPropertyValue('visisbility') === 'hidden') return false;
+        if (comStyle.getPropertyValue('opacity') === '0') return false;
+        current = current.parentElement;
+    }
+    var bound = elt.getBoundingClientRect();
+    var outBound = traceOutBoundingClientRect(elt);
+    if (bound.top > outBound.bottom) return false;
+    if (bound.bottom < outBound.top) return false;
+    if (bound.left > outBound.right) return false;
+    if (bound.right < outBound.left) return false;
+    return true;
+}
+
+Dom.isVisibilityOnScreen = isVisibilityOnScreen;
