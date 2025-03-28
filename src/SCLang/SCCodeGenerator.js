@@ -98,7 +98,11 @@ SCCodeGenerator.prototype.visitors = {
         return ['{', bodyCode, '}'].join('\n');
     },
     AssignStatement: function (node) {
+        //@deprecated
         return this.accept(node.left) + ' = ' + this.accept(node.right) + ';';
+    },
+    AssignmentExpression: function (node) {
+        return this.accept(node.left) + ' = ' + this.accept(node.right);
     },
     BooleanLiteral: function (node) {
         return node.value ? 'true' : 'false';

@@ -18,6 +18,7 @@ var operatorOrder = {
     '<=': 9,
     '>=': 9,
     '==': 9,
+    '===': 9,
     '!=': 9,
     'AND': 14,
     '&&': 14,
@@ -32,8 +33,8 @@ var elementRegexes = [
     ['number', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
     ['word', /[_a-zA-Z][_a-zA-Z0-9]*/],
     ['skip', /([\s\r\n]+)|(\/\/[^\n]*)|(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)/],
+    ['tsymbol', /(\.\.\.)|(===)/],
     ['dsymbol', /\+\+|--|==|!=|<=|>=|\|\||&&/],
-    ['tsymbol', /\.\.\./],
     ['symbol', /[^\s_a-zA-Z0-9]/],
 ];
 
@@ -240,7 +241,7 @@ rules.push({
     }
 });
 
-['+', '-', '*', '/', '%', '&&', '||', 'XOR', '==', '!=', '<', '>', '>=', '<='].forEach(function (op) {
+['+', '-', '*', '/', '%', '&&', '||', 'XOR', '==','===', '!=', '<', '>', '>=', '<='].forEach(function (op) {
     rules.push({
         target: 'bin_op',
         elements: ['_' + op],
@@ -895,11 +896,11 @@ rules.push({
 /**********************************************************************************************************************/
 
 rules.push({
-    target: 'assign_statement',
-    elements: ['ident', '_=', 'exp', '_;'],
+    target: 'assign_expression',
+    elements: ['ident', '_=', 'exp'],
     toAST: function (parseNode) {
         return {
-            type: 'AssignStatement',
+            type: 'AssignmentExpression',
             left: parsedNodeToAST(parseNode.children[0]),
             right: parsedNodeToAST(parseNode.children[2])
         }
@@ -908,16 +909,28 @@ rules.push({
 
 
 rules.push({
-    target: 'assign_statement',
-    elements: ['mem_exp', '_=', 'exp', '_;'],
+    target: 'assign_expression',
+    elements: ['mem_exp', '_=', 'exp'],
     toAST: function (parseNode) {
         return {
-            type: 'AssignStatement',
+            type: 'AssignmentExpression',
             left: parsedNodeToAST(parseNode.children[0]),
             right: parsedNodeToAST(parseNode.children[2])
         }
     }
 });
+
+rules.push({
+    target: 'expression_statement',
+    elements: ['assign_expression', '_;'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'ExpressionStatement',
+            expression: parsedNodeToAST(parsedNode.children[0])
+        }
+    }
+});
+
 
 
 /**********************************************************************************************************************/
@@ -1018,7 +1031,11 @@ rules.push({
     target: 'iterable_range_limit',
     elements: ['ident']
 });
-
+/**************************************************************************************/
+rules.push({
+    target: 'for_statement',
+    elements: ['_for', 'bracket_group', 'statement'],
+})
 
 /**********************************************************************************************************************/
 
