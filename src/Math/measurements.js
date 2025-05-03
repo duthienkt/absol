@@ -127,7 +127,7 @@ export function latLngRectFromCenter(center, distance) {
  *
  * @param p0
  * @param p1
- * @returns {number}
+ * @returns {number} in km
  */
 export function latLngDistance(p0, p1) {
     var lat0 = p0.latitude;
@@ -147,6 +147,5 @@ export function latLngDistance(p0, p1) {
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat0) * Math.cos(lat1);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c;
-    return d;
+    return  R * c;
 }
