@@ -34,13 +34,13 @@ SCScope.prototype.get = function (name) {
 };
 
 SCScope.prototype.declareConst = function (name, value, force, type) {
-    if ((name in this.data) && !force) throw  new Error("Cannot redefine variable, "+ name +" is already declared!");
+    if ((name in this.data) && !force) throw new Error("Cannot redefine variable, " + name + " is already declared!");
     this.data[name] = new Const(value, type);
 };
 
 
 SCScope.prototype.declareVar = function (name, value, force, type) {
-    if ((name in this.data) && !force) throw new Error("Cannot redefine variable, "+ name +" is already declared!");
+    if ((name in this.data) && !force) throw new Error("Cannot redefine variable, " + name + " is already declared!");
     this.data[name] = new Ref(value, type);
 };
 
@@ -64,12 +64,18 @@ SCScope.prototype.findRef = function (name) {
  * @return {SCScope|null}
  */
 SCScope.prototype.findScope = function (name) {
-    if (this.data[name]) return  this;
+    if (this.data[name]) return this;
     if (this.parent) return this.parent.findScope(name);
     return null;
 };
 
-
+SCScope.prototype.makeFlattenedScope = function () {
+    var res;
+    if (this.parent) res = this.parent.makeFlattenedScope();
+    else res = new SCScope();
+    Object.assign(res.data, this.data);
+    return res;
+};
 
 
 export default SCScope;
