@@ -69,6 +69,10 @@ SCScope.prototype.findScope = function (name) {
     return null;
 };
 
+/**
+ *
+ * @returns {SCScope}
+ */
 SCScope.prototype.makeFlattenedScope = function () {
     var res;
     if (this.parent) res = this.parent.makeFlattenedScope();
