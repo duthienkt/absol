@@ -60,6 +60,7 @@ CCBlock.prototype.pinOff = function (pinName, listener) {
 CCBlock.prototype.pinFire = function (pinName) {
     if (!this.__cc_listener__[pinName]) return this;
     var cbList = this.__cc_listener__[pinName].slice();
+    if (cbList.length === 0) return; //avoid call pinGetValue
     var args = Array.prototype.slice.call(arguments, 1);
     if (args.length === 0 && this.pinHandlers[pinName] && this.pinHandlers[pinName].get && cbList.length > 0)
         args.push(this.pinGetValue(pinName));
