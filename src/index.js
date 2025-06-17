@@ -62,7 +62,7 @@ import CCLine from "./AppPattern/circuit/CCLine";
 import * as FileSaver from './Network/FileSaver';
 import Thread from "./Network/Thread";
 import { copyJSVariable, generateJSVariable, replaceDateStringJSVariable } from "./JSMaker/generator";
-import {normalizeIdent} from "./String/stringFormat";
+import { normalizeIdent } from "./String/stringFormat";
 import ShareConfiguration from "./AppPattern/ShareConfiguration";
 import safeThrow from "./Code/safeThrow";
 import * as array from './DataStructure/Array';
@@ -79,8 +79,9 @@ import * as printer from './Print/printer';
 import * as measurements from './Math/measurements';
 import QRCode from "./Converter/QRCode";
 import DelaySignal from "./HTML5/DelaySignal";
-import BezierCurve  from "./Math/BezierCurve";
+import BezierCurve from "./Math/BezierCurve";
 import { validateSCCode } from "./SCLang/SCCodeValidation";
+import { MQTTExecMaster, MQTTExecSlave } from "./Code/MQTTExec";
 
 var absol = {
     int: int,
@@ -145,7 +146,7 @@ var absol = {
         dom: jsxdom,
         attribute: jsxattribute
     },
-    QRCode:QRCode,
+    QRCode: QRCode,
     clipboard: clipboard,
     dataStructure: { Heap: Heap },
     datetime: datetime,
@@ -172,11 +173,11 @@ var absol = {
     shareConfiguration: ShareConfiguration.instance,
     DynamicCSS: DynamicCSS,
     getSystemFontSize: getSystemFontSize,
-    sclang:{
+    sclang: {
         'SCParser': SCParser,
         'SCProgramInstance': SCProgramInstance,
         'SCOperatorExecutor': SCOperatorExecutor,
-        'SCStaticLibScope':SCStaticLibScope,
+        'SCStaticLibScope': SCStaticLibScope,
         'SCDynamicLibScope': SCDynamicLibScope,
         'SCScope': SCScope,
         'SCCodeGenerator': SCCodeGenerator,
@@ -185,9 +186,10 @@ var absol = {
         'validateSCCode': validateSCCode
     },
     printer: printer,
-    measurements: measurements
+    measurements: measurements,
+    MQTTExecMaster: MQTTExecMaster,
+    MQTTExecSlave: MQTTExecSlave,
 };
-
 
 
 export default absol;
