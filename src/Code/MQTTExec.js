@@ -34,9 +34,10 @@ MQTTExecSlave.prototype.handleCommand = function (message) {
             id: id,
             error: e.message || e.toString()
         }));
+        return;
     }
 
-    if (res.then) {
+    if (res && res.then) {
         res.then((result) => {
             this.client.publish(this.id + '_exec_cmd_result', generateJSVariable({ id: id, result }));
         }).catch((err) => {
@@ -53,39 +54,46 @@ MQTTExecSlave.prototype.handleCommand = function (message) {
 
 export function MQTTExecMaster(id) {
     this.id = id || 'dev';
-    this.client = window.MQTT.connect('wss://absol.cf:9884/');
-    this.client.on('connect', () => {
-        this.client.subscribe(this.id + '_exec_cmd_result',  (err)=> {
-            if (!err) {
-                console.log('Subscribed to topic ' + this.id + '_exec_cmd_result');
-            }
-            else {
-                console.error('Subscribe error:', err);
+    this.sync = new Promise((resolve, reject) => {
+        this.client = window.MQTT.connect('wss://absol.cf:9884/');
+        this.client.on('connect', () => {
+            this.client.subscribe(this.id + '_exec_cmd_result',  (err)=> {
+                if (!err) {
+                    console.log('Subscribed to topic ' + this.id + '_exec_cmd_result');
+                    resolve();
+                }
+                else {
+                    console.error('Subscribe error:', err);
+                }
+            });
+        });
+
+        this.client.on('message', (topic, message) => {
+            if (topic === this.id + '_exec_cmd_result') {
+                this.handleResult(message);
             }
         });
-    });
+    })
 
-    this.client.on('message', (topic, message) => {
-        if (topic === this.id + '_exec_cmd_result') {
-            this.handleResult(message);
-        }
-    });
 
     this.promises = {};
 }
 
 
 MQTTExecMaster.prototype.invoke = function (cmd, ...args) {
-    return new Promise((rs, rj) => {
-        var id = Math.random().toString(36).substring(2, 15);
-        this.promises[id] = {
-            resolve: rs,
-            reject: rj
-        };
-        this.client.publish(this.id + '_exec_cmd', generateJSVariable({
-            cmd: cmd,
-            args: args,
-        }));
+    return  this.sync.then(()=>{
+        return new Promise((rs, rj) => {
+            var id = Math.random().toString(36).substring(2, 15);
+            this.promises[id] = {
+                resolve: rs,
+                reject: rj
+            };
+            this.client.publish(this.id + '_exec_cmd', generateJSVariable({
+                cmd: cmd,
+                args: args,
+                id: id
+            }));
+        });
     });
 };
 
