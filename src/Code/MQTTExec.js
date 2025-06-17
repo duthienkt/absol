@@ -1,4 +1,5 @@
 import { generateJSVariable } from "../JSMaker/generator";
+import safeThrow from "./safeThrow";
 
 export function MQTTExecSlave(id) {
     this.id = id || 'dev';
@@ -28,19 +29,24 @@ MQTTExecSlave.prototype.handleCommand = function (message) {
     var args = data.args || [];
 
     try {
+        console.log('Executing', cmd, args);
         var res = this[cmd].apply(this, args);
     } catch (e) {
         this.client.publish(this.id + '_exec_cmd_result', generateJSVariable({
             id: id,
             error: e.message || e.toString()
         }));
+        safeThrow(e);
         return;
     }
 
     if (res && res.then) {
         res.then((result) => {
+            console.log('Recieved', result);
+
             this.client.publish(this.id + '_exec_cmd_result', generateJSVariable({ id: id, result }));
         }).catch((err) => {
+            safeThrow(err);
             this.client.publish(this.id + '_exec_cmd_result', generateJSVariable({
                 id: id,
                 error: (err && err.message || err.toString()) || "undefined_error"
@@ -48,6 +54,7 @@ MQTTExecSlave.prototype.handleCommand = function (message) {
         });
     }
     else {
+        console.log('Recieved', res);
         this.client.publish(this.id + '_exec_cmd_result', generateJSVariable({ id: id, result: res }));
     }
 }
