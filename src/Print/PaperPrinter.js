@@ -277,7 +277,7 @@ PaperPrinter.prototype.computeObjects = function () {
         doc.pages = doc.objects.reduce((ac, cr) => {
             var page = ac[ac.length - 1];
             if (cr.bound.height > pageContentHeight) {
-                page.object.push(cr);
+                page.objects.push(cr);
             }
             else {
                 if (cr.bound.y + cr.bound.height - page.y > pageContentHeight || cr.type === 'page_break') {
