@@ -123,14 +123,65 @@ export function inheritCreator(parent, child) {
 /***
  *
  * @param {Function} constructor
+ * @param {Function[]}ParentClasses
  */
-export function mixClass(constructor) {
+export function mixClass(constructor,  ...ParentClasses) {
+    var createFunction;
+    var cClass, proto;
     var descriptors = {};
-    for (var i = 1; i < arguments.length; ++i) {
-        Object.assign(descriptors, Object.getOwnPropertyDescriptors(arguments[i].prototype));
+    var attributeHandlers = undefined;
+    var pinHandlers = undefined;
+    var attributes = undefined;
+    var i;
+
+    //normal
+    for (i = 0; i < ParentClasses.length; ++i) {
+        cClass = ParentClasses[i];
+        if (typeof cClass === "function") {
+            proto = cClass.prototype;
+            createFunction = cClass.create || createFunction;
+        }
+        else {
+            proto = cClass;
+        }
+
+        Object.assign(descriptors, Object.getOwnPropertyDescriptors(proto));
+
+        //has attributes handler
+        if (proto.attributeHandlers) {
+            attributeHandlers = attributeHandlers || {};
+            Object.keys(proto.attributeHandlers || {}).forEach(key => {
+                attributeHandlers[key] = Object.assign({}, proto.attributeHandlers [key]);
+            });
+        }
+        if (proto.attributes) {
+            attributes = attributes || {};
+            Object.assign(attributes, proto.attributes);
+        }
+
+        //for CCBlock
+        if (proto.pinHandlers) {
+            pinHandlers = pinHandlers || {};
+            Object.keys(proto.pinHandlers || {}).forEach(key => {
+                pinHandlers[key] = Object.assign({}, proto.pinHandlers [key]);
+            });
+        }
+
+
     }
     delete descriptors.constructor;
+    delete descriptors.attributes;
+    delete descriptors.attributeHandlers;
+    delete descriptors.pinHandlers;
     Object.defineProperties(constructor.prototype, descriptors);
+
+    if (attributeHandlers)
+        constructor.prototype.attributeHandlers = attributeHandlers;
+    if (pinHandlers)
+        constructor.prototype.pinHandlers = pinHandlers;
+    if (attributes) {
+        constructor.prototype.attributes = attributes;
+    }
 }
 
 
