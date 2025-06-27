@@ -35,3 +35,25 @@ export function stringToBlob(text, type) {
         type: mineTye
     });
 }
+
+
+/**
+ *
+ * @param {File} file
+ */
+export function convertToSafeFile(file) {
+    if (!file) return file;
+    var blob;
+    var type, name, newName;
+    if (file instanceof File) {
+        type = file.type || 'application/octet-stream';
+        name = file.name || 'no_name';
+        newName = name.replace(/[\/\\<>:"'|?*]/g, '_');
+        if (newName !== name) {
+            blob = file.slice(0, file.size, type);
+            file = new File([blob], newName, {type: type});
+        }
+    }
+
+    return  file;
+}
