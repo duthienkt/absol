@@ -359,6 +359,17 @@ export function breakTextToLineByLength(text, limitLength) {
     return newLines.join('\n');
 }
 
+export function normalizeFileName(name) {
+    if (typeof name !== "string") return '';
+    name = name.trim();
+    if (name.length === 0) return '';
+    name = nonAccentVietnamese(name);
+    name = name.replace(/[^a-zA-Z0-9_.]+/g, '_');
+    return name;
+}
+
+
+
 // window.t = `Sử dụng công thức tính: (Luong_Gio  OT150  0.5) + (Luong_Gio  OT200  1.0) + (Luong_Gio  OT210  1.1) + (Luong_Gio  OT270  1.7) + (Luong_Gio  OT300  2.0)`;
 // console.log(breakTextToLineByLength(t, 50))
 
