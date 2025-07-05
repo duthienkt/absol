@@ -125,7 +125,7 @@ export function inheritCreator(parent, child) {
  * @param {Function} constructor
  * @param {Function[]}ParentClasses
  */
-export function mixClass(constructor,  ...ParentClasses) {
+export function mixClass(constructor, ...ParentClasses) {
     var createFunction;
     var cClass, proto;
     var descriptors = {};
@@ -133,6 +133,8 @@ export function mixClass(constructor,  ...ParentClasses) {
     var pinHandlers = undefined;
     var attributes = undefined;
     var i;
+    var render, tag, property, eventHandler, extendStyle;//dom module
+    var styleHandlers = undefined;
 
     //normal
     for (i = 0; i < ParentClasses.length; ++i) {
@@ -140,6 +142,21 @@ export function mixClass(constructor,  ...ParentClasses) {
         if (typeof cClass === "function") {
             proto = cClass.prototype;
             createFunction = cClass.create || createFunction;
+            if (cClass.render) {
+                render = cClass.render;
+            }
+            if (cClass.tag) {
+                tag = cClass.tag;
+            }
+            if (cClass.property) {
+                if (!property) property = {};
+                Object.keys(cClass.property).forEach((key) => {
+                    property[key] = Object.assign({}, cClass.property[key]);
+                });
+            }
+            if (cClass.eventHandler) {
+                eventHandler = Object.assign(eventHandler || {}, cClass.eventHandler);
+            }
         }
         else {
             proto = cClass;
@@ -167,12 +184,28 @@ export function mixClass(constructor,  ...ParentClasses) {
             });
         }
 
+        //dom
+
+        if (proto.styleHandlers) {
+            console.log(proto.styleHandlers)
+            styleHandlers = styleHandlers || {};
+            Object.keys(proto.styleHandlers || {}).forEach(key => {
+                styleHandlers[key] = Object.assign({}, proto.styleHandlers [key]);
+            });
+        }
+        if (proto.extendStyle) {
+            extendStyle = extendStyle || {};
+            Object.assign(extendStyle, proto.extendStyle);
+        }
 
     }
     delete descriptors.constructor;
     delete descriptors.attributes;
     delete descriptors.attributeHandlers;
     delete descriptors.pinHandlers;
+    delete descriptors.extendStyle;
+    delete descriptors.styleHandlers;
+
     Object.defineProperties(constructor.prototype, descriptors);
 
     if (attributeHandlers)
@@ -181,6 +214,20 @@ export function mixClass(constructor,  ...ParentClasses) {
         constructor.prototype.pinHandlers = pinHandlers;
     if (attributes) {
         constructor.prototype.attributes = attributes;
+    }
+
+
+    if (property) constructor.property = property;
+    if (render) constructor.render = render;
+    if (tag) constructor.tag = tag;
+    if (eventHandler)  constructor.eventHandler = eventHandler;
+    if (styleHandlers) {
+        console.log('st',constructor, styleHandlers);
+
+        constructor.prototype.styleHandlers = styleHandlers;
+    }
+    if (extendStyle) {
+        constructor.prototype.extendStyle = extendStyle;
     }
 }
 
