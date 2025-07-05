@@ -187,7 +187,6 @@ export function mixClass(constructor, ...ParentClasses) {
         //dom
 
         if (proto.styleHandlers) {
-            console.log(proto.styleHandlers)
             styleHandlers = styleHandlers || {};
             Object.keys(proto.styleHandlers || {}).forEach(key => {
                 styleHandlers[key] = Object.assign({}, proto.styleHandlers [key]);
@@ -222,8 +221,6 @@ export function mixClass(constructor, ...ParentClasses) {
     if (tag) constructor.tag = tag;
     if (eventHandler)  constructor.eventHandler = eventHandler;
     if (styleHandlers) {
-        console.log('st',constructor, styleHandlers);
-
         constructor.prototype.styleHandlers = styleHandlers;
     }
     if (extendStyle) {
