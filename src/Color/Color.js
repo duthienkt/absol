@@ -1,6 +1,15 @@
 import TemplateString from "../JSMaker/TemplateString";
 
+/**
+ *
+ * @param {number[]} rgba
+ * @constructor
+ */
 function Color(rgba) {
+    /**
+     *
+     * @type {number[]}
+     */
     this.rgba = rgba.slice();
 }
 
@@ -144,6 +153,41 @@ Color.prototype.clone = function () {
 
 /**
  *
+ * @param alpha
+ * @returns {Color}
+ */
+Color.prototype.withAlpha = function (alpha) {
+    if (typeof alpha !== 'number' || isNaN(alpha)) {
+        alpha = 1;
+    }
+    alpha = Math.max(0, Math.min(1, alpha));
+    return new Color(this.rgba.slice(0, 3).concat([alpha]));
+};
+
+/**
+ * Blend this color with another color using alpha compositing.
+ * @param {Color} other
+ * @param {string=} mode
+ * @returns {Color}
+ */
+Color.prototype.blend = function (other, mode) {
+    const a1 = this.rgba[3];
+    const a2 = other.rgba[3];
+    const outA = a1 + a2 * (1 - a1);
+
+    function blendChannel(c1, c2) {
+        return (c1 * a1 + c2 * a2 * (1 - a1)) / (outA || 1);
+    }
+
+    const outR = blendChannel(this.rgba[0], other.rgba[0]);
+    const outG = blendChannel(this.rgba[1], other.rgba[1]);
+    const outB = blendChannel(this.rgba[2], other.rgba[2]);
+
+    return new Color([outR, outG, outB, outA]);
+};
+
+/**
+ *
  *  ['rgba', 'rgba', 'rgba({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}}, {{x[3]}})'],
  *     ['rgb', 'rgba', 'rgb({{x[0]*255>>0}}, {{x[1]*255>>0}}, {{x[2]*255>>0}})'],
  *     ['hsl', 'toHSLA()', 'hsl({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
@@ -160,7 +204,7 @@ Color.prototype.clone = function () {
  */
 /****
  *
- * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex6"|hex8|"hwb"|"hwba"} mode
+ * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex6"|hex8|"hwb"|"hwba"=} mode
  * @returns {string}
  */
 Color.prototype.toString = function (mode) {
@@ -546,6 +590,8 @@ Color.fromCMYK = function (c, m, y, k) {
  * @returns {Color}
  */
 Color.parse = function (text) {
+    if (typeof text !== 'string') text = text + '';
+    text = text.trim().toLowerCase();
     if (this.namedColors[text]) text = this.namedColors[text];
     if (this.nonStandarNamedColors[text]) text = this.nonStandarNamedColors[text];
     if (this.regexes.hex8.test(text)) {
@@ -665,7 +711,7 @@ Color.parse = function (text) {
             this.regexes.cmyk.exec(text)
                 .slice(1)
                 .map(function (v, i) {
-                    return parseFloat(v) /100;
+                    return parseFloat(v) / 100;
                 }));
     }
     else {
