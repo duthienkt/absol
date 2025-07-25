@@ -82,6 +82,7 @@ import DelaySignal from "./HTML5/DelaySignal";
 import BezierCurve from "./Math/BezierCurve";
 import { validateSCCode } from "./SCLang/SCCodeValidation";
 import { MQTTExecMaster, MQTTExecSlave } from "./Code/MQTTExec";
+import AVLTree from "./DataStructure/AVLTree";
 
 var absol = {
     int: int,
@@ -148,7 +149,7 @@ var absol = {
     },
     QRCode: QRCode,
     clipboard: clipboard,
-    dataStructure: { Heap: Heap },
+    dataStructure: { Heap: Heap, AVLTree: AVLTree },
     datetime: datetime,
     Vec2: Vec2,
     Mat3: Mat3,
