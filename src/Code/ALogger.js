@@ -23,7 +23,9 @@ ALogger.prototype.table = noop;
 ALogger.prototype.error = noop;
 ALogger.prototype.warn = noop;
 
-(window || global).ALogger = new ALogger();
+
+export var conzole =  new ALogger();
+(window || global).ALogger = conzole;
 
 
 export default ALogger;
