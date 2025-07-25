@@ -103,10 +103,13 @@ export function heapPush(arr, item, cmp) {
 }
 
 
-
-
-function Heap(cmd) {
-    this.cmp = cmd || defaultCmp;
+/**
+ *
+ * @param {function} cmp
+ * @constructor
+ */
+function Heap(cmp) {
+    this.cmp = cmp || defaultCmp;
     this.arr = [];
 }
 
