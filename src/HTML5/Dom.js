@@ -186,6 +186,7 @@ Dom.prototype.makeNewTextNode = function (data) {
  * @returns {AElementNS| AElement | Text}
  */
 Dom.prototype._ = function (option, isInherited) {
+    var key;
     var res;
     var creator;
     if (Dom.isDomNode(option)) {
@@ -264,6 +265,14 @@ Dom.prototype._ = function (option, isInherited) {
             }
             creator.call(res);
         }
+
+        if (creator.property) {
+            for (key in creator.property) {
+                if (key in creator.prototype) {
+                    res[key] = creator.prototype[key];
+                }
+            }
+        }
     }
 
     option.extendEvent && res.defineEvent(option.extendEvent);
@@ -271,9 +280,16 @@ Dom.prototype._ = function (option, isInherited) {
     option.attr && res.attr(option.attr);
     option.on && res.on(option.on);
     option.once && res.once(option.once);
-    option.class && res.addClass(option.class);
+    if (option.class) {
+        if (option.class.split && option.class.indexOf && option.class.indexOf(' ') >= 0) {
+          option.class = option.class.trim().split(/\s+/g);
+        }
+        res.addClass(option.class);
+    }
     option.style && res.addStyle(option.style);
     option.id && res.attr('id', option.id);
+
+
     if (!isInherited) res.init(option.props);
     var children = option.child;
     if (children) {

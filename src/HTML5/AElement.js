@@ -217,7 +217,8 @@ AElement.prototype.hasClass = function (className) {
  * @returns {this}
  */
 AElement.prototype.addClass = function (className) {
-    if (className && className.forEach && className.map) {
+    if (!className) return this;
+    if (className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
             this.classList.add(className[i]);
     }
