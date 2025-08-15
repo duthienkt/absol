@@ -156,6 +156,27 @@ Object.defineProperty(Attributes.prototype, 'setProperty', {
 });
 
 
+Object.defineProperty(Attributes.prototype, 'exportProperty', {
+    enumerable: false,
+    configurable: true,
+    writable: false,
+    value: function (name) {
+        var value;
+        var handler = this._definedProperties[name];
+        var computedHandler = this._definedComputedHandlers[name];
+        var exporter = handler && handler.export;
+        if (exporter) {
+            value = exporter.call(this.$$node, computedHandler.ref);
+        }
+        else {
+            value = this[name];
+        }
+        return value;
+    }
+});
+
+
+
 Object.defineProperty(Attributes.prototype, 'export', {
     enumerable: false,
     configurable: true,
