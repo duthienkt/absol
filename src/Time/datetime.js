@@ -502,7 +502,7 @@ export function weekIndexOf(date, gmt, startDayOfWeek) {
     if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
     var by = beginOfYear(date, gmt);
     var byw = beginOfWeek(by, gmt, startDayOfWeek);
-    return Math.floor(compareDate(date, byw, gmt) / 7) ;
+    return Math.floor(compareDate(date, byw, gmt) / 7);
 }
 
 
@@ -520,7 +520,7 @@ export function weekInYear(year, weekIdx, gmt, startDayOfWeek) {
     if (gmt) bg.setUTCHours(0);
     var byw = beginOfWeek(bg, gmt, startDayOfWeek);
     if (weekIdx === 0) return bg;
-    return new Date(byw.getTime() +  weekIdx * 7 * MILLIS_PER_DAY);
+    return new Date(byw.getTime() + weekIdx * 7 * MILLIS_PER_DAY);
 }
 
 /**
@@ -1132,22 +1132,42 @@ export function implicitDate(o) {
 export function formatTimeRange24(range, opt) {
     opt = Object.assign({
         nextDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
-            || (window.systemconfig.language.toLowerCase().indexOf('vn') >= 0 || window.systemconfig.language.toLowerCase().indexOf('vi') >= 0)) ? 'Hôm sau' : 'Next day'
+            || (window.systemconfig.language.toLowerCase().indexOf('vn') >= 0 || window.systemconfig.language.toLowerCase().indexOf('vi') >= 0)) ? 'Hôm sau' : 'Next day',
+        prevDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
+            || (window.systemconfig.language.toLowerCase().indexOf('vn') >= 0 || window.systemconfig.language.toLowerCase().indexOf('vi') >= 0)) ? 'Hôm qua' : 'Previous day',
     }, opt || {});
     range = range || {};
-    var m0 = Math.floor(range.dayOffset / MILLIS_PER_MINUTE);
+
+    var dayOffset = range.dayOffset || 0;
+    if (opt.gmt) {
+        dayOffset -= new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
+    }
+
+    var pv = false;
+    var nx = false;
+    if (dayOffset < 0) {
+        pv = true;
+        dayOffset += MILLIS_PER_DAY;
+    }
+    var m0 = Math.floor(dayOffset / MILLIS_PER_MINUTE);
     var h0 = Math.floor(m0 / 60);
     var d0 = Math.floor(h0 / 24);
     m0 = m0 % 60;
     h0 = h0 % 24;
-    var endOffset = range.dayOffset + range.duration;
+    var endOffset = dayOffset + range.duration;
+    if (endOffset >= MILLIS_PER_DAY) {
+        nx = true;
+    }
     var m1 = Math.floor(endOffset / MILLIS_PER_MINUTE);
     var h1 = Math.floor(m1 / 60);
     var d1 = Math.floor(h1 / 24);
     m1 = m1 % 60;
     h1 = h1 % 24;
-    var res = h0 + ':' + integerZeroPadding(m0, 2) + ' - ' + h1 + ':' + integerZeroPadding(m1, 2);
-    if (d0 !== d1) res += ' (' + opt.nextDayText + ')';
+    var res = h0 + ':' + integerZeroPadding(m0, 2);
+    if (pv) res += ' (' + opt.prevDayText + ')';
+    res += ' - ';
+    res += h1 + ':' + integerZeroPadding(m1, 2);
+    if (nx) res += ' (' + opt.nextDayText + ')';
     return res;
 }
 
