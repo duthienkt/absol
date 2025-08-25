@@ -174,7 +174,12 @@ SCProgramInstance.prototype.visitors = {
         var i = 0;
         var statements = node.body;
         var returnWith;
-        var res = new Promise(rs => returnWith = rs);
+        var res = new Promise(rs => {
+            returnWith = (value)=>{
+                res = value;
+                rs(value);
+            }
+        });
         var runStep = () => {
             var statement;
             var sResult;
