@@ -16,6 +16,17 @@ export function arrayUnique(arr) {
 
 /***
  *
+ * @param {(string|number|boolean|null)[]} a1
+ * @param {(string|number|boolean|null)[]} a2
+ * @returns {(string|number|boolean|null)[]}
+ */
+export function arrayUnion(a1, a2) {
+    return arrayUnique(a1.concat(a2));
+}
+
+
+/***
+ *
  * @param {[]}arr
  * @return {[]}
  */
