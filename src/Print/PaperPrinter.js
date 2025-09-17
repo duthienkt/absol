@@ -9,8 +9,9 @@ import { copyJSVariable } from "../JSMaker/generator";
 var fontIdOf = fontName => {
     if (fontName.toLowerCase().indexOf('arial') >= 0) return 'arial';
     if (fontName.toLowerCase().indexOf('times') >= 0) return 'times';
+    if (fontName.toLowerCase().indexOf('roboto') >= 0) return 'roboto';
     if (fontName === "Material Design Icons") return 'MDI_6_7_96';
-    return fontName;
+    return 'roboto';
 
 }
 
@@ -56,6 +57,31 @@ PaperPrinter.prototype.share = {
     jsPDF: null,
     readySync: null,
     fonts: [
+        {
+            url: 'https://absol.cf/vendor/fonts/roboto/Roboto-Regular.ttf',
+            fileName: 'robotoregular.ttf',
+            name: 'roboto',
+            style: 'normal'
+        },
+        {
+            url: 'https://absol.cf/vendor/fonts/roboto/Roboto-Bold.ttf',
+            fileName: 'robotobold.ttf',
+            name: 'roboto',
+            style: 'bold'
+        },
+        {
+            url: 'https://absol.cf/vendor/fonts/roboto/Roboto-Italic.ttf',
+            fileName: 'robotoitalic.ttf',
+            name: 'roboto',
+            style: 'italic'
+        },
+        {
+            url: 'https://absol.cf/vendor/fonts/roboto/Roboto-BoldItalic.ttf',
+            fileName: 'robotoboldItalic.ttf',
+            name: 'roboto',
+            style: 'bold_italic'
+        },
+        ////////
         {
             url: 'https://absol.cf/vendor/fonts/arial.ttf',
             fileName: 'arial.ttf',

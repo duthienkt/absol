@@ -188,11 +188,10 @@ PrintSerializer.prototype.serialize = function (docList, printer, onProcess) {
 
     var content = Dom.ShareInstance._({
         style: {
-            width: 794 - 57 * 2 + 'px',
+            width: 794 - printer.opt.margin.left  -  printer.opt.margin.right + 'px',
             //WIDTH: 1123 - 57*2
             display: 'inline-block',
-            overflow: 'visible'
-
+            overflow: 'visible',
         },
         class: 'as-printer-content',
         child: contentChildList
@@ -236,7 +235,7 @@ PrintSerializer.prototype.serialize = function (docList, printer, onProcess) {
         });
     })
         .then(() => {
-            scroller.remove();
+            // scroller.remove();
             processInfo.onProcess = noop;
             return printer;
         });

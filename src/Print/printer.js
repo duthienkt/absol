@@ -54,7 +54,10 @@ export function downloadAsPDF(docList, arg2, onProcess) {
                     bottom: elt.fmComponent.style.paddingBottom || 57,
                     right: elt.fmComponent.style.paddingRight || 57
                 };
+                if (!opt.margin)
+                    opt.margin = doc.opt.margin;
             }
+
         }
         return doc;
     });
