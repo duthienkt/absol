@@ -6,19 +6,8 @@ import { saveAs } from "../Network/FileSaver";
 export var ShareSerializer = new PrintSerializer();
 export { mergePdfs }  from "./pdf";
 
-/***
- *
- * @param elt
- * @param fileName
- * @param {function(processInfo):void=} onProcess
- * @returns {Promise<*>}
- */
 
-
-/**
- * @type {((elt:AElement, fileName: string, onProcess: function(processInfo):void) => Promise ) & ((elt:AElement, opt: object, onProcess: function(processInfo):void) => Promise) }
- */
-export function downloadAsPDF(docList, arg2, onProcess) {
+export function makePdfDocument(docList, arg2, onProcess) {
     var opt = {
         fileName: 'exports.pdf.js'
     };
@@ -68,10 +57,30 @@ export function downloadAsPDF(docList, arg2, onProcess) {
     var printer = new PaperPrinter(opt);
     return serializer.serialize(docList, printer, opt.onProcess)
         .then(printer => printer.exportAsPDF())
-        .then(doc => {
-            saveAs(doc.output('blob'), opt.fileName);
-        });
+
 }
+
+
+
+/**
+ * @type {((elt:AElement, fileName: string, onProcess: function(processInfo):void) => Promise ) & ((elt:AElement, opt: object, onProcess: function(processInfo):void) => Promise) }
+ */
+export function downloadAsPDF(docList, arg2, onProcess) {
+    var fileName = 'exports.pdf.js';
+    if (typeof arg2 === 'string') fileName = arg2;
+    else if (arg2 && arg2.fileName) fileName = arg2.fileName;
+    return makePdfDocument(docList, arg2, onProcess).then(doc => {
+        saveAs(doc.output('blob'), fileName);
+    });
+}
+
+export function downloadAsPDFBlob(docList, arg2, onProcess) {
+    return makePdfDocument(docList, arg2, onProcess).then(doc => {
+        return doc.output('blob')
+    });
+}
+
+
 
 
 export { PaperPrinter };
