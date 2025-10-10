@@ -36,20 +36,29 @@ SCProgramInstance.prototype.exec = function () {
 SCProgramInstance.prototype.accept = function (node) {
     var visitor = this.visitors[node.type];
     if (visitor) {
-        return this.visitors[node.type].apply(this, arguments);
-        // try {
-        //
-        // } catch (e) {
-        //     console.error(e, node)
-        // }
+        try {
+            return this.visitors[node.type].apply(this, arguments);
+        }
+        catch (e) {
+            if (!e.extMessage) {
+                e.extMessage = this.makeSimpleErrorMessage("RuntimeError", e.message , node);
+                try {
+                    e.message = e.extMessage;
+                }
+                catch (e1){
+                    e =  new Error(e.extMessage);
+                    //can not modify message
+                }
+            }
+            throw e;
+        }
     }
     else {
         throw this.makeError("NotHandle", 'Can not handle node type ' + node && node.type, node);
     }
 };
 
-SCProgramInstance.prototype.makeError = function (type, message, node) {
-    var err = {};
+SCProgramInstance.prototype.copyAstWithError = function (message, errorNode) {
     var copy = o => {
         if (!o) return o;
         if (o instanceof Array) {
@@ -59,12 +68,20 @@ SCProgramInstance.prototype.makeError = function (type, message, node) {
         if (o.constructor === Object) return Object.keys(o).reduce((ac, key) => {
             ac[key] = copy(o[key]);
             return ac;
-        }, o === node ? { error: message || type || true } : {});
+        }, o === errorNode ? { error: message  } : {});
         return o;
     }
+    return copy(this.ast);
+}
 
-    err.ast = copy(this.ast);
-    err.message = message;
+SCProgramInstance.prototype.makeSimpleErrorMessage = function (type, message, node) {
+    var ast = this.copyAstWithError(message || type||true, node);
+    return generateSCCode(ast);
+};
+
+SCProgramInstance.prototype.makeError = function (type, message, node) {
+    var err = new Error(message);
+    err.ast = this.copyAstWithError(message || type||true, node);
     err.errorNode = node;
     err._shown = false;
     Object.defineProperty(err, 'SHOW_ERROR', {
@@ -715,7 +732,7 @@ SCProgramInstance.prototype.visitors = {
                 return ref.get();
             }
             else {
-                throw this.makeError("NotDeclare", "", node);
+                throw this.makeError("NotDeclare", 'NotDeclare:'+node.name, node);
             }
         }
         else if (type === 'ref') {
@@ -724,7 +741,7 @@ SCProgramInstance.prototype.visitors = {
                 return ref;
             }
             else {
-                this.makeError("NotDeclare", "", node);
+                this.makeError("NotDeclare",'NotDeclare:'+ node.name, node);
             }
         }
         return node.name;
@@ -756,14 +773,14 @@ SCProgramInstance.prototype.visitors = {
         if (sync.length > 0) {
             return Promise.all(sync).then(() => {
                 if (!calleeFunction) {
-                    throw { message: 'Undefined function ' + generateSCCode(node.callee), ast: node }
+                    throw Object.assign(new Error('Undefined function ' + generateSCCode(node.callee)), {ast: node});
                 }
                 return calleeFunction.apply(object, argumentValues);
             });
         }
         else {
             if (!calleeFunction) {
-                throw { message: 'Undefined function ' + generateSCCode(node.callee), ast: node }
+                throw Object.assign(new Error('Undefined function ' + generateSCCode(node.callee)), {ast: node });
             }
             return calleeFunction.apply(object, argumentValues);
         }
@@ -799,11 +816,7 @@ SCProgramInstance.prototype.visitors = {
 
         if (key && key.then) {
             return key.then(key => {
-                if (!object) {
-                    throw {
-                        message: 'Can not access ' + JSON.stringify(key) + ' from ' + generateSCCode(node.object)
-                    };
-                }
+                if (!object) new Error('Can not access ' + JSON.stringify(key) + ' from ' + generateSCCode(node.object));
 
                 if (type === 'const') return object[key];
                 return {

@@ -13,9 +13,14 @@ function SCCodeGenerator() {
 SCCodeGenerator.prototype.accept = function (node) {
     if (!node) return '/*TODO*/';
     var visitor = this.visitors[node.type];
+    var txt;
     if (visitor) {
         try {
-            return this.visitors[node.type].apply(this, arguments);
+            txt =  this.visitors[node.type].apply(this, arguments);
+            if (node.error) {
+                txt = "/"+"*error: "+node.error+">*"+"/"+txt+"/"+"*<error*"+"/";
+            }
+            return  txt;
         } catch (e) {
             console.error(e, node)
         }
@@ -288,7 +293,7 @@ export default SCCodeGenerator;
  * @extends SCCodeGenerator
  * @constructor
  */
-export function SCCodeHighlightingGenerator() {
+export function SCCodeHighlightingGenerator(opt) {
     SCCodeGenerator.apply(this, arguments);
 }
 
@@ -380,6 +385,7 @@ SCCodeHighlightingGenerator.prototype.generate = function (ast) {
         });
     }).join('<br>');
 };
+
 
 
 export function generateSCCode(ast) {
