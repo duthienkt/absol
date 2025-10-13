@@ -24,6 +24,11 @@ VarScope.prototype.isDeclared = function (name) {
     return (name in this.data);
 };
 
+VarScope.prototype.declareRef = function (name, ref) {
+    this.data[name] = ref;
+    return this;
+};
+
 /***
  *
  * @param name
