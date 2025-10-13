@@ -16,11 +16,15 @@ SCCodeGenerator.prototype.accept = function (node) {
     var txt;
     if (visitor) {
         try {
-            txt =  this.visitors[node.type].apply(this, arguments);
+            txt = this.visitors[node.type].apply(this, arguments);
             if (node.error) {
-                txt = "/"+"*error: "+node.error+">*"+"/"+txt+"/"+"*<error*"+"/";
+                txt = [
+                    '<mark>',
+                    txt,
+                    '</mark>',
+                ].join('');
             }
-            return  txt;
+            return txt;
         } catch (e) {
             console.error(e, node)
         }
@@ -75,7 +79,7 @@ SCCodeGenerator.prototype.visitors = {
         return node.name;
     },
     VariableDeclarator: function (node) {
-        var res =  node.id.name;
+        var res = node.id.name;
         var typeText;
         if (node.typeAnnotation) typeText = this.accept(node.typeAnnotation);
         if (typeText && typeText !== 'any') res += ': ' + typeText;
@@ -89,7 +93,7 @@ SCCodeGenerator.prototype.visitors = {
             res += node.declarations.map(arg => this.accept(arg)).join(', ');
         }
         else {
-            node  = Object.assign({}, node);
+            node = Object.assign({}, node);
             node.type = 'VariableDeclarator';
             res += this.accept(node); //adapter for old version
         }
@@ -364,7 +368,7 @@ SCCodeHighlightingGenerator.prototype.visitors = Object.assign({}, SCCodeGenerat
             res += node.declarations.map(arg => this.accept(arg)).join(', ');
         }
         else {
-            node  = Object.assign({}, node);
+            node = Object.assign({}, node);
             node.type = 'VariableDeclarator';
             res += this.accept(node); //adapter for old version
         }

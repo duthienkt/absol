@@ -38,15 +38,16 @@ SCProgramInstance.prototype.accept = function (node) {
     if (visitor) {
         try {
             return this.visitors[node.type].apply(this, arguments);
-        }
-        catch (e) {
+        } catch (e) {
             if (!e.extMessage) {
-                e.extMessage = this.makeSimpleErrorMessage("RuntimeError", e.message , node);
+                e.extMessage = this.makeSimpleErrorMessage("RuntimeError", e.message, node);
+                if (!e.ast) {//throw from system
+                    e.extMessage = e.stack + "\n"+ e.extMessage;
+                }
                 try {
                     e.message = e.extMessage;
-                }
-                catch (e1){
-                    e =  new Error(e.extMessage);
+                } catch (e1) {
+                    e = new Error(e.extMessage);
                     //can not modify message
                 }
             }
@@ -68,20 +69,28 @@ SCProgramInstance.prototype.copyAstWithError = function (message, errorNode) {
         if (o.constructor === Object) return Object.keys(o).reduce((ac, key) => {
             ac[key] = copy(o[key]);
             return ac;
-        }, o === errorNode ? { error: message  } : {});
+        }, o === errorNode ? { error: message } : {});
         return o;
     }
     return copy(this.ast);
 }
 
 SCProgramInstance.prototype.makeSimpleErrorMessage = function (type, message, node) {
-    var ast = this.copyAstWithError(message || type||true, node);
-    return generateSCCode(ast);
+    var ast = this.copyAstWithError(message || type || true, node);
+    var genCode = generateSCCode(ast);
+    var lines = genCode.split("\n");
+    var lineNum = lines.findIndex(line => line.indexOf('<mark>') >=0);
+    var viewLines = [];
+    var endIdx = Math.min(lines.length, lineNum + 2);
+    for (var i = Math.max(lineNum - 2, 0); i < endIdx; ++i) {
+        viewLines.push(lines[i]);
+    }
+    return message+"\nLine "+ (lineNum + 1)+ ':\n' + viewLines.join('\n');
 };
 
 SCProgramInstance.prototype.makeError = function (type, message, node) {
     var err = new Error(message);
-    err.ast = this.copyAstWithError(message || type||true, node);
+    err.ast = this.copyAstWithError(message || type || true, node);
     err.errorNode = node;
     err._shown = false;
     Object.defineProperty(err, 'SHOW_ERROR', {
@@ -192,7 +201,7 @@ SCProgramInstance.prototype.visitors = {
         var statements = node.body;
         var returnWith;
         var res = new Promise(rs => {
-            returnWith = (value)=>{
+            returnWith = (value) => {
                 res = value;
                 rs(value);
             }
@@ -732,7 +741,7 @@ SCProgramInstance.prototype.visitors = {
                 return ref.get();
             }
             else {
-                throw this.makeError("NotDeclare", 'NotDeclare:'+node.name, node);
+                throw this.makeError("NotDeclare", 'NotDeclare: ' + node.name, node);
             }
         }
         else if (type === 'ref') {
@@ -741,7 +750,7 @@ SCProgramInstance.prototype.visitors = {
                 return ref;
             }
             else {
-                this.makeError("NotDeclare",'NotDeclare:'+ node.name, node);
+                this.makeError("NotDeclare", 'NotDeclare: ' + node.name, node);
             }
         }
         return node.name;
@@ -773,14 +782,14 @@ SCProgramInstance.prototype.visitors = {
         if (sync.length > 0) {
             return Promise.all(sync).then(() => {
                 if (!calleeFunction) {
-                    throw Object.assign(new Error('Undefined function ' + generateSCCode(node.callee)), {ast: node});
+                    throw Object.assign(new Error('Undefined function ' + generateSCCode(node.callee)), { ast: node });
                 }
                 return calleeFunction.apply(object, argumentValues);
             });
         }
         else {
             if (!calleeFunction) {
-                throw Object.assign(new Error('Undefined function ' + generateSCCode(node.callee)), {ast: node });
+                throw Object.assign(new Error('Undefined function ' + generateSCCode(node.callee)), { ast: node });
             }
             return calleeFunction.apply(object, argumentValues);
         }
