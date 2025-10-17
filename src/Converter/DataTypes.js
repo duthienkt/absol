@@ -33,3 +33,33 @@ export function castToBoolean(x) {
     if (typeof x === 'boolean') return x;
     return !!x;
 }
+
+
+/**
+ * Implicit conversion to number
+ * @param x
+ * @return {number|NaN}
+ */
+export function implicitRealNumber(x) {
+    if (isRealNumber(x)) return x;
+    var rgx = /^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$/;
+    x = x + '';
+    x = x.trim();
+    if (x.match(rgx)) {
+        x  = parseFloat(x);
+    }
+    if (!isRealNumber(x)) x = NaN;
+    return x;
+}
+
+export function implicitInteger(x) {
+    x = implicitRealNumber(x);
+    if (!isNaturalNumber(x)) x = NaN;
+    return x;
+}
+
+export function implicitNaturalNumber(x) {
+    x = implicitRealNumber(x);
+    if (!isNaturalNumber(x)) x = NaN;
+    return x;
+}
