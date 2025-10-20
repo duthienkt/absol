@@ -132,6 +132,7 @@ export function mixClass(constructor, ...ParentClasses) {
     var attributeHandlers = undefined;
     var pinHandlers = undefined;
     var attributes = undefined;
+    var style = undefined;//fmv1
     var i;
     var render, tag, property, eventHandler, extendStyle;//dom module
     var styleHandlers = undefined;
@@ -176,6 +177,11 @@ export function mixClass(constructor, ...ParentClasses) {
             Object.assign(attributes, proto.attributes);
         }
 
+        if (proto.style) {
+            style = style || {};
+            Object.assign(style, proto.style);
+        }
+
         //for CCBlock
         if (proto.pinHandlers) {
             pinHandlers = pinHandlers || {};
@@ -214,7 +220,9 @@ export function mixClass(constructor, ...ParentClasses) {
     if (attributes) {
         constructor.prototype.attributes = attributes;
     }
-
+    if (style) {
+        constructor.prototype.style = style;
+    }
 
     if (property) constructor.property = property;
     if (render) constructor.render = render;
