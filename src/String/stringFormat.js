@@ -258,7 +258,11 @@ export function kebabCaseToUpperUnderScore(s) {
 
 /***
  *
- * @param {String} text
+ * @param {String} text The input text to normalize
+ * @param {Object} opt Configuration options
+ * @param {String} [opt.spaces='_'] Character to replace spaces with
+ * @param {String} [opt.symbols='_'] Character to replace special symbols with
+ * @param {boolean} [opt.startsWithDigit=false] Whether to allow identifiers starting with digits
  */
 export function normalizeIdent(text, opt) {
     var spaces = '_';
