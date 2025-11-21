@@ -195,7 +195,7 @@ export var eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelB
     "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
     "mozPressure", "offsetX", "offsetY", "originalTarget", "pageX", "pageY", "rangeOffset", "rangeParent", "region",
     "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
-    "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault'];
+    "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault', 'key', 'keyCode'];
 
 export var touchProperties = ['clientX', 'clientY', 'force', 'identifier', 'pageX', 'pageY', 'rotationAngle', 'screenX',
     'screenY', 'target'];
