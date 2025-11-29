@@ -145,16 +145,23 @@ JSPath.prototype.findAll = function (root, onFound) {
 var identRegex = /[a-zA-Z0-9\-_]+/;
 var stringRegex = /"(([^"\\]*|(\\.))*)"/;
 var classRegex = new RegExp('\\.' + identRegex.source);
+var nthChildRegex = /:nth-child\(\d+\)/;
+var firstChildRegex = /:first-child/;
+var lastChildRegex = /:last-child/;
+var pseudoClassRegex = new RegExp(nthChildRegex.source + '|' + firstChildRegex.source + '|' + lastChildRegex.source);
+
 var idRegex = new RegExp('#' + identRegex.source);
 var booleanRegex = /true|false/;
 var valueRegex = new RegExp(stringRegex.source + '|' + booleanRegex.source);
 var attributeRegex = new RegExp('\\[\\s*(' + identRegex.source + ')\\s*(=\\s*(' + valueRegex.source + '))\\]');
+
 var queryRegex = new RegExp([
     '(',
     identRegex.source, '|',
     attributeRegex.source, '|',
     classRegex.source, '|',
-    idRegex.source,
+    idRegex.source, '|',
+    pseudoClassRegex.source,
     ')+'
 ].join(''));
 
@@ -163,6 +170,8 @@ JSPath.__tagRegex = new RegExp(queryRegex.source + '|\\>', 'g');
 JSPath.__tagNameRegex = new RegExp('^' + identRegex.source, 'i');
 JSPath.__classRegex = new RegExp(classRegex.source, 'g');
 JSPath.__idRegex = new RegExp(idRegex.source, 'i');
+JSPath.__pseudoClassRegex = new RegExp(pseudoClassRegex.source, 'g');
+JSPath.__nthChildNumberRegex = /:nth-child\((\d+)\)/;
 
 JSPath.__attrRegex = new RegExp(attributeRegex.source, 'g');
 
@@ -194,6 +203,26 @@ JSPath.parseQuery = function (s) {
             return s.substring(1)
         });
     }
+/*
+    var pseudoClasses = s.match(this.__pseudoClassRegex);
+    if (pseudoClasses) {
+        pseudoClasses.forEach(function (pseudo) {
+            if (pseudo === ':first-child') {
+                tag.firstChild = true;
+            }
+            else if (pseudo === ':last-child') {
+                tag.lastChild = true;
+            }
+            else {
+                var nthMatch = pseudo.match(this.__nthChildNumberRegex);
+                if (nthMatch) {
+                    tag.nthChild = parseInt(nthMatch[1]);
+                }
+            }
+        }.bind(this));
+    }
+
+ */
     return tag;
 };
 
@@ -208,7 +237,7 @@ JSPath.compileJSPath = function (text) {
     var childCombinate = false;
     for (var i = 0; i < tagTexts.length; ++i) {
         var s = tagTexts[i];
-        if (s == '>') {
+        if (s === '>') {
             childCombinate = true;
         }
         else {
