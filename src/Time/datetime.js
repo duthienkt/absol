@@ -1183,15 +1183,21 @@ export function getTimeRangeFromStep(date, type, n) {
     var startDate, expiredDate;
 
     var initHandlers = {
+        date: x => beginOfDay(x),
         month: x => beginOfMonth(x),
         quarter: x => beginOfQuarter(x),
-        year: x => beginOfYear(x)
+        year: x => beginOfYear(x),
+        last_7_days: x => addDate(beginOfDay(x), -7),
+        week: x => beginOfWeek(x)
+        // "7_
     }
 
     var addHandlers = {
         month: (x, d) => addMonth(x, d),
         quarter: (x, d) => addQuarter(x, d),
-        year: (x, d) => addYear(x, d)
+        year: (x, d) => addYear(x, d),
+        week: (x, d) => addWeek(x, d),
+        last_7_days: x => addDate(x, n * 7)
     }
 
 
