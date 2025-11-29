@@ -1,10 +1,13 @@
 import AElement from "./AElement";
 import OOP from "./OOP";
 
-/***
+/**
+ * AElementNS class for handling namespace-aware DOM elements
  * @augments AElement
  * @augments SVGGraphicsElement
  * @constructor
+ * @class
+ * @description Extends AElement with namespace-aware functionality for SVG and other namespaced elements
  */
 function AElementNS() {
     AElement.call(this);
@@ -44,8 +47,15 @@ AElement.prototype.afterAttached = function () {
 
 OOP.mixClass(AElementNS, AElement);
 
+
+/**
+ * Gets or sets element attributes with namespace support
+ * @param {(string|Object)} arg1 - Attribute name or object containing key-value pairs of attributes
+ * @param {*} [arg2] - Value to set when first argument is a string
+ * @returns {(string|AElementNS)} Attribute value when getting, this instance when setting
+ */
 AElementNS.prototype.attr = function () {
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
         if (typeof (arguments[0]) == 'string') {
             if (this._azar_extendAttributes[arguments[0]]) {
                 return this._azar_extendAttributes[arguments[0]].get.call(this);
@@ -61,7 +71,7 @@ AElementNS.prototype.attr = function () {
         }
     }
     else {
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             if (arguments[1] === null || arguments[1] === undefined) {
                 if (this._azar_extendAttributes[arguments[0]]) {
                     this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[1]);

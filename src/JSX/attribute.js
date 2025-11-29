@@ -29,12 +29,18 @@ export function parseClassAttr(text) {
 }
 
 
+
 /**
- *
- * @param mValue
- * @returns {{unit: null, value: string}|{unit: string, value: number}|null}
+ * Parses a measurement value into a standardized object with value and unit
+ * @param {(string|number)} mValue - The measurement value to parse. Can be a number (treated as px), a string with units, 'auto' or 'match_parent'
+ * @returns {?{value: (number|string), unit: ?string}} Returns object with value and unit properties, null if parsing fails
+ *                                                     For 'auto' and 'match_parent', returns {value: string, unit: null}
+ *                                                     For valid measurements, returns {value: number, unit: string}
  */
 export function parseMeasureValue(mValue) {
+    if (typeof mValue === "string") {
+        mValue = mValue.replace(/\s/g, "");
+    }
     if (mValue === 'auto') return { unit: null, value: 'auto' };
     if (mValue === 'match_parent') return { unit: null, value: 'match_parent' };
     var value = NaN;
@@ -45,7 +51,7 @@ export function parseMeasureValue(mValue) {
         unit = 'px';
     }
     else if (typeof mValue === "string") {
-        matched = mValue.match(/([+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?)(px|%|vw|vh|em|rem|pt)?/i);
+        matched = mValue.match(/([+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?)(px|%|vw|vh|em|rem|pt|ex|ch)?/i);
         if (matched) {
             value = parseFloat(matched[1]);
             unit = matched[4];

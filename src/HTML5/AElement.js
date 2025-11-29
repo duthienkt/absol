@@ -49,12 +49,33 @@ AElement.prototype.defineAttribute = function (key, def) {
 };
 
 
+/**
+ * Defines multiple attributes with their get/set/remove handlers
+ * @param {Object.<string, AttributeDefiner>} defs - Object mapping attribute names to their definitions
+ * @returns {void}
+ */
 AElement.prototype.defineAttributes = function (defs) {
     for (var key in defs) {
         this.defineAttribute(key, defs[key]);
     }
 };
 
+
+/**
+ * Gets, sets, or removes attributes on the element
+ * @param {string|Object} arg0 - Attribute name or object containing key-value pairs of attributes
+ * @param {*} [arg1] - Value to set for the attribute. If null/undefined, removes the attribute
+ * @returns {*} Returns attribute value when getting single attribute, or this for method chaining
+ * @example
+ * // Get attribute
+ * element.attr('id')
+ * // Set attribute
+ * element.attr('id', 'myId')
+ * // Set multiple attributes
+ * element.attr({id: 'myId', class: 'myClass'})
+ * // Remove attribute
+ * element.attr('id', null)
+ */
 AElement.prototype.attr = function () {
     if (arguments.length === 1) {
         if (typeof (arguments[0]) == 'string') {
@@ -72,7 +93,7 @@ AElement.prototype.attr = function () {
         }
     }
     else {
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             if (arguments[1] === null || arguments[1] === undefined) {
                 if (this._azar_extendAttributes[arguments[0]]) {
                     this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[1]);
@@ -155,6 +176,16 @@ AElement.prototype.removeStyle = function (arg0) {
     return this;
 };
 
+/**
+ * Adds one or more child nodes to this element
+ * @param {Node|Array<Node>} child - A single Node or array of Nodes to append as children
+ * @returns {this} Returns this element for method chaining
+ * @example
+ * // Add single child
+ * element.addChild(childNode);
+ * // Add multiple children
+ * element.addChild([child1, child2, child3]);
+ */
 AElement.prototype.addChild = function (child) {
     if (child.indexOf && child.map && child.forEach) {
         for (var i = 0; i < child.length; ++i)
@@ -166,6 +197,12 @@ AElement.prototype.addChild = function (child) {
 };
 
 
+/**
+ * Adds this element as a child to the specified parent element
+ * @param {Node} parent - The parent element to append this element to
+ * @returns {this} Returns this element for method chaining
+ * @throws {Error} If parent is not a valid node that can accept children
+ */
 AElement.prototype.addTo = function (parent) {
     if (parent && parent.appendChild) {
         if (parent.addChild)
@@ -178,6 +215,10 @@ AElement.prototype.addTo = function (parent) {
 };
 
 
+/**
+ * Removes this element from its parent node if it has one
+ * @returns {this} Returns this element for method chaining
+ */
 AElement.prototype.selfRemove = function () {
     if (this.parentElement)
         this.parentElement.removeChild(this);
@@ -185,12 +226,21 @@ AElement.prototype.selfRemove = function () {
 };
 
 
+/**
+ * Replaces this element with another node in the DOM tree
+ * @param {Node} newNode - The node to replace this element with
+ * @returns {this} Returns this element for method chaining
+ */
 AElement.prototype.selfReplace = function (newNode) {
     if (this.parentElement)
         this.parentElement.replaceChild(newNode, this);
     return this;
 };
 
+/**
+ * Removes all child nodes from this element
+ * @returns {this} Returns this element for method chaining
+ */
 AElement.prototype.clearChild = function () {
     while (this.lastChild) {
         this.removeChild(this.lastChild);
@@ -243,16 +293,30 @@ AElement.prototype.removeClass = function (className) {
 };
 
 
+/**
+ * Gets the computed style value for a specific CSS property
+ * @param {string} key - The CSS property name
+ * @returns {string} The computed style value
+ */
 AElement.prototype.getComputedStyleValue = function (key) {
     return window.getComputedStyle(this).getPropertyValue(key);
 
 };
 
+/**
+ * Gets the computed font size in pixels
+ * @returns {number} The font size in pixels
+ */
 AElement.prototype.getFontSize = function () {
     return parseFloat(this.getComputedStyleValue('font-size').replace('px', ''));
 };
 
 
+/**
+ * Finds the child node that comes immediately after the specified node
+ * @param {Node} obj - The reference node
+ * @returns {Node|undefined} The next sibling node or undefined if none exists
+ */
 AElement.prototype.findChildAfter = function (obj) {
     var r = 0;
     for (var i = 0; i < this.childNodes.length; ++i) {
@@ -265,6 +329,11 @@ AElement.prototype.findChildAfter = function (obj) {
     return undefined;
 };
 
+/**
+ * Finds the child node that comes immediately before the specified node
+ * @param {Node} obj - The reference node
+ * @returns {Node|undefined} The previous sibling node or undefined if none exists
+ */
 AElement.prototype.findChildBefore = function (obj) {
     var r = 0;
     for (var i = 0; i < this.childNodes.length; ++i) {
@@ -277,11 +346,24 @@ AElement.prototype.findChildBefore = function (obj) {
     return undefined;
 };
 
+/**
+ * Inserts a new child node before a reference node
+ * @param {Node} newItem - The node to insert
+ * @param {Node} bf - The reference node
+ * @returns {this} Returns this element for method chaining
+ */
 AElement.prototype.addChildBefore = function (newItem, bf) {
     this.insertBefore(newItem, bf);
     return this;
 };
 
+/**
+ * Inserts a new child node after a reference node
+ * @param {Node} newItem - The node to insert
+ * @param {Node} [at] - The reference node. If not provided, inserts at the beginning
+ * @returns {this} Returns this element for method chaining
+ * @throws {Error} If the reference node is not a child of this element
+ */
 AElement.prototype.addChildAfter = function (newItem, at) {
     var atIdx;
     if (at) {
@@ -339,6 +421,11 @@ AElement.prototype.getBoundingRecursiveRect = function (depth) {
  * @param parent
  * @returns {boolean}
  */
+/**
+ * Checks if this element is a descendant of the specified parent element
+ * @param {Node} parent - The potential ancestor node
+ * @returns {boolean} True if this element is a descendant of the parent, false otherwise
+ */
 AElement.prototype.isDescendantOf = function (parent) {
     if (!parent || !parent.childNodes || !parent.childNodes.length) return false;
     var child = this;
@@ -351,6 +438,15 @@ AElement.prototype.isDescendantOf = function (parent) {
 
 
 /*************************** **********************/
+
+/**
+ * Gets all CSS rules that match this element from document stylesheets
+ * @returns {Array<CSSStyleRule>} Array of CSS style rules that match this element
+ * @example
+ * // Get all CSS rules affecting an element
+ * const rules = element.getCSSRules();
+ * rules.forEach(rule => console.log(rule.selectorText, rule.style));
+ */
 AElement.prototype.getCSSRules = function () {
     var sheets = document.styleSheets;
     var ret = [];
@@ -404,71 +500,6 @@ AElement.prototype.afterDisplayed = function (requestTimesOut) {
         trace();
     });
 };
-
-
-!(function () {
-    var origin = AElement.prototype.on;
-    if (BrowserDetector.isSafari && !BrowserDetector.isMobile && false) {
-        AElement.prototype.on = function () {
-            if (!this.isSupportedEvent('mouseleave') && arguments[0] == 'mouseleave') {
-                this.defineEvent('mouseleave');
-                var mouseLeaveEventHandler = function (event) {
-                    var bound = this.getBoundingClientRect();
-                    var ok = false;
-                    ok |= event.clientX < bound.left + 1;
-                    ok |= event.clientX >= bound.right - 1;
-                    ok |= event.clientY < bound.top + 1;
-                    ok |= event.clientY >= bound.bottom - 1;
-                    if (ok) this.emit('mouseleave', event);
-                };
-                this.addEventListener('mouseleave', mouseLeaveEventHandler, true);
-            }
-            origin.apply(this, arguments);
-            return this;
-        };
-    }
-
-    if (BrowserDetector.isFirefox && false) {
-        AElement.prototype.on = function () {
-            if (!this.isSupportedEvent('wheel') && arguments[0] == 'wheel') {
-
-                this.defineEvent('wheel');
-                var wheelEventHandler = function (oldEvent) {
-                    //clone event to avoid some lib fix it
-                    var event = oldEvent.absolEvent;
-                    if (!event) {
-                        event = Object.assign({}, oldEvent);
-                        for (var i = 0; i < AElement.eventProperties.length; ++i) {
-                            var key = AElement.eventProperties[i];
-                            if (typeof (event[key]) == 'function') {
-                                event[key] = event[key].bind(oldEvent);
-                            }
-                        }
-
-                        event.preventDefault = function () {
-                            oldEvent.preventDefault();
-                        };
-                        if (!event.mozFixWheelScale) {
-                            event.mozDeltaY = oldEvent.deltaY;
-                            event.mozFixWheelScale = true;
-                            Object.defineProperty(event, 'deltaY', {
-                                get: function () {
-                                    return this.mozDeltaY * 100 / 3;
-                                }
-                            });
-                        }
-                        oldEvent.absolEvent = event;
-                    }
-                    this.emit('wheel', event);
-                };
-                this.addEventListener('wheel', wheelEventHandler);
-            }
-            origin.apply(this, arguments);
-            return this;
-        };
-    }
-
-}());
 
 AElement.eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
     "ctrlKey", "currentTarget", "defaultPrevented", "deltaMode", "deltaX", "deltaY", "deltaZ", "detail", "eventPhase",

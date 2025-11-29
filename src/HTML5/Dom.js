@@ -326,6 +326,14 @@ Dom.prototype.$$ = function (query, root) {
     return res;
 };
 
+
+/**
+ * Installs new DOM element creators into the Dom instance
+ * @typedef {function(data:any, option:AbsolConstructDescriptor, dom:Dom): (AElement|AElementNS)} CreatorFunction
+ * @param {string|CreatorFunction|CreatorFunction[]|Object|Dom} arg0 - Creator function, array of creators, object with creators or Dom instance
+ * @param {Object=} arg1 - Optional object containing creator functions when arg0 is string or RegExp
+ * @returns {Dom} Returns this Dom instance for chaining
+ */
 Dom.prototype.install = function (arg0, arg1) {
     var _this = this;
     if (arguments.length === 1) {

@@ -455,7 +455,11 @@ export function computeMeasureExpression(exp, ctx, debug) {
     }
 }
 
-
+/**
+ *
+ * @param {string} selector
+ * @return {(number)[]}
+ */
 export function getQuerySelectorSpecificity(selector) {
     let inline = 0;
     let idCount = 0;
@@ -486,7 +490,12 @@ export function getQuerySelectorSpecificity(selector) {
     return [inline, idCount, classCount, tagCount];
 }
 
-
+/**
+ *
+ * @param selector1
+ * @param selector2
+ * @return {number}
+ */
 export function compareQuerySelectorSpecificity(selector1, selector2) {
     const specificity1 = getQuerySelectorSpecificity(selector1);
     const specificity2 = getQuerySelectorSpecificity(selector2);

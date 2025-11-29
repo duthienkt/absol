@@ -1,5 +1,10 @@
 import safeThrow from "../Code/safeThrow";
 
+
+/**
+ * EventEmitter class for handling event-based communication
+ * @constructor
+ */
 function EventEmitter() {
     if (!this._azar_extendEvents) {
         Object.defineProperty(this, '_azar_extendEvents', {
@@ -14,6 +19,11 @@ function EventEmitter() {
 }
 
 
+/**
+ * Define supported events
+ * @param {string|string[]} name - Event name or array of event names
+ * @returns {EventEmitter} Returns this for chaining
+ */
 EventEmitter.prototype.defineEvent = function (name) {
     if (name instanceof Array) {
         for (var i = 0; i < name.length; ++i)
@@ -24,15 +34,31 @@ EventEmitter.prototype.defineEvent = function (name) {
     return this;
 };
 
+/**
+ * Check if an event is supported
+ * @param {string} name - Event name to check
+ * @returns {boolean} True if event is supported
+ */
 EventEmitter.prototype.isSupportedEvent = function (name) {
     return this.__azar_force || !!this._azar_extendEvents.supported[name];
 };
 
 
+/**
+ * Emit an event
+ * @param {string} eventName - Name of the event to emit
+ * @param {*} data - Data to pass to event handlers
+ */
 EventEmitter.prototype.emit = function (eventName, data) {
     this.fire.apply(this, arguments);
 };
 
+/**
+ * Fire an event (alias for emit)
+ * @param {string} eventName - Name of the event to fire
+ * @param {*} data - Data to pass to event handlers
+ * @returns {EventEmitter} Returns this for chaining
+ */
 EventEmitter.prototype.fire = function (eventName, data) {
     var others = Array.prototype.slice.call(arguments, 1);
     var listenerList;
@@ -84,6 +110,15 @@ EventEmitter.prototype.fire = function (eventName, data) {
 };
 
 
+/**
+ * Internal method to handle event binding
+ * @param {boolean} isOnce - Whether the event should fire only once
+ * @param {string|object} arg0 - Event name or events object
+ * @param {function|object} arg1 - Callback function or options object
+ * @param {boolean} [arg2] - Priority flag
+ * @returns {EventEmitter} Returns this for chaining
+ * @private
+ */
 EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, arg2) {
     if (typeof arg0 == 'object') {
         for (var key in arg0) {
@@ -139,17 +174,38 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
 };
 
 
+/**
+ * Add an event listener
+ * @param {string|object} arg0 - Event name or events object
+ * @param {function|object} arg1 - Callback function or options object
+ * @param {boolean} [arg2] - Priority flag
+ * @returns {EventEmitter} Returns this for chaining
+ */
 EventEmitter.prototype.on = function (arg0, arg1, arg2) {
     this.eventEmittorOnWithTime(false, arg0, arg1, arg2);
     return this;
 };
 
 
+/**
+ * Add a one-time event listener
+ * @param {string|object} arg0 - Event name or events object
+ * @param {function|object} arg1 - Callback function or options object
+ * @param {boolean} [arg2] - Priority flag
+ * @returns {EventEmitter} Returns this for chaining
+ */
 EventEmitter.prototype.once = function (arg0, arg1, arg2) {
     this.eventEmittorOnWithTime(true, arg0, arg1, arg2);
     return this;
 };
 
+/**
+ * Remove an event listener
+ * @param {string|object} arg0 - Event name or events object
+ * @param {function|object} arg1 - Callback function or options object
+ * @param {boolean} [arg2] - Priority flag
+ * @returns {EventEmitter} Returns this for chaining
+ */
 EventEmitter.prototype.off = function (arg0, arg1, arg2) {
     if (typeof arg0 == 'object') {
         for (var key in arg0) {
@@ -190,6 +246,10 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
 
 };
 
+/**
+ * List of standard event properties to be copied
+ * @type {string[]}
+ */
 export var eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelBubble", "cancelable", "clientX", "clientY", "composed",
     "ctrlKey", "currentTarget", "defaultPrevented", "deltaMode", "deltaX", "deltaY", "deltaZ", "detail", "eventPhase",
     "explicitOriginalTarget", "isTrusted", "layerX", "layerY", "metaKey", "movementX", "movementY", "mozInputSource",
@@ -197,9 +257,18 @@ export var eventProperties = ["altKey", "bubbles", "button", "buttons", "cancelB
     "relatedTarget", "returnValue", "screenX", "screenY", "shiftKey", "srcElement", "target", "timeStamp", "type",
     "deltaMode", "deltaX", "deltaY", "deltaZ", 'preventDefault', 'key', 'keyCode'];
 
+/**
+ * List of touch event properties to be copied
+ * @type {string[]}
+ */
 export var touchProperties = ['clientX', 'clientY', 'force', 'identifier', 'pageX', 'pageY', 'rotationAngle', 'screenX',
     'screenY', 'target'];
 
+/**
+ * Check if the right mouse button was clicked
+ * @param {MouseEvent} event - The mouse event to check
+ * @returns {boolean} True if right mouse button was clicked
+ */
 export function isMouseRight(event) {
     var isRightMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
@@ -209,6 +278,11 @@ export function isMouseRight(event) {
     return isRightMB;
 }
 
+/**
+ * Check if the left mouse button was clicked
+ * @param {MouseEvent} event - The mouse event to check
+ * @returns {boolean} True if left mouse button was clicked
+ */
 export function isMouseLeft(event) {
     var isLeftMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
@@ -218,6 +292,11 @@ export function isMouseLeft(event) {
     return isLeftMB;
 }
 
+/**
+ * Check if the middle mouse button was clicked
+ * @param {MouseEvent} event - The mouse event to check
+ * @returns {boolean} True if middle mouse button was clicked
+ */
 export function isMouseMiddle(event) {
     var isMiddleMB = false;
     if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
@@ -251,6 +330,12 @@ export function hitElement(element, event) {
     return false;
 }
 
+/**
+ * Create a copy of an event object with additional properties
+ * @param {Event} event - The event to copy
+ * @param {Object} [props] - Additional properties to add to the copied event
+ * @returns {Object} A copy of the event with additional properties
+ */
 export function copyEvent(event, props) {
     var result = {};
     var key, value;
@@ -283,6 +368,12 @@ export function copyEvent(event, props) {
     return result;
 }
 
+/**
+ * Create a copy of a touch object with additional properties
+ * @param {Touch} touch - The touch object to copy
+ * @param {Object} [props] - Additional properties to add to the copied touch
+ * @returns {Object} A copy of the touch object with additional properties
+ */
 export function copyTouch(touch, props) {
     var result = {};
     var key, value;
