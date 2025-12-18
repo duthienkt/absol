@@ -1208,3 +1208,42 @@ export function getTimeRangeFromStep(date, type, n) {
         startdate: startDate, expireddate: expiredDate
     };
 }
+
+
+/**
+ * Returns the date format string based on the provided level.
+ * @param {"date"|"week"| "month"| "quarter"| "year"} level - The granularity level ("date', 'week', 'month', 'quarter', 'year').
+ * @returns {string} The corresponding date format string.
+ */
+export function getFormatDateFromLevel(level) {
+    var level2format = {
+        date: 'dd/MM/yyyy',
+        week: 'Tuần ww, yyyy',
+        month: 'MM/yyyy',
+        quarter: 'Quý QQ, yyyy',
+        year: 'yyyy'
+    };
+
+    return level2format[level] || level2format['date'];
+}
+
+/**
+ *
+ * @param {"date"|"week"| "month"| "quarter"| "year"} level
+ * @return {*|string}
+ */
+export function getDateFormatLevelName(level) {
+    var level2Name = {
+        date: 'Ngày',
+        week: 'Tuần',
+        month: 'Tháng',
+        quarter: 'Quý',
+        year: 'Năm'
+    };
+
+    return level2Name[level] || level2Name['date'];
+}
+
+export function getSupportedDateFormatLevels(){
+    return ['date', 'week', 'month', 'quarter', 'year'];
+}
