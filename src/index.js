@@ -83,8 +83,10 @@ import BezierCurve from "./Math/BezierCurve";
 import { validateSCCode } from "./SCLang/SCCodeValidation";
 import { MQTTExecMaster, MQTTExecSlave } from "./Code/MQTTExec";
 import AVLTree from "./DataStructure/AVLTree";
+import * as image from './HTML5/Image';
 
 var absol = {
+    image,
     int: int,
     array: array,
     safeThrow: safeThrow,
