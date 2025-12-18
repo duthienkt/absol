@@ -4,4 +4,21 @@
 <!--    <script src="../dist/absol.dependents.js"></script>-->
     <script src="../dist/absol.js"></script>
 </head>
+<body>
+<script>
+    var url = 'https://absol.cf/share/ico1.png';
+    var imgF = absol.image.resizeImageFile(url, {maxWidth: 200}).then(imgF=>{
+        console.log(imgF);
+        
+        var newUrl = URL.createObjectURL(imgF);
+        absol._({
+            tag: 'img',
+            attr: {
+                src: newUrl
+            }
+        }).addTo(document.body);
+    });
+    
+</script>
+</body>
 </html>
