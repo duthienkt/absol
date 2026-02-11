@@ -84,7 +84,7 @@ export function unpack(format, bytes) {
  * @returns {Promise<ArrayBuffer>} A promise that resolves to the ArrayBuffer of the fetched resource.
  */
 export function readUrlAsArrayBuffer(url) {
-    return fetch(url).then(function (response) {
+    return fetch(url, { cache: 'no-cache' }).then(function (response) {
         return response.arrayBuffer();
     });
 }
