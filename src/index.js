@@ -84,6 +84,7 @@ import { validateSCCode } from "./SCLang/SCCodeValidation";
 import { MQTTExecMaster, MQTTExecSlave } from "./Code/MQTTExec";
 import AVLTree from "./DataStructure/AVLTree";
 import * as image from './HTML5/Image';
+import XLoader from './Network/XLoader';
 
 var absol = {
     image,
@@ -107,8 +108,7 @@ var absol = {
     Activity: Activity,
     Element: AElement,
     ElementNS: AElementNS,
-    AElement: AElement,
-    AElementNS: AElementNS,
+
     DomSignal: DomSignal,
     DelaySignal: DelaySignal,
     JSPath: JSPath,
@@ -144,6 +144,7 @@ var absol = {
     Ref: Ref,
     Const: Const,
     XHR: XHR,
+    XLoader: XLoader,
     string: Object.assign({}, stringFormat, stringGenerate),
     jsx: {
         dom: jsxdom,
@@ -194,5 +195,7 @@ var absol = {
     MQTTExecSlave: MQTTExecSlave,
 };
 
+absol['AE'+'lement'] = AElement;
+absol['AEle'+'mentNS'] = AElementNS;
 
 export default absol;
