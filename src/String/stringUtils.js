@@ -58,3 +58,77 @@ function crc16($str) {
     $crc16 = $crc16.toString(16).toUpperCase();
     return $crc16;
 }
+
+/**
+ * Calculates the number of bytes required to encode a string in UTF-8.
+ *
+ * @param {string} str - The input string to measure.
+ * @returns {number} The number of bytes needed to represent the string in UTF-8 encoding.
+ */
+export function getUTF8BytesCount(str) {
+    var count = 0, i, code;
+    for (i = 0; i < str.length; i++) {
+        code = str.charCodeAt(i);
+        if (code <= 0x7f) {
+            count += 1;
+        }
+        else if (code <= 0x7ff) {
+            count += 2;
+        }
+        else if (code >= 0xd800 && code <= 0xdfff) {
+            // Surrogate pair: These take 4 bytes in UTF-8 and 2 chars in UCS-2
+            count += 4;
+            i++;
+        }
+        else if (code < 0xffff) {
+            count += 3;
+        }
+        else {
+            count += 4;
+        }
+    }
+    return count;
+}
+
+/**
+ * Crops a string so that its UTF-8 encoded byte length does not exceed maxBytes.
+ * The function ensures that no partial multi-byte characters are included in the result.
+ *
+ * @param {string} str - The input string to crop.
+ * @param {number} maxBytes - The maximum allowed UTF-8 byte length for the result.
+ * @returns {string} The cropped string, not exceeding maxBytes in UTF-8 encoding.
+ */
+export function cropTextByUTF8BytesCount(str, maxBytes) {
+    var res = '';
+    var count = 0, i, code;
+    for (i = 0; i < str.length; i++) {
+        code = str.charCodeAt(i);
+        if (code <= 0x7f) {
+            count += 1;
+        }
+        else if (code <= 0x7ff) {
+            count += 2;
+        }
+        else if (code >= 0xd800 && code <= 0xdfff) {
+            // Surrogate pair: These take 4 bytes in UTF-8 and 2 chars in UCS-2
+            count += 4;
+            if (count <= maxBytes) {
+                res += str.charAt(i);
+            }
+            i++;
+        }
+        else if (code < 0xffff) {
+            count += 3;
+        }
+        else {
+            count += 4;
+        }
+        if (count <= maxBytes) {
+            res += str.charAt(i);
+        }
+        else {
+            break;
+        }
+    }
+    return res;
+}
