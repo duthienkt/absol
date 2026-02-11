@@ -138,17 +138,22 @@ Dom.prototype.select = function (query, root, onFound) {
     return matcher.findFirst(root, onFound);
 };
 
+/**
+ * prevent ide define wrong class
+ * @type {{}}
+ */
+export var FeatureClass = {};
 
-export var FeatureClass = {
-    AElementNS: {
-        constructor: AElementNS,
-        prototypeKeys: Object.keys(AElementNS.prototype)
-    },
-    AElement: {
-        constructor: AElement,
-        prototypeKeys: Object.keys(AElement.prototype)
-    }
+FeatureClass['AElem'+'entNS'] = {
+    constructor: AElementNS,
+    prototypeKeys: Object.keys(AElementNS.prototype)
 };
+
+FeatureClass['AElem'+'ent'] = {
+    constructor: AElement,
+    prototypeKeys: Object.keys(AElement.prototype)
+};
+
 /**
  *
  * @param {AElement | AElementNS } element
