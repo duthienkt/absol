@@ -120,6 +120,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
  * @private
  */
 EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, arg2) {
+    var arg1Type;
     if (typeof arg0 == 'object') {
         for (var key in arg0) {
             this.eventEmittorOnWithTime(isOnce, key, arg0[key]);
@@ -127,10 +128,11 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
         return this;
     }
     else {
-        if (typeof arg1 == 'object') {
+        arg1Type = typeof arg1;
+        if (arg1Type === 'object') {
             return this.eventEmittorOnWithTime(isOnce, arg0, arg1.callback, arg1.cap);
         }
-        else {
+        else if (arg1Type === 'function') {
             var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var eventIndex = -1;
             for (var i = 0; i < eventArr.length; ++i) {
