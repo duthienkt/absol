@@ -1,7 +1,7 @@
 import ext2MineType from "./ext2MineType";
 
 export function blobToFile(theBlob, fileName) {
-    return new File([theBlob], fileName);
+    return new File([theBlob], fileName, { type: theBlob.type });
 }
 
 export function dataURItoBlob(dataURI) {
