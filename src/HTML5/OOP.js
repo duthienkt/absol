@@ -87,7 +87,8 @@ export function drillProperty(topObject, botObject, keyTop, keyBot) {
 export function bindFunctions(_this, handlers) {
     var res = {};
     for (var key in handlers) {
-        res[key] = handlers[key].bind(_this);
+        if (handlers[key] && handlers[key].bind)
+            res[key] = handlers[key].bind(_this);
     }
     return res;
 };
