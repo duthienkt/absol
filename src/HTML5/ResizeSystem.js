@@ -1,6 +1,8 @@
 import AElement from "./AElement";
 import AElementNS from "./AElementNS";
 import DelaySignal from "./DelaySignal";
+import EventEmitter from "./EventEmitter";
+import { mixClass } from "./OOP";
 
 /**
  * @name requestUpdateSize
@@ -28,10 +30,11 @@ import DelaySignal from "./DelaySignal";
 
 
 /**
- *
+ * @extends EventEmitter
  * @constructor
  */
 function ResizeSystem() {
+    EventEmitter.call(this);
     this.elts = [];
     this.cache = [];
     this.cacheOf = null;
@@ -39,7 +42,8 @@ function ResizeSystem() {
 
     this.pendingElts = {};
 
-    window.addEventListener('resize', this.update.bind(this));
+    window.addEventListener('resize', this.onWindowResizing.bind(this), true);
+    window.addEventListener('resize', this.onWindowResized.bind(this), false);
     this['goDown' + 'AndCache'] = this.goDownAndCache.bind(this);
     this['notify' + 'ToElt'] = this.notifyToElt.bind(this);
 
@@ -56,6 +60,20 @@ function ResizeSystem() {
         window.addEventListener("load", setup);
     }
 }
+
+mixClass(ResizeSystem, EventEmitter);
+
+ResizeSystem.prototype.onWindowResizing = function () {
+    this.emit('resizing', {type: 'resizing', target: this}, this);
+};
+
+
+
+ResizeSystem.prototype.onWindowResized = function(){
+    this.update();
+    this.emit('resized', {type: 'resized', target: this}, this);
+};
+
 
 /***
  *
