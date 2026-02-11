@@ -72,6 +72,7 @@ export function isMimeTypeSvg(input) {
  * @property {'contain'|'cover'|'stretch'} [size='contain'] - 'contain' preserves aspect ratio and fits image inside the box (may leave empty space); 'cover' preserves aspect ratio and fills the box (cropping overflow); 'stretch' ignores aspect ratio and stretches to exactly the box.
  * @property {string} [mimeType] - Output MIME type, defaults to original or 'image/png'.
  * @property {number} [quality] - Number 0..1 for lossy formats.
+ * @property {"File"|"Blob"|"DataURI"} [resultType] default Blob
  */
 
 
@@ -124,9 +125,10 @@ export function resizeImageFile(file, opt) {
             return Promise.resolve(file);
         }
     }
-    const sizeMode = opt.size || 'contain';
-    const mimeType = opt.mimeType || null;
-    const quality = typeof opt.quality === 'number' ? opt.quality : undefined;
+    var sizeMode = opt.size || 'contain';
+    var mimeType = opt.mimeType || null;
+    var quality = typeof opt.quality === 'number' ? opt.quality : undefined;
+    var resultType = opt.resultType || ((file instanceof File) ? 'File' : 'Blob');
 
 
     function clamp(v, min, max) {
@@ -260,23 +262,28 @@ export function resizeImageFile(file, opt) {
         ctx.drawImage(img, dx, dy, drawW, drawH);
 
 
-        var outType = mimeType;
-        if (!outType) {
+        if (!mimeType) {
             // try to infer from input blob/file if available
-            if (file && (file.type)) outType = file.type || 'image/png';
-            else outType = 'image/png';
+            if (file && (file.type)) mimeType = file.type || 'image/png';
+            else mimeType = 'image/png';
         }
-        return canvasToBlobAsync(canvas, quality, outType).then(blob => {
-            if (file instanceof File) {
-                blob = blobToFile(blob, file.name);
-            }
-            return blob;
-        }).catch(e=>{
-            if (e) {
-                safeThrow(e);
-            }
-            return null;
-        });
+
+        if (resultType === 'DataURI') {
+            return canvas.toDataURL(mimeType, quality);
+        }
+        else if (resultType === 'Blob' || resultType === 'File') {
+            return canvasToBlobAsync(canvas, quality, mimeType).then(blob => {
+                if (file instanceof File) {
+                    blob = blobToFile(blob, file.name);
+                }
+                return blob;
+            }).catch(e => {
+                if (e) {
+                    safeThrow(e);
+                }
+                return null;
+            });
+        }
     });
 }
 
