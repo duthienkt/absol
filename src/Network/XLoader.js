@@ -86,4 +86,40 @@ export function loadToBlobURL(url, noCache) {
     return blobCache[url];
 }
 
+XLoader.loadToBlobURL = loadToBlobURL;
+
+
+var waitServerReadyPromises = null;
+export function waitServerReady(pingUrl, interval, timeout) {
+    if (typeof interval !== "number")  interval = 1000;  
+    if (typeof timeout !== "number")  timeout = Infinity;
+    var endTime = Date.now() + timeout;
+    waitServerReadyPromises =  new Promise((resolve, reject) => {
+        function ping() {
+            fetch(pingUrl, {method: 'HEAD'}).then(res => {
+                if (res.ok) {
+                    waitServerReadyPromises = null;
+                    resolve();
+                } else {
+                    checkNext();
+                }
+            }).catch(err => {
+                checkNext();
+            });
+        }
+        function checkNext() {
+            if (Date.now() > endTime) {
+                 waitServerReadyPromises = null;
+                reject(new Error("waitServerReady: timeout"));
+            } else {
+                setTimeout(ping, interval);
+            }
+        }
+        ping();
+    });
+    return waitServerReadyPromises;
+}
+
+XLoader.waitServerReady = waitServerReady;
+
 export default XLoader;
