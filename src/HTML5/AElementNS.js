@@ -2,6 +2,7 @@ import AElement from "./AElement";
 import OOP from "./OOP";
 
 /**
+ * @global
  * AElementNS class for handling namespace-aware DOM elements
  * @augments AElement
  * @augments SVGGraphicsElement

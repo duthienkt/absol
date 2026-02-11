@@ -4,6 +4,7 @@ import OOP from "./OOP";
 
 
 /***
+ * @global
  * @augments Node
  * @augments ChildNode
  * @augments ParentNode
@@ -12,6 +13,7 @@ import OOP from "./OOP";
  * @augments EventEmitter
  * @augments ElementCSSInlineStyle
  * @constructor
+ * @class
  */
 function AElement() {
     EventEmitter.call(this);
