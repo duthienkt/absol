@@ -4,8 +4,8 @@ import Dom from "../HTML5/Dom";
 import Rectangle from "../Math/Rectangle";
 import { isMouseMiddle, isMouseRight } from "../HTML5/EventEmitter";
 
-const MQTT_URL = "wss://mqtt.absol.cf:9884/";
-const TOPIC = "duthienkt/tracker/MAZDA_CX5/tracking";
+const MQTT_URL = localStorage.getItem("mqtt_url");
+const TOPIC = localStorage.getItem("tracker_topic");
 
 let _mpqttPromise = null;
 var _ = Dom.ShareInstance._;
