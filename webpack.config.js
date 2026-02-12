@@ -25,11 +25,19 @@ var packages = {
         entry: ["./src/dependents.js"],
         filename: "./dist/absol.dependents.js"
     },
-    dev: {
+    devx: {
         entry: ["./src/dependents.js",
             "./src/absol.js"],
         filename: "./dist/absol.js"
     },
+    mqttgps: {
+        entry: ["./src/Detector/mqttGps.js"],
+        filename: "./dist/mqttGps.js"
+    },
+    dev: {
+        entry: ["./src/Detector/mqttGps.js"],
+        filename: "./dist/mqttGps.js"
+    }
 }
 
 
