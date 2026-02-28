@@ -9,6 +9,7 @@
     "scripts": {
         "dev": "webpack-dev-server --config webpack.config.js",
         "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production",
+        "mqttgps": "webpack --config webpack.config.js --progress --profile --colors --mode production",
         "dependents": "webpack --config webpack.config.js --progress --profile --colors --mode production"
     },
     "repository": {

@@ -25,7 +25,7 @@ var packages = {
         entry: ["./src/dependents.js"],
         filename: "./dist/absol.dependents.js"
     },
-    devx: {
+    dev: {
         entry: ["./src/dependents.js",
             "./src/absol.js"],
         filename: "./dist/absol.js"
@@ -34,7 +34,7 @@ var packages = {
         entry: ["./src/Detector/mqttGps.js"],
         filename: "./dist/mqttGps.js"
     },
-    dev: {
+    devx: {
         entry: ["./src/Detector/mqttGps.js"],
         filename: "./dist/mqttGps.js"
     }
