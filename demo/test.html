@@ -1,24 +1,73 @@
 <html>
 <head>
     <title>TEST</title>
-<!--    <script src="../dist/absol.dependents.js"></script>-->
+    <!--    <script src="../dist/absol.dependents.js"></script>-->
     <script src="../dist/absol.js"></script>
 </head>
 <body>
 <script>
     var url = 'https://absol.cf/share/ico1.png';
-    var imgF = absol.image.resizeImageFile(url, {maxWidth: 200}).then(imgF=>{
+    var div1 = absol._({
+        tag: 'div',
+        style: {
+            width: '200px',
+            height: '1200px',
+            border: '1px solid red'
+        }
+    }).addTo(document.body);
+    var div = absol._({
+        tag: 'div',
+        style: {
+            width: '200px',
+            height: '200px',
+            border: '1px solid red'
+        }
+    })//.addTo(document.body);
+    var obs = new absol.BoundingObserver(div, {autoStart: true, scrollTracking: true});
+    obs.on('bound',event=> {
+        console.log(event)
+        console.log(event.borderRect);
+    })
+    setTimeout(() => {
+            div.addTo(document.body);
+
+            // div.remove();
+            // console.log('add', div)
+            // img.addTo(document.body)
+        },
+        1000);
+
+    setTimeout(() => {
+            div.style.height = '100px'
+            // div.remove();
+            // console.log('add', div)
+            // img.addTo(document.body)
+        },
+        1500);
+
+    setTimeout(() => {
+            // div.addTo(document.body);
+
+            div.remove();
+            // console.log('add', div)
+            // img.addTo(document.body)
+        },
+        2000);
+
+    var imgF = absol.image.resizeImageFile(url, { maxWidth: 200 }).then(imgF => {
         console.log(imgF);
-        
+
         var newUrl = URL.createObjectURL(imgF);
-        absol._({
+        var img = absol._({
             tag: 'img',
             attr: {
                 src: newUrl
             }
-        }).addTo(document.body);
+        })//.addTo(document.body);
+
+
     });
-    
+
 </script>
 </body>
 </html>
