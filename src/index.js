@@ -85,6 +85,7 @@ import { MQTTExecMaster, MQTTExecSlave } from "./Code/MQTTExec";
 import AVLTree from "./DataStructure/AVLTree";
 import * as image from './HTML5/Image';
 import XLoader from './Network/XLoader';
+import BoundingObserver from "./HTML5/BoundingObserver";
 
 var absol = {
     image,
@@ -197,5 +198,6 @@ var absol = {
 
 absol['AE'+'lement'] = AElement;
 absol['AEle'+'mentNS'] = AElementNS;
+absol['Bounding'+'Observer'] = BoundingObserver;
 
 export default absol;
