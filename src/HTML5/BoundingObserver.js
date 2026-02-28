@@ -4,9 +4,9 @@ import Rectangle from "../Math/Rectangle";
 
 /**
  * @typedef {Object} BoundingObserverOption
- * @property {boolean} reusable
- * @property {boolean} scrollTracking
- * @property {boolean} autoStart
+ * @property {boolean} [reusable]
+ * @property {boolean} [scrollTracking]
+ * @property {boolean} [autoStart]
  */
 
 
