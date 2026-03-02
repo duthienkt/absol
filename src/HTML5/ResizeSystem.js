@@ -39,6 +39,7 @@ function ResizeSystem() {
     this.cache = [];
     this.cacheOf = null;
     this.lastResizeTime = 0;
+    this.updating = 0;
 
     this.pendingElts = {};
 
@@ -54,7 +55,7 @@ function ResizeSystem() {
         window.removeEventListener("load", setup);
     }
     if (document.body) {
-       setup();
+        setup();
     }
     else {
         window.addEventListener("load", setup);
@@ -108,6 +109,7 @@ ResizeSystem.prototype.notifyToElt = function (elt) {
 
 
 ResizeSystem.prototype.update = function () {
+    this.updating++;
     var now = Date.now();
     if (now - 100 > this.lastResizeTime) {
         this.removeTrash();
@@ -127,6 +129,7 @@ ResizeSystem.prototype.update = function () {
     else {
         this.cache.forEach(this.notifyToElt);
     }
+    this.updating--;
 };
 
 ResizeSystem.prototype.requestUpdateSignal = function () {
@@ -243,7 +246,8 @@ ResizeSystem.prototype.add = function (elt) {
         return !AElement.prototype.isDescendantOf.call(e, elt);
     });
     this.removeTrash();
-    this.cache = undefined;
+    if (!this.updating)
+        this.cache = undefined;
     this.elts.push(elt);
     return true;
 };
