@@ -566,6 +566,18 @@ export function beginOfDay(date, gmt) {
     return res;
 }
 
+/**
+ *
+ * @param {Date} value
+ */
+export function sameDateInUTC(value){
+    var utcTime;
+    utcTime = new Date();
+    utcTime.setUTCFullYear(value.getFullYear(), value.getMonth(), value.getDate());
+    utcTime.setUTCHours(0,0,0,0);
+    return utcTime;
+}
+
 
 /**
  * @param {Date} date
