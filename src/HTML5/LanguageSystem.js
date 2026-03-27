@@ -14,7 +14,7 @@ import safeThrow from "../Code/safeThrow";
  */
 function LanguageSystem() {
     this.data = {};
-    this.code = navigator.language || navigator.userLanguage;
+    this.code = this.getLanguage();
     /***
      *
      * @type {LanguageSystemExtension[]}
@@ -22,6 +22,16 @@ function LanguageSystem() {
      */
     this._extensions = [];
 }
+
+LanguageSystem.prototype.getLanguage = function () {
+    if (window.systemconfig && window.systemconfig.language) {
+        return window.systemconfig.language === 'VN' ? 'vi' : 'en';
+    }
+    else {
+        return navigator.language === 'vi' ? 'vi' : 'en';
+    }
+};
+
 
 LanguageSystem.prototype.notifyLanguageChange = function () {
     var sizeChange = false;
