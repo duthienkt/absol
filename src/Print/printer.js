@@ -9,7 +9,7 @@ export { mergePdfs }  from "./pdf";
 
 export function makePdfDocument(docList, arg2, onProcess) {
     var opt = {
-        fileName: 'exports.pdf.js'
+        fileName: 'exports.pdf'
     };
     if (typeof arg2 === 'string') opt.fileName = arg2;
     else Object.assign(opt, arg2);
