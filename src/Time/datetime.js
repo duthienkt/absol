@@ -4,6 +4,10 @@ import { integerZeroPadding } from "../Math/int";
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
 export var MILLIS_PER_MINUTE = 60000;
+export var GMT_HOUR_PERIOD_NULL = {
+    dayOffset: -100,
+    duration: 0
+};
 
 var _default_first_day_of_week = 1;
 
@@ -570,11 +574,11 @@ export function beginOfDay(date, gmt) {
  *
  * @param {Date} value
  */
-export function sameDateInUTC(value){
+export function sameDateInUTC(value) {
     var utcTime;
     utcTime = new Date();
     utcTime.setUTCFullYear(value.getFullYear(), value.getMonth(), value.getDate());
-    utcTime.setUTCHours(0,0,0,0);
+    utcTime.setUTCHours(0, 0, 0, 0);
     return utcTime;
 }
 
@@ -1136,13 +1140,22 @@ export function implicitDate(o) {
     return res;
 }
 
+export function isTimeRange24Null(range) {
+    if (!range) return true;
+    return range.dayOffset === GMT_HOUR_PERIOD_NULL.dayOffset && range.duration === GMT_HOUR_PERIOD_NULL.duration;
+}
+
 /***
  *
  * @param {null|{dayOffset?: number, duration?: number}}range
  * @param opt
  */
 export function formatTimeRange24(range, opt) {
+    if (isTimeRange24Null(range)) {
+        return "";
+    }
     opt = Object.assign({
+        paddingZeroHour: false,
         nextDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
             || (window.systemconfig.language.toLowerCase().indexOf('vn') >= 0 || window.systemconfig.language.toLowerCase().indexOf('vi') >= 0)) ? 'Hôm sau' : 'Next day',
         prevDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
@@ -1175,10 +1188,10 @@ export function formatTimeRange24(range, opt) {
     var d1 = Math.floor(h1 / 24);
     m1 = m1 % 60;
     h1 = h1 % 24;
-    var res = h0 + ':' + integerZeroPadding(m0, 2);
+    var res = (opt.paddingZeroHour ? (integerZeroPadding(h0, 2)) : h0) + ':' + integerZeroPadding(m0, 2);
     if (pv) res += ' (' + opt.prevDayText + ')';
     res += ' - ';
-    res += h1 + ':' + integerZeroPadding(m1, 2);
+    res += (opt.paddingZeroHour ? (integerZeroPadding(h1, 2)) : h1) + ':' + integerZeroPadding(m1, 2);
     if (nx) res += ' (' + opt.nextDayText + ')';
     return res;
 }
@@ -1256,6 +1269,6 @@ export function getDateFormatLevelName(level) {
     return level2Name[level] || level2Name['date'];
 }
 
-export function getSupportedDateFormatLevels(){
+export function getSupportedDateFormatLevels() {
     return ['date', 'week', 'month', 'quarter', 'year'];
 }
