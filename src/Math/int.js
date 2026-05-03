@@ -147,6 +147,77 @@ export function isNumber(value, decimalSeparator) {
 }
 
 
+/**
+ * Parse a floating-point number from a string that may contain thousands separators.
+ *
+ * This is a small helper inspired by `NITextController.prototype.flushTextToValue`.
+ *
+ * Default behavior:
+ * - Decimal separator: `.`
+ * - Thousands separator: `,` (ignored/removed)
+ *
+ * Notes:
+ * - Only `.` and `,` are supported as separators.
+ * - All other characters are removed before parsing.
+ * - If there is no decimal part, an integer is returned.
+ *
+ * @param {string|number} text
+ * @param {{
+ *   thousandsSeparator?: (","|"."|""),
+ *   decimalSeparator?: ("."|",")
+ * }=} opt
+ * @returns {number} Parsed number, or `NaN` if it cannot be parsed.
+ */
+export function parseExtFloat(text, opt) {
+    if (typeof text === 'number') return text;
+    if (text === undefined || text === null) return NaN;
+
+    opt = opt || {};
+    /** @type {string} */
+    var decimalSeparator = opt.decimalSeparator;
+    /** @type {string} */
+    var thousandsSeparator = opt.thousandsSeparator;
+
+    if (decimalSeparator !== '.' && decimalSeparator !== ',') decimalSeparator = '.';
+    if (thousandsSeparator !== '' && thousandsSeparator !== '.' && thousandsSeparator !== ',') thousandsSeparator = ',';
+    if (thousandsSeparator === decimalSeparator) thousandsSeparator = '';
+
+    var s = String(text);
+    s = s.replace(/[^0-9\-+.,]/g, '');
+
+    // Keep sign only if it is the leading character.
+    var sign = 1;
+    if (s[0] === '-') sign = -1;
+    if (s[0] === '-' || s[0] === '+') s = s.slice(1);
+    s = s.replace(/[+-]/g, '');
+
+    if (thousandsSeparator) {
+        s = s.split(thousandsSeparator).join('');
+    }
+
+    var parts = s.split(decimalSeparator);
+    var intText = (parts[0] || '').trim();
+    var fracText = (parts[1] || '').trim();
+
+    // Remove anything that is not a digit (safety when separators are missing/mixed).
+    intText = intText.replace(/\D/g, '');
+    fracText = fracText.replace(/\D/g, '');
+
+    if (!intText && !fracText) return NaN;
+
+    var value;
+    if (fracText) {
+        if (!intText) intText = '0';
+        value = parseFloat(intText + '.' + fracText);
+    }
+    else {
+        value = parseInt(intText, 10);
+    }
+
+    return sign * parseFloat(value);
+}
+
+
 export function numberAutoFixed(x, eDelta) {
     eDelta = eDelta || 10;
     eDelta = Math.round(eDelta);
