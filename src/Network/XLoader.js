@@ -1,7 +1,45 @@
 
 var XLoader = {};
 
-export function loadScript(url, onComplete, onError) {
+/**
+ * Append a cache-busting query param to an URL (keeps existing query and hash).
+ * Note: For <script src>, this is the most compatible way to bypass cache,
+ * because using `fetch()` first would require CORS for cross-origin scripts.
+ *
+ * @param {string} url
+ * @param {string=} paramName
+ * @returns {string}
+ */
+function withNoCache(url, paramName) {
+    url = String(url || '');
+    paramName = paramName || '_';
+
+    // Preserve hash fragment
+    var hashIndex = url.indexOf('#');
+    var hash = '';
+    if (hashIndex >= 0) {
+        hash = url.slice(hashIndex);
+        url = url.slice(0, hashIndex);
+    }
+
+    var sep = url.indexOf('?') >= 0 ? '&' : '?';
+    var value = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    return url + sep + encodeURIComponent(paramName) + '=' + encodeURIComponent(value) + hash;
+}
+
+/**
+ * Load a script by injecting a <script> tag.
+ *
+ * @param {string} url
+ * @param {function()=} onComplete
+ * @param {function(*)=} onError
+ * @param {boolean=} noCache If true, appends a cache-busting query param to the URL.
+ * @returns {Promise<void>}
+ */
+export function loadScript(url, onComplete, onError, noCache) {
+    if (typeof noCache === 'undefined') {
+        noCache = true;
+    }
     return new Promise(function (resolve, reject) {
         var script = document.createElement("script");
         script.type = "text/javascript";
@@ -32,7 +70,7 @@ export function loadScript(url, onComplete, onError) {
             }
         }
 
-        script.src = url;
+        script.src = noCache ? withNoCache(url) : url;
         document.getElementsByTagName("head")[0].appendChild(script);
     });
 }
@@ -81,9 +119,12 @@ var blobCache = {};
  * @return {*}
  */
 export function loadToBlobURL(url, noCache) {
-    if (blobCache[url]) return blobCache[url];
-    blobCache[url] = fetch(url).then(res=> res.blob()).then(blob=> URL.createObjectURL(blob));
-    return blobCache[url];
+    if (!noCache && blobCache[url]) return blobCache[url];
+    var p = fetch(url, noCache ? { cache: 'no-store' } : undefined)
+        .then(res => res.blob())
+        .then(blob => URL.createObjectURL(blob));
+    if (!noCache) blobCache[url] = p;
+    return p;
 }
 
 XLoader.loadToBlobURL = loadToBlobURL;
