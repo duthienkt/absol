@@ -61,7 +61,7 @@ import CCBlock from "./AppPattern/circuit/CCBlock";
 import CCLine from "./AppPattern/circuit/CCLine";
 import * as FileSaver from './Network/FileSaver';
 import Thread from "./Network/Thread";
-import { copyJSVariable, generateJSVariable, replaceDateStringJSVariable } from "./JSMaker/generator";
+import * as jsm from "./JSMaker/generator";
 import { normalizeIdent } from "./String/stringFormat";
 import ShareConfiguration from "./AppPattern/ShareConfiguration";
 import safeThrow from "./Code/safeThrow";
@@ -86,6 +86,7 @@ import AVLTree from "./DataStructure/AVLTree";
 import * as image from './HTML5/Image';
 import XLoader from './Network/XLoader';
 import BoundingObserver from "./HTML5/BoundingObserver";
+import * as stringUtil from './String/stringUtils';
 
 var absol = {
     image,
@@ -146,7 +147,7 @@ var absol = {
     Const: Const,
     XHR: XHR,
     XLoader: XLoader,
-    string: Object.assign({}, stringFormat, stringGenerate),
+    string: Object.assign({}, stringFormat, stringGenerate, stringUtil),
     jsx: {
         dom: jsxdom,
         attribute: jsxattribute
@@ -170,10 +171,7 @@ var absol = {
     Thread: Thread,
     setDomImmediate: setDomImmediate,
     clearDomImmediate: clearDomImmediate,
-    generateJSVariable: generateJSVariable,
-    copyJSVariable: copyJSVariable,
     normalizeIdent: normalizeIdent,
-    replaceDateStringJSVariable: replaceDateStringJSVariable,
     remoteNodeRequireAsync: remoteRequireNodeAsync,
     shareConfiguration: ShareConfiguration.instance,
     DynamicCSS: DynamicCSS,
@@ -199,5 +197,7 @@ var absol = {
 absol['AE'+'lement'] = AElement;
 absol['AEle'+'mentNS'] = AElementNS;
 absol['Bounding'+'Observer'] = BoundingObserver;
+
+Object.assign(absol, jsm);
 
 export default absol;
