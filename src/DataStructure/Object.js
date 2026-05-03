@@ -15,8 +15,11 @@ export function revokeResource(o) {
         o.revokeResource();
     }
     else if (o.nodeType === 1 || o.nodeType === 3) {
+        if (o.offAll) {
+            o.offAll();//remove all event listeners for event emitter
+        }
         if (o.revokeResource)
-            o.revokeResource();
+            o.revokeResource();//revokeResource by itself, not use default
         else {
             while (o.lastChild) {
                 oc = o.lastChild;
