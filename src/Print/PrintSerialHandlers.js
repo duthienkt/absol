@@ -153,39 +153,47 @@ PrintSerialHandlers.push({
     match: (elt, scope, stack) => {
         if (scope.isDeclared('borderStyle')) return false;
         var style = getComputedStyleCache(elt);
-        var borderColor = style.getPropertyValue('border-color');
-        var borderStyle = style.getPropertyValue('border-style');
-        var borderWidth = style.getPropertyValue('border-width');
-        var borderRadius = style.getPropertyValue('border-radius');
-        if (borderStyle === 'none' || borderWidth === '0px') return false;
+        var borders = ['top', 'bottom', 'left', 'right'].reduce((ac, key) => {
+            ac[key] = {
+                color: style.getPropertyValue('border-'+ key +'-color'),
+                style: style.getPropertyValue('border-'+ key +'-style'),
+                width: parseFloat((style.getPropertyValue('border-'+ key +'-width') || '0').replace('px')),
+                radius: style.getPropertyValue('border-radius')
+            }
+            return ac;
+        }, {});
+        if ((elt.getAttribute('data-empty-holder')||'').indexOf('line')>=0)
+
+        var hasBorder = Object.values(borders).some(border => border.style !== 'none' && border.width > 0);
+        var isRect = Object.values(borders).every(border => border.style === borders.top.style && border.width === borders.top.width);
+        if (!hasBorder) return false;
         scope.declare('borderStyle', {
-            width: parseFloat(borderWidth.replace('px', '')),
-            radius: parseMeasureValue(borderRadius),
-            color: borderColor,
+            data: borders,
+            isRect: isRect,
         })
 
         return true;
-
-
     },
     exec: (printer, elt, scope, stack, accept) => {
         var borderStyle = scope.get('borderStyle');
         var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
         var rect = bound.clone();
-        var strokeWidth = borderStyle.width;
+        var isRect = borderStyle.isRect;
+        var strokeWidth = borderStyle.data.top.width;
+
         if (elt.tagName === 'TD' || elt.tagName === 'TH') {
             rect.x -= printer.O.x;
             rect.y -= printer.O.y;
         }
         else {
-            rect.x -= printer.O.x - strokeWidth / 2;
-            rect.y -= printer.O.y - strokeWidth / 2;
-            rect.width -= strokeWidth;
-            rect.height -= strokeWidth;
+            rect.x -= printer.O.x - borderStyle.data.left.width / 2;
+            rect.y -= printer.O.y - borderStyle.data.top.width / 2;
+            rect.width -= borderStyle.data.left.width / 2 + borderStyle.data.right.width / 2;
+            rect.height -= borderStyle.data.top.width / 2 + borderStyle.data.bottom.width / 2;
         }
 
 
-        var radius = borderStyle.radius;
+        var radius = borderStyle.data.top.radius;
         var rounded;
         if (radius) {
             switch (radius.unit) {
@@ -197,11 +205,26 @@ PrintSerialHandlers.push({
                     break;
             }
         }
-        printer.rect(rect, {
-            stroke: borderStyle.color,
-            rounded: rounded,
-            strokeWidth: strokeWidth
-        });
+
+        var points = [rect.A(), rect.B(), rect.C(), rect.D(), rect.A()];
+        if (isRect){
+            printer.rect(rect, {
+                stroke: borderStyle.color,
+                rounded: rounded,
+                strokeWidth: strokeWidth
+            });
+        }
+        else {
+            console.log(borderStyle);
+            ['top', 'right', 'bottom', 'left'].forEach((key, i) => {
+                if (borderStyle.data[key].width > 0)
+                   printer.line(points[i], points[i + 1], {
+                       stroke: borderStyle.data[key].color,
+                       strokeWidth: borderStyle.data[key].width
+                   });
+            });
+        }
+
         return true;
     }
 });
