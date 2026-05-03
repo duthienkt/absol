@@ -286,9 +286,6 @@ Dom.prototype._ = function (option, isInherited) {
     option.on && res.on(option.on);
     option.once && res.once(option.once);
     if (option.class) {
-        if (option.class.split && option.class.indexOf && option.class.indexOf(' ') >= 0) {
-          option.class = option.class.trim().split(/\s+/g);
-        }
         res.addClass(option.class);
     }
     option.style && res.addStyle(option.style);
@@ -297,12 +294,15 @@ Dom.prototype._ = function (option, isInherited) {
 
     if (!isInherited) res.init(option.props);
     var children = option.child;
+    var child;
     if (children) {
         if (!children.forEach || !children.map) {
             children = [children];
         }
         for (var i = 0; i < children.length; ++i) {
-            res.addChild(this._(children[i], false));
+            child = children[i];
+            if (child)
+                res.addChild(this._(child, false));
         }
     }
     return res;

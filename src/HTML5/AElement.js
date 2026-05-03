@@ -190,8 +190,12 @@ AElement.prototype.removeStyle = function (arg0) {
  */
 AElement.prototype.addChild = function (child) {
     if (child.indexOf && child.map && child.forEach) {
-        for (var i = 0; i < child.length; ++i)
-            this.appendChild(child[i]);
+        for (var i = 0; i < child.length; ++i) {
+            if (child[i]) {
+                //This only filters out null items in an array. Passing null directly will throw an error, which helps prevent subtle, hard-to-debug issues.
+                this.appendChild(child[i]);
+            }
+        }
     }
     else
         this.appendChild(child);
@@ -251,8 +255,6 @@ AElement.prototype.clearChild = function () {
 };
 
 
-
-
 /**
  *
  * @param {string|Array} className
@@ -265,17 +267,38 @@ AElement.prototype.hasClass = function (className) {
 
 /**
  *
- * @param {string|Array} className
+ * @param {string|Array<string>} className
  * @returns {this}
  */
 AElement.prototype.addClass = function (className) {
     if (!className) return this;
-    if (className.forEach && className.map) {
-        for (var i = 0; i < className.length; ++i)
-            this.classList.add(className[i]);
+    var classItem;
+    if (className.trim) {
+        if (className.indexOf(' ') >= 0) {
+            className = className.split(' ');//string => array
+        }
+        else {
+            classItem = className;//only one class, and it is a string
+        }
     }
-    else
-        this.classList.add(className);
+    if (Array.isArray(className)) {//array
+        for (var i = 0; i < className.length; ++i) {
+            classItem = className[i];
+            if (classItem && classItem.trim) {
+                classItem = classItem.trim();
+                if (classItem)
+                    this.classList.add(classItem);
+            }
+
+        }
+    }
+    else if (classItem) {//classItem is always a string
+        classItem = classItem.trim();
+        if (classItem) {
+            this.classList.add(classItem);
+        }
+    }
+
     return this;
 };
 
@@ -285,12 +308,33 @@ AElement.prototype.addClass = function (className) {
  * @returns {this}
  */
 AElement.prototype.removeClass = function (className) {
-    if (className && className.forEach && className.map) {
-        for (var i = 0; i < className.length; ++i)
-            this.classList.remove(className[i]);
+    if (!className) return this;
+    var classItem;
+    if (className.trim) {
+        if (className.indexOf(' ') >= 0) {
+            className = className.split(' ');//string => array
+        }
+        else {
+            classItem = className;//only one class, and it is a string
+        }
     }
-    else
-        this.classList.remove(className);
+    if (Array.isArray(className)) {//array
+        for (var i = 0; i < className.length; ++i) {
+            classItem = className[i];
+            if (classItem && classItem.trim) {
+                classItem = classItem.trim();
+                if (classItem)
+                    this.classList.remove(classItem);
+            }
+
+        }
+    }
+    else if (classItem) {//classItem is always a string
+        classItem = classItem.trim();
+        if (classItem) {
+            this.classList.remove(classItem);
+        }
+    }
     return this;
 };
 
@@ -322,7 +366,7 @@ AElement.prototype.getFontSize = function () {
 AElement.prototype.findChildAfter = function (obj) {
     var r = 0;
     for (var i = 0; i < this.childNodes.length; ++i) {
-        if (obj == this.childNodes[i]) {
+        if (obj === this.childNodes[i]) {
             r = i + 1;
             break;
         }
@@ -339,7 +383,7 @@ AElement.prototype.findChildAfter = function (obj) {
 AElement.prototype.findChildBefore = function (obj) {
     var r = 0;
     for (var i = 0; i < this.childNodes.length; ++i) {
-        if (obj == this.childNodes[i]) {
+        if (obj === this.childNodes[i]) {
             r = i - 1;
             break;
         }
