@@ -73,7 +73,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
                     listenerList[i].wrappedCallback.apply(this, others);
                     endTime = Date.now();
                     if (endTime - startTime > 200) {
-                        console.log('slow function call ('+(endTime - startTime)+')', listenerList[i]);
+                        console.log('slow function call (' + (endTime - startTime) + ')', listenerList[i]);
                     }
                 } catch (e) {
                     safeThrow(e);
@@ -89,7 +89,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
                     listenerList[i].wrappedCallback.apply(this, others);
                     endTime = Date.now();
                     if (endTime - startTime > 200) {
-                        console.log('slow function call ('+(endTime - startTime)+')', listenerList[i]);
+                        console.log('slow function call (' + (endTime - startTime) + ')', listenerList[i]);
                     }
                 } catch (e) {
                     safeThrow(e);
@@ -224,12 +224,12 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
             var newEventArray = [];
             for (var i = 0; i < eventArr.length; ++i) {
                 var event = eventArr[i];
-                if (event.wrappedCallback == arg1) {
+                if (event.callback === arg1) {//compare width user callback
                     //Dont add to newEventArray
                     if (this.isSupportedEvent(arg0)) {
                     }
                     else {
-                        if (this.removeEventListener) {
+                        if (this.removeEventListener) { //remove real callback which added to DOM
                             this.removeEventListener(event.eventName, event.wrappedCallback, !!event.cap);
                         }
                         else {
@@ -245,7 +245,35 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
             return this;
         }
     }
+};
 
+
+EventEmitter.prototype.offAll = function () {
+    var ev2RemoveList = [];//need remove from DOM
+    var eventName, i;
+    var subList;
+    for (eventName in this._azar_extendEvents.prioritize) {
+        if (this.isSupportedEvent(eventName)) continue;// not need remove callback from DOM
+        subList = this._azar_extendEvents.prioritize[eventName];
+        for (i = 0; i < subList.length; ++i) {
+            ev2RemoveList.push([eventName, subList[i].callback, true]);
+        }
+    }
+
+    for (eventName in this._azar_extendEvents.nonprioritize) {
+        if (this.isSupportedEvent(eventName)) continue;// not need remove callback from DOM
+        subList = this._azar_extendEvents.nonprioritize[eventName];
+        for (i = 0; i < subList.length; ++i) {
+            ev2RemoveList.push([eventName, subList[i].callback, false]);
+        }
+    }
+
+    for (i = 0; i < ev2RemoveList.length; i++) {
+        this.off(ev2RemoveList[i][0], ev2RemoveList[i][1], ev2RemoveList[i][2]);
+    }
+    this._azar_extendEvents.prioritize = {};
+    this._azar_extendEvents.nonprioritize = {};
+    return this;
 };
 
 /**
