@@ -5,7 +5,7 @@
  * @param {object=}opt
  * @returns {string}
  */
-export function generateJSVariable(obj,indent, opt) {
+export function generateJSVariable(obj, indent, opt) {
     indent = indent || '';
     var childIndent = indent + '    ';
     if (obj === null) {
@@ -24,7 +24,7 @@ export function generateJSVariable(obj,indent, opt) {
             + '\n' + indent + ']';
     }
     else if (obj instanceof Error) {
-        return generateJSVariable({message: obj.message, stack: obj.stack});
+        return generateJSVariable({ message: obj.message, stack: obj.stack });
     }
     else if (typeof obj === 'object') {
         var keys = Object.keys(obj);
@@ -104,7 +104,7 @@ export function isJSVariableEqual(a, b) {
     if (tA !== tB) return false; //2
     if (!a !== !b) return false;
     if (tA === 'string') return false;//because 1 & 2
-    if (tA === "number"){
+    if (tA === "number") {
         if (isNaN(a) && isNaN(b)) return true;//because 2
         return false;//because 1
     }
@@ -132,7 +132,7 @@ export function isJSVariableEqual(a, b) {
     var bKeys = Object.keys(b);
     aKeys.sort();
     bKeys.sort();
-    if (!isJSVariableEqual(aKeys, bKeys)) return  false;
+    if (!isJSVariableEqual(aKeys, bKeys)) return false;
     for (i = 0; i < aKeys.length; ++i) {
         if (!isJSVariableEqual(a[aKeys[i]], b[aKeys[i]]))
             return false;
@@ -140,3 +140,50 @@ export function isJSVariableEqual(a, b) {
     return true;
 }
 
+/**
+ * Recursively interpolates template strings in an object, array, or string using provided variables.
+ *
+ * @param {Object|Array|string} object - The object, array, or string to interpolate.
+ * @param {Object} [opt] - Optional settings.
+ * @param {Object} [opt.variables] - Variables to use for interpolation (e.g., {foo: 'bar'}).
+ * @param {string[]} [opt.excludedKeys] - Keys to exclude from interpolation (object properties).
+ * @returns {Object|Array|string|any} The interpolated object, array, or string.
+ */
+export function interpolateTplStringInObject(object, opt) {
+    opt = opt || {};
+    var variables = opt.variables || {};
+    var excludeKeyDict = (opt.excludedKeys || []).reduce(function (ac, key) {
+        ac[key] = true;
+        return ac;
+    }, {});
+
+    function visit(o) {
+        var regex;
+        if (typeof o === "string") {
+            regex = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
+            return o.replace(regex, (match, varName) => {
+                if (varName in variables) {
+                    return variables[varName] + '';
+                }
+                return match;
+            });
+        }
+        else if (Array.isArray(o)) {
+            return o.map(item => visit(item));
+        }
+        else if (o && (typeof o === "object")) {
+            return Object.keys(o).reduce((ac, key) => {
+                if (excludeKeyDict[key]) {
+                    ac[key] = o[key];
+                }
+                else {
+                    ac[key] = visit(o[key]);
+                }
+                return ac;
+            }, {});
+        }
+        else return o;
+    }
+
+    return visit(object);
+}
