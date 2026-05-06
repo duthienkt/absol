@@ -51,6 +51,13 @@ export function centimeterToPx(cm) {
     return meterToInch(cm / 100) * 96;
 }
 
+export function chToArial14Px(ch) {
+    return ch * 7.7861328125;
+};
+
+export  function chToCalibri11Px(ch) {
+    return ch * 5;
+}
 
 export var PAGE_SIZE_IN_DOT = {
     a0: [2383.94, 3370.39],
