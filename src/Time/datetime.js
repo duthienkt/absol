@@ -1,5 +1,14 @@
+
 import { nonAccentVietnamese } from "../String/stringFormat";
 import { integerZeroPadding } from "../Math/int";
+
+
+/**
+ * @typedef {Object} TimeRange24Data
+ * @property {number} [dayOffset] - Optional. The day offset (e.g., 0 for today, 1 for tomorrow).
+ * @property {number} [duration] - Optional. Duration in milliseconds or another unit as defined by context.
+ */
+
 
 export var MILLIS_PER_DAY = 24 * 3600000;
 export var MILLIS_PER_HOUR = 3600000;
@@ -1145,9 +1154,48 @@ export function isTimeRange24Null(range) {
     return range.dayOffset === GMT_HOUR_PERIOD_NULL.dayOffset && range.duration === GMT_HOUR_PERIOD_NULL.duration;
 }
 
+
+function normalizeDayOffsetIn24Hours(dayOffset) {
+    dayOffset = dayOffset % MILLIS_PER_DAY;
+    if (dayOffset < 0) dayOffset += MILLIS_PER_DAY;
+    return dayOffset;
+}
+
+
 /***
  *
- * @param {null|{dayOffset?: number, duration?: number}}range
+ * The check uses a half-open interval: `[start, end]`.
+ * Ranges that cross midnight are handled automatically.
+ *
+
+ * @param {null|TimeRange24Data} range
+ * @param {number} [dayOffset] if not set, get now
+ * @returns {boolean}
+ */
+export function isDayOffsetInTimeRange24Gmt( range, dayOffset) {
+    if (isTimeRange24Null(range)) return false;
+    if (arguments.length === 1) {
+        dayOffset = new Date().getTime() - beginOfDay(new Date()) + new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
+    }
+    if (typeof dayOffset !== 'number' || !isFinite(dayOffset)) return false;
+
+    range = range || {};
+    var startOffset = typeof range.dayOffset === 'number' && isFinite(range.dayOffset) ? range.dayOffset : 0;
+    var duration = typeof range.duration === 'number' && isFinite(range.duration) ? range.duration : 0;
+    var endOffset = startOffset + duration;
+    var dO;
+    for (var k = -1; k < 1; ++k) {
+        dO = dayOffset + k * MILLIS_PER_DAY;
+        if (dO >= startOffset && dO <= endOffset)
+            return true;
+    }
+    return false;
+}
+
+
+/***
+ *
+ * @param {null|TimeRange24Data} range
  * @param opt
  */
 export function formatTimeRange24(range, opt) {
