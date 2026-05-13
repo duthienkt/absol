@@ -76,10 +76,12 @@ function Dom(option) {
             }
         });
 
-
+    //prevent code editor auto complete wrong type of function
     this['$ '.trim()] = this.$.bind(this);
     this['_ '.trim()] = this._.bind(this);
     this['$' + '$'] = this.$$.bind(this);
+    this['$' + 'up'] = this.$up.bind(this);
+    this['$' + '$up'] = this.$$up.bind(this);
     this.buildDom = this._;
 }
 
