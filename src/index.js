@@ -141,6 +141,8 @@ var absol = {
     _: Dom.ShareInstance._,
     $: Dom.ShareInstance.$,
     $$: Dom.ShareInstance.$$,
+    $$up: Dom.ShareInstance.$$up,
+    $up: Dom.ShareInstance.$up,
     _svg: Svg.ShareInstance._,
     $svg: Svg.ShareInstance.$,
     Ref: Ref,
