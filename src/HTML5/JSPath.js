@@ -9,22 +9,26 @@ function JSPath(props) {
  * @returns {Boolean}
  */
 JSPath.prototype.match = function (element, query) {
+    var matchTag;
+    var i;
+    var key;
+    var value;
+
     if (query.id) {
         if (!element.getAttribute || element.getAttribute('id') != query.id) return false;
     }
     if (query.tagName) {
-        var matchTag = false;
+        matchTag = false;
         if (element._azar_extendTags && element._azar_extendTags[query.tagName]) matchTag = true;
         matchTag = matchTag || ((element.tagName || '').toUpperCase() == query.tagName.toUpperCase());
         if (!matchTag) return false;
     }
     if (query.classList)
-        for (var i = 0; i < query.classList.length; ++i) {
+        for (i = 0; i < query.classList.length; ++i) {
             if (!element.classList || !element.classList.contains(query.classList[i])) return false;
         }
     if (query.attributes) {
-        for (var key in query.attributes) {
-            var value;
+        for (key in query.attributes) {
             if (element.attr) {
                 value = element.attr(key);
                 if (value != query.attributes[key]) return false;
@@ -44,17 +48,25 @@ JSPath.prototype.match = function (element, query) {
 JSPath.prototype.findFirst = function (root, onFound) {
     var queue = [{ e: root, i: 0 }];
     var current;
+    var isMatched;
+    var currentElt;
+    var currentI;
+    var trackI;
+    var trackElement;
+    var isTrackMatch;
+    var l;
+    var i;
 
     while (queue.length > 0) {
         current = queue.shift();
-        var isMathed = false;
-        var currentElt = current.e;
-        var currentI = current.i;
+        isMatched = false;
+        currentElt = current.e;
+        currentI = current.i;
         if (this.match(currentElt, this.path[currentI])) {
             if (this.path[currentI].childCombinate) {
-                var trackI = currentI;
-                var trackElement = currentElt;
-                var isTrackMatch = true;
+                trackI = currentI;
+                trackElement = currentElt;
+                isTrackMatch = true;
                 while (isTrackMatch && trackI > 0 && this.path[trackI].childCombinate) {
                     if (!trackElement.parentNode || !this.match(trackElement.parentNode, this.path[trackI - 1])) {
                         isTrackMatch = false;
@@ -64,26 +76,26 @@ JSPath.prototype.findFirst = function (root, onFound) {
                         trackI--;
                     }
                 }
-                if (isTrackMatch) isMathed = true;
+                if (isTrackMatch) isMatched = true;
             }
             else {
-                isMathed = true;
+                isMatched = true;
             }
         }
 
 
-        if (isMathed && currentI + 1 == this.path.length) {
+        if (isMatched && currentI + 1 === this.path.length) {
             if (!onFound || (onFound && onFound(currentElt)))
                 return currentElt;
         }
 
         if (currentElt.childNodes) {
-            var l = currentElt.childNodes.length;
-            for (var i = 0; i < l; ++i) {
+            l = currentElt.childNodes.length;
+            for (i = 0; i < l; ++i) {
                 if (currentElt.childNodes[i].tagName)
                     queue.push({
                         e: currentElt.childNodes[i],
-                        i: currentI + (isMathed && currentI + 1 < this.path.length ? 1 : 0)
+                        i: currentI + (isMatched && currentI + 1 < this.path.length ? 1 : 0)
                     });
             }
         }
@@ -96,17 +108,25 @@ JSPath.prototype.findAll = function (root, onFound) {
     var res = [];
     var queue = [{ e: root, i: 0 }];
     var current;
+    var isMatched;
+    var currentElt;
+    var currentI;
+    var trackI;
+    var trackElement;
+    var isTrackMatch;
+    var l;
+    var i;
 
     while (queue.length > 0) {
         current = queue.shift();
-        var isMathed = false;
-        var currentElt = current.e;
-        var currentI = current.i;
+        isMatched = false;
+        currentElt = current.e;
+        currentI = current.i;
         if (this.match(currentElt, this.path[currentI])) {
             if (this.path[currentI].childCombinate) {
-                var trackI = currentI;
-                var trackElement = currentElt;
-                var isTrackMatch = true;
+                trackI = currentI;
+                trackElement = currentElt;
+                isTrackMatch = true;
                 while (isTrackMatch && trackI > 0 && this.path[trackI].childCombinate) {
                     if (!trackElement.parentNode || !this.match(trackElement.parentNode, this.path[trackI - 1])) {
                         isTrackMatch = false;
@@ -116,30 +136,133 @@ JSPath.prototype.findAll = function (root, onFound) {
                         trackI--;
                     }
                 }
-                if (isTrackMatch) isMathed = true;
+                if (isTrackMatch) isMatched = true;
             }
             else {
-                isMathed = true;
+                isMatched = true;
             }
         }
 
-        if (isMathed && currentI + 1 == this.path.length) {
+        if (isMatched && currentI + 1 == this.path.length) {
             if (!onFound || (onFound && onFound(currentElt)))
                 res.push(currentElt);
         }
 
         if (currentElt.childNodes) {
-            var l = currentElt.childNodes.length;
-            for (var i = 0; i < l; ++i) {
+            l = currentElt.childNodes.length;
+            for (i = 0; i < l; ++i) {
                 if (currentElt.childNodes[i].tagName)
                     queue.push({
                         e: currentElt.childNodes[i],
-                        i: currentI + (isMathed && currentI + 1 < this.path.length ? 1 : 0)
+                        i: currentI + (isMatched && currentI + 1 < this.path.length ? 1 : 0)
                     });
             }
         }
     }
     return res;
+};
+
+
+
+
+/**
+ * Find nearest ancestor of descendant that matches the query
+ * @param descendant
+ * @param onFound
+ */
+JSPath.prototype.findUp = function (descendant, onFound) {
+    var stack = [{
+        e: descendant,
+        i: this.path.length - 1,
+        cc: false,//can continue if not match, used for child combinate
+        cr: null//candidate result
+    }];
+    var current;
+    var isMatched;
+    while (stack.length > 0) {
+        current = stack.shift();
+        isMatched = false;
+        isMatched = this.match(current.e, this.path[current.i]);
+        if (isMatched && !current.cr) current.cr = current.e;
+        if (isMatched && current.i === 0) {
+            if (!onFound || onFound(current.cr)) {
+                return  current.cr;
+            }
+            else {//user reject this element
+                while (stack.length > 0 && stack[stack.length - 1].e === current.cr) {
+                    stack.pop();
+                }
+            }
+        }
+        if (!isMatched && current.cc) continue;//cancel
+        if (current.e.parentNode) {
+            stack.push({
+                e: current.e.parentNode,
+                i: current.i,
+                cc: false,
+                cr: current.cr
+            });
+            if (isMatched && current.i > 0) {
+                stack.push({
+                    e: current.e.parentNode,
+                    i: current.i - 1,
+                    cr: current.cr,
+                    cc: this.path[current.i].childCombinate
+                });
+            }
+        }
+    }
+};
+
+/**
+ * Find nearest ancestor of descendant that matches the query
+ * @param descendant
+ * @param onFound
+ */
+JSPath.prototype.findUpAll = function (descendant, onFound) {
+    var result = [];
+    var stack = [{
+        e: descendant,
+        i: this.path.length - 1,
+        cc: false,//can continue if not match, used for child combinate
+        cr: null//candidate result
+    }];
+    var current;
+    var isMatched;
+    while (stack.length > 0) {
+        current = stack.shift();
+        isMatched = false;
+        isMatched = this.match(current.e, this.path[current.i]);
+        if (isMatched && !current.cr) current.cr = current.e;
+        if (isMatched && current.i === 0) {
+            if (!onFound || onFound(current.cr)) {
+                result.push(current.cr);
+            }
+            else {//user reject this element
+                while (stack.length > 0 && stack[stack.length - 1].e === current.cr) {
+                    stack.pop();
+                }
+            }
+        }
+        if (!isMatched && current.cc) continue;//cancel
+        if (current.e.parentNode) {
+            stack.push({
+                e: current.e.parentNode,
+                i: current.i,
+                cc: false,
+                cr: current.cr
+            });
+            if (isMatched && current.i > 0) {
+                stack.push({
+                    e: current.e.parentNode,
+                    i: current.i - 1,
+                    cr: current.cr,
+                    cc: this.path[current.i].childCombinate
+                });
+            }
+        }
+    }
+    return result;
 };
 
 var identRegex = /[a-zA-Z0-9\-_]+/;
@@ -203,26 +326,26 @@ JSPath.parseQuery = function (s) {
             return s.substring(1)
         });
     }
-/*
-    var pseudoClasses = s.match(this.__pseudoClassRegex);
-    if (pseudoClasses) {
-        pseudoClasses.forEach(function (pseudo) {
-            if (pseudo === ':first-child') {
-                tag.firstChild = true;
-            }
-            else if (pseudo === ':last-child') {
-                tag.lastChild = true;
-            }
-            else {
-                var nthMatch = pseudo.match(this.__nthChildNumberRegex);
-                if (nthMatch) {
-                    tag.nthChild = parseInt(nthMatch[1]);
+    /*
+        var pseudoClasses = s.match(this.__pseudoClassRegex);
+        if (pseudoClasses) {
+            pseudoClasses.forEach(function (pseudo) {
+                if (pseudo === ':first-child') {
+                    tag.firstChild = true;
                 }
-            }
-        }.bind(this));
-    }
+                else if (pseudo === ':last-child') {
+                    tag.lastChild = true;
+                }
+                else {
+                    var nthMatch = pseudo.match(this.__nthChildNumberRegex);
+                    if (nthMatch) {
+                        tag.nthChild = parseInt(nthMatch[1]);
+                    }
+                }
+            }.bind(this));
+        }
 
- */
+     */
     return tag;
 };
 
@@ -235,13 +358,16 @@ JSPath.compileJSPath = function (text) {
     var tagTexts = text.match(this.__tagRegex) || [''];
     var path = [];
     var childCombinate = false;
-    for (var i = 0; i < tagTexts.length; ++i) {
-        var s = tagTexts[i];
+    var i;
+    var s;
+    var tag;
+    for (i = 0; i < tagTexts.length; ++i) {
+        s = tagTexts[i];
         if (s === '>') {
             childCombinate = true;
         }
         else {
-            var tag = this.parseQuery(s);
+            tag = this.parseQuery(s);
             tag.childCombinate = childCombinate;
             path.push(tag);
             childCombinate = false;
