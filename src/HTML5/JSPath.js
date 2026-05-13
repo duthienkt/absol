@@ -106,59 +106,12 @@ JSPath.prototype.findFirst = function (root, onFound) {
 
 JSPath.prototype.findAll = function (root, onFound) {
     var res = [];
-    var queue = [{ e: root, i: 0 }];
-    var current;
-    var isMatched;
-    var currentElt;
-    var currentI;
-    var trackI;
-    var trackElement;
-    var isTrackMatch;
-    var l;
-    var i;
-
-    while (queue.length > 0) {
-        current = queue.shift();
-        isMatched = false;
-        currentElt = current.e;
-        currentI = current.i;
-        if (this.match(currentElt, this.path[currentI])) {
-            if (this.path[currentI].childCombinate) {
-                trackI = currentI;
-                trackElement = currentElt;
-                isTrackMatch = true;
-                while (isTrackMatch && trackI > 0 && this.path[trackI].childCombinate) {
-                    if (!trackElement.parentNode || !this.match(trackElement.parentNode, this.path[trackI - 1])) {
-                        isTrackMatch = false;
-                    }
-                    else {
-                        trackElement = trackElement.parentNode;
-                        trackI--;
-                    }
-                }
-                if (isTrackMatch) isMatched = true;
-            }
-            else {
-                isMatched = true;
-            }
+    this.findFirst(root, function onFoundWrapper(e) {
+        if (!onFound || onFound(e)) {
+            res.push(e);
         }
-
-        if (isMatched && currentI + 1 == this.path.length) {
-            if (!onFound || (onFound && onFound(currentElt)))
-                res.push(currentElt);
-        }
-
-        if (currentElt.childNodes) {
-            l = currentElt.childNodes.length;
-            for (i = 0; i < l; ++i) {
-                if (currentElt.childNodes[i].tagName)
-                    queue.push({
-                        e: currentElt.childNodes[i],
-                        i: currentI + (isMatched && currentI + 1 < this.path.length ? 1 : 0)
-                    });
-            }
-        }
-    }
+        return false;//continue search
+    });
     return res;
 };
 
@@ -188,10 +141,8 @@ JSPath.prototype.findUp = function (descendant, onFound) {
             if (!onFound || onFound(current.cr)) {
                 return  current.cr;
             }
-            else {//user reject this element
-                while (stack.length > 0 && stack[stack.length - 1].e === current.cr) {
-                    stack.pop();
-                }
+            while (stack.length > 0 && stack[stack.length - 1].e === current.cr) {//cur is matched with query
+                stack.pop();
             }
         }
         if (!isMatched && current.cc) continue;//cancel
@@ -221,47 +172,12 @@ JSPath.prototype.findUp = function (descendant, onFound) {
  */
 JSPath.prototype.findUpAll = function (descendant, onFound) {
     var result = [];
-    var stack = [{
-        e: descendant,
-        i: this.path.length - 1,
-        cc: false,//can continue if not match, used for child combinate
-        cr: null//candidate result
-    }];
-    var current;
-    var isMatched;
-    while (stack.length > 0) {
-        current = stack.shift();
-        isMatched = false;
-        isMatched = this.match(current.e, this.path[current.i]);
-        if (isMatched && current.i === this.path.length - 1) current.cr = current.e;
-        if (isMatched && current.i === 0) {
-            if (!onFound || onFound(current.cr)) {
-                result.push(current.cr);
-            }
-            else {//user reject this element
-                while (stack.length > 0 && stack[stack.length - 1].e === current.cr) {
-                    stack.pop();
-                }
-            }
-        }
-        if (!isMatched && current.cc) continue;//cancel
-        if (current.e.parentNode) {
-            stack.push({
-                e: current.e.parentNode,
-                i: current.i,
-                cc: false,
-                cr: current.cr
-            });
-            if (isMatched && current.i > 0) {
-                stack.push({
-                    e: current.e.parentNode,
-                    i: current.i - 1,
-                    cr: current.cr,
-                    cc: this.path[current.i].childCombinate
-                });
-            }
-        }
-    }
+    this.findUp(descendant, function (e) {
+       if (!onFound || onFound(e)) {
+           result.push(e);
+       }
+       return false;//continue search
+    });
     return result;
 };
 
