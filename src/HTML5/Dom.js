@@ -119,11 +119,28 @@ Dom.prototype.$ = function (query, root, onFound) {
     return res;
 };
 
+Dom.prototype.$up = function (query, descendant, onFound) {
+    var res = this.selectUp(query, descendant, onFound);
+    if (res) this.attach(res);
+    return res;
+};
+
+Dom.prototype.$$up = function (query, descendant, onFound) {
+    var res = this.selectUpAll(query, descendant, onFound);
+    for (var i = 0; i< res.length; ++i){
+        this.attach(res[i]);
+    }
+    return res;
+};
+
 /***
  *
  * @type {function(string, AElement, Function): AElement}
  */
 Dom.prototype.selectAttacth = Dom.prototype.$;
+
+Dom.prototype.selectUpAttacth = Dom.prototype.$up;
+Dom.prototype.selectUpAllAttacth = Dom.prototype.$up;
 
 
 /**
@@ -137,6 +154,20 @@ Dom.prototype.select = function (query, root, onFound) {
     var matcher = JSPath.compileJSPath(query);
     return matcher.findFirst(root, onFound);
 };
+
+
+Dom.prototype.selectUp = function (query, descendant, onFound) {
+    if (!descendant) return null;
+    var matcher = JSPath.compileJSPath(query);
+    return  matcher.findUp(descendant, onFound);
+}
+
+Dom.prototype.selectUpAll = function (query, descendant, onFound) {
+    if (!descendant) return null;
+    var matcher = JSPath.compileJSPath(query);
+    return  matcher.findUpAll(descendant, onFound);
+}
+
 
 /**
  * prevent ide define wrong class
