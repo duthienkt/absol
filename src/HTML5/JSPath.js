@@ -183,7 +183,7 @@ JSPath.prototype.findUp = function (descendant, onFound) {
         current = stack.shift();
         isMatched = false;
         isMatched = this.match(current.e, this.path[current.i]);
-        if (isMatched && !current.cr) current.cr = current.e;
+        if (isMatched && current.i === this.path.length - 1) current.cr = current.e;
         if (isMatched && current.i === 0) {
             if (!onFound || onFound(current.cr)) {
                 return  current.cr;
@@ -233,7 +233,7 @@ JSPath.prototype.findUpAll = function (descendant, onFound) {
         current = stack.shift();
         isMatched = false;
         isMatched = this.match(current.e, this.path[current.i]);
-        if (isMatched && !current.cr) current.cr = current.e;
+        if (isMatched && current.i === this.path.length - 1) current.cr = current.e;
         if (isMatched && current.i === 0) {
             if (!onFound || onFound(current.cr)) {
                 result.push(current.cr);
