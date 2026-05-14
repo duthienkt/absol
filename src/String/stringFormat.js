@@ -263,9 +263,12 @@ export function kebabCaseToUpperUnderScore(s) {
  * @param {String} [opt.spaces='_'] Character to replace spaces with
  * @param {String} [opt.symbols='_'] Character to replace special symbols with
  * @param {boolean} [opt.startsWithDigit=false] Whether to allow identifiers starting with digits
+ * @param {String} [opt.leadingDigitPrefix='$'] Prefix inserted when the normalized identifier starts with a digit and leading digits are not allowed
  */
 export function normalizeIdent(text, opt) {
     var spaces = '_';
+    var leadingDigitPrefix = '$';
+    var res;
     if (opt && ('spaces' in opt)) {
         spaces = opt.spaces || '';
     }
@@ -275,13 +278,17 @@ export function normalizeIdent(text, opt) {
         symbols = opt.symbols || '';
     }
 
-    var startsWithDigit = false;
+    if (opt && ('leadingDigitPrefix' in opt)) {
+        leadingDigitPrefix = opt.leadingDigitPrefix || '';
+    }
+
+    var startsWithDigit = true;
     if (opt && ('startsWithDigit' in opt)) {
         startsWithDigit = opt.startsWithDigit || false;
     }
 
 
-    var res = nonAccentVietnamese(text);
+    res = nonAccentVietnamese(text);
     if (typeof spaces === "string") {
         res = res.replace(/\s+/g, spaces);
     }
@@ -311,7 +318,7 @@ export function normalizeIdent(text, opt) {
 
 
     if (!startsWithDigit && res.match(/^[0-9]/)) {
-        res = '$' + res;
+        res = leadingDigitPrefix + res;
     }
     return res;
 }
