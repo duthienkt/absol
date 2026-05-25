@@ -9,6 +9,39 @@ export function stringHashCode(st) {
     return hash;
 }
 
+export function objectHashCode(obj) {
+    var tf = typeof obj;
+    var txt = '';
+    var i, keys;
+    if (tf === 'string') txt = '\"' + obj + '\"';
+    else if (!obj) txt = obj + '';
+    else if (Array.isArray(tf)) {
+        txt += '[';
+        for (i = 0; i < tf.length; i++) {
+            if (i > 0) txt += ',';
+            txt += objectHashCode(tf[i]);
+        }
+        txt += ']';
+    }
+    else if (obj.hash && (typeof obj.hash === 'function')) {
+        return obj.hash();
+    }
+    else if (tf === 'object') {
+        keys = Object.keys(obj);
+        keys.sort();
+        txt = '{';
+        for (i = 0; i < keys.length; i++) {
+            if (i > 0) txt += ',';
+            txt += stringHashCode(stringHashCode(keys[i]) + ':'+ objectHashCode(obj[keys[i]]));
+        }
+
+        txt += '}';
+    }
+    else {
+        txt = obj+'';
+    }
+    return stringHashCode(txt);
+}
 
 
 function crc16($str) {
