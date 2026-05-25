@@ -1,8 +1,11 @@
+import { objectHashCode } from "../String/stringUtils";
+
 function DynamicCSS() {
     this.elt = document.createElement('style');
     this.data = {};
     this.state = 'STANDBY';
     this.start();
+    this.lastHashCode = null;
 }
 
 /**
@@ -10,6 +13,9 @@ function DynamicCSS() {
  * @returns {this}
  */
 DynamicCSS.prototype.commit = function () {
+    var newHashCode = objectHashCode(this.data);
+    if (newHashCode === this.lastHashCode) return this;
+    this.lastHashCode = newHashCode;
     this.elt.innerHTML = Object.keys(this.data).map(ruleQuery => {
             var rule = this.data[ruleQuery];
             return [
