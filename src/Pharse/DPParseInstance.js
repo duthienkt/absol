@@ -51,7 +51,9 @@ function DPParseInstance(parser, source, target) {
         });
     }
     else if (source instanceof Array) {
-        this.tokens = source
+        this.tokens = source.filter(function (tk) {
+            return tk.type !== 'skip';
+        });
     }
     else {
         throw new Error("Invalid source, source must be string or array of token");
