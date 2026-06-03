@@ -136,7 +136,7 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
             var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var eventIndex = -1;
             for (var i = 0; i < eventArr.length; ++i) {
-                if (eventArr[i].wrappedCallback == arg1) {
+                if (eventArr[i].wrappedCallback === arg1) {
                     eventIndex = i;
                     break;
                 }
@@ -224,7 +224,7 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
             var newEventArray = [];
             for (var i = 0; i < eventArr.length; ++i) {
                 var event = eventArr[i];
-                if (event.callback === arg1) {//compare width user callback
+                if (event.callback === arg1 ||event.wrappedCallback === arg1) {//compare width user callback
                     //Dont add to newEventArray
                     if (this.isSupportedEvent(arg0)) {
                     }
