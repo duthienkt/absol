@@ -162,7 +162,7 @@ PrintSerialHandlers.push({
             }
             return ac;
         }, {});
-        if ((elt.getAttribute('data-empty-holder')||'').indexOf('line')>=0)
+        if ((elt.getAttribute('data-empty-holder')||'').indexOf('line')>=0) return false;
 
         var hasBorder = Object.values(borders).some(border => border.style !== 'none' && border.width > 0);
         var isRect = Object.values(borders).every(border => border.style === borders.top.style && border.width === borders.top.width);
@@ -194,6 +194,7 @@ PrintSerialHandlers.push({
 
 
         var radius = borderStyle.data.top.radius;
+        var color = borderStyle.data.top.color;
         var rounded;
         if (radius) {
             switch (radius.unit) {
@@ -209,13 +210,12 @@ PrintSerialHandlers.push({
         var points = [rect.A(), rect.B(), rect.C(), rect.D(), rect.A()];
         if (isRect){
             printer.rect(rect, {
-                stroke: borderStyle.color,
+                stroke: color,
                 rounded: rounded,
                 strokeWidth: strokeWidth
             });
         }
         else {
-            console.log(borderStyle);
             ['top', 'right', 'bottom', 'left'].forEach((key, i) => {
                 if (borderStyle.data[key].width > 0)
                    printer.line(points[i], points[i + 1], {
