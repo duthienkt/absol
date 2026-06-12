@@ -462,6 +462,8 @@ PrintSerialHandlers.push({
     exec: (printer, elt, scope, stack, accept) => {
         var O = printer.O;
         var style = getComputedStyleCache(elt);
+        var display = style.display !== 'none';
+        if (!display) return;
         var paddingLeft = parseMeasureValue(style.getPropertyValue('padding-left'));
         var paddingTop = parseMeasureValue(style.getPropertyValue('padding-top'));
         var paddingBottom = parseMeasureValue(style.getPropertyValue('padding-bottom'));
