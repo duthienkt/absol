@@ -1,3 +1,7 @@
+import { numberToVietnamese } from "../String/stringFormat";
+import TemplateString from "./TemplateString";
+import { formatDateTime } from "../Time/datetime";
+
 /**
  *
  * @param obj
@@ -151,22 +155,39 @@ export function isJSVariableEqual(a, b) {
  */
 export function interpolateTplStringInObject(object, opt) {
     opt = opt || {};
-    var variables = opt.variables || {};
+    var variables = Object.assign({},opt.variables || {});
     var excludeKeyDict = (opt.excludedKeys || []).reduce(function (ac, key) {
         ac[key] = true;
         return ac;
     }, {});
 
+    variables.numberToWords = numberToVietnamese;
+    variables.NumberToWords = numberToVietnamese;
+    variables.formatDateTime = formatDateTime;
+    variables.FormatDateTime = formatDateTime;
+    var variableNames = Object.keys(variables);
+    var variableArr = variableNames.map(function (name) {
+        return variables[name];
+    })
+
     function visit(o) {
-        var regex;
+        var jsCode, func;
         if (typeof o === "string") {
-            regex = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
-            return o.replace(regex, (match, varName) => {
-                if (varName in variables) {
-                    return variables[varName] + '';
+            if (o.indexOf("{{") >=0 && o.indexOf("}}") >=0) {//maybe template
+                try {
+                    jsCode = TemplateString.parse(o).toJSCode();
+                    jsCode = 'return ' + jsCode;
+                    func = Function.apply(null, variableNames.concat([jsCode]));
+                    return func.apply(null, variableArr);
                 }
-                return match;
-            });
+                catch (err) {
+                    console.error(func,err);
+                    return o;
+                }
+            }
+            else { // skip convert
+                return o;
+            }
         }
         else if (Array.isArray(o)) {
             return o.map(item => visit(item));
