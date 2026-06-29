@@ -380,12 +380,165 @@ export function normalizeFileName(name) {
 }
 
 
-
-// window.t = `Sử dụng công thức tính: (Luong_Gio  OT150  0.5) + (Luong_Gio  OT200  1.0) + (Luong_Gio  OT210  1.1) + (Luong_Gio  OT270  1.7) + (Luong_Gio  OT300  2.0)`;
-// console.log(breakTextToLineByLength(t, 50))
-
 String.nonAccentVietnamese = nonAccentVietnamese;
 
 String.prototype.nonAccentVietnamese = function () {
     return String.nonAccentVietnamese(this);
 };
+
+
+/****** NumberToVietnamese *****************/
+
+export function numberToVietnamese(n) {
+    var zeroLeftPadding = ["", "00", "0"];
+    var digits = [
+        "không",
+        "một",
+        "hai",
+        "ba",
+        "bốn",
+        "năm",
+        "sáu",
+        "bảy",
+        "tám",
+        "chín"
+    ];
+    var multipleThousandUnits = [
+        "",
+        "nghìn",
+        "triệu",
+        "tỷ",
+        "nghìn tỷ",
+        "triệu tỷ",
+        "tỷ tỷ"
+    ];
+
+    function shouldShowZeroHundred(groups) {
+        let trailingZeroGroups = 0;
+
+        for (let i = groups.length - 1; i >= 0; i--) {
+            if (groups[i] === "000") trailingZeroGroups++;
+            else break;
+        }
+
+        return trailingZeroGroups < groups.length - 1;
+    }
+
+    function deconstruct(items) {
+        const t0 = items.length > 0 ? items[0] : undefined;
+        const t1 = items.length > 1 ? items[1] : undefined;
+        const t2 = items.length > 2 ? items[2] : undefined;
+
+        return [t0, t1, t2];
+    }
+
+    function readPair(b, c) {
+        switch (b) {
+            case 0:
+                return c === 0 ? "" : " lẻ " + digits[c];
+
+            case 1:
+                switch (c) {
+                    case 0:
+                        return "mười ";
+                    case 5:
+                        return "mười lăm";
+                    default:
+                        return "mười " + digits[c];
+                }
+
+            default:
+                switch (c) {
+                    case 0:
+                        return digits[b] + " mươi ";
+                    case 1:
+                        return digits[b] + " mươi mốt";
+                    case 4:
+                        return digits[b] + " mươi tư";
+                    case 5:
+                        return digits[b] + " mươi lăm";
+                    default:
+                        return digits[b] + " mươi " + digits[c];
+                }
+        }
+    }
+
+    function readTriple(triple, showZeroHundred) {
+        var tripleChars = triple.split("");
+        var a = parseInt(tripleChars[0], 10);
+        var b = parseInt(tripleChars[1], 10);
+        var c = parseInt(tripleChars[2], 10);
+
+        if (a === 0 && b === 0 && c === 0) return "";
+        if (a === 0 && showZeroHundred) return "không trăm " + readPair(b, c);
+        if (a === 0 && b === 0) return digits[c];
+        if (a === 0) return readPair(b, c);
+
+        return digits[a] + " trăm " + readPair(b, c);
+    }
+
+    function capitalize(input) {
+        switch (input) {
+            case null:
+            case undefined:
+                throw new TypeError("input cannot be null or undefined");
+
+            case "":
+                throw new Error("input cannot be empty");
+
+            default:
+                return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+        }
+    }
+
+    function chunked(str, chunkSize) {
+        const result = [];
+        const count = Math.floor(str.length / chunkSize);
+
+        for (let i = 0; i < count; i++) {
+            result.push(str.substring(i * chunkSize, i * chunkSize + chunkSize));
+        }
+        return result;
+    }
+
+    function toVietnameseWords(n) {
+        if (typeof n === "number") {
+            if (!Number.isSafeInteger(n)) {
+                throw new RangeError("n must be a safe integer or BigInt");
+            }
+            n = BigInt(n);
+        } else if (typeof n === "string") {
+            n = BigInt(n);
+        } else if (typeof n !== "bigint") {
+            throw new TypeError("n must be a number, string, or BigInt");
+        }
+
+        if (n === 0n) return "Không";
+        if (n < 0n) return "Âm " + toVietnameseWords(-n).toLowerCase();
+
+        const s = n.toString();
+        const groups = chunked(zeroLeftPadding[s.length % 3] + s, 3);
+        const showZeroHundred = shouldShowZeroHundred(groups);
+
+        let index = -1;
+        const rawResult = groups.reduce((acc, e) => {
+            index++;
+
+            const tripleText = readTriple(e, showZeroHundred && index > 0);
+            const multipleThousand =
+                !tripleText || tripleText.trim() === ""
+                    ? ""
+                    : (multipleThousandUnits[groups.length - 1 - index] == null ? "" : multipleThousandUnits[groups.length - 1 - index]);
+
+            return `${acc} ${tripleText} ${multipleThousand} `;
+        }, "");
+
+        return capitalize(
+            rawResult
+                .replace(/\s+/g, " ")
+                .trim()
+        );
+    }
+
+    return toVietnameseWords(n);
+}
