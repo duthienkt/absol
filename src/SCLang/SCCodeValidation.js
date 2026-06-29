@@ -22,7 +22,6 @@ function SCCodeValidation(source, opt) {
     this.usedGlobalVariables = [];
     this.glolbalScope = new VarScope();
     this.topScope = new VarScope(this.glolbalScope);
-    console.log(this.topScope)
     this.stack = [
         {
             scope: this.glolbalScope,
