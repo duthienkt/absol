@@ -8,7 +8,7 @@ function Circle(x, y, r) {
 
 
 Circle.prototype.isPointInBound = function (p) {
-    return distance(this.x, this.y, p.x, p.y) > r;
+    return distance(this.x, this.y, p.x, p.y) <= this.r;
 };
 
 Circle.prototype.isRectInBound = function (rect) {

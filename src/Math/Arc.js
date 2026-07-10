@@ -10,8 +10,8 @@ function Arc(x, y, r, start, end) {
 }
 
 Arc.prototype.isPointInBound = function (p) {
-    if (distance(this.x, this.y, p.x, p.y) > r) return false;
-    return radianInRange(Math.atan2(p.y - this.y, p.x - this.x), start, end);
+    if (distance(this.x, this.y, p.x, p.y) > this.r) return false;
+    return radianInRange(Math.atan2(p.y - this.y, p.x - this.x), this.start, this.end);
 };
 
 Arc.prototype.isRectInBound = function (rect) {
