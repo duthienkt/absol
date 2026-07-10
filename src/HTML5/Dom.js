@@ -325,7 +325,14 @@ Dom.prototype._ = function (option, isInherited) {
     option.id && res.attr('id', option.id);
 
 
-    if (!isInherited) res.init(option.props);
+    if (isInherited) {
+        if (option.props) {
+            Object.assign(res, option.props);//only assign data without call init function
+        }
+    }
+    else {
+        res.init(option.props);
+    }
     var children = option.child;
     var child;
     if (children) {
