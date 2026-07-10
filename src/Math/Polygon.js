@@ -45,6 +45,7 @@ Polygon.prototype.pointLocalIn = function (P) {
 
 Polygon.prototype.getPathString = function () {
     var vts = this.vertices;
+    if (vts.length === 0) return '';
     var res = 'M' + vts[0].x + ' ' + vts[0].y;
     for (var i = 1; i < vts.length; ++i) {
         res += 'L' + vts[i].x + ' ' + vts[i].y;
