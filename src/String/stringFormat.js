@@ -382,6 +382,25 @@ export function normalizeFileName(name) {
 
 String.nonAccentVietnamese = nonAccentVietnamese;
 
+/**
+ * Crop text to specified limit. If the text is longer than limitLength,
+ * it is truncated and an ellipsis '...' is appended. The returned string
+ * length will not exceed limitLength.
+ *
+ * @param {String} s
+ * @param {Number} limitLength
+ * @returns {String}
+ */
+export function truncateWithEllipsis(s, limitLength) {
+    if (typeof s !== 'string') return '';
+    limitLength = parseInt(limitLength, 10) || 0;
+    if (limitLength <= 0) return '';
+    if (s.length <= limitLength) return s;
+    // If limit is very small, just return ellipsis
+    if (limitLength <= 3) return '...';
+    return s.substring(0, limitLength - 3) + '...';
+}
+
 String.prototype.nonAccentVietnamese = function () {
     return String.nonAccentVietnamese(this);
 };
