@@ -61,4 +61,24 @@ TemplateString.parse = function (text) {
     }
 };
 
+TemplateString.getVariables = function (text) {
+  var parsed = TemplateString.parse(text);
+  var variables = [];
+  var variableDict = {};
+  parsed.parts.forEach(function (part) {
+    if (part.type === TemplateString.TYPE_EXPRESSION) {
+      var matches = part.data.match(/([a-zA-Z_$][0-9a-zA-Z_$]*)/g);
+      if (matches) {
+        matches.forEach(function (match) {
+          if (!variableDict[match]) {
+            variableDict[match] = true;
+            variables.push(match);
+          }
+        });
+      }
+    }
+  });
+  return variables;
+};
+
 export default TemplateString;
