@@ -27,6 +27,7 @@ function SCProgramInstance(ast, env) {
     }];
 
     this.ast = ast;
+    this.sourceURL = null;
 }
 
 SCProgramInstance.prototype.exec = function () {
@@ -957,6 +958,9 @@ SCProgramInstance.prototype.visitors = {
         }
 
         var code = `return function ${functionName}(${node.params.map(pr => pr.id.name || randomIdent(5)).join(',')}) { return f.apply(this, arguments); }`;
+        if (this.sourceURL) {
+            code += '\n//# sourceURL=' + this.sourceURL + '\n';
+        }
         var func = (new Function('f', code))(f);
         this.topScope.declareVar(functionName, func);
         return func;
