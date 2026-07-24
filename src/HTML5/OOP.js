@@ -121,10 +121,41 @@ export function inheritCreator(parent, child) {
     }
 };
 
-/***
+/**
+ * @typedef {Object} MixClassStaticSource
+ * @property {Function} [create] Optional factory function. The last provided value wins.
+ * @property {*} [render] Optional renderer metadata copied to `constructor.render`.
+ * @property {string} [tag] Optional DOM tag metadata copied to `constructor.tag`.
+ * @property {Object<string, Object>} [property] Property schema map. Each entry is shallow-cloned.
+ * @property {Object<string, Function>} [eventHandler] Event handlers copied to `constructor.eventHandler`.
+ */
+
+/**
+ * @typedef {Object} MixClassPrototypeSource
+ * @property {Object<string, Object>} [attributeHandlers] Attribute handler map merged into `prototype.attributeHandlers`.
+ * @property {Object<string, *>} [attributes] Default attributes merged into `prototype.attributes`.
+ * @property {Object<string, *>} [style] Default style object merged into `prototype.style`.
+ * @property {Object<string, Object>} [pinHandlers] Pin handlers merged into `prototype.pinHandlers`.
+ * @property {Object<string, Object>} [styleHandlers] Style handlers merged into `prototype.styleHandlers`.
+ * @property {Object<string, *>} [extendStyle] Style extension map merged into `prototype.extendStyle`.
+ */
+
+/**
+ * @typedef {Function & MixClassStaticSource & {prototype: MixClassPrototypeSource}} MixClassParentConstructor
+ */
+
+/**
+ * Mixes methods/properties from one or many parent sources into a target constructor prototype.
  *
- * @param {Function} constructor
- * @param {Function[]}ParentClasses
+ * `ParentClasses` accepts either:
+ * - a constructor function (`MixClassParentConstructor`) whose `prototype` is mixed and whose
+ *   static fields (`create`, `render`, `tag`, `property`, `eventHandler`) can also be consumed;
+ * - a plain object (`MixClassPrototypeSource`) treated as a prototype-like source.
+ *
+ * For overlapping members, later sources override earlier ones.
+ *
+ * @param {Function} constructor Target constructor that receives merged prototype descriptors.
+ * @param {...(MixClassParentConstructor|MixClassPrototypeSource)} ParentClasses Parent sources to merge.
  */
 export function mixClass(constructor, ...ParentClasses) {
     var createFunction;
