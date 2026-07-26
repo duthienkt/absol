@@ -105,7 +105,7 @@ DPParseInstance.prototype._nextToken = function () {
 
     var prevExpectedList, prevRule;
     var prevExpectedItem;
-    //nếu cùng 1 rule, cùng điểm bắt dầu, cùng passed thì dài hơn lấy
+    //nếu cùng 1 rule, cùng điểm bắt dầu, cùng passed thì dài hơn lấy, nếu nhọc nhằn chọn rule đứng trước
     while (this.priQueue.size() > 0) {
         this.maxSize = Math.max(this.maxSize, this.priQueue.size());
         cur = this.priQueue.pop();
