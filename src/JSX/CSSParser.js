@@ -9,9 +9,10 @@ import { arrayLexicographicalCompare } from "../DataStructure/Array";
 
 
 var elementRegexes = [
+    ['color', /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/],
     ['varname', /--[a-z-]+/],
-    ['word', /[_a-zA-Z][_a-zA-Z0-9]*/],
-    ['msnumber', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)(vh|vw|px|%|pt)/],
+    ['word', /[_a-zA-Z][_a-zA-Z0-9\-]*/],
+    ['msnumber', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)(vmax|vmin|vh|vw|rem|em|ex|ch|lh|rlh|ic|cap|px|pt|pc|in|cm|mm|q|%|fr)/],
     ['number', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
     ['symbol', /[^\s_a-zA-Z0-9]/],
     ['string', /("(?:[^"\\]|\\.)*?")|('(?:[^'\\]|\\.)*?')/]
@@ -25,11 +26,13 @@ rules.push({
     target: 'measure_num',
     elements: ['.msnumber'],
     toAST: function (pN) {
+        var unitRegex = /(vmax|vmin|vh|vw|rem|em|ex|ch|lh|rlh|ic|cap|px|pt|pc|in|cm|mm|q|%|fr)/i;
         pN = pN.children[0];
+        var unit = pN.content.match(unitRegex)[0].toLowerCase();
         return {
             type: "MeasureLiteral",
-            value: parseFloat(pN.content.replace(/vh|vw|px|%|pt/, '')),
-            unit: pN.content.match(/px|%|pt|vw|vh/)[0]
+            value: parseFloat(pN.content.replace(unitRegex, '')),
+            unit: unit
         }
     }
 });
@@ -273,11 +276,133 @@ rules.push({
     }
 });
 
+rules.push({
+    target: 'list_items',
+    elements: ['.word'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'Identifier',
+            name: parsedNode.children[0].content
+        }
+    }
+});
 
-var cssExpressionParser = new DPParser({
+
+rules.push({
+    target: 'list_items',
+    elements: ['measure_num'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+
+rules.push({
+    target: 'color',
+    elements: ['.color'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'ColorLiteral',
+            value: parsedNode.children[0].content
+        };
+    }
+});
+
+
+rules.push({
+    target: 'list_items',
+    elements: ['color'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+
+
+rules.push({
+    target: 'list_items',
+    elements: ['function_call'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+
+rules.push({
+    target: 'exp_list',
+    elements:['list_items', 'list_items'],
+    toAST: function (parsedNode) {
+        return {
+            type:'DeclarationList',
+            children: parsedNode.children.map(it => parsedNodeToAST(it))
+        }
+    }
+});
+
+
+
+
+rules.push({
+   target: 'exp_list',
+   elements:['exp_list', 'list_items'],
+   toAST: function (parsedNode) {
+       return {
+           type:'DeclarationList',
+           children: parsedNode.children.map(it => parsedNodeToAST(it))
+       }
+   }
+});
+
+
+
+
+rules.push({
+    target: 'declaration_value',
+    elements:['list_items'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+
+rules.push({
+    target: 'declaration_value',
+    elements:['exp_list'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+
+rules.push({
+    target: 'keyword',
+    elements: ['_auto'],
+    toAST: function (pN) {
+        pN = pN.children[0];
+        return {
+            type: "KeywordLiteral",
+            value: pN.content,
+        }
+    }
+});
+
+
+rules.push({
+    target: 'exp',
+    elements: ['keyword'],
+    toAST: function (pN) {
+        return parsedNodeToAST(pN.children[0]);
+    }
+});
+
+
+
+var CSSParser = new DPParser({
     elementRegexes: elementRegexes,
     rules: rules
 });
+
+export default CSSParser;
 
 var getScreenViewSize = () => {
     var div = document.createElement('div');
@@ -445,7 +570,7 @@ var accept = (astNode, ctx) => {
  */
 export function computeMeasureExpression(exp, ctx, debug) {
     try {
-        var p = cssExpressionParser.parse(exp, 'exp');
+        var p = CSSParser.parse(exp, 'exp');
         if (p.ast) {
             return accept(p.ast, ctx);
         }
@@ -499,5 +624,5 @@ export function getQuerySelectorSpecificity(selector) {
 export function compareQuerySelectorSpecificity(selector1, selector2) {
     const specificity1 = getQuerySelectorSpecificity(selector1);
     const specificity2 = getQuerySelectorSpecificity(selector2);
-    return arrayLexicographicalCompare(selector1, specificity2);
+    return arrayLexicographicalCompare(specificity1, specificity2);
 }
