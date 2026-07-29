@@ -18,8 +18,8 @@ import OOP from "./OOP";
 function AElement() {
     EventEmitter.call(this);
     this._azar_extendAttributes = this._azar_extendAttributes || {};
-    this._azar_extendTags = {};
-    this.eventHandler = {};
+    this._azar_extendTags = this._azar_extendTags || {};
+    this.eventHandler = this.eventHandler || {};
 }
 
 OOP.mixClass(AElement, EventEmitter);
@@ -519,19 +519,19 @@ AElement.prototype.getCSSRules = function () {
 /***
  * WARNING: this function may be unsafe
  */
-AElement.prototype.afterDisplayed = function (requestTimesOut) {
-    if (!requestTimesOut) requestTimesOut = 24 * 3600 * 33;
+AElement.prototype.afterDisplayed = function (requestTimeout) {
+    if (!requestTimeout) requestTimeout = 24 * 3600 * 33;
     // var tracer = new Error();
     var current = this;
     return new Promise(function (resolve, reject) {
         function trace() {
-            if (requestTimesOut < 0) {
+            if (requestTimeout < 0) {
                 // reject(tracer);
                 // if (absol.BUILD && absol.BUILD.version == "DEBUG")
                 //     console.warn("Element not displayed", trace);
             }
             else {
-                requestTimesOut--;
+                requestTimeout--;
                 var bound = current.getBoundingClientRect();
                 if (bound.width > 0 || bound.height > 0) {
                     resolve();
