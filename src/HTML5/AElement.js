@@ -19,7 +19,7 @@ function AElement() {
     EventEmitter.call(this);
     this._azar_extendAttributes = this._azar_extendAttributes || {};
     this._azar_extendTags = this._azar_extendTags || {};
-    this.eventHandler = this.eventHandler || {};
+    this.eventHandler = {};
 }
 
 OOP.mixClass(AElement, EventEmitter);
