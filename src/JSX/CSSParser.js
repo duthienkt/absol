@@ -346,10 +346,10 @@ rules.push({
    target: 'exp_list',
    elements:['exp_list', 'list_items'],
    toAST: function (parsedNode) {
-       return {
-           type:'DeclarationList',
-           children: parsedNode.children.map(it => parsedNodeToAST(it))
-       }
+       var res = parsedNodeToAST(parsedNode.children[0]);
+       var last = parsedNodeToAST(parsedNode.children[1]);
+       res.children.push(last);
+       return  res;
    }
 });
 
@@ -626,3 +626,6 @@ export function compareQuerySelectorSpecificity(selector1, selector2) {
     const specificity2 = getQuerySelectorSpecificity(selector2);
     return arrayLexicographicalCompare(specificity1, specificity2);
 }
+
+
+//console.log(CSSParser.parse('italic bold 16px/1.5 Arial, sans-serif', 'declaration_value'));
