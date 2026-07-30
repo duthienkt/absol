@@ -522,6 +522,7 @@ export function numberToVietnamese(n) {
 
     function toVietnameseWords(n) {
         if (typeof n === "number") {
+            n = Math.round(n);
             if (!Number.isSafeInteger(n)) {
                 throw new RangeError("n must be a safe integer or BigInt");
             }
