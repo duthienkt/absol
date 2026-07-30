@@ -1,4 +1,4 @@
-import Color from "../Color/Color";
+import CSSParser from "./CSSParser";
 
 export { computeMeasureExpression } from  './CSSParser';
 
@@ -264,4 +264,12 @@ export function parseBorderValue(borderStr) {
     if (colors.length > 0) result.borderColor = colors.join(' ');
 
     return result;
+}
+
+
+export function parseGridTracks(value) {
+    if (typeof value !== 'string') return null;
+    value = value.trim();
+    var inst  = CSSParser.parse(value, 'declaration_value');
+    return inst.ast || null;
 }
