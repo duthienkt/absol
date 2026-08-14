@@ -318,6 +318,14 @@ rules.push({
 });
 
 
+rules.push({
+    target: 'list_items',
+    elements: ['number'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
 
 rules.push({
     target: 'list_items',
@@ -330,35 +338,31 @@ rules.push({
 
 rules.push({
     target: 'exp_list',
-    elements:['list_items', 'list_items'],
+    elements: ['list_items', 'list_items'],
     toAST: function (parsedNode) {
         return {
-            type:'DeclarationList',
+            type: 'DeclarationList',
             children: parsedNode.children.map(it => parsedNodeToAST(it))
         }
     }
 });
 
 
-
-
 rules.push({
-   target: 'exp_list',
-   elements:['exp_list', 'list_items'],
-   toAST: function (parsedNode) {
-       var res = parsedNodeToAST(parsedNode.children[0]);
-       var last = parsedNodeToAST(parsedNode.children[1]);
-       res.children.push(last);
-       return  res;
-   }
+    target: 'exp_list',
+    elements: ['exp_list', 'list_items'],
+    toAST: function (parsedNode) {
+        var res = parsedNodeToAST(parsedNode.children[0]);
+        var last = parsedNodeToAST(parsedNode.children[1]);
+        res.children.push(last);
+        return res;
+    }
 });
-
-
 
 
 rules.push({
     target: 'declaration_value',
-    elements:['list_items'],
+    elements: ['list_items'],
     toAST: function (parsedNode) {
         return parsedNodeToAST(parsedNode.children[0]);
     }
@@ -367,34 +371,126 @@ rules.push({
 
 rules.push({
     target: 'declaration_value',
-    elements:['exp_list'],
+    elements: ['exp_list'],
     toAST: function (parsedNode) {
         return parsedNodeToAST(parsedNode.children[0]);
     }
 });
 
 
+// grid-column / grid-row grammar
 rules.push({
-    target: 'keyword',
+    target: 'grid_line',
     elements: ['_auto'],
-    toAST: function (pN) {
-        pN = pN.children[0];
-        return {
-            type: "KeywordLiteral",
-            value: pN.content,
-        }
+    toAST: function () {
+        return { type: 'GridLine', auto: true, span: false, value: null, ident: null };
     }
 });
-
 
 rules.push({
-    target: 'exp',
-    elements: ['keyword'],
-    toAST: function (pN) {
-        return parsedNodeToAST(pN.children[0]);
+    target: 'grid_line',
+    elements: ['.number'],
+    toAST: function (node) {
+        return { type: 'GridLine', auto: false, span: false, value: parseInt(node.children[0].content, 10), ident: null };
     }
 });
 
+rules.push({
+    target: 'grid_line',
+    elements: ['.word'],
+    toAST: function (node) {
+        return { type: 'GridLine', auto: false, span: false, value: null, ident: node.children[0].content };
+    }
+});
+
+rules.push({
+    target: 'grid_line',
+    elements: ['.number', '.word'],
+    toAST: function (node) {
+        return {
+            type: 'GridLine', auto: false, span: false,
+            value: parseInt(node.children[0].content, 10),
+            ident: node.children[1].content
+        };
+    }
+});
+
+rules.push({
+    target: 'grid_line',
+    elements: ['_span', '.number'],
+    toAST: function (node) {
+        return { type: 'GridLine', auto: false, span: true, value: parseInt(node.children[1].content, 10), ident: null };
+    }
+});
+
+rules.push({
+    target: 'grid_line',
+    elements: ['_span', '.word'],
+    toAST: function (node) {
+        return { type: 'GridLine', auto: false, span: true, value: null, ident: node.children[1].content };
+    }
+});
+
+rules.push({
+    target: 'grid_line',
+    elements: ['_span', '.number', '.word'],
+    toAST: function (node) {
+        return {
+            type: 'GridLine', auto: false, span: true,
+            value: parseInt(node.children[1].content, 10),
+            ident: node.children[2].content
+        };
+    }
+});
+
+rules.push({
+    target: 'grid_line',
+    elements: ['_span', '.word', '.number'],
+    toAST: function (node) {
+        return {
+            type: 'GridLine', auto: false, span: true,
+            value: parseInt(node.children[2].content, 10),
+            ident: node.children[1].content
+        };
+    }
+});
+
+rules.push({
+    target: 'grid_column',
+    elements: ['grid_line'],
+    toAST: function (node) {
+        return {
+            type: 'GridColumn',
+            start: parsedNodeToAST(node.children[0]),
+            end: null
+        };
+    }
+});
+
+rules.push({
+    target: 'grid_column',
+    elements: ['grid_line', '_/', 'grid_line'],
+    toAST: function (node) {
+        return {
+            type: 'GridColumn',
+            start: parsedNodeToAST(node.children[0]),
+            end: parsedNodeToAST(node.children[2])
+        };
+    }
+});
+
+// Keep generic declaration_value behavior, but allow explicit grid placement with '/'.
+rules.push({
+    target: 'declaration_value',
+    elements: ['grid_line', '_/', 'grid_line'],
+    toAST: function (node) {
+        return {
+            type: 'GridColumn',
+            start: parsedNodeToAST(node.children[0]),
+            end: parsedNodeToAST(node.children[2])
+        };
+    }
+});
 
 
 var CSSParser = new DPParser({
@@ -403,6 +499,14 @@ var CSSParser = new DPParser({
 });
 
 export default CSSParser;
+
+export function parseGridColumn(value) {
+    var instance = CSSParser.parse(value, 'grid_column');
+    if (instance.error) {
+        throw new Error('[CSSParser:grid_column] ' + instance.error.message + ' in: "' + value + '"');
+    }
+    return instance.ast;
+}
 
 var getScreenViewSize = () => {
     var div = document.createElement('div');
@@ -627,5 +731,55 @@ export function compareQuerySelectorSpecificity(selector1, selector2) {
     return arrayLexicographicalCompare(specificity1, specificity2);
 }
 
+function test() {
+    var testcases = [
+        'auto calc(var(--abcd) + 15px + 15%)',
+        'var(--abcd)',
+        '1 / span 1'
+    ];
 
-//console.log(CSSParser.parse('italic bold 16px/1.5 Arial, sans-serif', 'declaration_value'));
+    // grid-column specific cases (valid + a few invalid edge cases)
+    var gridColumnCases = [
+        'auto',
+        '1',
+        'span 1',
+        'span col-start',
+        '2 col-start',
+        'span 2 col-start',
+        'span col-start 2',
+        '1 / 3',
+        '1 / span 1',
+        'col-start / col-end',
+        'auto / auto',
+        '2 col-start / span 3 col-end',
+        'span / 2',          // invalid
+        '1 /',               // invalid
+        '/ span 2'           // invalid
+    ];
+
+    function doTest(text) {
+        var t = performance.now();
+        var inst = CSSParser.parse(text, 'declaration_value');
+        t = performance.now() - t;
+        console.log('[declaration_value]', text, '\ntime', t);
+        console.log(inst.ast || inst.error);
+    }
+
+    function doGridColumnTest(text) {
+        var t = performance.now();
+        var inst = CSSParser.parse(text, 'grid_column');
+        t = performance.now() - t;
+        console.log('[grid_column]', text, '\ntime', t);
+        console.log(inst.ast || inst.error);
+    }
+
+    testcases.forEach(function (testcase) {
+        doTest(testcase);
+    });
+
+    gridColumnCases.forEach(function (testcase) {
+        doGridColumnTest(testcase);
+    });
+}
+
+test();
