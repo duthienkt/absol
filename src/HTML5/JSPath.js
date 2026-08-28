@@ -242,28 +242,11 @@ JSPath.parseQuery = function (s) {
             return s.substring(1)
         });
     }
-    /*
-        var pseudoClasses = s.match(this.__pseudoClassRegex);
-        if (pseudoClasses) {
-            pseudoClasses.forEach(function (pseudo) {
-                if (pseudo === ':first-child') {
-                    tag.firstChild = true;
-                }
-                else if (pseudo === ':last-child') {
-                    tag.lastChild = true;
-                }
-                else {
-                    var nthMatch = pseudo.match(this.__nthChildNumberRegex);
-                    if (nthMatch) {
-                        tag.nthChild = parseInt(nthMatch[1]);
-                    }
-                }
-            }.bind(this));
-        }
 
-     */
     return tag;
 };
+
+
 
 
 /**

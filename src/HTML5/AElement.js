@@ -1,6 +1,6 @@
 import EventEmitter from './EventEmitter';
 import BrowserDetector from '../Detector/BrowserDetector';
-import OOP from "./OOP";
+import OOP, { quickAssign } from "./OOP";
 
 
 /***
@@ -25,7 +25,7 @@ function AElement() {
 OOP.mixClass(AElement, EventEmitter);
 
 AElement.prototype.init = function (props) {
-    Object.assign(this, props || {});
+   quickAssign(this, props || {});
 };
 
 

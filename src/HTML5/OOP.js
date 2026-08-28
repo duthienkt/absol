@@ -1,4 +1,22 @@
 /**
+ * Lightweight assign for own enumerable string keys from one source object.
+ * It skips null/undefined source and returns target.
+ *
+ * @param {Object} target
+ * @param {Object} source
+ * @param {Array<string>} [keys] Optional array of keys to assign. If not provided, all own enumerable keys of source are used.
+ * @returns {Object}
+ */
+export function quickAssign(target, source, keys) {
+    if (!source) return target;
+    keys = keys || Object.keys(source);
+    for (var i = 0; i < keys.length; ++i) {
+        target[keys[i]] = source[keys[i]];
+    }
+    return target;
+}
+
+/**
  * @param {Object} object
  * @param {String} key
  * @param {Function} method

@@ -1,5 +1,5 @@
 import JSPath from './JSPath';
-import OOP from './OOP';
+import OOP, { quickAssign } from './OOP';
 import getFunctionName from '../String/getFunctionName';
 import AElementNS from "./ElementNS";
 import AElement from './AElement';
@@ -46,6 +46,7 @@ var svgCreator = function () {
     AElement.call(element);
     return element;
 };
+
 
 /***
  *
@@ -199,11 +200,11 @@ Dom.prototype.attach = function (element) {
     var prototypeKeys = feature.prototypeKeys;
     var n = prototypeKeys.length;
     var key;
+
     for (var i = 0; i < n; ++i) {
         key = prototypeKeys[i];
         element[key] = proto[key];
     }
-    Object.assign(element, elementConstructor.prototype)
     elementConstructor.call(element);
 };
 
@@ -234,14 +235,21 @@ Dom.prototype._ = function (option, isInherited) {
         isInherited = true;
     }
     else {
+
         if (option.charAt) {
-            option = option.trim();
+            if (option[0] === ' ' && option[option.length - 1] === ' ') {
+                option = option.trim();
+            }
+
             if (option[0] === '<') {
                 res = this.fromCode(option);
                 option = {};
             }
             else {
+
                 var queryObj = JSPath.parseQuery(option);
+
+
                 option = {};
                 option.tag = queryObj.tagName || this.defaultTag;
                 if (queryObj.classList && queryObj.classList.length > 0)
@@ -250,7 +258,9 @@ Dom.prototype._ = function (option, isInherited) {
                 if (queryObj.attributes) option.attr = queryObj.attributes;
             }
         }
+
     }
+
 
     if (option.text || option.text === '') {//is textNode
         return this.makeNewTextNode(option.text);
@@ -275,12 +285,13 @@ Dom.prototype._ = function (option, isInherited) {
             }
             else {
                 res = this.makeNewElement(option.tag);
-                Object.assign(res, option.data);
+                quickAssign(res, option.data);
             }
         }
     }
-
     this.attach(res);
+
+
 
     if (creator) {
         res._azar_extendTags = res._azar_extendTags || {};
@@ -327,7 +338,7 @@ Dom.prototype._ = function (option, isInherited) {
 
     if (isInherited) {
         if (option.props) {
-            Object.assign(res, option.props);//only assign data without call init function
+            quickAssign(res, option.props);//only assign data without call init function
         }
     }
     else {
@@ -555,7 +566,7 @@ export function traceOutBoundingClientRect(current) {
         var isHtml = current.tagName.toLowerCase() === 'html';
         if (ox || oy || isHtml || fixed) {
             if (isHtml) {
-                bound = Object.assign({ left: 0, top: 0 }, getScreenSize());
+                bound = quickAssign({ left: 0, top: 0 }, getScreenSize());
                 bound.bottom = bound.height;
                 bound.right = bound.width;
 
