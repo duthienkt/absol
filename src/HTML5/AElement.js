@@ -281,7 +281,7 @@ AElement.prototype.addClass = function (className) {
             classItem = className;//only one class, and it is a string
         }
     }
-    if (Array.isArray(className)) {//array
+    if (className && className.map && className.forEach) {//array
         for (var i = 0; i < className.length; ++i) {
             classItem = className[i];
             if (classItem && classItem.trim) {
@@ -293,7 +293,9 @@ AElement.prototype.addClass = function (className) {
         }
     }
     else if (classItem) {//classItem is always a string
-        classItem = classItem.trim();
+        if (classItem[0] === ' ' || classItem[classItem.length - 1] === ' ') {
+            classItem = classItem.trim();
+        }
         if (classItem) {
             this.classList.add(classItem);
         }
@@ -346,7 +348,6 @@ AElement.prototype.removeClass = function (className) {
  */
 AElement.prototype.getComputedStyleValue = function (key) {
     return window.getComputedStyle(this).getPropertyValue(key);
-
 };
 
 /**

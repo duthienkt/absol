@@ -48,6 +48,30 @@ var svgCreator = function () {
 };
 
 
+
+/**
+ * @deprecated
+ * @param {string|Array} className
+ * @returns {Boolean}
+ */
+AElement.prototype.containsClass = function (className) {
+    if (className.forEach && className.map) {
+        for (var i = 0; i < className.length; ++i)
+            if (!this.classList.containsClass(className[i])) return false;
+        return true;
+    }
+    else
+        return this.classList.contains(className);
+};
+
+
+/**
+ * @deprecated
+ * @param {string|Array} className
+ * @returns {Boolean}
+ */
+AElementNS.prototype.containsClass = AElement.prototype.containsClass;
+
 /***
  *
  * @param {*=} option
