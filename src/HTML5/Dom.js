@@ -204,12 +204,12 @@ export var FeatureClass = {};
 
 FeatureClass['AElem'+'entNS'] = {
     constructor: AElementNS,
-    prototypeKeys: Object.keys(AElementNS.prototype)
+    prototypeKeys: Object.keys(AElementNS.prototype).filter(key=> !Object.prototype.hasOwnProperty.call(Element.prototype, key))
 };
 
 FeatureClass['AElem'+'ent'] = {
     constructor: AElement,
-    prototypeKeys: Object.keys(AElement.prototype)
+    prototypeKeys: Object.keys(AElement.prototype).filter(key=> !Object.prototype.hasOwnProperty.call(Element.prototype, key))
 };
 
 /**
