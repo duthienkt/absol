@@ -11,10 +11,6 @@ function EventEmitter() {
             enumerable: false,
             value: this._azar_extendEvents || { supported: {}, prioritize: {}, nonprioritize: {} }
         });
-        Object.defineProperty(this, '__azar_force', {
-            value: !(typeof Node === "object" ? this instanceof Node : this && typeof this === "object" && typeof this.nodeType === "number" && typeof this.nodeName === "string"),
-            enumerable: false
-        });
     }
 }
 
@@ -25,11 +21,14 @@ function EventEmitter() {
  * @returns {EventEmitter} Returns this for chaining
  */
 EventEmitter.prototype.defineEvent = function (name) {
-    if (name instanceof Array) {
+    if (!this._azar_extendEvents) {
+        EventEmitter.call(this, name);//init
+    }
+    if (name && name.map && name.forEach) {
         for (var i = 0; i < name.length; ++i)
             this._azar_extendEvents.supported[name[i]] = true;
     }
-    else
+    else if (name)
         this._azar_extendEvents.supported[name] = true;
     return this;
 };
@@ -40,7 +39,7 @@ EventEmitter.prototype.defineEvent = function (name) {
  * @returns {boolean} True if event is supported
  */
 EventEmitter.prototype.isSupportedEvent = function (name) {
-    return this.__azar_force || !!this._azar_extendEvents.supported[name];
+    return !this.addEventListener || !this._azar_extendEvents||!this._azar_extendEvents.supported[name];
 };
 
 
@@ -65,7 +64,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
     var i;
     var startTime, endTime;
     if (this.isSupportedEvent(eventName)) {
-        if (this._azar_extendEvents.prioritize[eventName]) {
+        if (this._azar_extendEvents && this._azar_extendEvents.prioritize[eventName]) {
             listenerList = this._azar_extendEvents.prioritize[eventName].slice();
             for (i = 0; i < listenerList.length; ++i) {
                 try {
@@ -81,7 +80,7 @@ EventEmitter.prototype.fire = function (eventName, data) {
             }
         }
 
-        if (this._azar_extendEvents.nonprioritize[eventName]) {
+        if (this._azar_extendEvents && this._azar_extendEvents.nonprioritize[eventName]) {
             listenerList = this._azar_extendEvents.nonprioritize[eventName].slice();
             for (i = 0; i < listenerList.length; ++i) {
                 try {
@@ -133,6 +132,9 @@ EventEmitter.prototype.eventEmittorOnWithTime = function (isOnce, arg0, arg1, ar
             return this.eventEmittorOnWithTime(isOnce, arg0, arg1.callback, arg1.cap);
         }
         else if (arg1Type === 'function') {
+            if (!this._azar_extendEvents) {
+                EventEmitter.call(this, arg0);//init
+            }
             var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var eventIndex = -1;
             for (var i = 0; i < eventArr.length; ++i) {
@@ -220,6 +222,9 @@ EventEmitter.prototype.off = function (arg0, arg1, arg2) {
             return this.off(arg0, arg1.callback, arg1.cap);
         }
         else {
+            if (!this._azar_extendEvents) {
+                EventEmitter.call(this, arg0);//init
+            }
             var eventArr = this._azar_extendEvents[arg2 ? 'prioritize' : 'nonprioritize'][arg0] || [];
             var newEventArray = [];
             for (var i = 0; i < eventArr.length; ++i) {
@@ -252,6 +257,9 @@ EventEmitter.prototype.offAll = function () {
     var ev2RemoveList = [];//need remove from DOM
     var eventName, i;
     var subList;
+    if (!this._azar_extendEvents) {//not init anything
+        return this;
+    }
     for (eventName in this._azar_extendEvents.prioritize) {
         if (this.isSupportedEvent(eventName)) continue;// not need remove callback from DOM
         subList = this._azar_extendEvents.prioritize[eventName];

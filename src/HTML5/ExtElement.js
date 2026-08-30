@@ -1,5 +1,5 @@
 import { quickAssign } from "./OOP";
-import AElement from "./AElement";
+import EventEmitter from "./EventEmitter";
 
 /**
  * Extension container for methods/properties that are injected directly into
@@ -468,12 +468,100 @@ ExtElement.prototype.afterDisplayed = function (requestTimeout) {
 
 
 
+/**
+ * @typedef {Object} AttributeDefiner
+ * @property {Function} set
+ * @property {Function} get
+ * @property {Function} remove
+ *
+ * @param {String} key
+ * @param {AttributeDefiner} def
+ */
+ExtElement.prototype.defineAttribute = function (key, def) {
+    if (!this._azar_extendAttributes) this._azar_extendAttributes = {};
+    this._azar_extendAttributes[key] = def;
+};
 
 
-//
-var extElementDescriptors = Object.getOwnPropertyDescriptors(ExtElement.prototype);
-delete extElementDescriptors.constructor;
+/**
+ * Defines multiple attributes with their get/set/remove handlers
+ * @param {Object.<string, AttributeDefiner>} defs - Object mapping attribute names to their definitions
+ * @returns {void}
+ */
+ExtElement.prototype.defineAttributes = function (defs) {
+    for (var key in defs) {
+        this.defineAttribute(key, defs[key]);
+    }
+};
 
-Object.defineProperties(Element.prototype, extElementDescriptors);
+
+/**
+ * Gets, sets, or removes attributes on the element
+ * @param {string|Object} arg0 - Attribute name or object containing key-value pairs of attributes
+ * @param {*} [arg1] - Value to set for the attribute. If null/undefined, removes the attribute
+ * @returns {*} Returns attribute value when getting single attribute, or this for method chaining
+ * @example
+ * // Get attribute
+ * element.attr('id')
+ * // Set attribute
+ * element.attr('id', 'myId')
+ * // Set multiple attributes
+ * element.attr({id: 'myId', class: 'myClass'})
+ * // Remove attribute
+ * element.attr('id', null)
+ */
+ExtElement.prototype.attr = function () {
+    if (arguments.length === 1) {
+        if (typeof (arguments[0]) == 'string') {
+            if (this._azar_extendAttributes && this._azar_extendAttributes[arguments[0]]) {
+                return this._azar_extendAttributes[arguments[0]].get.call(this);
+            }
+            else if (this.getBBox && this.tagName !== 'svg') {
+                return this.getAttributeNS(null, arguments[0]);
+            }
+            else {
+                return this.getAttribute(arguments[0]);
+            }
+        }
+        else {
+            for (var key in arguments[0]) {
+                this.attr(key, arguments[0][key]);
+            }
+        }
+    }
+    else {
+        if (arguments.length === 2) {
+            if (arguments[1] === null || arguments[1] === undefined) {
+                if (this._azar_extendAttributes && this._azar_extendAttributes[arguments[0]]) {
+                    this._azar_extendAttributes[arguments[0]].remove.call(this, arguments[1]);
+                }
+                else if (this.getBBox && this.tagName !== 'svg') {
+                    this.removeAttributeNS(null, arguments[0]);
+                }
+                else {
+                    this.removeAttribute(arguments[0]);
+                }
+            }
+            else {
+                if (this._azar_extendAttributes && this._azar_extendAttributes[arguments[0]]) {
+                    this._azar_extendAttributes[arguments[0]].set.call(this, arguments[1]);
+                }
+                else if (this.getBBox && this.tagName !== 'svg') {
+                    this.setAttributeNS(null, arguments[0], arguments[1]);
+                }
+                else {
+                    this.setAttribute(arguments[0], arguments[1]);
+                }
+            }
+        }
+    }
+    return this;
+};
+
+var EmitDescriptors = Object.getOwnPropertyDescriptors(EventEmitter.prototype);
+delete EmitDescriptors.constructor;
+
+Object.defineProperties(ExtElement.prototype, EmitDescriptors);
+
 
 export default ExtElement;
