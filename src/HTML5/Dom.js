@@ -232,7 +232,7 @@ FeatureClass['AElem'+'ent'] = {
  * @param {AElement | AElementNS } element
  */
 Dom.prototype.attach = function (element) {
-    if (!element._azar_extendTags) return;//already attached
+    if (element._azar_extendTags) return;//already attached
     var feature = (element.getBBox && element.tagName !== 'svg') ? FeatureClass.AElementNS : FeatureClass.AElement;
     var elementConstructor = feature.constructor;
     var proto = elementConstructor.prototype;

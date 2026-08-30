@@ -39,7 +39,7 @@ EventEmitter.prototype.defineEvent = function (name) {
  * @returns {boolean} True if event is supported
  */
 EventEmitter.prototype.isSupportedEvent = function (name) {
-    return !this.addEventListener || (this._azar_extendEvents && this._azar_extendEvents.supported[name]);
+    return !this.addEventListener || !!(this._azar_extendEvents && this._azar_extendEvents.supported[name]);
 };
 
 
