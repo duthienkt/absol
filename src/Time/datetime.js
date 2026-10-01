@@ -612,7 +612,18 @@ export function beginOfHour(date, gmt) {
  * @return {Date} date at 00:00
  */
 export function beginOfWeek(date, gmt, startDayOfWeek) {
-    if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
+    if (typeof startDayOfWeek !== "number") {
+        startDayOfWeek = getDefaultFirstDayOfWeek();
+    }
+    else {
+        if (!isFinite(startDayOfWeek) || isNaN(startDayOfWeek)) {
+            startDayOfWeek = getDefaultFirstDayOfWeek();
+        }
+        else {
+            startDayOfWeek = Math.floor(startDayOfWeek);
+            startDayOfWeek = ((startDayOfWeek % 7) + 7) % 7;
+        }
+    }
     var res = beginOfDay(date, gmt);
     if (isNaN(res.getTime())) return res;
     while ((gmt ? res.getUTCDay() : res.getDay()) !== startDayOfWeek) {
