@@ -8,7 +8,7 @@
  * @returns {number}
  */
 export function map(x, l, h, L, H) {
-    return (x - l) / (h - l) * (H - L) + L;
+    return L + (H - L) * (x - l) / ((h - l) || 1);
 }
 
 
