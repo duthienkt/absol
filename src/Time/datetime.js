@@ -1207,7 +1207,8 @@ export function isDayOffsetInTimeRange24Gmt( range, dayOffset) {
 /***
  *
  * @param {null|TimeRange24Data} range
- * @param opt
+ * @param {Object} [opt]
+ * @param {boolean} [opt.showSeconds=false] Whether to display seconds for both endpoints.
  */
 export function formatTimeRange24(range, opt) {
     if (isTimeRange24Null(range)) {
@@ -1215,6 +1216,7 @@ export function formatTimeRange24(range, opt) {
     }
     opt = Object.assign({
         paddingZeroHour: false,
+        showSeconds: false,
         nextDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
             || (window.systemconfig.language.toLowerCase().indexOf('vn') >= 0 || window.systemconfig.language.toLowerCase().indexOf('vi') >= 0)) ? 'Hôm sau' : 'Next day',
         prevDayText: (!window.systemconfig || (typeof window.systemconfig.language !== "string")
@@ -1226,31 +1228,35 @@ export function formatTimeRange24(range, opt) {
     if (opt.gmt) {
         dayOffset -= new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
     }
-
-    var pv = false;
     var nx = false;
-    if (dayOffset < 0) {
+    var endOffset = dayOffset + range.duration;
+    if (endOffset >= MILLIS_PER_DAY) {
+        nx = true;
+    }
+    var pv = false;
+
+    if (dayOffset < 0) {//only support previous day, please give me valid dayOffset
         pv = true;
-        dayOffset += MILLIS_PER_DAY;
+        dayOffset += MILLIS_PER_DAY;//add for calculating hour and minute
     }
     var m0 = Math.floor(dayOffset / MILLIS_PER_MINUTE);
     var h0 = Math.floor(m0 / 60);
     var d0 = Math.floor(h0 / 24);
     m0 = m0 % 60;
     h0 = h0 % 24;
-    var endOffset = dayOffset + range.duration;
-    if (endOffset >= MILLIS_PER_DAY) {
-        nx = true;
-    }
+    endOffset = dayOffset + range.duration; // re-calc
+
     var m1 = Math.floor(endOffset / MILLIS_PER_MINUTE);
     var h1 = Math.floor(m1 / 60);
     var d1 = Math.floor(h1 / 24);
     m1 = m1 % 60;
     h1 = h1 % 24;
     var res = (opt.paddingZeroHour ? (integerZeroPadding(h0, 2)) : h0) + ':' + integerZeroPadding(m0, 2);
+    if (opt.showSeconds) res += ':' + integerZeroPadding(Math.floor(dayOffset / 1000) % 60, 2);
     if (pv) res += ' (' + opt.prevDayText + ')';
     res += ' - ';
     res += (opt.paddingZeroHour ? (integerZeroPadding(h1, 2)) : h1) + ':' + integerZeroPadding(m1, 2);
+    if (opt.showSeconds) res += ':' + integerZeroPadding(Math.floor(endOffset / 1000) % 60, 2);
     if (nx) res += ' (' + opt.nextDayText + ')';
     return res;
 }
