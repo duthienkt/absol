@@ -35,6 +35,7 @@ import ContextManager from './AppPattern/ContextManager';
 import Application from './AppPattern/Application';
 import VarScope from './AppPattern/VarScope';
 import Fragment from './AppPattern/Fragment';
+import Mutex from './AppPattern/Mutex';
 import Rectangle from './Math/Rectangle';
 import Arc from './Math/Arc';
 import NumRange from './Math/NumRange';
@@ -88,6 +89,7 @@ import XLoader from './Network/XLoader';
 import BoundingObserver from "./HTML5/BoundingObserver";
 import * as stringUtil from './String/stringUtils';
 import QuickIndexedArrayHolder from "./DataStructure/QuickIndexedArrayHolder";
+import * as types from './Converter/DataTypes';
 
 var absol = (function (){
     return {
@@ -109,6 +111,8 @@ var absol = (function (){
         Application: Application,
         Fragment: Fragment,
         VarScope: VarScope,
+        Mutex: Mutex,
+        Lock: Mutex,
         Context: Context,
         Activity: Activity,
         Element: AElement,
