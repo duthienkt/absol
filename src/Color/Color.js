@@ -204,7 +204,7 @@ Color.prototype.blend = function (other, mode) {
  */
 /****
  *
- * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex6"|hex8|"hwb"|"hwba"=} mode
+ * @param {"rgba"|"rgb"|"hsl"|"hsla"|"hsb"|"hsba"|"hex3"|"hex4"|"hex6"|"hex8"|"hwb"|"hwba"|"cmyk"=} mode
  * @returns {string}
  */
 Color.prototype.toString = function (mode) {
@@ -249,7 +249,7 @@ Color.templates = [
     ['hex8', 'toHex8()', '#{{x}}'],
     ['hwb', 'toHWBA()', 'hwb({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%)'],
     ['hwba', 'toHWBA()', 'hwba({{x[0] * 360}}, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3]}})'],
-    ['cmyk', 'toCMYK()', 'cmyk({{x[0] * 100}}%, {{x[1] * 100}}%, {{x[2] * 100}}%)']
+    ['cmyk', 'toCMYK()', 'cmyk({{x[0] * 100}}%, {{x[1] * 100}}%, {{x[2] * 100}}%, {{x[3] * 100}}%)']
 ].reduce(function (ac, cr) {
     ac[cr[0]] = new Function('color', [
         'var x = color.' + cr[1] + ';',
@@ -581,9 +581,206 @@ Color.fromHWBA = function (h, s, b, a) {
 };
 
 Color.fromCMYK = function (c, m, y, k) {
-    var rgba = this.cmykToRGB([c, m, y, k]).concat([0]);
+    var rgba = this.cmykToRGB([c, m, y, k]).concat([1]);
     return new Color(rgba);
 };
+
+function parseCssNumeric(token) {
+    token = token.toLowerCase();
+    if (token === 'none') return {value: 0, percent: false, unit: ''};
+    var match = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)(%|deg|grad|rad|turn)?$/i.exec(token);
+    if (!match) throw new Error('Invalid CSS color component: ' + token);
+    return {value: parseFloat(match[1]), percent: match[2] === '%', unit: match[2] || ''};
+}
+
+function parseCssNumber(token, numberScale) {
+    var parsed = parseCssNumeric(token);
+    if (parsed.unit && parsed.unit !== '%') throw new Error('Unexpected unit in CSS color component: ' + token);
+    return parsed.percent ? parsed.value / 100 : parsed.value / numberScale;
+}
+
+function parseCssPercentage(token) {
+    var parsed = parseCssNumeric(token);
+    if (parsed.unit && parsed.unit !== '%') throw new Error('Unexpected unit in CSS color component: ' + token);
+    if (!parsed.percent && token.toLowerCase() !== 'none') throw new Error('Expected percentage in CSS color component: ' + token);
+    return parsed.percent ? parsed.value / 100 : 0;
+}
+
+function parseCssUnitInterval(token) {
+    var parsed = parseCssNumeric(token);
+    if (parsed.unit && parsed.unit !== '%') throw new Error('Unexpected unit in CSS color component: ' + token);
+    return parsed.percent ? parsed.value / 100 : parsed.value;
+}
+
+function clampCssUnit(value) {
+    return Math.max(0, Math.min(1, value));
+}
+
+function parseCssAlpha(token) {
+    return parseCssNumber(token, 1);
+}
+
+function parseCssAngle(token) {
+    var parsed = parseCssNumeric(token);
+    if (parsed.percent) throw new Error('Expected angle in CSS color component: ' + token);
+    var degrees = parsed.value;
+    if (parsed.unit === 'grad') degrees *= 0.9;
+    else if (parsed.unit === 'rad') degrees *= 180 / Math.PI;
+    else if (parsed.unit === 'turn') degrees *= 360;
+    var turns = degrees / 360;
+    return ((turns % 1) + 1) % 1;
+}
+
+function parseCssLabComponent(token, percentageScale) {
+    var parsed = parseCssNumeric(token);
+    if (parsed.unit && parsed.unit !== '%') throw new Error('Unexpected unit in CSS color component: ' + token);
+    return parsed.percent ? parsed.value * percentageScale / 100 : parsed.value;
+}
+
+function decodeSrgb(value) {
+    var sign = value < 0 ? -1 : 1;
+    value = Math.abs(value);
+    return sign * (value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4));
+}
+
+function encodeSrgb(value) {
+    var sign = value < 0 ? -1 : 1;
+    value = Math.abs(value);
+    return sign * (value <= 0.0031308 ? value * 12.92 : 1.055 * Math.pow(value, 1 / 2.4) - 0.055);
+}
+
+function xyzD65ToLinearSrgb(xyz) {
+    return [
+        3.2409699419045216 * xyz[0] - 1.537383177570094 * xyz[1] - 0.4986107602930034 * xyz[2],
+        -0.9692436362808798 * xyz[0] + 1.8759675015077202 * xyz[1] + 0.04155505740717559 * xyz[2],
+        0.05563007969699361 * xyz[0] - 0.20397695888897652 * xyz[1] + 1.0569715142428786 * xyz[2]
+    ];
+}
+
+function xyzD50ToLinearSrgb(xyz) {
+    return xyzD65ToLinearSrgb([
+        0.9555766 * xyz[0] - 0.0230393 * xyz[1] + 0.0631636 * xyz[2],
+        -0.0282895 * xyz[0] + 1.0099416 * xyz[1] + 0.0210077 * xyz[2],
+        0.0122982 * xyz[0] - 0.020483 * xyz[1] + 1.3299098 * xyz[2]
+    ]);
+}
+
+function labToXyzD50(lightness, a, b) {
+    var fy = (lightness + 16) / 116;
+    var fx = fy + a / 500;
+    var fz = fy - b / 200;
+    var delta = 6 / 29;
+    function inverse(value) {
+        return value > delta ? value * value * value : 3 * delta * delta * (value - 4 / 29);
+    }
+    return [
+        0.96422 * inverse(fx),
+        inverse(fy),
+        0.82521 * inverse(fz)
+    ];
+}
+
+function oklabToLinearSrgb(lightness, a, b) {
+    var l = Math.pow(lightness + 0.3963377774 * a + 0.2158037573 * b, 3);
+    var m = Math.pow(lightness - 0.1055613458 * a - 0.0638541728 * b, 3);
+    var s = Math.pow(lightness - 0.0894841775 * a - 1.291485548 * b, 3);
+    return [
+        4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+        -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+        -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s
+    ];
+}
+
+function linearSrgbToRgba(rgb, alpha) {
+    return [encodeSrgb(rgb[0]), encodeSrgb(rgb[1]), encodeSrgb(rgb[2]), alpha];
+}
+
+function parseCssLabColor(name, components, alpha) {
+    var lch = name === 'lch' || name === 'oklch';
+    var oklab = name === 'oklab' || name === 'oklch';
+    var lightnessScale = oklab ? 1 : 100;
+    var chromaScale = oklab ? 0.4 : 150;
+    var lightness = parseCssLabComponent(components[0], lightnessScale);
+    var second = parseCssLabComponent(components[1], lch ? chromaScale : (oklab ? 0.4 : 125));
+    var third;
+    if (lch) {
+        var hue = parseCssAngle(components[2]) * 2 * Math.PI;
+        third = second * Math.sin(hue);
+        second = second * Math.cos(hue);
+    }
+    else {
+        third = parseCssLabComponent(components[2], oklab ? 0.4 : 125);
+    }
+    var rgb = oklab
+        ? oklabToLinearSrgb(lightness, second, third)
+        : xyzD50ToLinearSrgb(labToXyzD50(lightness, second, third));
+    return linearSrgbToRgba(rgb, alpha);
+}
+
+function parseCssColorSpace(space, components, alpha) {
+    var values = components.map(function (component) {
+        var parsed = parseCssNumeric(component);
+        if (parsed.unit && parsed.unit !== '%') throw new Error('Unexpected unit in color() component: ' + component);
+        return parsed.percent ? parsed.value / 100 : parsed.value;
+    });
+    var r = values[0], g = values[1], b = values[2];
+    var xyz;
+    var linear;
+    if (space === 'srgb') return [r, g, b, alpha];
+    if (space === 'srgb-linear') return linearSrgbToRgba(values, alpha);
+    if (space === 'display-p3') {
+        linear = [decodeSrgb(r), decodeSrgb(g), decodeSrgb(b)];
+        xyz = [
+            0.4865709486482162 * linear[0] + 0.26566769316909306 * linear[1] + 0.1982172852343625 * linear[2],
+            0.2289745640697488 * linear[0] + 0.6917385218365064 * linear[1] + 0.079286914093745 * linear[2],
+            0.04511338185890264 * linear[1] + 1.043944368900976 * linear[2]
+        ];
+        return linearSrgbToRgba(xyzD65ToLinearSrgb(xyz), alpha);
+    }
+    if (space === 'a98-rgb') {
+        function decodeA98(value) {
+            return (value < 0 ? -1 : 1) * Math.pow(Math.abs(value), 563 / 256);
+        }
+        linear = [decodeA98(r), decodeA98(g), decodeA98(b)];
+        xyz = [
+            0.5767309 * linear[0] + 0.185554 * linear[1] + 0.1881852 * linear[2],
+            0.2973769 * linear[0] + 0.6273491 * linear[1] + 0.0752741 * linear[2],
+            0.0270343 * linear[0] + 0.0706872 * linear[1] + 0.9911085 * linear[2]
+        ];
+        return linearSrgbToRgba(xyzD65ToLinearSrgb(xyz), alpha);
+    }
+    if (space === 'prophoto-rgb') {
+        function decodeProphoto(value) {
+            var sign = value < 0 ? -1 : 1;
+            value = Math.abs(value);
+            return sign * (value <= 16 / 512 ? value / 16 : Math.pow(value, 1.8));
+        }
+        linear = [decodeProphoto(r), decodeProphoto(g), decodeProphoto(b)];
+        xyz = [
+            0.7977666449 * linear[0] + 0.1351812974 * linear[1] + 0.0313477341 * linear[2],
+            0.2880748288 * linear[0] + 0.7118352348 * linear[1] + 0.0000899364 * linear[2],
+            0.8251046025 * linear[2]
+        ];
+        return linearSrgbToRgba(xyzD50ToLinearSrgb(xyz), alpha);
+    }
+    if (space === 'rec2020') {
+        function decodeRec2020(value) {
+            var sign = value < 0 ? -1 : 1;
+            value = Math.abs(value);
+            return sign * (value < 4.5 * 0.018053968510807 ? value / 4.5 : Math.pow((value + 0.09929682680944) / 1.09929682680944, 1 / 0.45));
+        }
+        linear = [decodeRec2020(r), decodeRec2020(g), decodeRec2020(b)];
+        xyz = [
+            0.6369580483 * linear[0] + 0.1446169036 * linear[1] + 0.1688809752 * linear[2],
+            0.262700212 * linear[0] + 0.6779980715 * linear[1] + 0.0593017165 * linear[2],
+            0.028072693 * linear[1] + 1.0609850577 * linear[2]
+        ];
+        return linearSrgbToRgba(xyzD65ToLinearSrgb(xyz), alpha);
+    }
+    if (space === 'xyz-d50') return linearSrgbToRgba(xyzD50ToLinearSrgb(values), alpha);
+    if (space === 'xyz' || space === 'xyz-d65') return linearSrgbToRgba(xyzD65ToLinearSrgb(values), alpha);
+    throw new Error('Unsupported CSS color space: ' + space);
+}
 
 /**
  * @param {String} text
@@ -592,131 +789,123 @@ Color.fromCMYK = function (c, m, y, k) {
 Color.parse = function (text) {
     if (typeof text !== 'string') text = text + '';
     text = text.trim().toLowerCase();
-    if (this.namedColors[text]) text = this.namedColors[text];
-    if (this.nonStandarNamedColors[text]) text = this.nonStandarNamedColors[text];
-    if (this.regexes.hex8.test(text)) {
-        return this.fromRGBA.apply(this,
-            this.regexes.hex8.exec(text)
-                .slice(1)
-                .map(function (v) {
-                    return parseInt(v, 16) / 255;
-                }));
+    var namedColor = Object.prototype.hasOwnProperty.call(this.namedColors, text)
+        ? this.namedColors[text]
+        : Object.prototype.hasOwnProperty.call(this.nonStandarNamedColors, text)
+            ? this.nonStandarNamedColors[text]
+            : null;
+    if (namedColor) text = namedColor;
+
+    var hex = /^#([a-f0-9]{3}|[a-f0-9]{4}|[a-f0-9]{6}|[a-f0-9]{8})$/i.exec(text);
+    if (hex) {
+        var digits = hex[1];
+        if (digits.length <= 4) digits = digits.split('').map(function (digit) {
+            return digit + digit;
+        }).join('');
+        var channels = digits.match(/.{2}/g).map(function (channel) {
+            return parseInt(channel, 16) / 255;
+        });
+        if (channels.length === 3) channels.push(1);
+        return new Color(channels);
     }
-    else if (this.regexes.hex6.test(text)) {
-        return this.fromRGB.apply(this,
-            this.regexes.hex6.exec(text)
-                .slice(1)
-                .map(function (v) {
-                    return parseInt(v, 16) / 255;
-                }));
+
+    var colorFunction = /^([a-z][a-z0-9-]*)\((.*)\)$/i.exec(text);
+    if (!colorFunction) throw new Error('Fail to parse ' + text);
+    var name = colorFunction[1];
+    var body = colorFunction[2].trim();
+    var slashParts = body.split('/');
+    if (slashParts.length > 2) throw new Error('Fail to parse ' + text);
+    var alpha = 1;
+    if (slashParts.length === 2) alpha = parseCssAlpha(slashParts[1].trim());
+    var componentText = slashParts[0].trim();
+    var commaSyntax = componentText.indexOf(',') >= 0;
+    if (commaSyntax && slashParts.length > 1) throw new Error('Fail to parse ' + text);
+    var components = commaSyntax
+        ? componentText.split(',').map(function (part) { return part.trim(); })
+        : componentText.split(/\s+/);
+    if (components.some(function (part) { return !part; })) throw new Error('Fail to parse ' + text);
+
+    var legacyFourPart = commaSyntax && (name === 'rgba' || name === 'hsla' || name === 'hsba' || name === 'hwba');
+    if (legacyFourPart) {
+        if (components.length !== 4) throw new Error('Fail to parse ' + text);
+        alpha = parseCssAlpha(components.pop());
     }
-    else if (this.regexes.hex4.test(text)) {
-        return this.fromRGBA.apply(this,
-            this.regexes.hex4.exec(text)
-                .slice(1)
-                .map(function (v) {
-                    return parseInt(v + v, 16) / 255;
-                }));
+    else if (commaSyntax && components.length !== 3 && name !== 'cmyk' && name !== 'device-cmyk') {
+        throw new Error('Fail to parse ' + text);
     }
-    else if (this.regexes.hex3.test(text)) {
-        return this.fromRGB.apply(this,
-            this.regexes.hex3.exec(text)
-                .slice(1)
-                .map(function (v) {
-                    return parseInt(v + v, 16) / 255;
-                }));
+
+    var rgba;
+    if (name === 'rgb' || name === 'rgba') {
+        if (components.length !== 3) throw new Error('Fail to parse ' + text);
+        rgba = components.map(function (component) {
+            return parseCssNumber(component, 255);
+        });
     }
-    else if (this.regexes.rgba.test(text)) {
-        return this.fromRGBA.apply(this,
-            this.regexes.rgba.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return i < 3 ? parseFloat(v) / 255 : parseFloat(v);
-                }));
+    else if (name === 'hsl' || name === 'hsla') {
+        if (components.length !== 3) throw new Error('Fail to parse ' + text);
+        rgba = Color.hslaToRGBA([
+            parseCssAngle(components[0]),
+            clampCssUnit(parseCssPercentage(components[1])),
+            clampCssUnit(parseCssPercentage(components[2])),
+            alpha
+        ]);
     }
-    else if (this.regexes.rgb.test(text)) {
-        return this.fromRGB.apply(this,
-            this.regexes.rgb.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / 255;
-                }));
+    else if (name === 'hsb' || name === 'hsba') {
+        if (components.length !== 3) throw new Error('Fail to parse ' + text);
+        rgba = Color.hsbaToRGBA([
+            parseCssAngle(components[0]),
+            clampCssUnit(parseCssPercentage(components[1])),
+            clampCssUnit(parseCssPercentage(components[2])),
+            alpha
+        ]);
     }
-    else if (this.regexes.rgbPercent.test(text)) {
-        return this.fromRGB.apply(this,
-            this.regexes.rgbPercent.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / 100;
-                }));
+    else if (name === 'hwb' || name === 'hwba') {
+        if (components.length !== 3) throw new Error('Fail to parse ' + text);
+        var hue = parseCssAngle(components[0]);
+        var whiteness = clampCssUnit(parseCssPercentage(components[1]));
+        var blackness = clampCssUnit(parseCssPercentage(components[2]));
+        if (whiteness + blackness >= 1) {
+            var gray = whiteness / (whiteness + blackness);
+            rgba = [gray, gray, gray, alpha];
+        }
+        else {
+            var pureHue = Color.hslaToRGBA([hue, 1, 0.5, alpha]);
+            var factor = 1 - whiteness - blackness;
+            rgba = [
+                pureHue[0] * factor + whiteness,
+                pureHue[1] * factor + whiteness,
+                pureHue[2] * factor + whiteness,
+                alpha
+            ];
+        }
     }
-    else if (this.regexes.rgbaPercent.test(text)) {
-        return this.fromRGBA.apply(this,
-            this.regexes.rgbaPercent.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i < 3 ? 100 : 1);
-                }));
+    else if (name === 'lab' || name === 'lch' || name === 'oklab' || name === 'oklch') {
+        if (components.length !== 3) throw new Error('Fail to parse ' + text);
+        rgba = parseCssLabColor(name, components, alpha);
     }
-    else if (this.regexes.hsl.test(text)) {
-        return this.fromHSL.apply(this,
-            this.regexes.hsl.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i == 0 ? 360 : 100);
-                }));
+    else if (name === 'color') {
+        if (components.length !== 4) throw new Error('Fail to parse ' + text);
+        rgba = parseCssColorSpace(components[0], components.slice(1), alpha);
     }
-    else if (this.regexes.hsla.test(text)) {
-        return this.fromHSLA.apply(this,
-            this.regexes.hsla.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i == 0 ? 360 : i < 3 ? 100 : 1);
-                }));
-    }
-    else if (this.regexes.hsb.test(text)) {
-        return this.fromHSB.apply(this,
-            this.regexes.hsb.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i == 0 ? 360 : 100);
-                }));
-    }
-    else if (this.regexes.hsba.test(text)) {
-        return this.fromHSBA.apply(this,
-            this.regexes.hsba.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i == 0 ? 360 : i < 3 ? 100 : 1);
-                }));
-    }
-    else if (this.regexes.hwb.test(text)) {
-        return this.fromHWB.apply(this,
-            this.regexes.hwb.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i == 0 ? 360 : 100);
-                }));
-    }
-    else if (this.regexes.hwba.test(text)) {
-        return this.fromHWBA.apply(this,
-            this.regexes.hwba.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / (i == 0 ? 360 : i < 3 ? 100 : 1);
-                }));
-    }
-    else if (this.regexes.cmyk.test(text)) {
-        return this.fromCMYK.apply(this,
-            this.regexes.cmyk.exec(text)
-                .slice(1)
-                .map(function (v, i) {
-                    return parseFloat(v) / 100;
-                }));
+    else if (name === 'cmyk' || name === 'device-cmyk') {
+        if (components.length !== 4) throw new Error('Fail to parse ' + text);
+        var cmyk = components.map(function (component) {
+            return clampCssUnit(name === 'device-cmyk'
+                ? parseCssUnitInterval(component)
+                : parseCssPercentage(component));
+        });
+        rgba = Color.cmykToRGB(cmyk).concat([alpha]);
     }
     else {
-        throw new Error("Fail to parse " + text);
+        throw new Error('Fail to parse ' + text);
     }
+
+    rgba = rgba.map(function (channel) {
+        if (!isFinite(channel)) throw new Error('Fail to parse ' + text);
+        return Math.max(0, Math.min(1, channel));
+    });
+    rgba[3] = Math.max(0, Math.min(1, alpha));
+    return new Color(rgba);
 };
 
 /***
@@ -844,6 +1033,7 @@ Color.namedColors = {
     powderblue: '#b0e0e6',
     purple: '#800080',
     red: '#ff0000',
+    rebeccapurple: '#663399',
     rosybrown: '#bc8f8f',
     royalblue: '#4169e1',
     saddlebrown: '#8b4513',
