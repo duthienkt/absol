@@ -472,3 +472,77 @@ if (!('btoa' in window)) {
         };
     }
 })();
+
+if (!Promise.withResolvers) {
+    Promise.withResolvers = function () {
+        var resolve, reject;
+        var promise = new Promise((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+        return { promise: promise, resolve: resolve, reject: reject };
+    };
+}
+
+
+// Blob
+if (typeof Blob !== "undefined" && !Blob.prototype.text) {
+    Object.defineProperty(Blob.prototype, "text", {
+        configurable: true,
+        writable: true,
+        value: function text() {
+            var blob = this;
+            return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    resolve(reader.result);
+                };
+                reader.onerror = function () {
+                    reject(reader.error);
+                };
+                reader.onabort = function () {
+                    reject(new DOMException("Blob reading was aborted", "AbortError"));
+                };
+                reader.readAsText(blob, "UTF-8");
+            });
+        }
+    });
+}
+
+if (typeof Blob !== "undefined" && !Blob.prototype.arrayBuffer) {
+    Object.defineProperty(Blob.prototype, "arrayBuffer", {
+        configurable: true,
+        writable: true,
+        value: function arrayBuffer() {
+            var blob = this;
+            return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    resolve(reader.result);
+                };
+                reader.onerror = function () {
+                    reject(reader.error);
+                };
+                reader.onabort = function () {
+                    reject(new DOMException("Blob reading was aborted", "AbortError"));
+                };
+                reader.readAsArrayBuffer(blob);
+            });
+        }
+    });
+}
+
+if (typeof Blob !== "undefined" && !Blob.prototype.bytes) {
+    Object.defineProperty(Blob.prototype, "bytes", {
+        configurable: true,
+        writable: true,
+        value: function bytes() {
+            var blob = this;
+            return Promise.resolve().then(function () {
+                return blob.arrayBuffer();
+            }).then(function (buffer) {
+                return new Uint8Array(buffer);
+            });
+        }
+    });
+}
