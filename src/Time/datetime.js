@@ -27,7 +27,7 @@ export function getDefaultFirstDayOfWeek() {
 export function setDefaultFirstDayOfWeek(value) {
     if (isNaN(value) || !isFinite(value)) return;
     value = Math.floor(value) % 7;
-    _default_first_day_of_week = value;
+    _default_first_day_of_week =  ((value % 7) + 7) % 7;
 }
 
 /**
@@ -530,7 +530,7 @@ export function weekIndexOf(date, gmt, startDayOfWeek) {
 export function weekInYear(year, weekIdx, gmt, startDayOfWeek) {
     if (typeof startDayOfWeek !== "number") startDayOfWeek = getDefaultFirstDayOfWeek();
     var bg = new Date(year, 0, 1, 0, 0, 0, 0);
-    if (gmt) bg.setUTCHours(0);
+    if (gmt) bg.setUTCHours(0, 0, 0, 0);
     var byw = beginOfWeek(bg, gmt, startDayOfWeek);
     if (weekIdx === 0) return bg;
     return new Date(byw.getTime() + weekIdx * 7 * MILLIS_PER_DAY);
@@ -795,10 +795,18 @@ export function prevYear(date, gmt) {
  * @return {number}
  */
 export function compareDate(date0, date1, gmt) {
-    date0 = beginOfDay(date0, gmt);
-    date1 = beginOfDay(date1, gmt);
-    //Date(1975, 5, 12) has 1 hour extend
-    return Math.floor((date0.getTime() - date1.getTime()) / 86400000);
+    function getDayIndex(date) {
+        var normalized = new Date(0);
+        normalized.setUTCHours(0, 0, 0, 0);
+        normalized.setUTCFullYear(
+            gmt ? date.getUTCFullYear() : date.getFullYear(),
+            gmt ? date.getUTCMonth() : date.getMonth(),
+            gmt ? date.getUTCDate() : date.getDate()
+        );
+        return normalized.getTime() / MILLIS_PER_DAY;
+    }
+
+    return getDayIndex(date0) - getDayIndex(date1);
 }
 
 
@@ -861,7 +869,7 @@ export function addMonth(date, delta, gmt) {
 export function addMonthKeepDate(date, delta, gmt) {
     var res = addMonth(date, delta, gmt);
     var dateNum = gmt ? date.getUTCDate() : date.getDate();
-    var dim = daysInMonth(gmt ? date.getUTCFullYear() : date.getFullYear(), gmt ? date.getUTCFullYear() : date.getFullYear());
+    var dim = daysInMonth(gmt ? date.getUTCFullYear() : date.getFullYear(), gmt ? date.getUTCMonth() : date.getUTCMonth());
     dateNum = Math.min(dateNum, dim);
     res = addDate(res, dateNum - 1, gmt);
     return res;
@@ -1075,6 +1083,8 @@ export function formatDateTime(date, format, opt) {
     }, opt);
 
     var fmRgx = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
+    var startDayOfWeek = ((opt.startDayOfWeek % 7) + 7) % 7;
+    if (isNaN(startDayOfWeek)) startDayOfWeek = getDefaultFirstDayOfWeek();
     return format.replace(fmRgx, function (s) {
         var res = s;
         switch (s) {
@@ -1084,7 +1094,7 @@ export function formatDateTime(date, format, opt) {
                 break;
             case 'w':
             case 'ww':
-                res = integerZeroPadding(weekIndexOf(date, false, opt.startDayOfWeek || getDefaultFirstDayOfWeek()) + 1, s.length);
+                res = integerZeroPadding(weekIndexOf(date, false, startDayOfWeek) + 1, s.length);
                 break;
             case 'M':
             case 'MM':
@@ -1177,6 +1187,9 @@ function normalizeDayOffsetIn24Hours(dayOffset) {
  *
  * The check uses a half-open interval: `[start, end]`.
  * Ranges that cross midnight are handled automatically.
+ * Note: Only range occurrences starting on the previous day and the current day
+ * are checked relative to the day containing `dayOffset`; a range starting on
+ * the next day cannot contain the tested offset.
  *
 
  * @param {null|TimeRange24Data} range
@@ -1195,7 +1208,7 @@ export function isDayOffsetInTimeRange24Gmt( range, dayOffset) {
     var duration = typeof range.duration === 'number' && isFinite(range.duration) ? range.duration : 0;
     var endOffset = startOffset + duration;
     var dO;
-    for (var k = -1; k < 1; ++k) {
+    for (var k = -1; k < 1; ++k) {//because range can start from previous day and today, dO is not next day
         dO = dayOffset + k * MILLIS_PER_DAY;
         if (dO >= startOffset && dO <= endOffset)
             return true;
@@ -1283,6 +1296,7 @@ export function getTimeRangeFromStep(date, type, n) {
     }
 
     var addHandlers = {
+        date: (x, d) => addDate(x, d),
         month: (x, d) => addMonth(x, d),
         quarter: (x, d) => addQuarter(x, d),
         year: (x, d) => addYear(x, d),
